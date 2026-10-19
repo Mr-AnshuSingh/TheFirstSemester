@@ -277,6 +277,47 @@ assertCheck('PPS Lab topics covered with TopicContent', ppsTopicsCovered, 17, pp
 assertCheck('PPS Lab 2D diagrams XML valid', ppsDiagramsValid ? 'All 17 SVGs valid' : 'Invalid SVG found', 'All 17 SVGs valid', ppsDiagramsValid);
 assertCheck('PPS Lab TopicContent definitions and exam answers valid', ppsContentValid ? 'All 17 entries complete' : 'Incomplete entries', 'All 17 entries complete', ppsContentValid);
 
+// 17. Phase 3B Topic Content and 2D Diagram validation (EIC)
+const eic = SUBJECTS.find((s) => s.id === 'eic');
+let eicTopicsCovered = 0;
+let eicDiagramsValid = true;
+let eicContentValid = true;
+
+if (eic) {
+  eic.units.forEach((u, uIdx) => {
+    u.topics.forEach((_, tIdx) => {
+      const tc = TOPIC_CONTENT[`eic:${uIdx}:${tIdx}`];
+      if (tc) {
+        eicTopicsCovered++;
+        if (!tc.diagram?.svg?.startsWith('<svg') || !tc.diagram?.svg?.endsWith('</svg>')) {
+          eicDiagramsValid = false;
+        }
+        if (!tc.definition || !tc.slip || !tc.examAnswer || tc.examAnswer.length === 0) {
+          eicContentValid = false;
+        }
+      }
+    });
+  });
+}
+
+assertCheck('EIC topics covered with TopicContent', eicTopicsCovered, 17, eicTopicsCovered === 17);
+assertCheck('EIC 2D diagrams XML valid', eicDiagramsValid ? 'All 17 SVGs valid' : 'Invalid SVG found', 'All 17 SVGs valid', eicDiagramsValid);
+assertCheck('EIC TopicContent definitions and exam answers valid', eicContentValid ? 'All 17 entries complete' : 'Incomplete entries', 'All 17 entries complete', eicContentValid);
+
+// 18. Phase 3B Global Coverage: 291 / 291 topics across all 8 subjects
+let totalCoveredAcrossApp = 0;
+SUBJECTS.forEach((s) => {
+  s.units.forEach((u, uIdx) => {
+    u.topics.forEach((_, tIdx) => {
+      if (TOPIC_CONTENT[`${s.id}:${uIdx}:${tIdx}`]) {
+        totalCoveredAcrossApp++;
+      }
+    });
+  });
+});
+
+assertCheck('Total TopicContent coverage across all 8 subjects', totalCoveredAcrossApp, 291, totalCoveredAcrossApp === 291);
+
 // Print summary
 console.log('--------------------------------------------------');
 console.log('LNJPIT Semester I: Data Integrity Verification');

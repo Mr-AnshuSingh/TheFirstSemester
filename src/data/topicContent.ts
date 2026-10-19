@@ -5,6 +5,7 @@ import { AI_TOPIC_CONTENT, AI_UNIT_STORIES } from './topics/ai';
 import { CFET_TOPIC_CONTENT, CFET_UNIT_STORIES } from './topics/cfet';
 import { UHV_TOPIC_CONTENT, UHV_UNIT_STORIES } from './topics/uhv';
 import { PPS_TOPIC_CONTENT, PPS_UNIT_STORIES } from './topics/pps';
+import { EIC_TOPIC_CONTENT, EIC_UNIT_STORIES } from './topics/eic';
 
 /* ---------- SVG Builder Helpers (matching notebook aesthetic) ---------- */
 const S = (w: number, h: number, b: string) =>
@@ -33,6 +34,7 @@ export const UNIT_STORIES: Record<string, UnitStory> = {
   ...CFET_UNIT_STORIES,
   ...UHV_UNIT_STORIES,
   ...PPS_UNIT_STORIES,
+  ...EIC_UNIT_STORIES,
   'math:0': {
     whatItIs:
       'Linear algebra is the mathematics of straight lines, flat planes, and coordinate grids that stretch without bending. A matrix is an algebraic machine that takes in a vector and scales or rotates it into a new space.',
@@ -83,6 +85,7 @@ export const TOPIC_CONTENT: Record<string, TopicContent> = {
   ...CFET_TOPIC_CONTENT,
   ...UHV_TOPIC_CONTENT,
   ...PPS_TOPIC_CONTENT,
+  ...EIC_TOPIC_CONTENT,
   // ==========================================
   // MATHEMATICS-I (math) - 5 Units, 40 Topics
   // ==========================================
