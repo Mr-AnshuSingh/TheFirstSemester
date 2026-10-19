@@ -3,6 +3,12 @@ import { SC } from '../src/data/scenes';
 import { PPS_EXPERIMENTS } from '../src/data/ppsExperiments';
 import { QUIZ_BANK } from '../src/data/quizBank';
 import { TOPIC_CONTENT } from '../src/data/topicContent';
+import {
+  migrateStudyState,
+  exportStudyStateAsJSON,
+  validateAndParseImportJSON,
+  CURRENT_STORAGE_VERSION,
+} from '../src/lib/offlineStorage';
 
 interface CheckResult {
   passed: boolean;
@@ -317,6 +323,33 @@ SUBJECTS.forEach((s) => {
 });
 
 assertCheck('Total TopicContent coverage across all 8 subjects', totalCoveredAcrossApp, 291, totalCoveredAcrossApp === 291);
+
+// 19. Phase 4 Persistence and Migration Verification
+const legacyV1 = {
+  done: { 'math:0:0': 1 },
+  confidence: { 'math:0:0': 2, bad_conf: 99 },
+  customNotes: { 'math:0': 'My notes' },
+};
+const migrated = migrateStudyState(legacyV1);
+const migrationPassed =
+  migrated.version === CURRENT_STORAGE_VERSION &&
+  migrated.done['math:0:0'] === 1 &&
+  migrated.confidence['math:0:0'] === 2 &&
+  (migrated.confidence as Record<string, unknown>)['bad_conf'] === undefined &&
+  migrated.customNotes['math:0'] === 'My notes' &&
+  migrated.lab === 'G1';
+
+assertCheck('Persistence schema v2 migration integrity', migrationPassed, true, migrationPassed);
+
+// Round-trip export and import validation
+const exportedJSON = exportStudyStateAsJSON(migrated);
+const importResult = validateAndParseImportJSON(exportedJSON);
+const importValid = importResult.valid && importResult.data?.done['math:0:0'] === 1;
+assertCheck('Persistence backup JSON export/import round-trip', importValid, true, importValid);
+
+// Malformed JSON rejection
+const badImport = validateAndParseImportJSON('{ invalid json ...');
+assertCheck('Malformed JSON import rejection', badImport.valid, false, badImport.valid === false);
 
 // Print summary
 console.log('--------------------------------------------------');

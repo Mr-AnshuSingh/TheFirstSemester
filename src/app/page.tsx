@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { SUBJECTS } from '@/data/subjects';
 import { SC } from '@/data/scenes';
 import { WORKED } from '@/data/worked';
@@ -19,13 +19,14 @@ import { MockTestModal } from '@/components/study/MockTestModal';
 import { FlashcardsModal } from '@/components/study/FlashcardsModal';
 import { CommandPaletteModal } from '@/components/study/CommandPaletteModal';
 import { FormulaSheetModal } from '@/components/study/FormulaSheetModal';
+import { BackupModal } from '@/components/study/BackupModal';
 import { ConfidenceLevel, FlashcardProgress } from '@/types/syllabus';
 import { getTopicContent, getUnitStory } from '@/data/topicContent';
 import {
   DEFAULT_STUDY_STATE,
   PersistedStudyState,
   loadStudyState,
-  saveStudyStateOptimistic,
+  saveStudyState,
 } from '@/lib/offlineStorage';
 
 const TABS = ['Explain', '2D Diagrams', 'Notes', 'Topics', 'Quiz', 'Exam', 'AI Tutor'] as const;
@@ -41,7 +42,9 @@ export default function SemesterOnePage() {
   const [flashcardsModalOpen, setFlashcardsModalOpen] = useState<boolean>(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState<boolean>(false);
   const [formulaSheetModalOpen, setFormulaSheetModalOpen] = useState<boolean>(false);
+  const [backupModalOpen, setBackupModalOpen] = useState<boolean>(false);
   const [diagramModal, setDiagramModal] = useState<{ svg: string; title: string; caption: string } | null>(null);
+  const isLoadedRef = useRef<boolean>(false);
 
   useEffect(() => {
     loadStudyState().then((loaded) => {
@@ -53,6 +56,7 @@ export default function SemesterOnePage() {
       );
       setSi(validSi);
       setUi(validUi);
+      isLoadedRef.current = true;
     });
   }, []);
 
@@ -68,13 +72,49 @@ export default function SemesterOnePage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Pure React state updater; writes are debounced in the effect below
   const persist = useCallback((updater: (prev: PersistedStudyState) => PersistedStudyState) => {
-    setSt((prev) => {
-      const next = updater(prev);
-      saveStudyStateOptimistic(next);
-      return next;
-    });
+    setSt(updater);
   }, []);
+
+  // Phase 4: Debounced persistence effect (~500ms debounce)
+  useEffect(() => {
+    if (!isLoadedRef.current) return;
+    const timer = setTimeout(() => {
+      saveStudyState(st);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [st]);
+
+  // Immediate flush before tab close / unmount
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (isLoadedRef.current) {
+        saveStudyState(st);
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [st]);
+
+  const handleImportState = (newState: PersistedStudyState) => {
+    setSt(newState);
+    saveStudyState(newState);
+    const validSi = Math.min(SUBJECTS.length - 1, Math.max(0, newState.at?.[0] || 0));
+    const validUi = Math.min(
+      SUBJECTS[validSi].units.length - 1,
+      Math.max(0, newState.at?.[1] || 0)
+    );
+    setSi(validSi);
+    setUi(validUi);
+  };
+
+  const handleResetState = () => {
+    setSt(DEFAULT_STUDY_STATE);
+    saveStudyState(DEFAULT_STUDY_STATE);
+    setSi(0);
+    setUi(0);
+  };
 
   const activeSubject = SUBJECTS[si];
   const activeUnit = activeSubject.units[ui];
@@ -166,6 +206,7 @@ export default function SemesterOnePage() {
         onOpenFlashcards={() => setFlashcardsModalOpen(true)}
         onOpenMockTest={() => setMockTestModalOpen(true)}
         onOpenFormulaSheet={() => setFormulaSheetModalOpen(true)}
+        onOpenBackupModal={() => setBackupModalOpen(true)}
       />
 
       <UnitSidebar
@@ -639,12 +680,21 @@ export default function SemesterOnePage() {
         onOpenPlan={() => setPlanModalOpen(true)}
         onOpenNotes={() => setNotesModalOpen(true)}
         onOpenFormulaSheet={() => setFormulaSheetModalOpen(true)}
+        onOpenBackup={() => setBackupModalOpen(true)}
       />
 
       <FormulaSheetModal
         open={formulaSheetModalOpen}
         subjects={SUBJECTS}
         onClose={() => setFormulaSheetModalOpen(false)}
+      />
+
+      <BackupModal
+        open={backupModalOpen}
+        onClose={() => setBackupModalOpen(false)}
+        currentState={st}
+        onImportState={handleImportState}
+        onResetState={handleResetState}
       />
 
       {/* Lightbox Diagram Preview Modal */}

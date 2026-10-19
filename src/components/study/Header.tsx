@@ -16,6 +16,7 @@ interface HeaderProps {
   onOpenFlashcards: () => void;
   onOpenMockTest: () => void;
   onOpenFormulaSheet: () => void;
+  onOpenBackupModal: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -31,6 +32,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenFlashcards,
   onOpenMockTest,
   onOpenFormulaSheet,
+  onOpenBackupModal,
 }) => {
   const pct = totalTopicsAll ? (totalClearedAll / totalTopicsAll) * 100 : 0;
   return (
@@ -97,6 +99,9 @@ export const Header: React.FC<HeaderProps> = ({
         </button>
         <button type="button" className="btn" onClick={onOpenNotesModal}>
           All notes
+        </button>
+        <button type="button" className="btn hidden sm:inline-flex" onClick={onOpenBackupModal} title="Backup & Restore Data">
+          Backup
         </button>
         <button type="button" className="btn red" onClick={onOpenPlanModal}>
           Exam plan

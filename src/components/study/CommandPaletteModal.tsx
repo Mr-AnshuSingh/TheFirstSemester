@@ -23,6 +23,7 @@ interface CommandPaletteModalProps {
   onOpenPlan: () => void;
   onOpenNotes: () => void;
   onOpenFormulaSheet: () => void;
+  onOpenBackup?: () => void;
 }
 
 export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
@@ -35,6 +36,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
   onOpenPlan,
   onOpenNotes,
   onOpenFormulaSheet,
+  onOpenBackup,
 }) => {
   const [query, setQuery] = useState<string>('');
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
@@ -110,6 +112,19 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
         onOpenNotes();
       },
     });
+    if (onOpenBackup) {
+      list.push({
+        id: 'act-backup',
+        type: 'action',
+        title: 'Backup & Restore Study Progress (JSON)',
+        subtitle: 'Export/import progress, diagnostics & offline persistence',
+        badge: 'Action',
+        onSelect: () => {
+          onClose();
+          onOpenBackup();
+        },
+      });
+    }
 
     // Subjects & Units
     subjects.forEach((s, sIdx) => {
@@ -185,6 +200,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
     onOpenFormulaSheet,
     onOpenPlan,
     onOpenNotes,
+    onOpenBackup,
   ]);
 
   // Filter items matching query
