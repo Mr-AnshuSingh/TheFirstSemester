@@ -304,11 +304,11 @@ export default function SemesterOnePage() {
           {/* TAB 0: EXPLAIN ("Understand it") */}
           {st.tab === 0 && (
             <div className="space-y-5">
-              {/* 3-Part Plain English Story */}
+              {/* 3-Part Unit Big Picture Story */}
               {unitStory ? (
                 <div className="box space-y-3 bg-paper p-4 rounded-lg border-[1.5px] border-ink shadow-sketchy">
                   <h4 className="font-hand text-xl font-bold text-accentRed pb-1 border-b border-dashed border-ink/20">
-                    Unit Big Picture · Plain English Intuition
+                    Unit Big Picture
                   </h4>
                   <div className="space-y-2 text-xs md:text-sm text-ink/90 font-medium leading-relaxed font-sans">
                     <div>
@@ -327,7 +327,7 @@ export default function SemesterOnePage() {
                 </div>
               ) : (
                 <div className="box">
-                  <h4>Unit Core Intuition</h4>
+                  <h4>Unit Big Picture</h4>
                   <p className="text-sm leading-relaxed text-ink/90 font-medium font-sans">
                     <KatexText htmlOrText={activeUnit.s} />
                   </p>
