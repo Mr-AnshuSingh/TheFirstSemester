@@ -41,6 +41,7 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
   const [playing, setPlaying] = useState<boolean>(initialPlaying);
   const [showHint, setShowHint] = useState<boolean>(true);
   const [slidersOpen, setSlidersOpen] = useState<boolean>(true);
+  const [slidersVisible, setSlidersVisible] = useState<boolean>(true);
 
   // Mutable engine state stored in ref to avoid re-creating RAF loop on every frame
   const engineRef = useRef<{
@@ -532,6 +533,13 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
   }, []);
 
   const currentStepObj = scene.steps[step] || scene.steps[0];
+  const labStepIndex = scene.steps.findIndex(
+    (s) =>
+      s.t.toLowerCase().includes('live parameter lab') ||
+      s.t.toLowerCase().includes('live:') ||
+      s.t.toLowerCase().includes('live ')
+  );
+  const isLabStep = labStepIndex !== -1 ? step === labStepIndex : true;
 
   return (
     <section id="stage" className="relative min-w-0 min-h-0 overflow-hidden h-full">
@@ -619,69 +627,131 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
       </div>
 
       {scene.params && scene.params.length > 0 && (
-        <div className="absolute left-4 bottom-24 md:bottom-28 z-20 max-w-[340px] w-[calc(100%-2rem)] md:w-80 bg-paper/95 border-[1.5px] border-ink rounded-lg p-3 shadow-sketchy backdrop-blur-xs font-hand">
-          <div className="flex items-center justify-between pb-1 mb-2 border-b border-dashed border-ink/30">
-            <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-accentRed font-sans">
-              LIVE EXPERIMENT SLIDERS
-            </span>
-            <div className="flex items-center gap-2">
+        <>
+          {/* If current step is not the live lab step, show quick-jump badge */}
+          {!isLabStep && labStepIndex !== -1 ? (
+            <div
+              onPointerDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              className="absolute left-4 bottom-24 md:bottom-28 z-20"
+            >
               <button
                 type="button"
-                onClick={() => {
-                  const reset: Record<string, number> = {};
-                  scene.params?.forEach((p) => {
-                    reset[p.id] = p.defaultVal;
-                  });
-                  setParamValues(reset);
-                }}
-                className="text-[12px] text-dim hover:text-ink underline decoration-dashed transition-colors"
-                title="Reset sliders to defaults"
+                onClick={() => onStepChange(labStepIndex)}
+                className="flex items-center gap-2 bg-paper/95 border-[1.5px] border-ink rounded-lg px-3 py-1.5 text-xs font-hand font-bold shadow-sketchy hover:bg-gold/20 transition-all text-ink cursor-pointer"
+                title="Jump to the interactive live lab step"
               >
-                reset
-              </button>
-              <button
-                type="button"
-                onClick={() => setSlidersOpen((o) => !o)}
-                className="text-[12px] text-dim hover:text-ink font-sans px-1"
-                title={slidersOpen ? 'Collapse sliders' : 'Expand sliders'}
-              >
-                {slidersOpen ? '▲' : '▼'}
+                <span className="text-accentRed font-sans text-sm animate-pulse">⚡</span>
+                <span>Live Experiment Lab on <strong>Step {labStepIndex + 1}</strong> · Click to open</span>
+                <span className="text-[11px] font-mono px-1 py-0.5 rounded border border-ink/40 bg-gold/20">→</span>
               </button>
             </div>
-          </div>
-          {slidersOpen && (
-            <div className="space-y-2.5">
-              {scene.params.map((p) => {
-                const val = paramValues[p.id] ?? p.defaultVal;
-                return (
-                  <div key={p.id} className="flex flex-col gap-1">
-                    <div className="flex justify-between items-baseline text-[14px]">
-                      <label htmlFor={`param-${p.id}`} className="font-bold text-ink">
-                        {p.label}
-                      </label>
-                      <span className="font-bold text-accentRed text-[15px] font-mono">
-                        {typeof val === 'number' && Number.isInteger(p.step) ? val : val.toFixed(2)} {p.unit}
-                      </span>
-                    </div>
-                    <input
-                      id={`param-${p.id}`}
-                      type="range"
-                      min={p.min}
-                      max={p.max}
-                      step={p.step}
-                      value={val}
-                      onChange={(e) => {
-                        const num = parseFloat(e.target.value);
-                        setParamValues((prev) => ({ ...prev, [p.id]: num }));
-                      }}
-                      className="w-full accent-ink cursor-pointer h-1.5 bg-ink/15 rounded-full"
-                    />
-                  </div>
-                );
-              })}
+          ) : slidersVisible ? (
+            /* When on the live lab step: active real-time parameter sliders */
+            <div
+              onPointerDown={(e) => e.stopPropagation()}
+              onPointerMove={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              onTouchMove={(e) => e.stopPropagation()}
+              className="absolute left-4 bottom-24 md:bottom-28 z-20 max-w-[340px] w-[calc(100%-2rem)] md:w-80 bg-paper/95 border-[1.5px] border-ink rounded-lg p-3 shadow-sketchy backdrop-blur-xs font-hand"
+            >
+              <div className="flex items-center justify-between pb-1 mb-2 border-b border-dashed border-ink/30">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-accentRed font-sans text-xs">⚡</span>
+                  <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-accentRed font-sans">
+                    LIVE EXPERIMENT SLIDERS
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const reset: Record<string, number> = {};
+                      scene.params?.forEach((p) => {
+                        reset[p.id] = p.defaultVal;
+                      });
+                      engineRef.current.params = reset;
+                      setParamValues(reset);
+                    }}
+                    className="text-[12px] text-dim hover:text-ink underline decoration-dashed transition-colors"
+                    title="Reset sliders to defaults"
+                  >
+                    reset
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSlidersOpen((o) => !o)}
+                    className="text-[12px] text-dim hover:text-ink font-sans px-1"
+                    title={slidersOpen ? 'Collapse sliders' : 'Expand sliders'}
+                  >
+                    {slidersOpen ? '▲' : '▼'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSlidersVisible(false)}
+                    className="text-[12px] text-dim hover:text-ink font-sans px-1"
+                    title="Hide slider panel"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+              {slidersOpen && (
+                <div className="space-y-2.5">
+                  {scene.params.map((p) => {
+                    const val = paramValues[p.id] ?? p.defaultVal;
+                    return (
+                      <div key={p.id} className="flex flex-col gap-1">
+                        <div className="flex justify-between items-baseline text-[14px]">
+                          <label htmlFor={`param-${p.id}`} className="font-bold text-ink">
+                            {p.label}
+                          </label>
+                          <span className="font-bold text-accentRed text-[15px] font-mono">
+                            {typeof val === 'number' && Number.isInteger(p.step) ? val : val.toFixed(2)} {p.unit}
+                          </span>
+                        </div>
+                        <input
+                          id={`param-${p.id}`}
+                          type="range"
+                          min={p.min}
+                          max={p.max}
+                          step={p.step}
+                          value={val}
+                          onChange={(e) => {
+                            const num = parseFloat(e.target.value);
+                            engineRef.current.params = {
+                              ...(engineRef.current.params || {}),
+                              [p.id]: num,
+                            };
+                            setParamValues((prev) => ({ ...prev, [p.id]: num }));
+                          }}
+                          className="w-full accent-ink cursor-pointer h-1.5 bg-ink/15 rounded-full"
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          ) : (
+            /* Minimized toggle button to re-open sliders */
+            <div
+              onPointerDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              className="absolute left-4 bottom-24 md:bottom-28 z-20"
+            >
+              <button
+                type="button"
+                onClick={() => setSlidersVisible(true)}
+                className="flex items-center gap-1.5 bg-paper/95 border-[1.5px] border-ink rounded-lg px-2.5 py-1 text-xs font-hand font-bold shadow-sketchy hover:bg-gold/20 transition-all text-ink cursor-pointer"
+                title="Show experiment sliders"
+              >
+                <span className="text-accentRed font-sans">⚡</span>
+                <span>Experiment Sliders</span>
+              </button>
             </div>
           )}
-        </div>
+        </>
       )}
 
       <div ref={capRef} id="cap">
