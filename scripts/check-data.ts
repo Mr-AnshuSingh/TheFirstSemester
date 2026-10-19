@@ -142,6 +142,34 @@ assertCheck('Physics topics covered with TopicContent', phyTopicsCovered, 57, ph
 assertCheck('Physics 2D diagrams XML valid', phyDiagramsValid ? 'All 57 SVGs valid' : 'Invalid SVG found', 'All 57 SVGs valid', phyDiagramsValid);
 assertCheck('Physics TopicContent definitions and exam answers valid', phyContentValid ? 'All 57 entries complete' : 'Incomplete entries', 'All 57 entries complete', phyContentValid);
 
+// 12. Phase 3B Topic Content and 2D Diagram validation (BEEE)
+const beee = SUBJECTS.find((s) => s.id === 'beee');
+let beeeTopicsCovered = 0;
+let beeeDiagramsValid = true;
+let beeeContentValid = true;
+
+if (beee) {
+  beee.units.forEach((u, uIdx) => {
+    u.topics.forEach((_, tIdx) => {
+      const tc = TOPIC_CONTENT[`beee:${uIdx}:${tIdx}`];
+      if (tc) {
+        beeeTopicsCovered++;
+        if (!tc.diagram?.svg?.startsWith('<svg') || !tc.diagram?.svg?.endsWith('</svg>')) {
+          beeeDiagramsValid = false;
+        }
+        if (!tc.definition || !tc.slip || !tc.examAnswer || tc.examAnswer.length === 0) {
+          beeeContentValid = false;
+        }
+      }
+    });
+  });
+}
+
+assertCheck('BEEE topics covered with TopicContent', beeeTopicsCovered, 61, beeeTopicsCovered === 61);
+assertCheck('BEEE 2D diagrams XML valid', beeeDiagramsValid ? 'All 61 SVGs valid' : 'Invalid SVG found', 'All 61 SVGs valid', beeeDiagramsValid);
+assertCheck('BEEE TopicContent definitions and exam answers valid', beeeContentValid ? 'All 61 entries complete' : 'Incomplete entries', 'All 61 entries complete', beeeContentValid);
+
+
 
 // Print summary
 console.log('--------------------------------------------------');

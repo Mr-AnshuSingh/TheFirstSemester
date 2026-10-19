@@ -1,5 +1,6 @@
 import { TopicContent, UnitStory } from '@/types/syllabus';
 import { PHY_TOPIC_CONTENT, PHY_UNIT_STORIES } from './topics/physics';
+import { BEEE_TOPIC_CONTENT, BEEE_UNIT_STORIES } from './topics/beee';
 
 /* ---------- SVG Builder Helpers (matching notebook aesthetic) ---------- */
 const S = (w: number, h: number, b: string) =>
@@ -23,6 +24,7 @@ const LA = (a: number, b: number, c: number, d: number, k = 'a') =>
 /* ---------- UNIT STORIES ---------- */
 export const UNIT_STORIES: Record<string, UnitStory> = {
   ...PHY_UNIT_STORIES,
+  ...BEEE_UNIT_STORIES,
   'math:0': {
     whatItIs:
       'Linear algebra is the mathematics of straight lines, flat planes, and coordinate grids that stretch without bending. A matrix is an algebraic machine that takes in a vector and scales or rotates it into a new space.',
@@ -68,6 +70,7 @@ export const UNIT_STORIES: Record<string, UnitStory> = {
 /* ---------- TOPIC CONTENT ---------- */
 export const TOPIC_CONTENT: Record<string, TopicContent> = {
   ...PHY_TOPIC_CONTENT,
+  ...BEEE_TOPIC_CONTENT,
   // ==========================================
   // MATHEMATICS-I (math) - 5 Units, 40 Topics
   // ==========================================
