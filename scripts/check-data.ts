@@ -250,6 +250,33 @@ assertCheck('UHV topics covered with TopicContent', uhvTopicsCovered, 18, uhvTop
 assertCheck('UHV 2D diagrams XML valid', uhvDiagramsValid ? 'All 18 SVGs valid' : 'Invalid SVG found', 'All 18 SVGs valid', uhvDiagramsValid);
 assertCheck('UHV TopicContent definitions and exam answers valid', uhvContentValid ? 'All 18 entries complete' : 'Incomplete entries', 'All 18 entries complete', uhvContentValid);
 
+// 16. Phase 3B Topic Content and 2D Diagram validation (PPS Lab)
+const pps = SUBJECTS.find((s) => s.id === 'pps');
+let ppsTopicsCovered = 0;
+let ppsDiagramsValid = true;
+let ppsContentValid = true;
+
+if (pps) {
+  pps.units.forEach((u, uIdx) => {
+    u.topics.forEach((_, tIdx) => {
+      const tc = TOPIC_CONTENT[`pps:${uIdx}:${tIdx}`];
+      if (tc) {
+        ppsTopicsCovered++;
+        if (!tc.diagram?.svg?.startsWith('<svg') || !tc.diagram?.svg?.endsWith('</svg>')) {
+          ppsDiagramsValid = false;
+        }
+        if (!tc.definition || !tc.slip || !tc.examAnswer || tc.examAnswer.length === 0) {
+          ppsContentValid = false;
+        }
+      }
+    });
+  });
+}
+
+assertCheck('PPS Lab topics covered with TopicContent', ppsTopicsCovered, 17, ppsTopicsCovered === 17);
+assertCheck('PPS Lab 2D diagrams XML valid', ppsDiagramsValid ? 'All 17 SVGs valid' : 'Invalid SVG found', 'All 17 SVGs valid', ppsDiagramsValid);
+assertCheck('PPS Lab TopicContent definitions and exam answers valid', ppsContentValid ? 'All 17 entries complete' : 'Incomplete entries', 'All 17 entries complete', ppsContentValid);
+
 // Print summary
 console.log('--------------------------------------------------');
 console.log('LNJPIT Semester I: Data Integrity Verification');
