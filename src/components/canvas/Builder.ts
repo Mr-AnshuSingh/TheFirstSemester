@@ -54,7 +54,7 @@ export interface PrimitiveItem {
 }
 
 export interface DynamicCallback {
-  fn: (time: number, b: Builder) => void;
+  fn: (time: number, b: Builder, params?: Record<string, number>) => void;
   step: number;
   only: boolean;
 }
@@ -201,7 +201,7 @@ export class Builder implements SceneBuilderAPI {
     return this;
   }
 
-  dyn(fn: (time: number, b: Builder) => void): this {
+  dyn(fn: (time: number, b: Builder, params?: Record<string, number>) => void): this {
     this.dyns.push({ fn, step: this.step, only: this.only });
     return this;
   }

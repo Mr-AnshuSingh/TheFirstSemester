@@ -40,6 +40,7 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
   const [spin, setSpin] = useState<boolean>(initialSpin);
   const [playing, setPlaying] = useState<boolean>(initialPlaying);
   const [showHint, setShowHint] = useState<boolean>(true);
+  const [slidersOpen, setSlidersOpen] = useState<boolean>(true);
 
   // Mutable engine state stored in ref to avoid re-creating RAF loop on every frame
   const engineRef = useRef<{
@@ -64,6 +65,7 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
     stat: PrimitiveItem[];
     dyns: DynamicCallback[];
     scene: SceneDefinition;
+    params: Record<string, number>;
   }>({
     yaw: scene.cam?.yaw ?? -0.55,
     pitch: scene.cam?.pitch ?? 0.3,
@@ -86,6 +88,17 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
     stat: [],
     dyns: [],
     scene,
+    params: {},
+  });
+
+  const [paramValues, setParamValues] = useState<Record<string, number>>(() => {
+    const init: Record<string, number> = {};
+    if (scene.params) {
+      for (const p of scene.params) {
+        init[p.id] = p.defaultVal;
+      }
+    }
+    return init;
   });
 
   // Sync React props to mutable ref
@@ -102,7 +115,20 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
     eng.idle = 0;
     eng.step = 0;
     eng.stepT = performance.now();
+
+    const initParams: Record<string, number> = {};
+    if (scene.params) {
+      for (const p of scene.params) {
+        initParams[p.id] = p.defaultVal;
+      }
+    }
+    eng.params = initParams;
+    setParamValues(initParams);
   }, [scene]);
+
+  useEffect(() => {
+    engineRef.current.params = paramValues;
+  }, [paramValues]);
 
   useEffect(() => {
     engineRef.current.step = Math.max(0, Math.min(scene.steps.length - 1, step));
@@ -344,7 +370,7 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
         b.idBase = 1e4 + d.step * 500;
         b.step = d.step;
         b.only = d.only;
-        d.fn(eng.time, b);
+        d.fn(eng.time, b, eng.params);
         for (const it of b.items) {
           it.step = d.step;
           it.only = d.only;
@@ -591,6 +617,72 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
       >
         drag to turn it, scroll or pinch to zoom
       </div>
+
+      {scene.params && scene.params.length > 0 && (
+        <div className="absolute left-4 bottom-24 md:bottom-28 z-20 max-w-[340px] w-[calc(100%-2rem)] md:w-80 bg-paper/95 border-[1.5px] border-ink rounded-lg p-3 shadow-sketchy backdrop-blur-xs font-hand">
+          <div className="flex items-center justify-between pb-1 mb-2 border-b border-dashed border-ink/30">
+            <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-accentRed font-sans">
+              LIVE EXPERIMENT SLIDERS
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const reset: Record<string, number> = {};
+                  scene.params?.forEach((p) => {
+                    reset[p.id] = p.defaultVal;
+                  });
+                  setParamValues(reset);
+                }}
+                className="text-[12px] text-dim hover:text-ink underline decoration-dashed transition-colors"
+                title="Reset sliders to defaults"
+              >
+                reset
+              </button>
+              <button
+                type="button"
+                onClick={() => setSlidersOpen((o) => !o)}
+                className="text-[12px] text-dim hover:text-ink font-sans px-1"
+                title={slidersOpen ? 'Collapse sliders' : 'Expand sliders'}
+              >
+                {slidersOpen ? '▲' : '▼'}
+              </button>
+            </div>
+          </div>
+          {slidersOpen && (
+            <div className="space-y-2.5">
+              {scene.params.map((p) => {
+                const val = paramValues[p.id] ?? p.defaultVal;
+                return (
+                  <div key={p.id} className="flex flex-col gap-1">
+                    <div className="flex justify-between items-baseline text-[14px]">
+                      <label htmlFor={`param-${p.id}`} className="font-bold text-ink">
+                        {p.label}
+                      </label>
+                      <span className="font-bold text-accentRed text-[15px] font-mono">
+                        {typeof val === 'number' && Number.isInteger(p.step) ? val : val.toFixed(2)} {p.unit}
+                      </span>
+                    </div>
+                    <input
+                      id={`param-${p.id}`}
+                      type="range"
+                      min={p.min}
+                      max={p.max}
+                      step={p.step}
+                      value={val}
+                      onChange={(e) => {
+                        const num = parseFloat(e.target.value);
+                        setParamValues((prev) => ({ ...prev, [p.id]: num }));
+                      }}
+                      className="w-full accent-ink cursor-pointer h-1.5 bg-ink/15 rounded-full"
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
 
       <div ref={capRef} id="cap">
         <div className="sn">

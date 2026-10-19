@@ -1,13 +1,15 @@
-'use client';
+import { FlashcardProgress, ConfidenceLevel } from '@/types/syllabus';
 
 export interface PersistedStudyState {
   done: Record<string, number>;
+  confidence: Record<string, ConfidenceLevel>;
+  weakSpots: Record<string, number>;
   exam: string;
   lab: 'G1' | 'G2';
   at: [number, number];
   tab: number;
   customNotes: Record<string, string>;
-  flashcards: Record<string, { ease: number; interval: number; reps: number; lastRating: string }>;
+  flashcards: Record<string, FlashcardProgress>;
 }
 
 const DB_NAME = 'lnjpit-semester1-pwa-db';
@@ -16,6 +18,8 @@ const LOCAL_KEY = 'semester-taken-apart-v1';
 
 export const DEFAULT_STUDY_STATE: PersistedStudyState = {
   done: {},
+  confidence: {},
+  weakSpots: {},
   exam: '',
   lab: 'G1',
   at: [0, 0],

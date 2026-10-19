@@ -117,12 +117,18 @@ SC['beee:0']={cam:{yaw:-.5,pitch:.45},steps:[
   B.s(4);B.L([[-4,-1.6,0],[0,-1.6,0],[4,-1.6,0],[4,1.6,0],[0,1.6,0],[-4,1.6,0],[-4,-1.6,0]],{c:COL.ink,w:2.6});B.L([[0,-1.6,0],[0,1.6,0]],{c:COL.ink,w:2.6});zig(B,0,0,0,0,0,0,{});const zz=[[0,1.0,0]];for(let i=0;i<6;i++)zz.push([i%2?-.3:.3,1.0-2.0*(i+.5)/6,0]);zz.push([0,-1,0]);B.L(zz,{c:COL.red,w:3.2});
   B.F(a=>[-2+cos(a)*.7,sin(a)*.7,0],.5,5.8,{c:COL.teal,w:3});B.A([-2.7,.3,0],[-2.7,.35,0],{c:COL.teal,w:3});B.F(a=>[2+cos(a)*.7,sin(a)*.7,0],.5,5.8,{c:COL.gold,w:3});B.T([-2,0,0],'I₁',{c:COL.teal,b:1,sz:24});B.T([2,0,0],'I₂',{c:COL.gold,b:1,sz:24});B.T([.7,0,0],'shared: I₁ − I₂',{c:COL.red,b:1,sz:18,a:'left'});B.T([0,2.4,0],'one KVL equation per mesh',{b:1,sz:24});B.T([0,-2.4,0],'solve the simultaneous equations',{c:COL.gray})}};
 
-SC['beee:1']={cam:{yaw:-.4,pitch:.3},steps:[
- {t:'A sine wave is a rotating arrow',d:'Spin an arrow of length Vm at angular speed ω and look at its height: v = Vm sin ωt. That is exactly an AC voltage. One turn is one cycle; frequency f = ω/2π. Instantaneous, peak (Vm), average and RMS values all describe this same wave.'},
- {t:'Phase difference: lag and lead',d:'In a coil the current reaches its peak after the voltage (lags by φ); in a capacitor it peaks before (leads). On the phasor picture that is simply a smaller or larger angle between two arrows. Impedance Z = √(R² + (X_L − X_C)²), X_L = 2πfL, X_C = 1/(2πfC).',only:true},
- {t:'RMS, average, form factor, peak factor',d:'RMS is the steady value that heats a resistor as much as the wave: V_rms = Vm/√2 = 0.707 Vm. Average over a half cycle = 2Vm/π = 0.637 Vm. Form factor = V_rms/V_avg = 1.11; peak factor = Vm/V_rms = 1.414.',only:true},
- {t:'Power triangle and power factor',d:'Only part of the current does useful work. Real power P = VI cosφ (kW), reactive Q = VI sinφ (kVAr), apparent S = VI (kVA); S² = P² + Q². Power factor = cosφ = P/S = R/Z. The impedance triangle (R, X, Z) behind it has the same angle.',only:true},
- {t:'Three-phase: three waves 120° apart',d:'Three coils spaced 120° apart give three voltages with the same size, shifted by a third of a cycle, phase sequence R–Y–B. Star: V_L = √3·V_ph and I_L = I_ph. Delta: V_L = V_ph and I_L = √3·I_ph. Power P = √3·V_L·I_L·cosφ. Advantages: constant power flow, smaller conductors, self-starting motors.',only:true}],
+SC['beee:1']={cam:{yaw:-.4,pitch:.3},
+ params:[
+  {id:'resistance',label:'Resistance R',min:1,max:10,step:0.5,defaultVal:4,unit:'Ω'},
+  {id:'reactanceX',label:'Net Reactance X',min:-8,max:8,step:0.5,defaultVal:3,unit:'Ω'}
+ ],
+ steps:[
+  {t:'A sine wave is a rotating arrow',d:'Spin an arrow of length Vm at angular speed ω and look at its height: v = Vm sin ωt. That is exactly an AC voltage. One turn is one cycle; frequency f = ω/2π. Instantaneous, peak (Vm), average and RMS values all describe this same wave.'},
+  {t:'Phase difference: lag and lead',d:'In a coil the current reaches its peak after the voltage (lags by φ); in a capacitor it peaks before (leads). On the phasor picture that is simply a smaller or larger angle between two arrows. Impedance Z = √(R² + (X_L − X_C)²), X_L = 2πfL, X_C = 1/(2πfC).',only:true},
+  {t:'RMS, average, form factor, peak factor',d:'RMS is the steady value that heats a resistor as much as the wave: V_rms = Vm/√2 = 0.707 Vm. Average over a half cycle = 2Vm/π = 0.637 Vm. Form factor = V_rms/V_avg = 1.11; peak factor = Vm/V_rms = 1.414.',only:true},
+  {t:'Power triangle and power factor',d:'Only part of the current does useful work. Real power P = VI cosφ (kW), reactive Q = VI sinφ (kVAr), apparent S = VI (kVA); S² = P² + Q². Power factor = cosφ = P/S = R/Z. The impedance triangle (R, X, Z) behind it has the same angle.',only:true},
+  {t:'Three-phase: three waves 120° apart',d:'Three coils spaced 120° apart give three voltages with the same size, shifted by a third of a cycle, phase sequence R–Y–B. Star: V_L = √3·V_ph and I_L = I_ph. Delta: V_L = V_ph and I_L = √3·I_ph. Power P = √3·V_L·I_L·cosφ. Advantages: constant power flow, smaller conductors, self-starting motors.',only:true},
+  {t:'Live parameter lab: AC impedance triangle and power factor',d:'Tweak resistance R and net reactance (X_L - X_C) to calculate impedance Z, phase angle φ, and power factor cos φ in real time.',only:true}],
  build(B){
   B.s(0);B.dyn((t,b)=>{const a=t*1.6,R=1.8,cx=-4.2;b.C([cx,0,0],R,{n:'z',c:COL.gray,w:1.6});b.A([cx,0,0],[cx+cos(a)*R,sin(a)*R,0],{c:COL.red,w:3.4});b.F(x=>[x,R*sin(a-(x-cx-R)*1.2),0],cx+R,6,{c:COL.teal,w:3.2,seg:100});b.L([[cx+cos(a)*R,sin(a)*R,0],[cx+R,sin(a)*R,0]],{c:COL.gray,w:1.2,d:[4,4]});b.D([cx+cos(a)*R,sin(a)*R,0],.12,{f:COL.red})});
   B.A([-2,0,0],[6.4,0,0],{c:COL.gray});B.T([-4.2,-2.6,0],'rotating arrow, length Vm',{c:COL.red,b:1,sz:20});B.T([2.4,2.5,0],'v = Vm sin ωt',{c:COL.teal,b:1,sz:26});B.T([2.4,-2.6,0],'one turn = one cycle,  f = ω/2π',{sz:21});
@@ -133,13 +139,22 @@ SC['beee:1']={cam:{yaw:-.4,pitch:.3},steps:[
   B.s(3);B.P([[-3,-1.5,0],[2.5,-1.5,0],[2.5,1.7,0]],{f:COL.red,a:.15,c:COL.red,w:2.8});B.T([-.3,-2.0,0],'P = VI cosφ (kW)',{c:COL.red,b:1});B.T([3.3,.1,0],'Q = VI sinφ',{c:COL.gold,b:1,a:'left'});B.T([-.4,.7,0],'S = VI (kVA)',{b:1,sz:24});B.F(a=>[-3+cos(a)*.9,-1.5+sin(a)*.9,0],0,.6,{c:COL.ink,w:2});B.T([-1.9,-1.2,0],'φ',{b:1,sz:24});
   B.P([[-3,-1.5,-3],[1.5,-1.5,-3],[1.5,.8,-3]],{f:COL.teal,a:.12,c:COL.teal,w:2});B.T([-.8,-1.9,-3],'R',{c:COL.teal,b:1});B.T([1.9,-.3,-3],'X',{c:COL.teal,b:1});B.T([-1,.2,-3],'Z',{c:COL.teal,b:1});B.T([0,3.1,0],'pf = cosφ = P/S = R/Z',{b:1,sz:26});
   B.s(4);B.dyn((t,b)=>{const a=t*1.4,cs=[COL.red,COL.gold,COL.blue];b.C([-4.4,0,0],1.6,{n:'z',c:COL.gray,w:1.4});for(let k=0;k<3;k++){const g=a-k*2*PI/3;b.A([-4.4,0,0],[-4.4+cos(g)*1.6,sin(g)*1.6,0],{c:cs[k],w:3.2});b.F(x=>[x,sin(1.2*x-a*1+k*2*PI/3)*1.4,0],-2,5,{c:cs[k],w:2.8,seg:100})}});
-  B.T([-4.4,-2.3,0],'120° apart',{b:1,sz:22});B.T([1.5,2.2,0],'R   Y   B  sequence',{b:1,sz:22});B.T([1.5,-2.5,0],'star: V_L = √3 V_ph   P = √3 V_L I_L cosφ',{c:COL.red,b:1,sz:21})}};
+  B.T([-4.4,-2.3,0],'120° apart',{b:1,sz:22});B.T([1.5,2.2,0],'R   Y   B  sequence',{b:1,sz:22});B.T([1.5,-2.5,0],'star: V_L = √3 V_ph   P = √3 V_L I_L cosφ',{c:COL.red,b:1,sz:21});
+  B.s(5);B.dyn((t,b,p={})=>{const R=p.resistance??4,X=p.reactanceX??3,Z=sqrt(R*R+X*X),pf=R/Z,phiDeg=(Math.atan2(X,R)*180)/PI,sc=0.45;b.P([[-3,-1.2,0],[-3+R*sc,-1.2,0],[-3+R*sc,-1.2+X*sc,0]],{f:X>=0?COL.red:COL.blue,a:0.2,c:COL.ink,w:2.8});b.T([-3+(R*sc)/2,-1.8,0],`R = ${R} Ω`,{c:COL.teal,b:1});b.T([-3+R*sc+0.6,-1.2+(X*sc)/2,0],`X = ${X} Ω`,{c:COL.gold,b:1});b.T([-3+(R*sc)/2,-1.2+(X*sc)/2+0.4,0],`Z = ${Z.toFixed(2)} Ω`,{c:COL.red,b:1});b.T([0,3.0,0],`Power Factor cos φ = ${pf.toFixed(3)} (${X>0?'Lagging':X<0?'Leading':'Unity'})`,{c:COL.red,sz:24,b:1});b.T([0,-2.8,0],`Phase Angle φ = ${phiDeg.toFixed(1)}°`,{c:COL.ink,sz:22});});
+}};
 
-SC['beee:2']={cam:{yaw:-.4,pitch:.3},steps:[
- {t:'Single-phase transformer',d:'Two coils share an iron core. An alternating current in the primary makes an alternating flux Φ in the core; that flux links the secondary and induces a voltage. E = 4.44 f N Φm (rms). So V₁/V₂ = N₁/N₂ = I₂/I₁ = K. Voltage regulation = (V_no-load − V_full-load)/V_no-load × 100%. It works only on AC.'},
- {t:'Faraday and Lenz',d:'Move a magnet in and out of a coil and a voltage appears: e = −N dΦ/dt. The minus sign is Lenz’s law: the induced current opposes the change that caused it. Self-inductance L = NΦ/I and mutual inductance M are the same idea applied to one coil or two neighbouring coils.',only:true},
- {t:'DC motor: force on a current-carrying loop',d:'A wire carrying current I in field B feels a force F = BIL. The two sides of the loop carry opposite currents, so one is pushed up and the other down: a turning force. The split-ring commutator reverses the current every half turn so the push always keeps the loop turning the same way. Back EMF: E_b = V − I_aR_a.',only:true},
- {t:'Induction motor: a rotating field drags the rotor',d:'Three-phase currents in three coil pairs create a magnetic field that rotates at synchronous speed N_s = 120f/P. The rotor conductors cut that field, a current is induced (Faraday), and the rotor is dragged round, always a little slower: slip s = (N_s − N)/N_s. If it caught up there would be no relative motion and no torque.',only:true}],
+SC['beee:2']={cam:{yaw:-.4,pitch:.3},
+ params:[
+  {id:'turnsN1',label:'Primary Turns N₁',min:50,max:500,step:10,defaultVal:200,unit:'turns'},
+  {id:'turnsN2',label:'Secondary Turns N₂',min:50,max:500,step:10,defaultVal:100,unit:'turns'},
+  {id:'voltageV1',label:'Primary Voltage V₁',min:50,max:240,step:10,defaultVal:220,unit:'V'}
+ ],
+ steps:[
+  {t:'Single-phase transformer',d:'Two coils share an iron core. An alternating current in the primary makes an alternating flux Φ in the core; that flux links the secondary and induces a voltage. E = 4.44 f N Φm (rms). So V₁/V₂ = N₁/N₂ = I₂/I₁ = K. Voltage regulation = (V_no-load − V_full-load)/V_no-load × 100%. It works only on AC.'},
+  {t:'Faraday and Lenz',d:'Move a magnet in and out of a coil and a voltage appears: e = −N dΦ/dt. The minus sign is Lenz’s law: the induced current opposes the change that caused it. Self-inductance L = NΦ/I and mutual inductance M are the same idea applied to one coil or two neighbouring coils.',only:true},
+  {t:'DC motor: force on a current-carrying loop',d:'A wire carrying current I in field B feels a force F = BIL. The two sides of the loop carry opposite currents, so one is pushed up and the other down: a turning force. The split-ring commutator reverses the current every half turn so the push always keeps the loop turning the same way. Back EMF: E_b = V − I_aR_a.',only:true},
+  {t:'Induction motor: a rotating field drags the rotor',d:'Three-phase currents in three coil pairs create a magnetic field that rotates at synchronous speed N_s = 120f/P. The rotor conductors cut that field, a current is induced (Faraday), and the rotor is dragged round, always a little slower: slip s = (N_s − N)/N_s. If it caught up there would be no relative motion and no torque.',only:true},
+  {t:'Live parameter lab: transformer turns ratio and voltage transformation',d:'Adjust primary turns N₁, secondary turns N₂, and primary input voltage V₁ to observe transformation ratio K = N₂/N₁, induced secondary voltage V₂, and step-up vs step-down behavior.',only:true}],
  build(B){
   B.s(0);B.X([-3,0,0],[.9,5,1],{f:COL.gray});B.X([3,0,0],[.9,5,1],{f:COL.gray});B.X([0,2.3,0],[6.9,.4,1],{f:COL.gray});B.X([0,-2.3,0],[6.9,.4,1],{f:COL.gray});
   B.F(u=>[-3+cos(u*30)*.85,-1.6+u*3.2,sin(u*30)*.85],0,1,{c:COL.red,w:2.2,seg:150});B.F(u=>[3+cos(u*18)*.85,-1.6+u*3.2,sin(u*18)*.85],0,1,{c:COL.teal,w:2.2,seg:120});
@@ -152,7 +167,9 @@ SC['beee:2']={cam:{yaw:-.4,pitch:.3},steps:[
   B.T([0,2.8,0],'F = B I L',{c:COL.red,b:1,sz:26});B.T([0,-2.8,0],'commutator keeps the push in one direction',{sz:20});B.T([2.1,-1.5,1.8],'brush',{sz:18,c:COL.gray});
   B.s(3);B.C([0,0,0],3.2,{n:'z',c:COL.gray,w:2});[0,1,2].forEach(k=>{const a=PI/2+k*2*PI/3,c=[COL.red,COL.gold,COL.blue][k];B.X([cos(a)*3.2,sin(a)*3.2,0],[.9,.9,.9],{f:c,a:.35});B.X([-cos(a)*3.2,-sin(a)*3.2,0],[.9,.9,.9],{f:c,a:.35});B.T([cos(a)*3.9,sin(a)*3.9,0],['R','Y','B'][k],{b:1,c,sz:24})});
   B.dyn((t,b)=>{const a=t*1.6;b.A([0,0,0],[cos(a)*2.4,sin(a)*2.4,0],{c:COL.red,w:4});b.C([0,0,0],1.2,{n:'z',c:COL.ink,w:2.4});const r=a*.85;for(let k=0;k<4;k++){const g=r+k*PI/2;b.L([[cos(g)*.3,sin(g)*.3,0],[cos(g)*1.2,sin(g)*1.2,0]],{c:COL.ink,w:3})}});
-  B.T([0,-4.2,0],'N_s = 120 f / P     slip s = (N_s − N)/N_s',{b:1,sz:23});B.T([0,0,.9],'rotor',{sz:18,c:COL.gray,dy:26});B.T([-4.8,2.8,0],'rotating field',{c:COL.red,b:1})}};
+  B.T([0,-4.2,0],'N_s = 120 f / P     slip s = (N_s − N)/N_s',{b:1,sz:23});B.T([0,0,.9],'rotor',{sz:18,c:COL.gray,dy:26});B.T([-4.8,2.8,0],'rotating field',{c:COL.red,b:1});
+  B.s(4);B.dyn((t,b,p={})=>{const n1=Math.round(p.turnsN1??200),n2=Math.round(p.turnsN2??100),v1=p.voltageV1??220;const k=n2/n1,v2=v1*k,isStepUp=n2>n1,typeStr=n2===n1?'1:1 Isolation':isStepUp?'Step-Up Transformer':'Step-Down Transformer';b.X([-3,0,0],[.9,5,1],{f:COL.gray});b.X([3,0,0],[.9,5,1],{f:COL.gray});b.X([0,2.3,0],[6.9,.4,1],{f:COL.gray});b.X([0,-2.3,0],[6.9,.4,1],{f:COL.gray});const cd1=Math.round(8+(n1/500)*24);b.F(u=>[-3+cos(u*cd1*2*PI)*.85,-1.6+u*3.2,sin(u*cd1*2*PI)*.85],0,1,{c:COL.red,w:2.2,seg:120});const cd2=Math.round(8+(n2/500)*24);b.F(u=>[3+cos(u*cd2*2*PI)*.85,-1.6+u*3.2,sin(u*cd2*2*PI)*.85],0,1,{c:COL.teal,w:2.2,seg:120});for(let i=0;i<8;i++){const s=((t*.2+i/8)%1)*4,per=[[-3,-1.9],[3,-1.9],[3,1.9],[-3,1.9]],seg=Math.floor(s),u=s-seg,p0=per[seg%4],p1=per[(seg+1)%4];b.D([p0[0]+(p1[0]-p0[0])*u,p0[1]+(p1[1]-p0[1])*u,.6],.12,{f:COL.gold});}b.T([0,3.3,0],`${typeStr} (K = ${k.toFixed(2)})`,{c:isStepUp?COL.teal:COL.red,b:1,sz:24});b.T([-4.5,1.8,0],`N₁ = ${n1}`,{c:COL.red,b:1,sz:22});b.T([-4.5,-1.8,0],`V₁ = ${v1} V`,{c:COL.ink,b:1,sz:22});b.T([4.5,1.8,0],`N₂ = ${n2}`,{c:COL.teal,b:1,sz:22});b.T([4.5,-1.8,0],`V₂ = ${v2.toFixed(1)} V`,{c:isStepUp?COL.teal:COL.red,b:1,sz:24});b.T([0,-3.3,0],`V₂/V₁ = N₂/N₁ = K  |  E = 4.44 f N Φ_m`,{c:COL.ink,b:1,sz:21});});
+}};
 
 SC['beee:3']={cam:{yaw:-.4,pitch:.3},steps:[
  {t:'Diode, forward bias: the valve is open',d:'A p-n junction has a thin depletion layer. Connect + to p and − to n and the applied voltage shrinks that layer, so carriers cross and current flows once V exceeds the cut-in voltage (about 0.7 V for silicon, 0.3 V for germanium). Intrinsic and extrinsic semiconductors, and p-n junction construction, are the base of every device in this unit.'},
@@ -225,16 +242,23 @@ SC['cfet:0']={cam:{yaw:-.4,pitch:.3},steps:[
   B.s(2);[['register',.3,COL.red,'1 cycle'],['cache',.9,COL.gold,'~10'],['RAM',1.9,COL.teal,'~100'],['disk',3.6,COL.blue,'~millions']].forEach(([l,h,c,t],i)=>{B.X([-4.2+i*2.8,h/2-1.8,0],[1.5,h,1.5],{f:c,a:.4});lab(B,[-4.2+i*2.8,-2.3,0],l,{sz:21});lab(B,[-4.2+i*2.8,h-1.4,0],t,{c,sz:19})});B.T([0,3.2,0],'access time (log scale)',{b:1,sz:23});B.T([0,-3.3,0],'avg time = hit time + miss rate × miss penalty',{c:COL.red,b:1,sz:21});
   B.s(3);const pipe=(y,name,boxes,c)=>{lab(B,[-5.6,y,0],name,{c,a:'left',sz:22});boxes.forEach((t,i)=>{bx(B,[-2.6+i*2.8,y,0],[2,.9,.8],t,c,{sz:18});if(i)B.A([-2.6+i*2.8-1.5,y,0],[-2.6+i*2.8-1.05,y,0],{c:COL.ink,w:2})})};pipe(1.8,'compiler',['source','compile all','machine code','run fast'],COL.teal);pipe(-1.4,'interpreter',['source','line 1','line 2','line 3 …'],COL.gold);B.dyn((t,b)=>{const k=Math.floor(t/.8)%4;b.D([-2.6+k*2.8,-1.4+.9,0],.14,{f:COL.red})});lab(B,[0,-3,0],'all errors at once vs stops at the first error',{sz:21,c:COL.red})}};
 
-SC['cfet:1']={cam:{yaw:-.4,pitch:.3},steps:[
- {t:'Binary: every bit has a place value',d:'In an 8-bit number the places are 128, 64, 32, 16, 8, 4, 2, 1. Switch a bit on and you add its value. 01001000 = 64 + 8 = 72. Octal groups bits in threes and hexadecimal in fours: 0100 1000 = 48 (hex). A byte is 8 bits, enough for one character.'},
- {t:'Decimal to binary: halve and read upward',d:'Divide by 2 again and again, keeping each remainder: 45 → 22 r1, 22 → 11 r0, 11 → 5 r1, 5 → 2 r1, 2 → 1 r0, 1 → 0 r1. Read the remainders from the bottom up: 101101. Fractions work the other way: multiply by 2 and read the integer parts downward.',only:true},
- {t:'Negative numbers: the 2’s complement wheel',d:'Put the 16 four-bit patterns round a wheel. Counting up from 0000 reaches 0111 (+7), then wraps to 1000 (−8) and climbs back to 1111 (−1). To negate: flip all bits, then add 1: 0101 (+5) → 1010 → 1011 (−5). Range of n bits: −2ⁿ⁻¹ to 2ⁿ⁻¹ − 1. 1’s complement is just the flip and has two zeros. Subtraction A − B = A + (2’s complement of B), dropping the carry.',only:true},
- {t:'ASCII and Unicode: letters are numbers',d:'A character is a number both sides agree on. ASCII uses 7 bits (128 symbols): ‘H’ = 72 = 01001000, ‘i’ = 105 = 01101001, ‘A’ = 65, ‘a’ = 97. Unicode extends the idea to every script. Memory stores each as a byte, one after another.',only:true}],
+SC['cfet:1']={cam:{yaw:-.4,pitch:.3},
+ params:[
+  {id:'decimalVal',label:'Decimal Value (0–255)',min:0,max:255,step:1,defaultVal:72,unit:''}
+ ],
+ steps:[
+  {t:'Binary: every bit has a place value',d:'In an 8-bit number the places are 128, 64, 32, 16, 8, 4, 2, 1. Switch a bit on and you add its value. 01001000 = 64 + 8 = 72. Octal groups bits in threes and hexadecimal in fours: 0100 1000 = 48 (hex). A byte is 8 bits, enough for one character.'},
+  {t:'Decimal to binary: halve and read upward',d:'Divide by 2 again and again, keeping each remainder: 45 → 22 r1, 22 → 11 r0, 11 → 5 r1, 5 → 2 r1, 2 → 1 r0, 1 → 0 r1. Read the remainders from the bottom up: 101101. Fractions work the other way: multiply by 2 and read the integer parts downward.',only:true},
+  {t:'Negative numbers: the 2’s complement wheel',d:'Put the 16 four-bit patterns round a wheel. Counting up from 0000 reaches 0111 (+7), then wraps to 1000 (−8) and climbs back to 1111 (−1). To negate: flip all bits, then add 1: 0101 (+5) → 1010 → 1011 (−5). Range of n bits: −2ⁿ⁻¹ to 2ⁿ⁻¹ − 1. 1’s complement is just the flip and has two zeros. Subtraction A − B = A + (2’s complement of B), dropping the carry.',only:true},
+  {t:'ASCII and Unicode: letters are numbers',d:'A character is a number both sides agree on. ASCII uses 7 bits (128 symbols): ‘H’ = 72 = 01001000, ‘i’ = 105 = 01101001, ‘A’ = 65, ‘a’ = 97. Unicode extends the idea to every script. Memory stores each as a byte, one after another.',only:true},
+  {t:'Live parameter lab: interactive 8-bit binary and hex converter',d:'Slide through decimal numbers 0 to 255 to see each bit block toggle, with live binary, hexadecimal, octal, and ASCII conversions.',only:true}],
  build(B){
   B.s(0);const bits=[0,1,0,0,1,0,0,0],vals=[128,64,32,16,8,4,2,1];bits.forEach((b,i)=>{const x=-4.2+i*1.2,h=.5+(7-i)*.38;B.X([x,h/2-1.6,0],[.9,h,.9],{f:b?COL.red:COL.gray,a:b?.5:.12});lab(B,[x,-2.1,0],''+vals[i],{sz:20,c:b?COL.red:COL.gray});lab(B,[x,h-1.2,0],''+b,{sz:28,c:b?COL.red:COL.gray})});lab(B,[0,2.8,0],'01001000 = 64 + 8 = 72',{sz:30,c:COL.red});lab(B,[0,-3.1,0],'hex: 0100 1000 → 48     octal: 01 001 000 → 110',{sz:21});
   B.s(1);const ds=[[45,1],[22,0],[11,1],[5,1],[2,0],[1,1]];ds.forEach(([v,r],i)=>{const y=2.6-i*1.15,w=1+Math.sqrt(v)*.4;B.X([-2.6,y,0],[w,.8,.8],{f:COL.teal,a:.3});lab(B,[-2.6,y,.5],''+v,{sz:22});lab(B,[-2.6+w/2+.6,y,0],'÷2 → r',{sz:17,c:COL.gray,a:'left'});B.X([2.4,y,0],[.7,.7,.7],{f:r?COL.red:COL.gray,a:r?.6:.15});lab(B,[2.4,y,.5],''+r,{sz:22,c:r?COL.red:COL.gray})});B.A([3.6,-3.2,0],[3.6,3.1,0],{c:COL.red,w:3.4});lab(B,[3.8,.1,0],'read upward',{c:COL.red,a:'left',sz:22});lab(B,[0,3.7,0],'45₁₀ = 101101₂',{sz:28,c:COL.red});
   B.s(2);const R=3,pat=i=>i.toString(2).padStart(4,'0'),sv=i=>i<8?i:i-16;for(let i=0;i<16;i++){const a=PI/2-i/16*2*PI,x=cos(a)*R,y=sin(a)*R;B.D([x,y,0],i===5||i===11?.3:.2,{f:i<8?COL.teal:COL.red});lab(B,[cos(a)*(R+.95),sin(a)*(R+.55),0],pat(i)+'  '+sv(i),{sz:17,c:i<8?COL.teal:COL.red})}B.C([0,0,0],R,{n:'z',c:COL.gray,w:1.4});B.A([cos(PI/2-5/16*2*PI)*R,sin(PI/2-5/16*2*PI)*R,0],[cos(PI/2-11/16*2*PI)*R,sin(PI/2-11/16*2*PI)*R,0],{c:COL.gold,w:3});lab(B,[0,.4,0],'+5 → flip → add 1 → −5',{sz:22,c:COL.gold});lab(B,[0,-.5,0],'0101 → 1010 → 1011',{sz:20});
-  B.s(3);[['H',72,'01001000'],['i',105,'01101001']].forEach(([ch,n,bs],r)=>{const y=1.4-r*2.6;lab(B,[-5,y,0],ch,{sz:44,c:COL.red});bs.split('').forEach((b,i)=>{B.X([-3.4+i*.95,y,0],[.8,.8,.8],{f:b==='1'?COL.red:COL.gray,a:b==='1'?.55:.12});lab(B,[-3.4+i*.95,y,.5],b,{sz:22,c:b==='1'?COL.red:COL.gray})});lab(B,[5,y,0],'= '+n,{sz:30,a:'left'})});lab(B,[0,3.4,0],'ASCII: 7 bits, 128 symbols',{sz:25});lab(B,[0,-3.2,0],'‘A’ = 65   ‘a’ = 97   Unicode covers every script',{sz:21,c:COL.gray})}};
+  B.s(3);[['H',72,'01001000'],['i',105,'01101001']].forEach(([ch,n,bs],r)=>{const y=1.4-r*2.6;lab(B,[-5,y,0],ch,{sz:44,c:COL.red});bs.split('').forEach((b,i)=>{B.X([-3.4+i*.95,y,0],[.8,.8,.8],{f:b==='1'?COL.red:COL.gray,a:b==='1'?.55:.12});lab(B,[-3.4+i*.95,y,.5],b,{sz:22,c:b==='1'?COL.red:COL.gray})});lab(B,[5,y,0],'= '+n,{sz:30,a:'left'})});lab(B,[0,3.4,0],'ASCII: 7 bits, 128 symbols',{sz:25});lab(B,[0,-3.2,0],'‘A’ = 65   ‘a’ = 97   Unicode covers every script',{sz:21,c:COL.gray});
+  B.s(4);B.dyn((t,b,p={})=>{const dec=Math.max(0,Math.min(255,Math.round(p.decimalVal??72)));const binStr=dec.toString(2).padStart(8,'0');const hexStr='0x'+dec.toString(16).toUpperCase().padStart(2,'0');const octStr='0o'+dec.toString(8).padStart(3,'0');const asciiChar=dec>=32&&dec<=126?`'${String.fromCharCode(dec)}'`:'(non-printable)';const vals=[128,64,32,16,8,4,2,1];for(let i=0;i<8;i++){const bit=binStr[i]==='1',x=-4.2+i*1.2,h=bit?1.6:0.5;b.X([x,h/2-1.6,0],[0.95,h,0.95],{f:bit?COL.red:COL.gray,a:bit?0.6:0.15});lab(b,[x,-2.1,0],''+vals[i],{sz:19,c:bit?COL.red:COL.gray});lab(b,[x,h-1.2,0],bit?'1':'0',{sz:28,c:bit?COL.red:COL.gray});}lab(b,[0,3.2,0],`DECIMAL: ${dec}  =  BIN: ${binStr}₂`,{sz:28,c:COL.red});lab(b,[0,2.3,0],`HEX: ${hexStr}   |   OCTAL: ${octStr}   |   ASCII: ${asciiChar}`,{sz:23,c:COL.ink});lab(b,[0,-3.2,0],`Place values: 128 + 64 + 32 + 16 + 8 + 4 + 2 + 1`,{sz:20,c:COL.gray});});
+}};
 
 SC['cfet:2']={cam:{yaw:-.4,pitch:.3},steps:[
  {t:'Software layers and the OS',d:'System software (operating system, compilers, drivers) runs the machine; application software (browser, spreadsheet) does your jobs. The OS sits between users and hardware. Objectives: convenience, efficient use of the hardware, ability to evolve. Interfaces: CLI (type commands, fast and scriptable) and GUI (windows and icons).'},
@@ -285,11 +309,17 @@ function ribbon(B,fn,x0,x1,d=.8,o={}){const n=26;for(let i=0;i<n;i++){const xa=x
 function gam(x){if(x<.5)return PI/(sin(PI*x)*gam(1-x));x-=1;const c=[0.99999999999980993,676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];let a=c[0];const t=x+7.5;for(let i=1;i<9;i++)a+=c[i]/(x+i);return sqrt(2*PI)*pow(t,x+.5)*exp(-t)*a}
 const arc=(B,c,r,a0,a1,o)=>B.F(a=>[c[0]+cos(a)*r,c[1]+sin(a)*r,c[2]],a0,a1,o);
 
-SC['math:0']={cam:{yaw:-.6,pitch:.5},steps:[
- {t:'Three equations are three sheets',d:'Each linear equation in x, y, z is a flat sheet in space. When three sheets meet at exactly one point, that point is the unique solution and r(A) = r([A|B]) = 3. Row reduction is just a tidy way of walking to that corner.'},
- {t:'Sheets sharing a line: infinitely many solutions',d:'If the third equation is just a mix of the first two, the three sheets all pass through one common line. Then r(A) = r([A|B]) = 2, which is less than 3 unknowns, so there is a free variable and infinitely many solutions.',only:true},
- {t:'Parallel sheets: no solution',d:'Two sheets that are parallel but not the same never meet, so no point can satisfy both. In rank language r(A) = 2 but r([A|B]) = 3, the ranks differ, so the system is inconsistent.',only:true},
- {t:'Eigenvectors keep their direction',d:'A matrix usually turns and stretches a vector. An eigenvector is special: the matrix only stretches it. Here [[2,1],[1,2]] turns the circle into an ellipse, and the two axes of that ellipse are the eigenvectors with eigenvalues 3 and 1. Check: trace = 2 + 2 = 4 = 3 + 1, determinant = 3 = 3 × 1.',only:true}],
+SC['math:0']={cam:{yaw:-.6,pitch:.5},
+ params:[
+  {id:'lambda1',label:'λ₁ (Major)',min:0.5,max:4.0,step:0.1,defaultVal:3.0,unit:'x'},
+  {id:'lambda2',label:'λ₂ (Minor)',min:0.5,max:3.0,step:0.1,defaultVal:1.0,unit:'x'}
+ ],
+ steps:[
+  {t:'Three equations are three sheets',d:'Each linear equation in x, y, z is a flat sheet in space. When three sheets meet at exactly one point, that point is the unique solution and r(A) = r([A|B]) = 3. Row reduction is just a tidy way of walking to that corner.'},
+  {t:'Sheets sharing a line: infinitely many solutions',d:'If the third equation is just a mix of the first two, the three sheets all pass through one common line. Then r(A) = r([A|B]) = 2, which is less than 3 unknowns, so there is a free variable and infinitely many solutions.',only:true},
+  {t:'Parallel sheets: no solution',d:'Two sheets that are parallel but not the same never meet, so no point can satisfy both. In rank language r(A) = 2 but r([A|B]) = 3, the ranks differ, so the system is inconsistent.',only:true},
+  {t:'Eigenvectors keep their direction',d:'A matrix usually turns and stretches a vector. An eigenvector is special: the matrix only stretches it. Here [[2,1],[1,2]] turns the circle into an ellipse, and the two axes of that ellipse are the eigenvectors with eigenvalues 3 and 1. Check: trace = 2 + 2 = 4 = 3 + 1, determinant = 3 = 3 × 1.',only:true},
+  {t:'Live parameter lab: transform the eigenvectors',d:'Drag the eigenvalue sliders λ₁ and λ₂ to stretch the eigenvectors and watch the unit circle deform into the ellipse A·v in real time.',only:true}],
  build(B){
   B.s(0);axes(B,4);plane(B,[0,0,0],[1,.3,.2],2.6,{f:COL.teal});plane(B,[0,0,0],[-.2,1,.4],2.6,{f:COL.gold});plane(B,[0,0,0],[.3,-.2,1],2.6,{f:COL.pink});
   B.D([0,0,0],.2,{f:COL.red});B.T([0,0,0],'x = 2, y = 3, z = −1',{c:COL.red,b:1,dy:26});B.T([0,3.2,0],'r(A) = r(A|B) = 3 : unique point',{c:COL.ink,sz:22});
@@ -299,13 +329,21 @@ SC['math:0']={cam:{yaw:-.6,pitch:.5},steps:[
   B.T([2.6,1.1,0],'sheet 1',{c:COL.teal});B.T([2.6,-1.1,0],'sheet 2 (parallel)',{c:COL.gold});B.T([0,3.2,0],'r(A) = 2, r(A|B) = 3 : no solution',{sz:22});
   B.s(3);B.C([0,0,0],1.4,{c:COL.teal,d:[5,4],w:2});B.F(a=>{const x=cos(a)*1.4,z=sin(a)*1.4;return[2*x+z,0,x+2*z]},0,2*PI,{c:COL.red,w:2.8,seg:60});
   const s2=1/sqrt(2);B.A([0,0,0],[1.4*s2,0,1.4*s2],{c:COL.teal,w:3});B.A([0,0,0],[3*1.4*s2,0,3*1.4*s2],{c:COL.red,w:3});B.A([0,0,0],[1.4*s2,0,-1.4*s2],{c:COL.teal,w:3});B.A([0,0,0],[1.4*s2,0,-1.4*s2],{c:COL.red,w:1});
-  B.T([3.2,0,3.2],'eigenvalue 3 (stretched ×3)',{c:COL.red,b:1});B.T([2.4,0,-1.6],'eigenvalue 1 (unchanged)',{c:COL.teal,b:1});B.T([-3,0,-2.6],'circle → ellipse',{sz:22});B.T([0,2.2,0],'A v = λ v',{c:COL.ink,sz:26,b:1});}};
+  B.T([3.2,0,3.2],'eigenvalue 3 (stretched ×3)',{c:COL.red,b:1});B.T([2.4,0,-1.6],'eigenvalue 1 (unchanged)',{c:COL.teal,b:1});B.T([-3,0,-2.6],'circle → ellipse',{sz:22});B.T([0,2.2,0],'A v = λ v',{c:COL.ink,sz:26,b:1});
+  B.s(4);B.dyn((t,b,p={})=>{const l1=p.lambda1??3.0,l2=p.lambda2??1.0;b.C([0,0,0],1.4,{c:COL.teal,d:[5,4],w:2});b.F(a=>{const x=cos(a)*1.4,z=sin(a)*1.4;const s2=1/sqrt(2);const u=(x+z)*s2,v=(-x+z)*s2;const su=u*l1,sv=v*l2;return[(su-sv)*s2,0,(su+sv)*s2]},0,2*PI,{c:COL.red,w:3,seg:80});const s2=1/sqrt(2);b.A([0,0,0],[l1*1.4*s2,0,l1*1.4*s2],{c:COL.red,w:3.5});b.A([0,0,0],[-l2*1.4*s2,0,l2*1.4*s2],{c:COL.gold,w:3.5});b.T([0,2.5,0],`Live: λ₁ = ${l1.toFixed(1)}, λ₂ = ${l2.toFixed(1)}`,{c:COL.ink,sz:24,b:1});b.T([0,-2.5,0],`det(A) = ${(l1*l2).toFixed(2)}, trace = ${(l1+l2).toFixed(2)}`,{c:COL.red,sz:22});});
+}};
 
-SC['math:1']={cam:{yaw:-.45,pitch:.25},steps:[
- {t:'Rolle: same height at both ends means a flat spot',d:'If a smooth hill starts and ends at the same height, then somewhere between the ends the tangent must be perfectly flat (f′(c) = 0). Conditions that must be checked: continuous on [a, b], differentiable on (a, b), f(a) = f(b).'},
- {t:'Lagrange: a tangent parallel to the chord',d:'Drop the equal-height condition and Rolle becomes Lagrange: somewhere the tangent has the same slope as the chord joining the endpoints, f′(c) = [f(b) − f(a)]/(b − a). Cauchy’s theorem is the same idea for two functions at once: f′(c)/g′(c) = [f(b) − f(a)]/[g(b) − g(a)].',only:true},
- {t:'Curvature is the circle that fits the bend',d:'At any point the curve is hugged by one circle, the circle of curvature. Its radius is ρ = 1/κ, with κ = y₂/(1 + y₁²)^(3/2). For y = x²/4 at the vertex y₁ = 0, y₂ = ½, so κ = ½ and ρ = 2: a gentle bend has a big circle.',only:true},
- {t:'L’Hôpital: compare slopes when 0/0',d:'sin x / x looks like 0/0 at x = 0. Near 0 the curve sin x and the line x leave the origin with slopes cos 0 = 1 and 1, so their ratio tends to 1. Differentiate top and bottom separately; repeat only while the form stays 0/0 or ∞/∞.',only:true}],
+SC['math:1']={cam:{yaw:-.45,pitch:.25},
+ params:[
+  {id:'cPos',label:'Tangent x (c)',min:-2.5,max:2.5,step:0.1,defaultVal:0.0,unit:''},
+  {id:'curveScale',label:'Curvature Amp',min:0.5,max:2.5,step:0.1,defaultVal:1.2,unit:''}
+ ],
+ steps:[
+  {t:'Rolle: same height at both ends means a flat spot',d:'If a smooth hill starts and ends at the same height, then somewhere between the ends the tangent must be perfectly flat (f′(c) = 0). Conditions that must be checked: continuous on [a, b], differentiable on (a, b), f(a) = f(b).'},
+  {t:'Lagrange: a tangent parallel to the chord',d:'Drop the equal-height condition and Rolle becomes Lagrange: somewhere the tangent has the same slope as the chord joining the endpoints, f′(c) = [f(b) − f(a)]/(b − a). Cauchy’s theorem is the same idea for two functions at once: f′(c)/g′(c) = [f(b) − f(a)]/[g(b) − g(a)].',only:true},
+  {t:'Curvature is the circle that fits the bend',d:'At any point the curve is hugged by one circle, the circle of curvature. Its radius is ρ = 1/κ, with κ = y₂/(1 + y₁²)^(3/2). For y = x²/4 at the vertex y₁ = 0, y₂ = ½, so κ = ½ and ρ = 2: a gentle bend has a big circle.',only:true},
+  {t:'L’Hôpital: compare slopes when 0/0',d:'sin x / x looks like 0/0 at x = 0. Near 0 the curve sin x and the line x leave the origin with slopes cos 0 = 1 and 1, so their ratio tends to 1. Differentiate top and bottom separately; repeat only while the form stays 0/0 or ∞/∞.',only:true},
+  {t:'Live parameter lab: Rolle and Lagrange tangent explorer',d:'Slide c to slide the point along the curve and inspect how the tangent line changes slope relative to the secant chord.',only:true}],
  build(B){
   const f=x=>2.2*sin(PI*(x+3)/6);B.s(0);axes(B,3.8,['x','f','']);ribbon(B,f,-3,3,.9);
   B.L([[-3,0,0],[3,0,0]],{c:COL.gray,d:[6,5]});B.A([-1.6,f(0),0],[1.6,f(0),0],{c:COL.red,w:3});B.D([0,f(0),0],.13,{f:COL.red});
@@ -316,7 +354,9 @@ SC['math:1']={cam:{yaw:-.45,pitch:.25},steps:[
   B.s(2);const p=x=>x*x/4;axes(B,3.8,['x','y','']);ribbon(B,p,-3,3,.9,{f:COL.teal});B.C([0,2,0],2,{n:'z',c:COL.red,w:2.6});B.L([[0,2,0],[0,0,0]],{c:COL.red,d:[5,4]});B.D([0,0,0],.13,{f:COL.red});B.D([0,2,0],.1,{f:COL.red});
   B.T([1.6,1.7,0],'ρ = 1/κ = 2',{c:COL.red,b:1,sz:24});B.T([0,3.3,0],'κ = y₂ / (1 + y₁²)^(3/2)',{sz:22});
   B.s(3);axes(B,3.8,['x','y','']);B.F(x=>[x,sin(x),0],-2.6,2.6,{c:COL.teal,w:3});B.F(x=>[x,x,-.8],-2.6,2.6,{c:COL.red,w:3});B.D([0,0,0],.13,{f:COL.ink});B.D([0,0,-.8],.13,{f:COL.ink});
-  B.T([2.6,.9,0],'sin x',{c:COL.teal,b:1});B.T([2.2,2.7,-.8],'x',{c:COL.red,b:1});B.T([0,3.2,0],'lim sin x / x = cos 0 / 1 = 1',{sz:23,b:1})}};
+  B.T([2.6,.9,0],'sin x',{c:COL.teal,b:1});B.T([2.2,2.7,-.8],'x',{c:COL.red,b:1});B.T([0,3.2,0],'lim sin x / x = cos 0 / 1 = 1',{sz:23,b:1});
+  B.s(4);B.dyn((t,b,p={})=>{const c=p.cPos??0.0,amp=p.curveScale??1.2;const gv=x=>amp*sin(0.9*x)+0.35*x,gpv=x=>amp*0.9*cos(0.9*x)+0.35;axes(b,3.8,['x','f','']);b.F(x=>[x,gv(x),0],-3,3,{c:COL.teal,w:3,seg:90});const mv=(gv(3)-gv(-3))/6;b.L([[-3,gv(-3),0],[3,gv(3),0]],{c:COL.gray,d:[6,4],w:1.8});const slope=gpv(c);b.L([[c-1.6,gv(c)-1.6*slope,0],[c+1.6,gv(c)+1.6*slope,0]],{c:COL.red,w:3.2});b.D([c,gv(c),0],0.18,{f:COL.red});b.T([0,3.0,0],`c = ${c.toFixed(2)}, f′(c) = ${slope.toFixed(2)}, chord = ${mv.toFixed(2)}`,{c:COL.ink,sz:22,b:1});b.T([0,-3.2,0],abs(slope-mv)<0.15?'Tangents match! (Lagrange MVT satisfied)':'Adjust c until tangent is parallel to chord',{c:abs(slope-mv)<0.15?COL.teal:COL.gray,sz:20});});
+}};
 
 SC['math:2']={cam:{yaw:-.65,pitch:.5},steps:[
  {t:'A surface z = f(x, y)',d:'A function of two variables is a landscape: height z above each point (x, y). This hill has one peak. At the top the ground is flat in every direction, which is the condition for a stationary point.'},
@@ -377,12 +417,18 @@ SC['math:4']={cam:{yaw:-.6,pitch:.5},steps:[
 function cylx(B,x0,x1,r,o={}){const n=16;for(let i=0;i<n;i++){const a0=i/n*2*PI,a1=(i+1)/n*2*PI;B.P([[x0,cos(a0)*r,sin(a0)*r],[x1,cos(a0)*r,sin(a0)*r],[x1,cos(a1)*r,sin(a1)*r],[x0,cos(a1)*r,sin(a1)*r]],Object.assign({a:.16,nostroke:true},o))}B.C([x0,0,0],r,Object.assign({n:'x'},o,{f:null}));B.C([x1,0,0],r,Object.assign({n:'x'},o,{f:null}))}
 function plot(B,o,w,h,xl,yl,t0){B.A([o[0],o[1],o[2]],[o[0]+w,o[1],o[2]],{c:COL.ink,w:2});B.A([o[0],o[1],o[2]],[o[0],o[1]+h,o[2]],{c:COL.ink,w:2});B.T([o[0]+w,o[1]-.35,o[2]],xl,{sz:18});B.T([o[0]-.2,o[1]+h+.35,o[2]],yl,{sz:18});if(t0)B.T([o[0]+w/2,o[1]+h+.5,o[2]],t0,{b:1,sz:22})}
 const rnd=(n)=>{let a=n*9301+49297;a=(a*233280+7)%233280;return a/233280};
-SC['phy:0']={cam:{yaw:-.5,pitch:.3},steps:[
- {t:'Interference: add the waves',d:'Two waves of the same wavelength meet. Where crest meets crest (phase difference 0, 2π…, path difference nλ) the sum doubles: bright. Where crest meets trough (path difference (n + ½)λ) the sum cancels: dark. Watch the red sum change as the phase difference slides.'},
- {t:'Newton’s rings: a curved lens on flat glass',d:'The air film between lens and plate grows steadily from the touching point, so the path difference grows too, giving alternate dark and bright circles. With reflected light the centre is dark. For the nth dark ring D² = 4nλR, so λ = (D²ₙ₊ₚ − D²ₙ)/(4pR) from two rings p apart.',only:true},
- {t:'Single slit: a wide central bright band',d:'Light bending through a narrow slit of width a spreads onto the screen. Dark fringes occur where a sinθ = mλ (m = ±1, ±2…). The central maximum is twice as wide as the others, and a narrower slit gives a wider pattern.',only:true},
- {t:'Grating: sharp, bright orders',d:'A grating has thousands of slits with spacing (a + b). Bright orders appear at (a + b) sinθ = nλ, and sinθ ≤ 1 limits the highest order to n < (a + b)/λ. More slits means sharper lines, which is why a grating measures wavelength well. Rayleigh: two sources are just resolved when one peak sits on the other’s first minimum, sinθ ≈ 1.22λ/D.',only:true},
- {t:'Polarisation: Malus’ law',d:'Natural light vibrates in every direction across its path. A polariser passes only one direction. A second polariser (analyser) at angle θ passes the component cosθ of the amplitude, so intensity I = I₀cos²θ. A Nicol prism makes plane-polarised light using double refraction.',only:true}],
+SC['phy:0']={cam:{yaw:-.5,pitch:.3},
+ params:[
+  {id:'phaseShift',label:'Phase Diff δ',min:0,max:2,step:0.05,defaultVal:0.0,unit:'π'},
+  {id:'wavelength',label:'Wave Number k',min:1.0,max:4.0,step:0.2,defaultVal:2.0,unit:''}
+ ],
+ steps:[
+  {t:'Interference: add the waves',d:'Two waves of the same wavelength meet. Where crest meets crest (phase difference 0, 2π…, path difference nλ) the sum doubles: bright. Where crest meets trough (path difference (n + ½)λ) the sum cancels: dark. Watch the red sum change as the phase difference slides.'},
+  {t:'Newton’s rings: a curved lens on flat glass',d:'The air film between lens and plate grows steadily from the touching point, so the path difference grows too, giving alternate dark and bright circles. With reflected light the centre is dark. For the nth dark ring D² = 4nλR, so λ = (D²ₙ₊ₚ − D²ₙ)/(4pR) from two rings p apart.',only:true},
+  {t:'Single slit: a wide central bright band',d:'Light bending through a narrow slit of width a spreads onto the screen. Dark fringes occur where a sinθ = mλ (m = ±1, ±2…). The central maximum is twice as wide as the others, and a narrower slit gives a wider pattern.',only:true},
+  {t:'Grating: sharp, bright orders',d:'A grating has thousands of slits with spacing (a + b). Bright orders appear at (a + b) sinθ = nλ, and sinθ ≤ 1 limits the highest order to n < (a + b)/λ. More slits means sharper lines, which is why a grating measures wavelength well. Rayleigh: two sources are just resolved when one peak sits on the other’s first minimum, sinθ ≈ 1.22λ/D.',only:true},
+  {t:'Polarisation: Malus’ law',d:'Natural light vibrates in every direction across its path. A polariser passes only one direction. A second polariser (analyser) at angle θ passes the component cosθ of the amplitude, so intensity I = I₀cos²θ. A Nicol prism makes plane-polarised light using double refraction.',only:true},
+  {t:'Live parameter lab: wave superposition',d:'Adjust the phase difference δ and wave number k to watch constructive vs destructive interference live.',only:true}],
  build(B){
   B.s(0);B.dyn((t,b)=>{const ph=t*1.8,d=PI*(.5+.5*sin(t*.5))*1.0;b.F(x=>[x,2.3+sin(x*2-ph)*.7,0],-4.5,4.5,{c:COL.teal,w:3,seg:90});b.F(x=>[x,.3+sin(x*2-ph-d)*.7,0],-4.5,4.5,{c:COL.gold,w:3,seg:90});b.F(x=>[x,-2+(sin(x*2-ph)+sin(x*2-ph-d))*.5*1.0,0],-4.5,4.5,{c:COL.red,w:3.6,seg:90});
    b.T([-4.6,2.3,0],'ψ₁',{c:COL.teal,b:1,sz:24});b.T([-4.6,.3,0],'ψ₂',{c:COL.gold,b:1,sz:24});b.T([-4.6,-2,0],'sum',{c:COL.red,b:1,sz:24});b.T([0,-3.5,0],'phase difference = '+(d/PI).toFixed(2)+' π  →  amplitude ×'+(2*abs(cos(d/2))).toFixed(2),{sz:22,b:1})});
@@ -400,13 +446,21 @@ SC['phy:0']={cam:{yaw:-.5,pitch:.3},steps:[
   for(let a=0;a<8;a++){const g=a*PI/8;B.A([-cos(g)*.7,-sin(g)*.7,-7],[cos(g)*.7,sin(g)*.7,-7],{c:COL.ink,w:1.6})}
   B.A([0,-.9,-5],[0,.9,-5],{c:COL.ink,w:2});B.A([0,0,-1],[0,1.5,-1],{c:COL.teal,w:3.2});const tr=1.5*cos(PI/2-an);B.A([0,0,3.4],[cos(an)*tr,sin(an)*tr,3.4],{c:COL.gold,w:3.2});
   B.L([[0,0,-7],[0,0,5]],{c:COL.gray,d:[5,5],w:1.4});
-  B.T([0,-1.2,-7],'natural light',{c:COL.ink});B.T([0,2.6,-3],'polariser',{c:COL.teal,b:1});B.T([0,2.6,1.5],'analyser at θ',{c:COL.gold,b:1});B.T([0,-2.7,1.5],'I = I₀ cos²θ',{c:COL.red,b:1,sz:24})}};
+  B.T([0,-1.2,-7],'natural light',{c:COL.ink});B.T([0,2.6,-3],'polariser',{c:COL.teal,b:1});B.T([0,2.6,1.5],'analyser at θ',{c:COL.gold,b:1});B.T([0,-2.7,1.5],'I = I₀ cos²θ',{c:COL.red,b:1,sz:24});
+  B.s(5);B.dyn((t,b,p={})=>{const delta=(p.phaseShift??0)*PI,k=p.wavelength??2.0,ph=t*1.8;b.F(x=>[x,2.0+sin(x*k-ph)*0.7,0],-4.5,4.5,{c:COL.teal,w:2.8,seg:90});b.F(x=>[x,0.2+sin(x*k-ph-delta)*0.7,0],-4.5,4.5,{c:COL.gold,w:2.8,seg:90});b.F(x=>[x,-2.0+(sin(x*k-ph)+sin(x*k-ph-delta))*0.5,0],-4.5,4.5,{c:COL.red,w:3.6,seg:90});const ampFactor=2*abs(cos(delta/2));b.T([0,3.2,0],`Phase δ = ${(delta/PI).toFixed(2)}π | Net Amp = ${ampFactor.toFixed(2)}x`,{c:COL.ink,sz:24,b:1});b.T([0,-3.5,0],ampFactor>1.8?'CONSTRUCTIVE INTERFERENCE (BRIGHT)':ampFactor<0.3?'DESTRUCTIVE INTERFERENCE (DARK)':'PARTIAL INTERFERENCE',{c:ampFactor>1.8?COL.teal:ampFactor<0.3?COL.red:COL.gold,sz:21,b:1});});
+}};
 
-SC['phy:1']={cam:{yaw:-.5,pitch:.3},steps:[
- {t:'Three ways light meets an atom',d:'Absorption: an atom in the low level E₁ swallows a photon of energy hν = E₂ − E₁ and jumps up. Spontaneous emission: an excited atom drops by itself, at a random time and direction. Stimulated emission: a passing photon makes an excited atom emit a clone, same direction, same phase. Einstein: B₁₂ = B₂₁ and A₂₁/B₂₁ = 8πhν³/c³.'},
- {t:'Population inversion',d:'Normally most atoms sit in the low level (left), so light is absorbed more than it is amplified. A laser needs the opposite: more atoms in the upper level than the lower one (right). That is population inversion, made by pumping, and it needs at least three energy levels.',only:true},
- {t:'The laser cavity (ruby laser)',d:'A ruby rod sits between a fully reflecting mirror and a partly reflecting one. A flash lamp wound round it pumps Cr³⁺ ions to the upper state. Photons travelling along the axis bounce back and forth, stimulating more photons each pass, and a fraction leaks out as the laser beam. The He–Ne laser uses the same idea with a gas tube excited by an electric discharge.',only:true},
- {t:'Optical fibre: light in a glass pipe',d:'Light stays in the core by total internal reflection because the core index n₁ is higher than the cladding index n₂. It must enter inside the acceptance cone: sin θ₀ = NA = √(n₁² − n₂²). Attenuation is α = (10/L) log₁₀(Pin/Pout) dB/km. Step-index and graded-index, single-mode and multimode are the main types.',only:true}],
+SC['phy:1']={cam:{yaw:-.5,pitch:.3},
+ params:[
+  {id:'coreIndex',label:'Core Index n₁',min:1.45,max:1.70,step:0.01,defaultVal:1.55,unit:''},
+  {id:'cladIndex',label:'Cladding Index n₂',min:1.40,max:1.50,step:0.01,defaultVal:1.45,unit:''}
+ ],
+ steps:[
+  {t:'Three ways light meets an atom',d:'Absorption: an atom in the low level E₁ swallows a photon of energy hν = E₂ − E₁ and jumps up. Spontaneous emission: an excited atom drops by itself, at a random time and direction. Stimulated emission: a passing photon makes an excited atom emit a clone, same direction, same phase. Einstein: B₁₂ = B₂₁ and A₂₁/B₂₁ = 8πhν³/c³.'},
+  {t:'Population inversion',d:'Normally most atoms sit in the low level (left), so light is absorbed more than it is amplified. A laser needs the opposite: more atoms in the upper level than the lower one (right). That is population inversion, made by pumping, and it needs at least three energy levels.',only:true},
+  {t:'The laser cavity (ruby laser)',d:'A ruby rod sits between a fully reflecting mirror and a partly reflecting one. A flash lamp wound round it pumps Cr³⁺ ions to the upper state. Photons travelling along the axis bounce back and forth, stimulating more photons each pass, and a fraction leaks out as the laser beam. The He–Ne laser uses the same idea with a gas tube excited by an electric discharge.',only:true},
+  {t:'Optical fibre: light in a glass pipe',d:'Light stays in the core by total internal reflection because the core index n₁ is higher than the cladding index n₂. It must enter inside the acceptance cone: sin θ₀ = NA = √(n₁² − n₂²). Attenuation is α = (10/L) log₁₀(Pin/Pout) dB/km. Step-index and graded-index, single-mode and multimode are the main types.',only:true},
+  {t:'Live parameter lab: numerical aperture & acceptance cone',d:'Change the core (n₁) and cladding (n₂) refractive indices to calculate NA = √(n₁² − n₂²) and the critical acceptance angle in real time.',only:true}],
  build(B){
   const lv=(x,tag)=>{B.L([[x-1.5,-1.6,0],[x+1.5,-1.6,0]],{c:COL.ink,w:3});B.L([[x-1.5,1.6,0],[x+1.5,1.6,0]],{c:COL.ink,w:3});B.T([x+1.9,-1.6,0],'E₁',{sz:20});B.T([x+1.9,1.6,0],'E₂',{sz:20});B.T([x,-2.6,0],tag,{b:1,sz:22,c:COL.red})};
   B.s(0);lv(-4,'absorption');lv(0,'spontaneous');lv(4,'stimulated');
@@ -421,7 +475,9 @@ SC['phy:1']={cam:{yaw:-.5,pitch:.3},steps:[
   B.s(3);cylx(B,-5,5,.6,{f:COL.teal,c:COL.teal});cylx(B,-5,5,1.1,{f:COL.gray,c:COL.gray,a:.06});
   const zz=[[-5,0],[-3.9,.5],[-2.3,-.5],[-.7,.5],[.9,-.5],[2.5,.5],[4.1,-.5],[5,0]];B.L(zz.map(p=>[p[0],p[1],0]),{c:COL.red,w:2.8});
   B.L([[-5,0,0],[-7,1.6,0]],{c:COL.gold,w:1.6,d:[4,3]});B.L([[-5,0,0],[-7,-1.6,0]],{c:COL.gold,w:1.6,d:[4,3]});B.A([-6.6,0,0],[-5.2,0,0],{c:COL.gold,w:2.6});B.T([-6.4,2.1,0],'acceptance cone θ₀',{c:COL.gold,b:1,sz:19});
-  B.T([0,1.9,0],'cladding n₂',{c:COL.gray,b:1});B.T([0,-1.2,0],'core n₁ > n₂',{c:COL.teal,b:1,sz:19});B.T([0,-2.6,0],'NA = sinθ₀ = √(n₁² − n₂²)',{c:COL.red,b:1,sz:24})}};
+  B.T([0,1.9,0],'cladding n₂',{c:COL.gray,b:1});B.T([0,-1.2,0],'core n₁ > n₂',{c:COL.teal,b:1,sz:19});B.T([0,-2.6,0],'NA = sinθ₀ = √(n₁² − n₂²)',{c:COL.red,b:1,sz:24});
+  B.s(4);B.dyn((t,b,p={})=>{const n1=p.coreIndex??1.55,n2=Math.min(n1-0.01,p.cladIndex??1.45);const na=sqrt(Math.max(0,n1*n1-n2*n2));const thetaDeg=(Math.asin(Math.min(1,na))*180)/PI;cylx(b,-5,5,0.6,{f:COL.teal,c:COL.teal});cylx(b,-5,5,1.1,{f:COL.gray,c:COL.gray,a:0.06});const coneR=Math.tan((thetaDeg*PI)/180)*1.8;b.L([[-5,0,0],[-6.8,coneR,0]],{c:COL.gold,w:2});b.L([[-5,0,0],[-6.8,-coneR,0]],{c:COL.gold,w:2});b.A([-6.8,0,0],[-5,0,0],{c:COL.gold,w:2.5});b.T([0,2.6,0],`n₁ = ${n1.toFixed(2)}, n₂ = ${n2.toFixed(2)}  →  NA = ${na.toFixed(3)}`,{c:COL.red,sz:24,b:1});b.T([0,-2.6,0],`Acceptance angle θ₀ = ${thetaDeg.toFixed(1)}°`,{c:COL.ink,sz:22});});
+}};
 
 SC['phy:2']={cam:{yaw:-.5,pitch:.3},steps:[
  {t:'Dielectric in a capacitor',d:'Between two charged plates the field E₀ points from + to −. Slide in an insulator: its atoms stretch into tiny dipoles that line up against the field, their own field opposes E₀, and the net field falls to E = E₀/K. For the same charge the voltage drops, so capacitance rises: C = K·C₀. Gauss’ law in dielectrics uses D: ∮D·dA = q_free, with D = ε₀E + P.'},
@@ -443,11 +499,17 @@ SC['phy:2']={cam:{yaw:-.5,pitch:.3},steps:[
   B.s(3);B.dyn((t,b)=>{const ph=t*2.4;b.A([0,0,-5.5],[0,0,5.8],{c:COL.ink,w:2});b.F(z=>[0,sin(z*1.7-ph)*1.7,z],-5.2,5.2,{c:COL.red,w:3.4,seg:100});b.F(z=>[sin(z*1.7-ph)*1.7,0,z],-5.2,5.2,{c:COL.teal,w:3.4,seg:100});for(let k=0;k<9;k++){const z=-4.8+k*1.2,y=sin(z*1.7-ph)*1.7;b.L([[0,0,z],[0,y,z]],{c:COL.red,w:1,d:[3,3]});b.L([[0,0,z],[y,0,z]],{c:COL.teal,w:1,d:[3,3]})}});
   B.T([0,2.4,-3],'E',{c:COL.red,b:1,sz:28});B.T([2.5,0,-3],'B',{c:COL.teal,b:1,sz:28});B.T([0,-1.3,5.4],'S = E × H, travel',{b:1});B.T([0,3,0],'c = 1/√(μ₀ε₀),  E = cB',{sz:22,b:1})}};
 
-SC['phy:3']={cam:{yaw:-.4,pitch:.3},steps:[
- {t:'De Broglie: matter has a wavelength',d:'Every moving particle behaves like a wave with λ = h/p = h/√(2mE). An electron accelerated through V volts has λ ≈ 12.27/√V Å, short enough that electron microscopes see finer detail than light. A stable orbit holds a whole number of waves: nλ = 2πr (here n = 5).'},
- {t:'Uncertainty: sharp in space, blurred in momentum',d:'A tightly localised wave packet (top) is built from many wavelengths, so its momentum is spread out. A long, almost pure wave (bottom) has a sharp momentum but no definite position. That trade-off is Δx·Δp ≥ ħ/2; it comes from the nature of waves, not from clumsy instruments.',only:true},
- {t:'Particle in a box: energy comes in steps',d:'A particle trapped between walls can only hold waves that fit, with ψ = 0 at both walls: L = nλ/2. That gives Eₙ = n²h²/(8mL²) and ψₙ = √(2/L) sin(nπx/L). The levels sit at 1 : 4 : 9, and the lowest (n = 1) is never zero: zero-point energy. Normalisation: ∫|ψ|²dx = 1.',only:true},
- {t:'Tunnelling: leaking through a wall',d:'When a wave meets a barrier taller than its energy it does not stop dead: inside the barrier it dies away exponentially and a smaller wave emerges on the far side. T ≈ e^(−2κa) with κ = √(2m(V₀ − E))/ħ, so thinner or lower barriers leak more.',only:true}],
+SC['phy:3']={cam:{yaw:-.4,pitch:.3},
+ params:[
+  {id:'quantumN',label:'Quantum Level n',min:1,max:5,step:1,defaultVal:1,unit:''},
+  {id:'boxWidth',label:'Box Width L',min:3.0,max:7.0,step:0.5,defaultVal:6.0,unit:'Å'}
+ ],
+ steps:[
+  {t:'De Broglie: matter has a wavelength',d:'Every moving particle behaves like a wave with λ = h/p = h/√(2mE). An electron accelerated through V volts has λ ≈ 12.27/√V Å, short enough that electron microscopes see finer detail than light. A stable orbit holds a whole number of waves: nλ = 2πr (here n = 5).'},
+  {t:'Uncertainty: sharp in space, blurred in momentum',d:'A tightly localised wave packet (top) is built from many wavelengths, so its momentum is spread out. A long, almost pure wave (bottom) has a sharp momentum but no definite position. That trade-off is Δx·Δp ≥ ħ/2; it comes from the nature of waves, not from clumsy instruments.',only:true},
+  {t:'Particle in a box: energy comes in steps',d:'A particle trapped between walls can only hold waves that fit, with ψ = 0 at both walls: L = nλ/2. That gives Eₙ = n²h²/(8mL²) and ψₙ = √(2/L) sin(nπx/L). The levels sit at 1 : 4 : 9, and the lowest (n = 1) is never zero: zero-point energy. Normalisation: ∫|ψ|²dx = 1.',only:true},
+  {t:'Tunnelling: leaking through a wall',d:'When a wave meets a barrier taller than its energy it does not stop dead: inside the barrier it dies away exponentially and a smaller wave emerges on the far side. T ≈ e^(−2κa) with κ = √(2m(V₀ − E))/ħ, so thinner or lower barriers leak more.',only:true},
+  {t:'Live parameter lab: particle in a 1D box wavefunctions',d:'Adjust quantum level n and box width L to observe the energy level Eₙ and wave function nodes ψₙ(x) = √(2/L) sin(nπx/L).',only:true}],
  build(B){
   B.s(0);B.C([0,0,0],2.2,{c:COL.gray,d:[4,4],w:1.6});B.F(a=>{const r=2.2+.35*sin(5*a);return[cos(a)*r,0,sin(a)*r]},0,2*PI,{c:COL.red,w:3.4,seg:120});B.D([0,0,0],.2,{f:COL.ink});B.T([0,0,0],'nucleus',{dy:22,sz:18});B.T([0,2.6,0],'λ = h/p',{c:COL.red,b:1,sz:30});B.T([0,-2.4,3.6],'n λ = 2π r',{b:1,sz:24});
   B.F(x=>[-5.5+x,sin(x*7)*.5,-4.4],0,3.2,{c:COL.teal,w:3});B.T([-3.9,1.1,-4.4],'electron wave',{c:COL.teal,b:1,sz:18});
@@ -457,7 +519,9 @@ SC['phy:3']={cam:{yaw:-.4,pitch:.3},steps:[
   B.s(2);B.X([-3.4,0,0],[.5,6.4,2],{f:COL.gray});B.X([3.4,0,0],[.5,6.4,2],{f:COL.gray});B.L([[-3.15,-3.2,0],[3.15,-3.2,0]],{c:COL.ink,w:3});
   [1,2,3].forEach(n=>{const E=-3.2+n*n*.42;B.L([[-3.15,E,0],[3.15,E,0]],{c:COL.gray,w:1.4,d:[4,4]});B.F(x=>[x,E+.55*sin(n*PI*(x+3.15)/6.3),0],-3.15,3.15,{c:[COL.teal,COL.gold,COL.red][n-1],w:3,seg:90});B.T([4.1,E,0],'n = '+n,{sz:20,a:'left'})});B.T([0,3.7,0],'Eₙ = n²h²/(8mL²)   1 : 4 : 9',{c:COL.red,b:1,sz:24});B.T([0,-3.8,0],'width L',{c:COL.gray});
   B.s(3);B.X([0,0,0],[1.6,2.8,1.6],{f:COL.red,a:.3});B.dyn((t,b)=>{const k=7,w=t*4;b.F(x=>{const a=x<-.8?1:x<.8?exp(-(x+.8)*1.4):.28;return[x,a*cos(k*x-w)*.9,0]},-5,5,{c:COL.teal,w:3.2,seg:220})});B.L([[-5,0,0],[5,0,0]],{c:COL.gray,w:1,d:[4,4]});
-  B.T([0,2.2,0],'barrier V₀',{c:COL.red,b:1});B.T([-3,1.6,0],'incident',{c:COL.teal,b:1});B.T([3,1.2,0],'transmitted (smaller)',{c:COL.teal,b:1});B.T([0,-1.9,0],'decays inside: T ≈ e^(−2κa)',{b:1,sz:22})}};
+  B.T([0,2.2,0],'barrier V₀',{c:COL.red,b:1});B.T([-3,1.6,0],'incident',{c:COL.teal,b:1});B.T([3,1.2,0],'transmitted (smaller)',{c:COL.teal,b:1});B.T([0,-1.9,0],'decays inside: T ≈ e^(−2κa)',{b:1,sz:22});
+  B.s(4);B.dyn((t,b,p={})=>{const n=Math.round(p.quantumN??1),L=p.boxWidth??6.0,halfL=L/2;b.X([-halfL-0.25,0,0],[0.5,6,1.5],{f:COL.gray});b.X([halfL+0.25,0,0],[0.5,6,1.5],{f:COL.gray});b.L([[-halfL,-2.5,0],[halfL,-2.5,0]],{c:COL.ink,w:3});const En=(n*n)/(L*L),yBase=-2.0+Math.min(4.5,n*0.9);b.L([[-halfL,yBase,0],[halfL,yBase,0]],{c:COL.gray,w:1.5,d:[4,4]});b.F(x=>[x,yBase+1.2*sin(n*PI*(x+halfL)/L),0],-halfL,halfL,{c:COL.teal,w:3.2,seg:100});b.T([0,3.2,0],`Level n = ${n} | E_${n} ∝ ${En.toFixed(3)} eV`,{c:COL.red,sz:25,b:1});b.T([0,-3.2,0],`Nodes = ${n-1} | Zero-point energy (n=1) is never 0`,{c:COL.ink,sz:21});});
+}};
 
 SC['phy:4']={cam:{yaw:-.45,pitch:.3},steps:[
  {t:'Metal, semiconductor, insulator',d:'Electrons fill the valence band (VB). To conduct they need empty states in the conduction band (CB). In a metal the bands overlap, so electrons move freely. A semiconductor has a small gap (about 1 eV for silicon) that heat or doping can bridge. An insulator has a wide gap (several eV) that nothing at room temperature crosses.'},

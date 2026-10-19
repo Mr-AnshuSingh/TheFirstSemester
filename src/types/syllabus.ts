@@ -98,12 +98,23 @@ export interface SceneBuilderAPI {
   X(c: Vec3, sz: Vec3, o?: DrawOptions): SceneBuilderAPI;
   Y(c: Vec3, r: number, h: number, o?: DrawOptions): SceneBuilderAPI;
   W(fn: (x: number, z: number) => number, xr: [number, number], zr: [number, number], n: number, o?: DrawOptions): SceneBuilderAPI;
-  dyn(fn: (time: number, b: SceneBuilderAPI) => void): SceneBuilderAPI;
+  dyn(fn: (time: number, b: SceneBuilderAPI, params?: Record<string, number>) => void): SceneBuilderAPI;
+}
+
+export interface SceneParamConfig {
+  id: string;
+  label: string;
+  min: number;
+  max: number;
+  step: number;
+  defaultVal: number;
+  unit?: string;
 }
 
 export interface SceneDefinition {
   cam?: CameraConfig;
   steps: SceneStep[];
+  params?: SceneParamConfig[];
   build: (B: SceneBuilderAPI) => void;
 }
 
@@ -169,3 +180,35 @@ export interface TutorResponsePayload {
     activeStepTitle: string;
   };
 }
+
+export interface QuizQuestion {
+  id: string;
+  subjectId: SubjectId;
+  unitIndex: number;
+  unitTitle: string;
+  question: string;
+  options: [string, string, string, string];
+  answer: number;
+  explanation: string;
+}
+
+export interface Flashcard {
+  id: string;
+  subjectId: SubjectId;
+  unitIndex: number;
+  unitTitle: string;
+  front: string;
+  back: string;
+  category: 'formula' | 'definition' | 'theorem' | 'viva';
+}
+
+export interface FlashcardProgress {
+  interval: number;
+  repetition: number;
+  easeFactor: number;
+  dueDate: string;
+  lastReviewed?: string;
+}
+
+export type ConfidenceLevel = 0 | 1 | 2;
+

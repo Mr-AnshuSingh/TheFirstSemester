@@ -1,6 +1,7 @@
 import { SUBJECTS } from '../src/data/subjects';
 import { SC } from '../src/data/scenes';
 import { PPS_EXPERIMENTS } from '../src/data/ppsExperiments';
+import { QUIZ_BANK } from '../src/data/quizBank';
 
 interface CheckResult {
   passed: boolean;
@@ -75,6 +76,16 @@ assertCheck(
   'All subjects valid',
   invalidSubjects.length === 0
 );
+
+// 9. Quiz Bank question count and unit coverage
+assertCheck('Quiz bank total questions', QUIZ_BANK.length, 86, QUIZ_BANK.length === 86);
+const unitsWithTwoQuestions = SUBJECTS.every((s) =>
+  s.units.every((_, uIdx) => {
+    const qCount = QUIZ_BANK.filter((q) => q.subjectId === s.id && q.unitIndex === uIdx).length;
+    return qCount >= 2;
+  })
+);
+assertCheck('All 43 units have at least 2 quiz questions', unitsWithTwoQuestions ? 'All 43 units covered' : 'Missing questions', 'All 43 units covered', unitsWithTwoQuestions);
 
 // Print summary
 console.log('--------------------------------------------------');
