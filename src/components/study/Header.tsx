@@ -17,6 +17,7 @@ interface HeaderProps {
   onOpenMockTest: () => void;
   onOpenFormulaSheet: () => void;
   onOpenBackupModal: () => void;
+  onOpenClassesModal: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -28,6 +29,7 @@ export const Header: React.FC<HeaderProps> = ({
   onSelectSubject,
   onOpenNotesModal,
   onOpenPlanModal,
+  onOpenClassesModal,
   onOpenCommandPalette,
   onOpenFlashcards,
   onOpenMockTest,
@@ -102,6 +104,15 @@ export const Header: React.FC<HeaderProps> = ({
         </button>
         <button type="button" className="btn" onClick={onOpenBackupModal} title="Backup & Restore Data">
           Backup
+        </button>
+        <button
+          type="button"
+          className="btn gold flex items-center gap-1.5"
+          onClick={onOpenClassesModal}
+          title="Room 13 Class Schedule & BEU Patna Holiday Calendar"
+        >
+          <span className="w-2 h-2 rounded-full bg-accentRed animate-ping inline-block" />
+          <span>Classes Scheduled</span>
         </button>
         <button type="button" className="btn red" onClick={onOpenPlanModal}>
           Exam plan

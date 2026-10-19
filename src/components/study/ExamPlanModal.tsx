@@ -2,24 +2,22 @@
 
 import React from 'react';
 import { Subject } from '@/types/syllabus';
-import { TT, WEEKS, RULES, HUE } from '@/data/schedule';
+import { WEEKS, RULES } from '@/data/schedule';
 
 interface ExamPlanModalProps {
   open: boolean;
   subjects: Subject[];
-  labGroup: 'G1' | 'G2';
   examDate: string;
-  onChangeLabGroup: (g: 'G1' | 'G2') => void;
   onChangeExamDate: (d: string) => void;
   onClose: () => void;
+  labGroup?: 'G1' | 'G2';
+  onChangeLabGroup?: (g: 'G1' | 'G2') => void;
 }
 
 export const ExamPlanModal: React.FC<ExamPlanModalProps> = ({
   open,
   subjects,
-  labGroup,
   examDate,
-  onChangeLabGroup,
   onChangeExamDate,
   onClose,
 }) => {
@@ -44,78 +42,7 @@ export const ExamPlanModal: React.FC<ExamPlanModalProps> = ({
 
         <div className="ms">
           <h3>
-            <span>1</span>My real week
-            <span className="seg">
-              <button
-                type="button"
-                onClick={() => onChangeLabGroup('G1')}
-                className={labGroup === 'G1' ? 'on' : ''}
-              >
-                G1
-              </button>
-              <button
-                type="button"
-                onClick={() => onChangeLabGroup('G2')}
-                className={labGroup === 'G2' ? 'on' : ''}
-              >
-                G2
-              </button>
-            </span>
-          </h3>
-          <div className="sx">
-            <table className="ttab">
-              <thead>
-                <tr>
-                  <th />
-                  <th colSpan={2}>10:00–12:00</th>
-                  <th>12:00–1:00</th>
-                  <th />
-                  <th>2:00–3:00</th>
-                  <th>3:00–4:00</th>
-                  <th>4:00–5:00</th>
-                </tr>
-              </thead>
-              <tbody>
-                {TT.grid.map((row, d) => {
-                  let slot = 0;
-                  return (
-                    <tr key={d}>
-                      <th>{TT.days[d]}</th>
-                      {row.map((c, ci) => {
-                        const sp = c.h || 1;
-                        const off = c.g && c.g !== labGroup && c.g !== 'G1 & G2';
-                        const free = c.k === 'x' || c.k === 'lib';
-                        const showBrk = slot === 3 && d === 0;
-                        slot += sp;
-                        return (
-                          <React.Fragment key={ci}>
-                            {showBrk && (
-                              <td className="brk" rowSpan={6}>
-                                BREAK 1–2
-                              </td>
-                            )}
-                            <td
-                              colSpan={sp}
-                              className={`${free ? 'f' : ''}${off ? ' o' : ''}`}
-                              style={{ '--c': HUE[c.k] || HUE.x } as React.CSSProperties}
-                            >
-                              {c.l}
-                              {c.g && <small>{c.g} · 2 h</small>}
-                            </td>
-                          </React.Fragment>
-                        );
-                      })}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div className="ms">
-          <h3>
-            <span>2</span>Six-week countdown
+            <span>1</span>Six-week countdown
           </h3>
           <div className="xd">
             <label htmlFor="exam">My exam starts on</label>
@@ -143,7 +70,7 @@ export const ExamPlanModal: React.FC<ExamPlanModalProps> = ({
 
         <div className="ms">
           <h3>
-            <span>3</span>Free marks ({fmCount} questions)
+            <span>2</span>Free marks ({fmCount} questions)
           </h3>
           <div className="fm">
             {subjects.map((s) => (
@@ -161,7 +88,7 @@ export const ExamPlanModal: React.FC<ExamPlanModalProps> = ({
 
         <div className="ms">
           <h3>
-            <span>4</span>Exam-day rules
+            <span>3</span>Exam-day rules
           </h3>
           <ol className="rl">
             {RULES.map((r, ri) => (
@@ -172,7 +99,7 @@ export const ExamPlanModal: React.FC<ExamPlanModalProps> = ({
 
         <div className="ms">
           <h3>
-            <span>5</span>Memory hooks
+            <span>4</span>Memory hooks
           </h3>
           {subjects.map((s) => (
             <div key={s.id} className="hk">

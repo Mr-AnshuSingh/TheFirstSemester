@@ -24,6 +24,7 @@ interface CommandPaletteModalProps {
   onOpenNotes: () => void;
   onOpenFormulaSheet: () => void;
   onOpenBackup?: () => void;
+  onOpenClasses?: () => void;
 }
 
 export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
@@ -37,6 +38,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
   onOpenNotes,
   onOpenFormulaSheet,
   onOpenBackup,
+  onOpenClasses,
 }) => {
   const [query, setQuery] = useState<string>('');
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
@@ -57,6 +59,19 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
     const list: SearchItem[] = [];
 
     // Quick Actions
+    if (onOpenClasses) {
+      list.push({
+        id: 'act-classes',
+        type: 'action',
+        title: 'Open Classes Scheduled & BEU Patna Holiday Calendar',
+        subtitle: 'Room 13 weekly class schedule, live running class, and 2026 holidays',
+        badge: 'Schedule',
+        onSelect: () => {
+          onClose();
+          onOpenClasses();
+        },
+      });
+    }
     list.push({
       id: 'act-mock',
       type: 'action',
@@ -201,6 +216,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
     onOpenPlan,
     onOpenNotes,
     onOpenBackup,
+    onOpenClasses,
   ]);
 
   // Filter items matching query

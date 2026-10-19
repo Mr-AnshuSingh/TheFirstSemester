@@ -140,6 +140,19 @@ export interface WeekCountdownItem {
   d: string[];
 }
 
+export interface UniversityHoliday {
+  id: number;
+  name: string;
+  englishName: string;
+  startDate: string;
+  endDate: string;
+  daysDisplay: string;
+  dayOfWeek: string;
+  totalDays: number;
+  note?: string;
+}
+
+
 export interface PpsTraceFrame {
   line: number;
   explanation: string;

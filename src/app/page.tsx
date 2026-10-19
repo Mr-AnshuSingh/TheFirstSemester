@@ -55,6 +55,9 @@ const UnitQuiz = dynamic(
 const ExamPlanModal = dynamic(
   () => import('@/components/study/ExamPlanModal').then((m) => m.ExamPlanModal)
 );
+const ClassesScheduledModal = dynamic(
+  () => import('@/components/study/ClassesScheduledModal').then((m) => m.ClassesScheduledModal)
+);
 const AllNotesModal = dynamic(
   () => import('@/components/study/AllNotesModal').then((m) => m.AllNotesModal)
 );
@@ -91,6 +94,7 @@ export default function SemesterOnePage() {
   const [step, setStep] = useState<number>(0);
   const [notesModalOpen, setNotesModalOpen] = useState<boolean>(false);
   const [planModalOpen, setPlanModalOpen] = useState<boolean>(false);
+  const [classesModalOpen, setClassesModalOpen] = useState<boolean>(false);
   const [mockTestModalOpen, setMockTestModalOpen] = useState<boolean>(false);
   const [flashcardsModalOpen, setFlashcardsModalOpen] = useState<boolean>(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState<boolean>(false);
@@ -255,6 +259,7 @@ export default function SemesterOnePage() {
         onSelectSubject={(idx) => selectSubjectUnit(idx, 0)}
         onOpenNotesModal={() => setNotesModalOpen(true)}
         onOpenPlanModal={() => setPlanModalOpen(true)}
+        onOpenClassesModal={() => setClassesModalOpen(true)}
         onOpenCommandPalette={() => setCommandPaletteOpen(true)}
         onOpenFlashcards={() => setFlashcardsModalOpen(true)}
         onOpenMockTest={() => setMockTestModalOpen(true)}
@@ -731,6 +736,7 @@ export default function SemesterOnePage() {
         onOpenMockTest={() => setMockTestModalOpen(true)}
         onOpenFlashcards={() => setFlashcardsModalOpen(true)}
         onOpenPlan={() => setPlanModalOpen(true)}
+        onOpenClasses={() => setClassesModalOpen(true)}
         onOpenNotes={() => setNotesModalOpen(true)}
         onOpenFormulaSheet={() => setFormulaSheetModalOpen(true)}
         onOpenBackup={() => setBackupModalOpen(true)}
@@ -748,6 +754,13 @@ export default function SemesterOnePage() {
         currentState={st}
         onImportState={handleImportState}
         onResetState={handleResetState}
+      />
+
+      <ClassesScheduledModal
+        open={classesModalOpen}
+        labGroup={st.lab || 'G1'}
+        onChangeLabGroup={(g) => persist((prev) => ({ ...prev, lab: g }))}
+        onClose={() => setClassesModalOpen(false)}
       />
 
       {/* Lightbox Diagram Preview Modal */}
