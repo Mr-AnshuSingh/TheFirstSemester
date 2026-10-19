@@ -169,6 +169,33 @@ assertCheck('BEEE topics covered with TopicContent', beeeTopicsCovered, 61, beee
 assertCheck('BEEE 2D diagrams XML valid', beeeDiagramsValid ? 'All 61 SVGs valid' : 'Invalid SVG found', 'All 61 SVGs valid', beeeDiagramsValid);
 assertCheck('BEEE TopicContent definitions and exam answers valid', beeeContentValid ? 'All 61 entries complete' : 'Incomplete entries', 'All 61 entries complete', beeeContentValid);
 
+// 13. Phase 3B Topic Content and 2D Diagram validation (AI)
+const ai = SUBJECTS.find((s) => s.id === 'ai');
+let aiTopicsCovered = 0;
+let aiDiagramsValid = true;
+let aiContentValid = true;
+
+if (ai) {
+  ai.units.forEach((u, uIdx) => {
+    u.topics.forEach((_, tIdx) => {
+      const tc = TOPIC_CONTENT[`ai:${uIdx}:${tIdx}`];
+      if (tc) {
+        aiTopicsCovered++;
+        if (!tc.diagram?.svg?.startsWith('<svg') || !tc.diagram?.svg?.endsWith('</svg>')) {
+          aiDiagramsValid = false;
+        }
+        if (!tc.definition || !tc.slip || !tc.examAnswer || tc.examAnswer.length === 0) {
+          aiContentValid = false;
+        }
+      }
+    });
+  });
+}
+
+assertCheck('AI topics covered with TopicContent', aiTopicsCovered, 39, aiTopicsCovered === 39);
+assertCheck('AI 2D diagrams XML valid', aiDiagramsValid ? 'All 39 SVGs valid' : 'Invalid SVG found', 'All 39 SVGs valid', aiDiagramsValid);
+assertCheck('AI TopicContent definitions and exam answers valid', aiContentValid ? 'All 39 entries complete' : 'Incomplete entries', 'All 39 entries complete', aiContentValid);
+
 
 
 // Print summary
