@@ -9,6 +9,10 @@ import {
   validateAndParseImportJSON,
   CURRENT_STORAGE_VERSION,
 } from '../src/lib/offlineStorage';
+import { progressSyncSchema, MAX_BODY_SIZE_BYTES } from '../src/lib/validations/progress';
+import { isAuthConfigured, extractAuthToken } from '../src/lib/auth';
+import * as fs from 'fs';
+import * as path from 'path';
 
 interface CheckResult {
   passed: boolean;
@@ -350,6 +354,59 @@ assertCheck('Persistence backup JSON export/import round-trip', importValid, tru
 // Malformed JSON rejection
 const badImport = validateAndParseImportJSON('{ invalid json ...');
 assertCheck('Malformed JSON import rejection', badImport.valid, false, badImport.valid === false);
+
+// 20. Phase 5 Backend Security & Validation Verification
+const prismaSchemaPath = path.resolve(__dirname, '../prisma/schema.prisma');
+const prismaSchemaText = fs.readFileSync(prismaSchemaPath, 'utf-8');
+const usesPostgres = prismaSchemaText.includes('provider = "postgresql"');
+const noDefaultStudentInSchema = !prismaSchemaText.includes('default-student');
+
+assertCheck('Prisma schema uses PostgreSQL provider', usesPostgres, true, usesPostgres);
+assertCheck('Prisma schema has removed hardcoded default-student', noDefaultStudentInSchema, true, noDefaultStudentInSchema);
+
+const envExamplePath = path.resolve(__dirname, '../.env.example');
+const envExampleText = fs.readFileSync(envExamplePath, 'utf-8');
+const envExampleHasPostgres = envExampleText.includes('postgresql://');
+const envExampleNoSqlite = !envExampleText.includes('file:./dev.db');
+
+assertCheck('.env.example documents PostgreSQL connection string', envExampleHasPostgres, true, envExampleHasPostgres);
+assertCheck('.env.example removes SQLite assumption', envExampleNoSqlite, true, envExampleNoSqlite);
+
+// Zod validation testing
+const validSyncPayload = {
+  done: { 'math:0:0': true, 'math:0:1': false, 'math:0:2': 1 },
+  customNotes: { 'math:0': 'Important Taylor series tips' },
+  lab: 'G2',
+  exam: '2026-11-15',
+  confidence: { 'math:0:0': 2 },
+  starred: ['math:0:0'],
+};
+const zodValidParse = progressSyncSchema.safeParse(validSyncPayload);
+assertCheck('Zod schema accepts valid progress sync payload', zodValidParse.success, true, zodValidParse.success);
+
+const invalidSyncPayload = {
+  done: 'not an object',
+  customNotes: { 'math:0': 12345 }, // invalid: notes must be string
+};
+const zodInvalidParse = progressSyncSchema.safeParse(invalidSyncPayload);
+assertCheck('Zod schema rejects malformed payload with bad types', zodInvalidParse.success, false, zodInvalidParse.success === false);
+
+assertCheck('Progress body size limit configured to 1MB', MAX_BODY_SIZE_BYTES, 1024 * 1024, MAX_BODY_SIZE_BYTES === 1048576);
+
+// Auth extraction testing
+const mockReqWithBearer = {
+  headers: new Headers({ authorization: 'Bearer mock-supabase-jwt-token-123' }),
+  cookies: { get: () => undefined },
+} as any;
+const extractedBearer = extractAuthToken(mockReqWithBearer);
+assertCheck('extractAuthToken correctly parses Bearer token', extractedBearer, 'mock-supabase-jwt-token-123', extractedBearer === 'mock-supabase-jwt-token-123');
+
+const mockReqWithoutBearer = {
+  headers: new Headers({ authorization: 'Basic dXNlcjpwYXNz' }),
+  cookies: { get: () => undefined },
+} as any;
+const extractedInvalidBearer = extractAuthToken(mockReqWithoutBearer);
+assertCheck('extractAuthToken rejects non-Bearer auth schemes', extractedInvalidBearer, null, extractedInvalidBearer === null);
 
 // Print summary
 console.log('--------------------------------------------------');

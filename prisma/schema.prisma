@@ -1,16 +1,16 @@
-// Prisma schema supporting SQLite (local/offline-first dev) and Supabase PostgreSQL (production)
+// Prisma schema supporting PostgreSQL (production via Supabase / Neon / AWS RDS)
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite" // Switch to "postgresql" when deploying with Supabase
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model UserProgress {
   id          String   @id @default(cuid())
-  userId      String   @default("default-student")
+  userId      String   // Authenticated user ID (Supabase Auth UID / NextAuth sub)
   topicKey    String   // Format: "${subjectId}:${unitIndex}:${topicIndex}"
   subjectId   String
   unitIndex   Int
@@ -27,7 +27,7 @@ model UserProgress {
 
 model CustomNotes {
   id          String   @id @default(cuid())
-  userId      String   @default("default-student")
+  userId      String   // Authenticated user ID
   unitKey     String   // Format: "${subjectId}:${unitIndex}"
   subjectId   String
   unitIndex   Int
@@ -40,7 +40,7 @@ model CustomNotes {
 
 model FlashcardReview {
   id           String   @id @default(cuid())
-  userId       String   @default("default-student")
+  userId       String   // Authenticated user ID
   cardKey      String   // Format: "${subjectId}:${unitIndex}:${moveIndex}"
   subjectId    String
   unitIndex    Int
@@ -57,7 +57,7 @@ model FlashcardReview {
 
 model StudySession {
   id              String   @id @default(cuid())
-  userId          String   @default("default-student")
+  userId          String   // Authenticated user ID
   subjectId       String
   unitIndex       Int
   durationSeconds Int
