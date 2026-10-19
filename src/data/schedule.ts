@@ -50,8 +50,8 @@ export const WEEKS: WeekCountdownItem[] = [
 
 /**
  * Official Holiday Calendar 2026 for Government Engineering Colleges
- * Bihar Engineering University, Patna (BEU Patna)
- * Ref: ज्ञापांक: वि०अ०वि० / 1029 / 2025 / पटना, दिनांक: 18/12/2025
+ * University Holiday Calendar 2026
+ * Ref: 1029 / 2025, दिनांक: 18/12/2025
  */
 export const UNIVERSITY_HOLIDAYS_2026: UniversityHoliday[] = [
   {

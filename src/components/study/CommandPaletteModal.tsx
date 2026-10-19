@@ -63,7 +63,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
       list.push({
         id: 'act-classes',
         type: 'action',
-        title: 'Open Classes Scheduled & BEU Patna Holiday Calendar',
+        title: 'Open Classes Scheduled & University Holiday Calendar',
         subtitle: 'Room 13 weekly class schedule, live running class, and 2026 holidays',
         badge: 'Schedule',
         onSelect: () => {

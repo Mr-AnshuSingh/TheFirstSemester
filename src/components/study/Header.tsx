@@ -109,7 +109,7 @@ export const Header: React.FC<HeaderProps> = ({
           type="button"
           className="btn gold flex items-center gap-1.5"
           onClick={onOpenClassesModal}
-          title="Room 13 Class Schedule & BEU Patna Holiday Calendar"
+          title="Room 13 Class Schedule & University Holiday Calendar"
         >
           <span className="w-2 h-2 rounded-full bg-accentRed animate-ping inline-block" />
           <span>Classes Scheduled</span>

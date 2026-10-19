@@ -210,7 +210,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
               <h2 className="font-hand text-3xl font-bold text-ink">Classes Scheduled &amp; University Calendar</h2>
             </div>
             <p className="text-[13px] text-dim mt-1 font-sans">
-              Room 13 Weekly Timetable (w.e.f. 28.09.26) · Bihar Engineering University, Patna (BEU Patna) 2026 Holidays
+              Room 13 Weekly Timetable (w.e.f. 28.09.26) · Official 2026 University Holiday Calendar
             </p>
           </div>
           <button type="button" className="btn" onClick={onClose} aria-label="Close modal">
@@ -241,7 +241,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
                   : 'bg-paper text-ink border-ink/30 hover:bg-gold/15'
               }`}
             >
-              🏛️ BEU Patna Holidays 2026 ({UNIVERSITY_HOLIDAYS_2026.length})
+              🏛️ University Holidays 2026 ({UNIVERSITY_HOLIDAYS_2026.length})
             </button>
           </div>
 
@@ -351,7 +351,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
                       {activeClass.status === 'holiday' && (
                         <div className="font-sans">
                           <span className="text-xs font-bold uppercase tracking-wider text-accentRed font-mono">
-                            🎉 BEU PATNA UNIVERSITY HOLIDAY TODAY
+                            🎉 UNIVERSITY HOLIDAY TODAY
                           </span>
                           <h4 className="font-hand text-xl font-bold text-ink">
                             {activeClass.holidayName} · College Closed
@@ -525,7 +525,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
             </div>
           )}
 
-          {/* TAB 2: BEU PATNA 2026 HOLIDAY CALENDAR */}
+          {/* TAB 2: 2026 UNIVERSITY HOLIDAY CALENDAR */}
           {activeTab === 'holidays' && (
             <div className="space-y-4">
               {/* University Header Notification Badge */}
@@ -533,13 +533,13 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
                 <div className="flex items-start justify-between gap-3 flex-wrap">
                   <div>
                     <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-accentRed font-mono block">
-                      OFFICIAL NOTIFICATION · BEU PATNA
+                      OFFICIAL NOTIFICATION · 2026 CALENDAR
                     </span>
                     <h3 className="font-hand text-2xl font-bold text-ink mt-0.5">
-                      बिहार अभियंत्रण विश्वविद्यालय, पटना · अवकाश-तालिका २०२६
+                      विश्वविद्यालय · अवकाश-तालिका २०२६
                     </h3>
                     <p className="text-xs text-dim font-sans mt-0.5">
-                      राजकीय अभियंत्रण महाविद्यालयों के शिक्षकों एवं छात्र-छात्राओं हेतु वर्ष २०२६ के लिए अवकाश-तालिका (ज्ञापांक: वि०अ०वि० / 1029 / 2025 / पटना)
+                      राजकीय अभियंत्रण महाविद्यालयों के शिक्षकों एवं छात्र-छात्राओं हेतु वर्ष २०२६ के लिए अवकाश-तालिका (ज्ञापांक: 1029 / 2025)
                     </p>
                   </div>
 
@@ -690,7 +690,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
                 <p>1. मुस्लिम त्योहारों में चाँद के दृष्टिगोचर होने के अनुसार अवकाश की तिथि में तत्संबंधी सरकारी आदेशानुसार परिवर्तन हो सकता है।</p>
                 <p>2. अतिरिक्त अवकाश सरकारी आदेशानुसार देय होगा।</p>
                 <p className="pt-1 text-[11px] font-mono text-ink">
-                  आदेशानुसार: कुलसचिव, बिहार अभियंत्रण विश्वविद्यालय, पटना (BEU Patna)
+                  आदेशानुसार: कुलसचिव, विश्वविद्यालय प्रशासन
                 </p>
               </div>
             </div>
