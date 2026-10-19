@@ -11,6 +11,8 @@ import {
 } from '../src/lib/offlineStorage';
 import { progressSyncSchema, MAX_BODY_SIZE_BYTES } from '../src/lib/validations/progress';
 import { isAuthConfigured, extractAuthToken } from '../src/lib/auth';
+import { tutorRequestSchema } from '../src/lib/validations/tutor';
+import { checkRateLimit, resetRateLimitStore } from '../src/lib/rateLimit';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -407,6 +409,60 @@ const mockReqWithoutBearer = {
 } as any;
 const extractedInvalidBearer = extractAuthToken(mockReqWithoutBearer);
 assertCheck('extractAuthToken rejects non-Bearer auth schemes', extractedInvalidBearer, null, extractedInvalidBearer === null);
+
+// 21. Phase 6 AI Tutor Grounding, Rate Limiting, & Security Verification
+const validTutorReq = {
+  subjectId: 'math',
+  unitIndex: 0,
+  stepIndex: 1,
+  question: 'What are the three conditions required for Rolle theorem?',
+};
+const tutorParseSuccess = tutorRequestSchema.safeParse(validTutorReq);
+assertCheck('Tutor schema accepts valid syllabus question', tutorParseSuccess.success, true, tutorParseSuccess.success);
+
+const emptyQuestionReq = {
+  subjectId: 'math',
+  unitIndex: 0,
+  stepIndex: 1,
+  question: '   ',
+};
+const emptyQuestionParsed = tutorRequestSchema.safeParse(emptyQuestionReq);
+assertCheck('Tutor schema rejects blank/whitespace question', emptyQuestionParsed.success, false, emptyQuestionParsed.success === false);
+
+const badSubjectReq = {
+  subjectId: 'advanced-quantum-robotics',
+  unitIndex: 0,
+  stepIndex: 0,
+  question: 'Explain quantum circuits',
+};
+const badSubjectParsed = tutorRequestSchema.safeParse(badSubjectReq);
+assertCheck('Tutor schema rejects non-existent subject ID', badSubjectParsed.success, false, badSubjectParsed.success === false);
+
+// Rate limiter testing
+resetRateLimitStore();
+const testIp = '10.0.0.42';
+let allFifteenAllowed = true;
+for (let i = 0; i < 15; i++) {
+  const res = checkRateLimit(testIp, { maxRequests: 15, windowMs: 60000 });
+  if (!res.allowed) allFifteenAllowed = false;
+}
+assertCheck('Rate limiter permits requests within quota (15/min)', allFifteenAllowed, true, allFifteenAllowed);
+
+const sixteenthRes = checkRateLimit(testIp, { maxRequests: 15, windowMs: 60000 });
+assertCheck('Rate limiter blocks 16th request from same IP', sixteenthRes.allowed, false, sixteenthRes.allowed === false);
+
+const differentIpRes = checkRateLimit('10.0.0.43', { maxRequests: 15, windowMs: 60000 });
+assertCheck('Rate limiter does not bleed across independent IPs', differentIpRes.allowed, true, differentIpRes.allowed === true);
+resetRateLimitStore();
+
+// Security: Verify GEMINI_API_KEY is server-only and never exposed to the client
+const tutorPanelPath = path.resolve(__dirname, '../src/components/study/AiTutorPanel.tsx');
+const tutorPanelCode = fs.readFileSync(tutorPanelPath, 'utf-8');
+const noSecretInClient = !tutorPanelCode.includes('GEMINI_API_KEY');
+assertCheck('Client component AiTutorPanel contains no GEMINI_API_KEY reference', noSecretInClient, true, noSecretInClient);
+
+const envExampleNoPublicGemini = !envExampleText.includes('NEXT_PUBLIC_GEMINI');
+assertCheck('GEMINI_API_KEY is server-only (not prefixed with NEXT_PUBLIC_)', envExampleNoPublicGemini, true, envExampleNoPublicGemini);
 
 // Print summary
 console.log('--------------------------------------------------');

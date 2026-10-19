@@ -179,6 +179,8 @@ export interface TutorResponsePayload {
     unitTitle: string;
     activeStepTitle: string;
   };
+  isLiveAi?: boolean;
+  source?: 'gemini' | 'offline_template';
 }
 
 export interface QuizQuestion {

@@ -110,6 +110,21 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
 
       {response && (
         <div className="p-3.5 rounded-xl bg-[#fff9e8] border-2 border-ink space-y-3 text-xs leading-relaxed">
+          <div className="flex items-center justify-between pb-2 border-b border-ink/20">
+            <span
+              className={`text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full border ${
+                response.isLiveAi
+                  ? 'bg-amber-100 text-amber-900 border-amber-400'
+                  : 'bg-paper text-dim border-ink/30'
+              }`}
+            >
+              {response.isLiveAi ? 'Gemini 1.5 Flash Live' : 'Offline Syllabus Grounded'}
+            </span>
+            <span className="text-[11px] text-dim font-mono">
+              {response.contextUsed.subjectCode} · Unit {unitIndex + 1}
+            </span>
+          </div>
+
           <div>
             <strong className="text-accentTeal uppercase tracking-wider block text-[11px] mb-1">
               University Marking-Scheme Answer:
