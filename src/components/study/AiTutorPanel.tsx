@@ -72,6 +72,8 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
           {[
             `How do I write a full-marks 7-mark answer on "${activeStep.t}"?`,
             `Explain the key formula and derivation for ${unit.t}.`,
+            `Solve a university-style numerical problem on ${unit.t}.`,
+            `Explain this with a simple real-life analogy.`,
             `What are the common exam traps in ${unit.t}?`,
           ].map((preset, i) => (
             <button
@@ -94,7 +96,7 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && askTutor()}
-            placeholder={`Ask a doubt about ${unit.t}...`}
+            placeholder={`Ask any question or numerical about ${unit.t}...`}
             className="flex-1 px-3 py-1.5 text-sm bg-[#fffdf7] border-[1.5px] border-ink rounded-lg"
           />
           <button
@@ -129,7 +131,9 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
             <strong className="text-accentTeal uppercase tracking-wider block text-[11px] mb-1">
               University Marking-Scheme Answer:
             </strong>
-            <p className="text-sm text-ink whitespace-pre-line">{response.answer}</p>
+            <div className="text-sm text-ink whitespace-pre-line leading-relaxed">
+              <KatexText htmlOrText={response.answer} />
+            </div>
           </div>
 
           <div>

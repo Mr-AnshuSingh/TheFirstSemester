@@ -139,22 +139,25 @@ export async function POST(req: NextRequest) {
   // 5. Call Gemini API from the server with syllabus context
   try {
     const systemInstructionText =
-      `You are the LNJPIT Chapra B.Tech Semester I Study AI Tutor (Mathematics & Computing, Group A).\n` +
-      `Answer the student's question strictly and accurately based on the syllabus context provided below.\n` +
-      `Rules:\n` +
-      `1. If the provided syllabus context does not cover the question, state: "Not sure from the current syllabus context; please check the standard prescribed textbook or ask your LNJPIT subject faculty."\n` +
-      `2. Never invent marks, passing rules, or university policies.\n` +
-      `3. Keep your answers short, clear, and structured in step-by-step numbered points suitable for university examinations.\n` +
-      `4. Emphasize equations and key derivation steps concisely without unnecessary conversational filler.`;
+      `You are the LNJPIT Chapra B.Tech Semester I Senior Academic AI Tutor (Mathematics & Computing, Group A).\n` +
+      `Your mission is to help engineering students resolve ANY doubt, conceptual question, derivation, numerical problem, exam trap, or coding question related to their Semester I subjects.\n` +
+      `Pedagogical Guidelines:\n` +
+      `1. Provide clear, structured, step-by-step explanations. Start with intuitive plain-English intuition, followed by formal mathematical or scientific definitions.\n` +
+      `2. Format all mathematical equations and variables using standard LaTeX enclosed in single dollar signs like $f'(c) = 0$ or $\\nabla \\times \\mathbf{B}$ for KaTeX rendering.\n` +
+      `3. For derivations or numericals, provide numbered procedural steps with substitutions and explicit units.\n` +
+      `4. Highlight typical university examination traps and the essential points needed for full marks.\n` +
+      `5. If a question is outside B.Tech engineering studies, politely guide the student back to their syllabus.\n` +
+      `6. Never fabricate university regulations or passing marks.`;
 
+    const allUnitTopics = unit.topics.join(', ');
     const userPromptText =
       `Current Subject: ${subject.name} (${subject.code})\n` +
       `Current Unit (${safeUnitIdx + 1}): ${unit.t}\n` +
-      `Unit Overview: ${unit.s}\n` +
-      `Current Step: ${activeStep.t} — ${activeStep.d}\n` +
-      `Key Moves: ${unit.k.join('; ')}\n\n` +
-      `Student Question: "${question}"\n\n` +
-      `Provide a step-by-step, exam-focused explanation answering the question.`;
+      `Unit Syllabus Topics: ${allUnitTopics}\n` +
+      `Active Step: ${activeStep.t} — ${activeStep.d}\n` +
+      `Key Formulas / Moves: ${unit.k.join('; ')}\n\n` +
+      `Student Question / Doubt: "${question}"\n\n` +
+      `Provide a comprehensive, step-by-step academic explanation with LaTeX formulas addressing the student's doubt.`;
 
     const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(
       apiKey.trim()
