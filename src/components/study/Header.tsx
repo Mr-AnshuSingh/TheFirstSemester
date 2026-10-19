@@ -100,7 +100,7 @@ export const Header: React.FC<HeaderProps> = ({
         <button type="button" className="btn" onClick={onOpenNotesModal}>
           All notes
         </button>
-        <button type="button" className="btn hidden sm:inline-flex" onClick={onOpenBackupModal} title="Backup & Restore Data">
+        <button type="button" className="btn" onClick={onOpenBackupModal} title="Backup & Restore Data">
           Backup
         </button>
         <button type="button" className="btn red" onClick={onOpenPlanModal}>

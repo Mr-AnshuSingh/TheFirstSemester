@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Paper texture & filters -->
+    <filter id="sketch" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+    <radialGradient id="paperGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fffef9" />
+      <stop offset="100%" stop-color="#f2ede0" />
+    </radialGradient>
+  </defs>
+
+  <!-- Background Paper Plate -->
+  <rect x="16" y="16" width="480" height="480" rx="64" fill="url(#paperGlow)" stroke="#1a1a1a" stroke-width="8" stroke-linejoin="round" />
+
+  <!-- Notebook Binder Rings on Top -->
+  <g fill="#333333" stroke="#1a1a1a" stroke-width="3">
+    <circle cx="120" cy="40" r="12" />
+    <circle cx="256" cy="40" r="12" />
+    <circle cx="392" cy="40" r="12" />
+    <rect x="114" y="16" width="12" height="30" rx="6" fill="#666666" />
+    <rect x="250" y="16" width="12" height="30" rx="6" fill="#666666" />
+    <rect x="386" y="16" width="12" height="30" rx="6" fill="#666666" />
+  </g>
+
+  <!-- Light Grid Lines -->
+  <g stroke="#ddd6c6" stroke-width="2" stroke-dasharray="4,4">
+    <line x1="64" y1="120" x2="448" y2="120" />
+    <line x1="64" y1="180" x2="448" y2="180" />
+    <line x1="64" y1="240" x2="448" y2="240" />
+    <line x1="64" y1="300" x2="448" y2="300" />
+    <line x1="64" y1="360" x2="448" y2="360" />
+    <line x1="64" y1="420" x2="448" y2="420" />
+
+    <line x1="120" y1="80" x2="120" y2="448" />
+    <line x1="180" y1="80" x2="180" y2="448" />
+    <line x1="240" y1="80" x2="240" y2="448" />
+    <line x1="300" y1="80" x2="300" y2="448" />
+    <line x1="360" y1="80" x2="360" y2="448" />
+    <line x1="420" y1="80" x2="420" y2="448" />
+  </g>
+
+  <!-- Central Isometric 3D Cube / Polyhedron Geometry -->
+  <g stroke="#1a1a1a" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Top Face (Amber tint) -->
+    <polygon points="256,130 368,190 256,250 144,190" fill="#fde68a" />
+    <!-- Left Face (Blue-Slate tint) -->
+    <polygon points="144,190 256,250 256,380 144,320" fill="#cbd5e1" />
+    <!-- Right Face (Teal-Mint tint) -->
+    <polygon points="256,250 368,190 368,320 256,380" fill="#a7f3d0" />
+
+    <!-- 3D Coordinate Axis Lines -->
+    <line x1="256" y1="250" x2="256" y2="100" stroke="#b91c1c" stroke-width="4" stroke-dasharray="6,4" />
+    <line x1="256" y1="250" x2="400" y2="170" stroke="#047857" stroke-width="4" stroke-dasharray="6,4" />
+    <line x1="256" y1="250" x2="110" y2="170" stroke="#1d4ed8" stroke-width="4" stroke-dasharray="6,4" />
+
+    <!-- Center vertex dot -->
+    <circle cx="256" cy="250" r="7" fill="#b91c1c" />
+  </g>
+
+  <!-- Math & Engineering Symbol Overlay -->
+  <g font-family="monospace" font-size="28" font-weight="bold" fill="#1a1a1a">
+    <text x="180" y="210">∇×F</text>
+    <text x="280" y="320">∫∫</text>
+    <text x="175" y="320">λ·I</text>
+  </g>
+
+  <!-- Compass Arc sketch -->
+  <path d="M 170,160 A 120,120 0 0,1 342,160" fill="none" stroke="#b91c1c" stroke-width="4" stroke-dasharray="8,6" />
+
+  <!-- College & Semester Labels -->
+  <text x="256" y="425" text-anchor="middle" font-family="'Caveat', cursive, sans-serif" font-size="44" font-weight="bold" fill="#1a1a1a">
+    LNJPIT · Chapra
+  </text>
+  <text x="256" y="460" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" font-weight="700" letter-spacing="3" fill="#666666">
+    SEMESTER I · 3D STUDY NOTEBOOK
+  </text>
+</svg>

@@ -5,21 +5,74 @@ import { SUBJECTS } from '@/data/subjects';
 import { SC } from '@/data/scenes';
 import { WORKED } from '@/data/worked';
 import { TT, WEEKS, RULES, HUE } from '@/data/schedule';
-import { NotebookCanvas3D } from '@/components/canvas/NotebookCanvas3D';
+import dynamic from 'next/dynamic';
 import { KatexText } from '@/components/study/KatexRenderer';
-import { SvgDiagramViewer } from '@/components/study/SvgDiagramViewer';
-import { PpsCodeRunner } from '@/components/study/PpsCodeRunner';
-import { AiTutorPanel } from '@/components/study/AiTutorPanel';
 import { Header } from '@/components/study/Header';
 import { UnitSidebar } from '@/components/study/UnitSidebar';
-import { ExamPlanModal } from '@/components/study/ExamPlanModal';
-import { AllNotesModal } from '@/components/study/AllNotesModal';
-import { UnitQuiz } from '@/components/study/UnitQuiz';
-import { MockTestModal } from '@/components/study/MockTestModal';
-import { FlashcardsModal } from '@/components/study/FlashcardsModal';
-import { CommandPaletteModal } from '@/components/study/CommandPaletteModal';
-import { FormulaSheetModal } from '@/components/study/FormulaSheetModal';
-import { BackupModal } from '@/components/study/BackupModal';
+
+const NotebookCanvas3D = dynamic(
+  () => import('@/components/canvas/NotebookCanvas3D').then((m) => m.NotebookCanvas3D),
+  {
+    ssr: false,
+    loading: () => (
+      <section id="stage" className="relative min-w-0 min-h-0 overflow-hidden h-full">
+        <div id="cv" className="flex items-center justify-center bg-paper text-dim font-hand text-lg">
+          Loading 3D workspace...
+        </div>
+        <div id="ovt" className="absolute left-4 top-3.5 pointer-events-none max-w-[52%]">
+          <div className="text-[11px] font-bold tracking-[0.12em] uppercase text-accentRed">
+            LNJPIT · Mathematics &amp; Computing
+          </div>
+          <h1 className="font-hand text-[32px] leading-[0.95] font-bold mt-0.5 text-ink">
+            Semester I in 3D
+          </h1>
+        </div>
+        <div id="cap" className="border-t-2 border-b-2 border-ink lg:absolute lg:bottom-4 lg:left-4 lg:right-4 p-3 bg-paper2">
+          <h3 className="font-hand text-xl font-bold text-ink">Step 1: Setup &amp; Principle</h3>
+          <p className="text-xs md:text-sm font-sans text-ink/90 leading-relaxed">
+            Interactive 3D notebook and visual intuition for B.Tech Semester I, Group A at LNJPIT Chapra.
+          </p>
+        </div>
+      </section>
+    ),
+  }
+);
+const SvgDiagramViewer = dynamic(
+  () => import('@/components/study/SvgDiagramViewer').then((m) => m.SvgDiagramViewer),
+  { loading: () => <div className="p-4 text-center font-hand text-dim">Loading diagrams...</div> }
+);
+const PpsCodeRunner = dynamic(
+  () => import('@/components/study/PpsCodeRunner').then((m) => m.PpsCodeRunner)
+);
+const AiTutorPanel = dynamic(
+  () => import('@/components/study/AiTutorPanel').then((m) => m.AiTutorPanel),
+  { loading: () => <div className="p-4 text-center font-hand text-dim">Starting AI Tutor...</div> }
+);
+const UnitQuiz = dynamic(
+  () => import('@/components/study/UnitQuiz').then((m) => m.UnitQuiz),
+  { loading: () => <div className="p-4 text-center font-hand text-dim">Loading quiz...</div> }
+);
+const ExamPlanModal = dynamic(
+  () => import('@/components/study/ExamPlanModal').then((m) => m.ExamPlanModal)
+);
+const AllNotesModal = dynamic(
+  () => import('@/components/study/AllNotesModal').then((m) => m.AllNotesModal)
+);
+const MockTestModal = dynamic(
+  () => import('@/components/study/MockTestModal').then((m) => m.MockTestModal)
+);
+const FlashcardsModal = dynamic(
+  () => import('@/components/study/FlashcardsModal').then((m) => m.FlashcardsModal)
+);
+const CommandPaletteModal = dynamic(
+  () => import('@/components/study/CommandPaletteModal').then((m) => m.CommandPaletteModal)
+);
+const FormulaSheetModal = dynamic(
+  () => import('@/components/study/FormulaSheetModal').then((m) => m.FormulaSheetModal)
+);
+const BackupModal = dynamic(
+  () => import('@/components/study/BackupModal').then((m) => m.BackupModal)
+);
 import { ConfidenceLevel, FlashcardProgress } from '@/types/syllabus';
 import { getTopicContent, getUnitStory } from '@/data/topicContent';
 import {
@@ -289,7 +342,7 @@ export default function SemesterOnePage() {
                   const topicData = getTopicContent(activeSubject.id, ui, tIdx);
 
                   return (
-                    <div key={tIdx} className="p-3.5 bg-paper border-[1.5px] border-ink rounded-lg shadow-sketchy space-y-2.5">
+                    <div key={tIdx} className="topic-card p-3.5 bg-paper border-[1.5px] border-ink rounded-lg shadow-sketchy space-y-2.5">
                       <div className="flex items-start justify-between gap-2 pb-1 border-b border-dashed border-ink/20">
                         <h5 className="font-hand text-lg font-bold text-ink leading-snug">
                           {star && <span className="text-accentRed mr-1">★</span>}
@@ -368,7 +421,7 @@ export default function SemesterOnePage() {
                 const topicData = getTopicContent(activeSubject.id, ui, tIdx);
 
                 return (
-                  <div key={tIdx} className="p-4 bg-paper border-[1.5px] border-ink rounded-lg shadow-sketchy space-y-3 font-sans">
+                  <div key={tIdx} className="topic-card p-4 bg-paper border-[1.5px] border-ink rounded-lg shadow-sketchy space-y-3 font-sans">
                     <div className="flex items-baseline justify-between border-b border-dashed border-ink/30 pb-1">
                       <h5 className="font-hand text-xl font-bold text-ink">
                         {star && <span className="text-accentRed mr-1">★</span>}

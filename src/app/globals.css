@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import 'katex/dist/katex.min.css';
-
 :root {
   --paper: #f6f0e1;
   --paper2: #efe7d2;
@@ -14,7 +12,7 @@
   --red: #d4572b;
   --teal: #2a7f78;
   --gold: #d49a14;
-  --hand: Caveat, "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
+  --hand: var(--font-caveat), Caveat, "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
   --body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --rail: 272px;
   --study: 440px;
@@ -1296,3 +1294,9 @@ button {
     transition-duration: 0.01ms !important;
   }
 }
+
+.topic-card {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 200px;
+}
+

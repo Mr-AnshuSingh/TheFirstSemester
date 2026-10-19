@@ -6,3 +6,5 @@ node_modules/
 *.db-journal
 *.tsbuildinfo
 node_modules
+test-results/
+lighthouse*.json

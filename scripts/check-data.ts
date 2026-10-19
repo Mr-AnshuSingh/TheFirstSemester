@@ -464,6 +464,73 @@ assertCheck('Client component AiTutorPanel contains no GEMINI_API_KEY reference'
 const envExampleNoPublicGemini = !envExampleText.includes('NEXT_PUBLIC_GEMINI');
 assertCheck('GEMINI_API_KEY is server-only (not prefixed with NEXT_PUBLIC_)', envExampleNoPublicGemini, true, envExampleNoPublicGemini);
 
+// 22. Phase 7 PWA, Service Worker Offline Caching, & E2E Verification
+const manifestPath = path.resolve(__dirname, '../public/manifest.webmanifest');
+const manifestExists = fs.existsSync(manifestPath);
+assertCheck('PWA manifest.webmanifest exists in public/', manifestExists, true, manifestExists);
+
+let manifestValid = false;
+let manifestHasIcons = false;
+let manifestIsStandalone = false;
+if (manifestExists) {
+  try {
+    const manifestJson = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+    manifestValid = Boolean(manifestJson.name && manifestJson.short_name && manifestJson.start_url);
+    manifestHasIcons = Array.isArray(manifestJson.icons) && manifestJson.icons.length >= 3;
+    manifestIsStandalone = manifestJson.display === 'standalone';
+  } catch {
+    manifestValid = false;
+  }
+}
+assertCheck('PWA manifest metadata and standalone display valid', manifestValid && manifestIsStandalone, true, manifestValid && manifestIsStandalone);
+assertCheck('PWA manifest defines high-res 192/512/maskable icons', manifestHasIcons, true, manifestHasIcons);
+
+// Service Worker assertions
+const swPath = path.resolve(__dirname, '../public/sw.js');
+const swExists = fs.existsSync(swPath);
+assertCheck('Service worker public/sw.js exists', swExists, true, swExists);
+
+let swCachesFontsAndShell = false;
+if (swExists) {
+  const swCode = fs.readFileSync(swPath, 'utf-8');
+  swCachesFontsAndShell =
+    swCode.includes('lnjpit-study-shell-v1') &&
+    swCode.includes('fonts.googleapis.com') &&
+    swCode.includes('fonts.gstatic.com') &&
+    swCode.includes("request.mode === 'navigate'");
+}
+assertCheck('Service worker caches app shell and Caveat font offline', swCachesFontsAndShell, true, swCachesFontsAndShell);
+
+// Icon files existence & size checks
+const icon192Path = path.resolve(__dirname, '../public/icons/icon-192.png');
+const icon512Path = path.resolve(__dirname, '../public/icons/icon-512.png');
+const icon192Valid = fs.existsSync(icon192Path) && fs.statSync(icon192Path).size > 15000;
+const icon512Valid = fs.existsSync(icon512Path) && fs.statSync(icon512Path).size > 50000;
+assertCheck('PWA icon-192.png and icon-512.png generated and non-empty', icon192Valid && icon512Valid, true, icon192Valid && icon512Valid);
+
+// Layout PWA integration
+const layoutPath = path.resolve(__dirname, '../src/app/layout.tsx');
+const layoutCode = fs.readFileSync(layoutPath, 'utf-8');
+const layoutHasManifest = layoutCode.includes("manifest: '/manifest.webmanifest'");
+const layoutHasSw = layoutCode.includes('<ServiceWorkerRegistration />');
+assertCheck('RootLayout registers PWA manifest and ServiceWorkerRegistration', layoutHasManifest && layoutHasSw, true, layoutHasManifest && layoutHasSw);
+
+// Playwright E2E suites verification
+const testFiles = [
+  'units-and-steps.spec.ts',
+  'topic-persistence.spec.ts',
+  'quiz.spec.ts',
+  'backup-roundtrip.spec.ts',
+  'mobile-390px.spec.ts',
+];
+let allE2ETestsExist = true;
+for (const tf of testFiles) {
+  if (!fs.existsSync(path.resolve(__dirname, `../tests/e2e/${tf}`))) {
+    allE2ETestsExist = false;
+  }
+}
+assertCheck('All 5 Playwright E2E test suites present in tests/e2e/', allE2ETestsExist, true, allE2ETestsExist);
+
 // Print summary
 console.log('--------------------------------------------------');
 console.log('LNJPIT Semester I: Data Integrity Verification');
