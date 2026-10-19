@@ -223,7 +223,32 @@ assertCheck('CFET topics covered with TopicContent', cfetTopicsCovered, 42, cfet
 assertCheck('CFET 2D diagrams XML valid', cfetDiagramsValid ? 'All 42 SVGs valid' : 'Invalid SVG found', 'All 42 SVGs valid', cfetDiagramsValid);
 assertCheck('CFET TopicContent definitions and exam answers valid', cfetContentValid ? 'All 42 entries complete' : 'Incomplete entries', 'All 42 entries complete', cfetContentValid);
 
+// 15. Phase 3B Topic Content and 2D Diagram validation (UHV)
+const uhv = SUBJECTS.find((s) => s.id === 'uhv');
+let uhvTopicsCovered = 0;
+let uhvDiagramsValid = true;
+let uhvContentValid = true;
 
+if (uhv) {
+  uhv.units.forEach((u, uIdx) => {
+    u.topics.forEach((_, tIdx) => {
+      const tc = TOPIC_CONTENT[`uhv:${uIdx}:${tIdx}`];
+      if (tc) {
+        uhvTopicsCovered++;
+        if (!tc.diagram?.svg?.startsWith('<svg') || !tc.diagram?.svg?.endsWith('</svg>')) {
+          uhvDiagramsValid = false;
+        }
+        if (!tc.definition || !tc.slip || !tc.examAnswer || tc.examAnswer.length === 0) {
+          uhvContentValid = false;
+        }
+      }
+    });
+  });
+}
+
+assertCheck('UHV topics covered with TopicContent', uhvTopicsCovered, 18, uhvTopicsCovered === 18);
+assertCheck('UHV 2D diagrams XML valid', uhvDiagramsValid ? 'All 18 SVGs valid' : 'Invalid SVG found', 'All 18 SVGs valid', uhvDiagramsValid);
+assertCheck('UHV TopicContent definitions and exam answers valid', uhvContentValid ? 'All 18 entries complete' : 'Incomplete entries', 'All 18 entries complete', uhvContentValid);
 
 // Print summary
 console.log('--------------------------------------------------');
