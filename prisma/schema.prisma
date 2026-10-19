@@ -1,0 +1,68 @@
+// Prisma schema supporting SQLite (local/offline-first dev) and Supabase PostgreSQL (production)
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite" // Switch to "postgresql" when deploying with Supabase
+  url      = env("DATABASE_URL")
+}
+
+model UserProgress {
+  id          String   @id @default(cuid())
+  userId      String   @default("default-student")
+  topicKey    String   // Format: "${subjectId}:${unitIndex}:${topicIndex}"
+  subjectId   String
+  unitIndex   Int
+  topicIndex  Int
+  completed   Boolean  @default(true)
+  labGroup    String   @default("G1")
+  examDate    String?
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, topicKey])
+  @@index([userId, subjectId])
+}
+
+model CustomNotes {
+  id          String   @id @default(cuid())
+  userId      String   @default("default-student")
+  unitKey     String   // Format: "${subjectId}:${unitIndex}"
+  subjectId   String
+  unitIndex   Int
+  content     String
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, unitKey])
+}
+
+model FlashcardReview {
+  id           String   @id @default(cuid())
+  userId       String   @default("default-student")
+  cardKey      String   // Format: "${subjectId}:${unitIndex}:${moveIndex}"
+  subjectId    String
+  unitIndex    Int
+  easeFactor   Float    @default(2.5)
+  intervalDays Int      @default(1)
+  repetitions  Int      @default(0)
+  nextReviewAt DateTime @default(now())
+  lastRating   String   @default("good") // "again" | "hard" | "good" | "easy"
+  updatedAt    DateTime @updatedAt
+
+  @@unique([userId, cardKey])
+  @@index([userId, nextReviewAt])
+}
+
+model StudySession {
+  id              String   @id @default(cuid())
+  userId          String   @default("default-student")
+  subjectId       String
+  unitIndex       Int
+  durationSeconds Int
+  mode            String   @default("3d-explore") // "3d-explore" | "notes" | "pps-lab" | "ai-tutor"
+  startedAt       DateTime @default(now())
+
+  @@index([userId, subjectId])
+}
