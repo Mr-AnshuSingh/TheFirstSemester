@@ -6,8 +6,8 @@ import { TutorResponsePayload } from '@/types/syllabus';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { tutorRequestSchema } from '@/lib/validations/tutor';
 
-// 10 second timeout for external Gemini API calls
-const GEMINI_TIMEOUT_MS = 10000;
+// 18 second timeout for external Gemini API calls
+const GEMINI_TIMEOUT_MS = 18000;
 
 export async function POST(req: NextRequest) {
   // 1. Per-IP Rate Limiting (max 15 requests per minute)
@@ -88,10 +88,11 @@ export async function POST(req: NextRequest) {
   );
   const formulaHighlight = matchedMoves.length > 0 ? matchedMoves : unit.k.slice(0, 4);
 
-  // Template answer generator for offline / fallback scenarios (clean, no error prefixes)
-  const generateTemplateAnswer = (): string => {
+  // Template answer generator for offline / fallback scenarios
+  const generateTemplateAnswer = (noticePrefix: string): string => {
     return [
-      image ? '📸 [Attached Problem Image Received & Analyzed]' : '',
+      noticePrefix,
+      image ? '📸 [Attached Problem Image Received]' : '',
       `[${subject.name} (${subject.code}) · Unit ${safeUnitIdx + 1}: ${unit.t}]`,
       ``,
       `1. Core Principle (${activeStep.t}):`,
@@ -110,21 +111,16 @@ export async function POST(req: NextRequest) {
       .join('\n');
   };
 
-  const apiKey = process.env.GEMINI_API_KEY?.trim();
+  const apiKey = process.env.GEMINI_API_KEY;
 
-  // 4. Fallback if GEMINI_API_KEY is not configured or is a project ID instead of an API key
-  // Valid Gemini API keys from Google AI Studio begin with "AIzaSy"
-  const isLikelyValidKey = Boolean(apiKey && apiKey.startsWith('AIzaSy'));
-
-  if (!apiKey || !isLikelyValidKey) {
-    if (apiKey && !isLikelyValidKey) {
-      console.warn(
-        `[TUTOR] GEMINI_API_KEY "${apiKey.slice(0, 14)}..." is not an AI Studio API key (keys start with "AIzaSy..."). Falling back to clean syllabus solver.`
-      );
-    }
+  // 4. Fallback if GEMINI_API_KEY is not configured
+  if (!apiKey || apiKey.trim() === '') {
+    const fallbackAnswer = generateTemplateAnswer(
+      '[Offline Syllabus Grounded Answer · GEMINI_API_KEY not configured on server]\n'
+    );
 
     const fallbackResponse: TutorResponsePayload = {
-      answer: generateTemplateAnswer(),
+      answer: fallbackAnswer,
       markingSchemeSteps: subject.ex.a,
       formulaHighlight,
       trapWarning: subject.ex.x[0] || 'Always write units, signs, and a concluding sentence.',
@@ -194,7 +190,7 @@ export async function POST(req: NextRequest) {
     }
     userParts.push({ text: userPromptText });
 
-    const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(
+    const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${encodeURIComponent(
       apiKey.trim()
     )}`;
 
@@ -221,7 +217,7 @@ export async function POST(req: NextRequest) {
           ],
           generationConfig: {
             temperature: 0.2,
-            maxOutputTokens: 1000,
+            maxOutputTokens: 2500,
           },
         }),
         signal: controller.signal,
@@ -231,10 +227,12 @@ export async function POST(req: NextRequest) {
     }
 
     if (!geminiRes.ok) {
-      const errText = await geminiRes.text().catch(() => '');
-      console.warn(`[TUTOR] Gemini API returned status ${geminiRes.status}:`, errText.slice(0, 200));
+      console.warn(`Gemini API returned status ${geminiRes.status}: falling back to syllabus template`);
+      const fallbackAnswer = generateTemplateAnswer(
+        `[Offline Syllabus Grounded Answer · Gemini API status ${geminiRes.status}]\n`
+      );
       return NextResponse.json({
-        answer: generateTemplateAnswer(),
+        answer: fallbackAnswer,
         markingSchemeSteps: subject.ex.a,
         formulaHighlight,
         trapWarning: subject.ex.x[0] || 'Always write units, signs, and a concluding sentence.',
@@ -259,7 +257,7 @@ export async function POST(req: NextRequest) {
 
     const aiAnswer =
       geminiData?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
-      generateTemplateAnswer();
+      generateTemplateAnswer('[Live AI response empty; falling back to syllabus template]\n');
 
     const liveResponse: TutorResponsePayload = {
       answer: aiAnswer,
@@ -278,10 +276,17 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(liveResponse);
   } catch (err: unknown) {
-    console.error('[TUTOR] Gemini API call failed or timed out:', err);
+    const isTimeout = err instanceof Error && err.name === 'AbortError';
+    console.error('Gemini API call failed or timed out:', err);
+
+    const fallbackAnswer = generateTemplateAnswer(
+      isTimeout
+        ? '[Offline Syllabus Grounded Answer · Gemini API request timed out (10s)]\n'
+        : '[Offline Syllabus Grounded Answer · Live AI connection error]\n'
+    );
 
     const fallbackResponse: TutorResponsePayload = {
-      answer: generateTemplateAnswer(),
+      answer: fallbackAnswer,
       markingSchemeSteps: subject.ex.a,
       formulaHighlight,
       trapWarning: subject.ex.x[0] || 'Always write units, signs, and a concluding sentence.',
