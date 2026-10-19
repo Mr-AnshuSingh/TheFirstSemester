@@ -2,6 +2,7 @@ import { SUBJECTS } from '../src/data/subjects';
 import { SC } from '../src/data/scenes';
 import { PPS_EXPERIMENTS } from '../src/data/ppsExperiments';
 import { QUIZ_BANK } from '../src/data/quizBank';
+import { TOPIC_CONTENT } from '../src/data/topicContent';
 
 interface CheckResult {
   passed: boolean;
@@ -86,6 +87,33 @@ const unitsWithTwoQuestions = SUBJECTS.every((s) =>
   })
 );
 assertCheck('All 43 units have at least 2 quiz questions', unitsWithTwoQuestions ? 'All 43 units covered' : 'Missing questions', 'All 43 units covered', unitsWithTwoQuestions);
+
+// 10. Phase 3B Topic Content and 2D Diagram validation (Math-I)
+const math = SUBJECTS.find((s) => s.id === 'math');
+let mathTopicsCovered = 0;
+let mathDiagramsValid = true;
+let mathContentValid = true;
+
+if (math) {
+  math.units.forEach((u, uIdx) => {
+    u.topics.forEach((_, tIdx) => {
+      const tc = TOPIC_CONTENT[`math:${uIdx}:${tIdx}`];
+      if (tc) {
+        mathTopicsCovered++;
+        if (!tc.diagram?.svg?.startsWith('<svg') || !tc.diagram?.svg?.endsWith('</svg>')) {
+          mathDiagramsValid = false;
+        }
+        if (!tc.definition || !tc.slip || !tc.examAnswer || tc.examAnswer.length === 0) {
+          mathContentValid = false;
+        }
+      }
+    });
+  });
+}
+
+assertCheck('Math-I topics covered with TopicContent', mathTopicsCovered, 40, mathTopicsCovered === 40);
+assertCheck('Math-I 2D diagrams XML valid', mathDiagramsValid ? 'All 40 SVGs valid' : 'Invalid SVG found', 'All 40 SVGs valid', mathDiagramsValid);
+assertCheck('Math-I TopicContent definitions and exam answers valid', mathContentValid ? 'All 40 entries complete' : 'Incomplete entries', 'All 40 entries complete', mathContentValid);
 
 // Print summary
 console.log('--------------------------------------------------');

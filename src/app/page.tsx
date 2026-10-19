@@ -20,6 +20,7 @@ import { FlashcardsModal } from '@/components/study/FlashcardsModal';
 import { CommandPaletteModal } from '@/components/study/CommandPaletteModal';
 import { FormulaSheetModal } from '@/components/study/FormulaSheetModal';
 import { ConfidenceLevel, FlashcardProgress } from '@/types/syllabus';
+import { getTopicContent, getUnitStory } from '@/data/topicContent';
 import {
   DEFAULT_STUDY_STATE,
   PersistedStudyState,
@@ -40,6 +41,7 @@ export default function SemesterOnePage() {
   const [flashcardsModalOpen, setFlashcardsModalOpen] = useState<boolean>(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState<boolean>(false);
   const [formulaSheetModalOpen, setFormulaSheetModalOpen] = useState<boolean>(false);
+  const [diagramModal, setDiagramModal] = useState<{ svg: string; title: string; caption: string } | null>(null);
 
   useEffect(() => {
     loadStudyState().then((loaded) => {
@@ -82,6 +84,7 @@ export default function SemesterOnePage() {
     build: () => {},
   };
   const workedExample = WORKED[sceneKey];
+  const unitStory = getUnitStory(activeSubject.id, ui);
 
   const isTopicDone = (subId: string, uIdx: number, tIdx: number) =>
     !!st.done[`${subId}:${uIdx}:${tIdx}`];
@@ -199,14 +202,90 @@ export default function SemesterOnePage() {
         </div>
 
         <div id="tab-content" className="flex-1 overflow-y-auto p-4 space-y-4">
+          {/* TAB 0: EXPLAIN ("Understand it") */}
           {st.tab === 0 && (
-            <>
-              <div className="box">
-                <h4>Unit Core Intuition</h4>
-                <p className="text-sm leading-relaxed text-ink/90 font-medium font-sans">
-                  <KatexText htmlOrText={activeUnit.s} />
-                </p>
+            <div className="space-y-5">
+              {/* 3-Part Plain English Story */}
+              {unitStory ? (
+                <div className="box space-y-3 bg-paper p-4 rounded-lg border-[1.5px] border-ink shadow-sketchy">
+                  <h4 className="font-hand text-xl font-bold text-accentRed pb-1 border-b border-dashed border-ink/20">
+                    Unit Big Picture · Plain English Intuition
+                  </h4>
+                  <div className="space-y-2 text-xs md:text-sm text-ink/90 font-medium leading-relaxed font-sans">
+                    <div>
+                      <strong className="text-accentRed uppercase tracking-wider text-[11px] block font-mono">1. What It Is:</strong>
+                      <p><KatexText htmlOrText={unitStory.whatItIs} /></p>
+                    </div>
+                    <div>
+                      <strong className="text-accentRed uppercase tracking-wider text-[11px] block font-mono">2. Why It Matters:</strong>
+                      <p><KatexText htmlOrText={unitStory.whyItMatters} /></p>
+                    </div>
+                    <div>
+                      <strong className="text-accentRed uppercase tracking-wider text-[11px] block font-mono">3. How It Works:</strong>
+                      <p><KatexText htmlOrText={unitStory.howItWorks} /></p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="box">
+                  <h4>Unit Core Intuition</h4>
+                  <p className="text-sm leading-relaxed text-ink/90 font-medium font-sans">
+                    <KatexText htmlOrText={activeUnit.s} />
+                  </p>
+                </div>
+              )}
+
+              {/* Topics with Inline 2D Hand-drawn Diagrams */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-1 border-b-2 border-ink">
+                  <h4 className="font-hand text-xl font-bold">Topic-by-Topic Intuition &amp; 2D Diagrams</h4>
+                  <span className="text-xs text-dim font-mono">{activeUnit.topics.length} topics</span>
+                </div>
+
+                {activeUnit.topics.map((top, tIdx) => {
+                  const star = top.startsWith('★');
+                  const cleanTitle = star ? top.slice(1).trim() : top;
+                  const topicData = getTopicContent(activeSubject.id, ui, tIdx);
+
+                  return (
+                    <div key={tIdx} className="p-3.5 bg-paper border-[1.5px] border-ink rounded-lg shadow-sketchy space-y-2.5">
+                      <div className="flex items-start justify-between gap-2 pb-1 border-b border-dashed border-ink/20">
+                        <h5 className="font-hand text-lg font-bold text-ink leading-snug">
+                          {star && <span className="text-accentRed mr-1">★</span>}
+                          {cleanTitle}
+                        </h5>
+                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-ink/30 bg-gold/10 text-dim shrink-0">
+                          Topic {tIdx + 1}
+                        </span>
+                      </div>
+
+                      {topicData ? (
+                        <div className="text-xs md:text-sm text-ink/90 leading-relaxed font-sans space-y-1.5">
+                          {topicData.explain.map((sent, sIdx) => (
+                            <p key={sIdx}><KatexText htmlOrText={sent} /></p>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-xs text-dim italic">Concept overview being compiled...</p>
+                      )}
+
+                      {/* Inline 2D Diagram */}
+                      {topicData?.diagram && (
+                        <div className="mt-2 pt-2 border-t border-dashed border-ink/20">
+                          <div
+                            dangerouslySetInnerHTML={{ __html: topicData.diagram.svg }}
+                            className="w-full bg-paper rounded border border-ink/20 p-2 overflow-x-auto [&_svg]:w-full [&_svg]:h-auto [&_svg_.l]:stroke-[#2b2a28] [&_svg_.l]:fill-none [&_svg_.l]:stroke-[1.8] [&_svg_.a]:stroke-[#d4572b] [&_svg_.a]:fill-none [&_svg_.a]:stroke-[2.2] [&_svg_.d]:stroke-[#6b665b] [&_svg_.d]:fill-none [&_svg_.d]:stroke-dasharray-[4,3] [&_svg_.fa]:fill-[#f6e3b4] [&_svg_.fa]:stroke-[#2b2a28] [&_svg_.t]:fill-[#2b2a28] [&_svg_.t]:text-[11px] [&_svg_.ta]:fill-[#d4572b] [&_svg_.ta]:font-bold [&_svg_.ta]:text-[11.5px]"
+                          />
+                          <p className="text-[11px] text-dim font-hand mt-1 italic text-center">
+                            Figure {ui + 1}.{tIdx + 1}: {topicData.diagram.caption}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
+
               {workedExample && (
                 <div className="box">
                   <h4>Exam Model Worked Problem</h4>
@@ -215,28 +294,129 @@ export default function SemesterOnePage() {
                   </div>
                 </div>
               )}
-              <div className="box">
-                <h4>High-Yield Key Takeaways</h4>
-                <ul className="text-xs space-y-1.5 list-disc list-inside text-ink/90 font-mono">
-                  {activeUnit.k.map((kItem, idx) => (
-                    <li key={idx}>
-                      <KatexText htmlOrText={kItem} />
-                    </li>
-                  ))}
-                </ul>
-              </div>
+
               {activeSubject.id === 'pps' && <PpsCodeRunner unitIndex={ui} />}
-            </>
+            </div>
           )}
 
+          {/* TAB 1: 2D DIAGRAMS GALLERY */}
           {st.tab === 1 && (
             <SvgDiagramViewer diagrams={activeSubject.dg} subjectShortName={activeSubject.co} />
           )}
 
+          {/* TAB 2: NOTES ("Revise it fast, exam-ready") */}
           {st.tab === 2 && (
-            <div className="space-y-4">
-              <div className="box">
-                <h4>Personal Unit Notes (Synced to Prisma / IndexedDB)</h4>
+            <div className="space-y-6">
+              <div className="flex items-center justify-between pb-1 border-b-2 border-ink">
+                <div>
+                  <h4 className="font-hand text-2xl font-bold">Exam Revision Notes · {activeSubject.co} U{ui + 1}</h4>
+                  <p className="text-xs text-dim">Structured definition, formulas, steps, diagrams &amp; marking schemes</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="text-xs px-2.5 py-1 border-[1.5px] border-ink rounded font-hand font-bold bg-paper hover:bg-gold/20"
+                >
+                  Print Unit Notes
+                </button>
+              </div>
+
+              {activeUnit.topics.map((top, tIdx) => {
+                const star = top.startsWith('★');
+                const cleanTitle = star ? top.slice(1).trim() : top;
+                const topicData = getTopicContent(activeSubject.id, ui, tIdx);
+
+                return (
+                  <div key={tIdx} className="p-4 bg-paper border-[1.5px] border-ink rounded-lg shadow-sketchy space-y-3 font-sans">
+                    <div className="flex items-baseline justify-between border-b border-dashed border-ink/30 pb-1">
+                      <h5 className="font-hand text-xl font-bold text-ink">
+                        {star && <span className="text-accentRed mr-1">★</span>}
+                        {cleanTitle}
+                      </h5>
+                      <span className="text-[11px] font-mono text-dim">Topic {tIdx + 1}</span>
+                    </div>
+
+                    {topicData ? (
+                      <div className="space-y-3 text-xs md:text-sm">
+                        {/* 1. Definition (1 line) */}
+                        <div>
+                          <span className="font-bold text-accentRed uppercase tracking-wider text-[11px] block font-mono">
+                            1. DEFINITION
+                          </span>
+                          <p className="font-medium text-ink/90 leading-relaxed">
+                            <KatexText htmlOrText={topicData.definition} />
+                          </p>
+                        </div>
+
+                        {/* 2. Formula or rule (boxed) */}
+                        {topicData.formula && (
+                          <div>
+                            <span className="font-bold text-dim uppercase tracking-wider text-[11px] block font-mono">
+                              2. FORMULA / RULE
+                            </span>
+                            <div className="p-2 bg-gold/10 border-[1.5px] border-ink rounded font-mono text-xs my-1">
+                              <KatexText htmlOrText={topicData.formula} />
+                            </div>
+                          </div>
+                        )}
+
+                        {/* 3. Derivation or procedure steps */}
+                        {topicData.steps && topicData.steps.length > 0 && (
+                          <div>
+                            <span className="font-bold text-dim uppercase tracking-wider text-[11px] block font-mono">
+                              3. STEP-BY-STEP PROCEDURE / DERIVATION
+                            </span>
+                            <ul className="space-y-1 list-none pl-1 text-ink/90 text-xs">
+                              {topicData.steps.map((stItem, sIdx) => (
+                                <li key={sIdx} className="leading-relaxed">
+                                  <KatexText htmlOrText={stItem} />
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        {/* 4. 2D Diagram */}
+                        {topicData.diagram && (
+                          <div>
+                            <span className="font-bold text-dim uppercase tracking-wider text-[11px] block font-mono">
+                              4. EXAM DIAGRAM
+                            </span>
+                            <div
+                              dangerouslySetInnerHTML={{ __html: topicData.diagram.svg }}
+                              className="w-full bg-paper rounded border border-ink/20 p-2 my-1 overflow-x-auto [&_svg]:w-full [&_svg]:h-auto [&_svg_.l]:stroke-[#2b2a28] [&_svg_.l]:fill-none [&_svg_.l]:stroke-[1.8] [&_svg_.a]:stroke-[#d4572b] [&_svg_.a]:fill-none [&_svg_.a]:stroke-[2.2] [&_svg_.d]:stroke-[#6b665b] [&_svg_.d]:fill-none [&_svg_.d]:stroke-dasharray-[4,3] [&_svg_.fa]:fill-[#f6e3b4] [&_svg_.fa]:stroke-[#2b2a28] [&_svg_.t]:fill-[#2b2a28] [&_svg_.t]:text-[11px] [&_svg_.ta]:fill-[#d4572b] [&_svg_.ta]:font-bold [&_svg_.ta]:text-[11.5px]"
+                            />
+                          </div>
+                        )}
+
+                        {/* 5. Write this for full marks */}
+                        <div>
+                          <span className="font-bold text-accentTeal uppercase tracking-wider text-[11px] block font-mono">
+                            5. WRITE THIS FOR FULL MARKS
+                          </span>
+                          <ul className="list-disc list-inside space-y-0.5 text-xs text-ink/90">
+                            {topicData.examAnswer.map((ans, aIdx) => (
+                              <li key={aIdx}><KatexText htmlOrText={ans} /></li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        {/* 6. Common slip */}
+                        <div className="p-2 bg-accentRed/10 border-l-2 border-accentRed rounded-r text-xs text-accentRed font-medium">
+                          <span className="font-bold font-mono uppercase text-[10px] block">COMMON EXAM SLIP:</span>
+                          {topicData.slip}
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-dim italic">Notes being compiled for this topic...</p>
+                    )}
+                  </div>
+                );
+              })}
+
+              {/* Free text personal notes */}
+              <div className="box mt-6">
+                <h4>Personal Student Notes (Synced to IndexedDB / Prisma)</h4>
                 <textarea
                   rows={6}
                   value={st.customNotes[`${activeSubject.id}:${ui}`] || ''}
@@ -247,13 +427,14 @@ export default function SemesterOnePage() {
                       customNotes: { ...prev.customNotes, [`${activeSubject.id}:${ui}`]: val },
                     }));
                   }}
-                  placeholder={`Write your revision notes, viva insights, or teacher tips for ${activeUnit.t}...`}
-                  className="w-full p-2.5 text-sm bg-paper border-[1.5px] border-ink rounded-lg font-hand text-base"
+                  placeholder={`Add personal lecturer tips, worked steps or doubts for ${activeUnit.t}...`}
+                  className="w-full p-2.5 text-base font-hand bg-paper border-[1.5px] border-ink rounded-lg"
                 />
               </div>
             </div>
           )}
 
+          {/* TAB 3: TOPICS (Checklist + Diagram Thumbnails) */}
           {st.tab === 3 && (
             <div>
               <div className="ct flex items-center justify-between">
@@ -268,9 +449,10 @@ export default function SemesterOnePage() {
                 const key = `${activeSubject.id}:${ui}:${idx}`;
                 const checked = isTopicDone(activeSubject.id, ui, idx);
                 const conf = getTopicConfidence(activeSubject.id, ui, idx);
+                const topicData = getTopicContent(activeSubject.id, ui, idx);
 
                 return (
-                  <div key={key} className="flex items-center justify-between gap-1 py-1 px-1.5 rounded hover:bg-gold/10">
+                  <div key={key} className="flex items-center justify-between gap-1 py-1.5 px-2 rounded hover:bg-gold/10 transition-colors">
                     <label className="tk flex-1 cursor-pointer">
                       <input
                         type="checkbox"
@@ -288,34 +470,55 @@ export default function SemesterOnePage() {
                       </span>
                     </label>
 
-                    {/* 3-State Confidence Dot */}
-                    <button
-                      type="button"
-                      onClick={() => cycleTopicConfidence(activeSubject.id, ui, idx)}
-                      className="w-6 h-6 rounded-full flex items-center justify-center border-[1.5px] border-ink bg-paper hover:bg-gold/20 shrink-0 transition-colors"
-                      title={
-                        conf === 2
-                          ? 'Mastered (click to reset)'
-                          : conf === 1
-                          ? 'Familiar (click for Mastered)'
-                          : 'Unstudied (click for Familiar)'
-                      }
-                      aria-label="Toggle confidence rating"
-                    >
-                      {conf === 2 ? (
-                        <span className="w-3.5 h-3.5 rounded-full bg-accentTeal block" />
-                      ) : conf === 1 ? (
-                        <span className="w-2.5 h-2.5 rounded-full bg-gold block" />
-                      ) : (
-                        <span className="w-1.5 h-1.5 rounded-full bg-ink/25 block" />
+                    <div className="flex items-center gap-2 shrink-0">
+                      {/* Diagram thumbnail button */}
+                      {topicData?.diagram && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setDiagramModal({
+                              svg: topicData.diagram.svg,
+                              title: label,
+                              caption: topicData.diagram.caption,
+                            })
+                          }
+                          className="px-1.5 py-0.5 text-[10px] font-mono border border-ink/30 rounded bg-paper hover:bg-gold/20 text-dim hover:text-ink"
+                          title="Preview 2D Diagram"
+                        >
+                          2D Diagram
+                        </button>
                       )}
-                    </button>
+
+                      {/* 3-State Confidence Dot */}
+                      <button
+                        type="button"
+                        onClick={() => cycleTopicConfidence(activeSubject.id, ui, idx)}
+                        className="w-6 h-6 rounded-full flex items-center justify-center border-[1.5px] border-ink bg-paper hover:bg-gold/20 shrink-0 transition-colors"
+                        title={
+                          conf === 2
+                            ? 'Mastered (click to reset)'
+                            : conf === 1
+                            ? 'Familiar (click for Mastered)'
+                            : 'Unstudied (click for Familiar)'
+                        }
+                        aria-label="Toggle confidence rating"
+                      >
+                        {conf === 2 ? (
+                          <span className="w-3.5 h-3.5 rounded-full bg-accentTeal block" />
+                        ) : conf === 1 ? (
+                          <span className="w-2.5 h-2.5 rounded-full bg-gold block" />
+                        ) : (
+                          <span className="w-1.5 h-1.5 rounded-full bg-ink/25 block" />
+                        )}
+                      </button>
+                    </div>
                   </div>
                 );
               })}
             </div>
           )}
 
+          {/* TAB 4: QUIZ */}
           {st.tab === 4 && (
             <UnitQuiz
               subject={activeSubject}
@@ -335,6 +538,7 @@ export default function SemesterOnePage() {
             />
           )}
 
+          {/* TAB 5: EXAM */}
           {st.tab === 5 && (
             <div>
               <div className="box">
@@ -374,6 +578,7 @@ export default function SemesterOnePage() {
             </div>
           )}
 
+          {/* TAB 6: AI TUTOR */}
           {st.tab === 6 && (
             <AiTutorPanel
               subject={activeSubject}
@@ -441,6 +646,42 @@ export default function SemesterOnePage() {
         subjects={SUBJECTS}
         onClose={() => setFormulaSheetModalOpen(false)}
       />
+
+      {/* Lightbox Diagram Preview Modal */}
+      {diagramModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setDiagramModal(null)}
+          className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-xs"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-lg bg-paper border-2 border-ink rounded-xl p-5 shadow-2xl space-y-3 font-sans text-ink"
+          >
+            <div className="flex items-center justify-between border-b border-dashed border-ink/30 pb-2">
+              <h3 className="font-hand text-2xl font-bold text-accentRed">
+                {diagramModal.title}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setDiagramModal(null)}
+                className="text-2xl font-bold text-dim hover:text-ink leading-none px-2"
+                aria-label="Close diagram preview"
+              >
+                ✕
+              </button>
+            </div>
+            <div
+              dangerouslySetInnerHTML={{ __html: diagramModal.svg }}
+              className="w-full bg-paper rounded border border-ink/20 p-3 overflow-x-auto [&_svg]:w-full [&_svg]:h-auto [&_svg_.l]:stroke-[#2b2a28] [&_svg_.l]:fill-none [&_svg_.l]:stroke-[1.8] [&_svg_.a]:stroke-[#d4572b] [&_svg_.a]:fill-none [&_svg_.a]:stroke-[2.2] [&_svg_.d]:stroke-[#6b665b] [&_svg_.d]:fill-none [&_svg_.d]:stroke-dasharray-[4,3] [&_svg_.fa]:fill-[#f6e3b4] [&_svg_.fa]:stroke-[#2b2a28] [&_svg_.t]:fill-[#2b2a28] [&_svg_.t]:text-[11px] [&_svg_.ta]:fill-[#d4572b] [&_svg_.ta]:font-bold [&_svg_.ta]:text-[11.5px]"
+            />
+            <p className="text-xs font-hand text-dim italic text-center">
+              {diagramModal.caption}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

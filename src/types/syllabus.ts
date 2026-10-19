@@ -212,3 +212,24 @@ export interface FlashcardProgress {
 
 export type ConfidenceLevel = 0 | 1 | 2;
 
+export interface DiagramRef {
+  svg: string;
+  caption: string;
+  redrawLabelMap?: Record<string, string>;
+}
+
+export interface TopicContent {
+  explain: string[];
+  definition: string;
+  formula?: string;
+  steps?: string[];
+  examAnswer: string[];
+  slip: string;
+  diagram: DiagramRef;
+}
+
+export interface UnitStory {
+  whatItIs: string;
+  whyItMatters: string;
+  howItWorks: string;
+}
