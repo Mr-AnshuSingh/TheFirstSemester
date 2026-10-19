@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { subjectId, unitIndex, stepIndex, question } = parsed.data;
+  const { subjectId, unitIndex, stepIndex, question, image } = parsed.data;
 
   // 3. Locate syllabus context
   const subject = SUBJECTS.find((s) => s.id === subjectId) || SUBJECTS[0];
@@ -92,12 +92,13 @@ export async function POST(req: NextRequest) {
   const generateTemplateAnswer = (noticePrefix: string): string => {
     return [
       noticePrefix,
-      `[LNJPIT Chapra · ${subject.name} (${subject.code}) · Unit ${safeUnitIdx + 1}: ${unit.t}]`,
+      image ? '📸 [Attached Problem Image Received]' : '',
+      `[${subject.name} (${subject.code}) · Unit ${safeUnitIdx + 1}: ${unit.t}]`,
       ``,
       `1. Core Principle (${activeStep.t}):`,
       `${activeStep.d}`,
       ``,
-      `2. Intuitive Explanation:`,
+      `2. Concept Explanation:`,
       `${unit.s}`,
       workedExample
         ? `\n3. University Exam Worked Pattern:\n${workedExample.replace(/<[^>]+>/g, '')}`
@@ -139,14 +140,14 @@ export async function POST(req: NextRequest) {
   // 5. Call Gemini API from the server with syllabus context
   try {
     const systemInstructionText =
-      `You are the LNJPIT Chapra B.Tech Semester I Senior Academic AI Tutor (Mathematics & Computing, Group A).\n` +
-      `Your mission is to help engineering students resolve ANY doubt, conceptual question, derivation, numerical problem, exam trap, or coding question related to their Semester I subjects.\n` +
+      `You are the Senior Academic AI Doubt Solver & Tutor for B.Tech Semester I Engineering.\n` +
+      `Your mission is to help engineering students resolve ANY doubt, conceptual question, camera-captured problem, handwritten equation, derivation, numerical calculation, exam trap, or coding question related to their Semester I subjects.\n` +
       `Pedagogical Guidelines:\n` +
-      `1. Provide clear, structured, step-by-step explanations. Start with intuitive plain-English intuition, followed by formal mathematical or scientific definitions.\n` +
+      `1. Provide clear, structured, step-by-step explanations. Start with intuitive conceptual explanations, followed by formal mathematical or scientific definitions.\n` +
       `2. Format all mathematical equations and variables using standard LaTeX enclosed in single dollar signs like $f'(c) = 0$ or $\\nabla \\times \\mathbf{B}$ for KaTeX rendering.\n` +
-      `3. For derivations or numericals, provide numbered procedural steps with substitutions and explicit units.\n` +
-      `4. Highlight typical university examination traps and the essential points needed for full marks.\n` +
-      `5. If a question is outside B.Tech engineering studies, politely guide the student back to their syllabus.\n` +
+      `3. When an image is attached (photo of a problem, handwritten work, textbook page, diagram, or calculation): carefully inspect the image, transcribe the problem accurately, check every step, pinpoint any calculation or conceptual errors if reviewing work, and provide a full step-by-step solution.\n` +
+      `4. For derivations or numericals, provide numbered procedural steps with substitutions and explicit units.\n` +
+      `5. Highlight typical university examination traps and the essential points needed for full marks.\n` +
       `6. Never fabricate university regulations or passing marks.`;
 
     const allUnitTopics = unit.topics.join(', ');
@@ -156,8 +157,38 @@ export async function POST(req: NextRequest) {
       `Unit Syllabus Topics: ${allUnitTopics}\n` +
       `Active Step: ${activeStep.t} — ${activeStep.d}\n` +
       `Key Formulas / Moves: ${unit.k.join('; ')}\n\n` +
+      (image
+        ? `[ATTACHED IMAGE]: A photo/screenshot of a problem, diagram, or handwritten work has been uploaded by the student. Please read, transcribe, analyze, and solve it in detail.\n\n`
+        : '') +
       `Student Question / Doubt: "${question}"\n\n` +
       `Provide a comprehensive, step-by-step academic explanation with LaTeX formulas addressing the student's doubt.`;
+
+    // Parse image into Gemini inline_data format if provided
+    let imagePart: { inline_data: { mime_type: string; data: string } } | null = null;
+    if (image) {
+      const match = image.match(/^data:([^;]+);base64,(.+)$/);
+      if (match) {
+        imagePart = {
+          inline_data: {
+            mime_type: match[1],
+            data: match[2],
+          },
+        };
+      } else {
+        imagePart = {
+          inline_data: {
+            mime_type: 'image/jpeg',
+            data: image,
+          },
+        };
+      }
+    }
+
+    const userParts: Array<{ text?: string; inline_data?: { mime_type: string; data: string } }> = [];
+    if (imagePart) {
+      userParts.push(imagePart);
+    }
+    userParts.push({ text: userPromptText });
 
     const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(
       apiKey.trim()
@@ -181,12 +212,12 @@ export async function POST(req: NextRequest) {
           contents: [
             {
               role: 'user',
-              parts: [{ text: userPromptText }],
+              parts: userParts,
             },
           ],
           generationConfig: {
             temperature: 0.2,
-            maxOutputTokens: 800,
+            maxOutputTokens: 1000,
           },
         }),
         signal: controller.signal,

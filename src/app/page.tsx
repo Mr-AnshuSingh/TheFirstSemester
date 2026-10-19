@@ -740,6 +740,7 @@ export default function SemesterOnePage() {
         onOpenNotes={() => setNotesModalOpen(true)}
         onOpenFormulaSheet={() => setFormulaSheetModalOpen(true)}
         onOpenBackup={() => setBackupModalOpen(true)}
+        onOpenTutor={() => persist((prev) => ({ ...prev, tab: 6 }))}
       />
 
       <FormulaSheetModal

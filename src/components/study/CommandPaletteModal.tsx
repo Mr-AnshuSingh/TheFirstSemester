@@ -25,6 +25,7 @@ interface CommandPaletteModalProps {
   onOpenFormulaSheet: () => void;
   onOpenBackup?: () => void;
   onOpenClasses?: () => void;
+  onOpenTutor?: () => void;
 }
 
 export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
@@ -39,6 +40,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
   onOpenFormulaSheet,
   onOpenBackup,
   onOpenClasses,
+  onOpenTutor,
 }) => {
   const [query, setQuery] = useState<string>('');
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
@@ -69,6 +71,19 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
         onSelect: () => {
           onClose();
           onOpenClasses();
+        },
+      });
+    }
+    if (onOpenTutor) {
+      list.push({
+        id: 'act-tutor',
+        type: 'action',
+        title: 'Open AI Doubt Solver & Tutor (Camera & Voice)',
+        subtitle: 'Snap a problem photo, solve numericals & derivations step-by-step',
+        badge: 'AI Tutor',
+        onSelect: () => {
+          onClose();
+          onOpenTutor();
         },
       });
     }
@@ -217,6 +232,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
     onOpenNotes,
     onOpenBackup,
     onOpenClasses,
+    onOpenTutor,
   ]);
 
   // Filter items matching query

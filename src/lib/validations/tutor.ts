@@ -28,6 +28,10 @@ export const tutorRequestSchema = z.object({
     .trim()
     .min(1, 'Question cannot be empty')
     .max(1000, 'Question exceeds maximum limit of 1000 characters'),
+  image: z
+    .string()
+    .max(8000000, 'Image payload exceeds maximum limit of 8MB')
+    .optional(),
 });
 
 export type TutorRequestInput = z.infer<typeof tutorRequestSchema>;

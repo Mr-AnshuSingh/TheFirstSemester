@@ -179,6 +179,7 @@ export interface TutorRequestPayload {
   unitIndex: number;
   stepIndex: number;
   question: string;
+  image?: string;
 }
 
 export interface TutorResponsePayload {
