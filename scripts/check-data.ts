@@ -115,6 +115,34 @@ assertCheck('Math-I topics covered with TopicContent', mathTopicsCovered, 40, ma
 assertCheck('Math-I 2D diagrams XML valid', mathDiagramsValid ? 'All 40 SVGs valid' : 'Invalid SVG found', 'All 40 SVGs valid', mathDiagramsValid);
 assertCheck('Math-I TopicContent definitions and exam answers valid', mathContentValid ? 'All 40 entries complete' : 'Incomplete entries', 'All 40 entries complete', mathContentValid);
 
+// 11. Phase 3B Topic Content and 2D Diagram validation (Physics)
+const phy = SUBJECTS.find((s) => s.id === 'phy');
+let phyTopicsCovered = 0;
+let phyDiagramsValid = true;
+let phyContentValid = true;
+
+if (phy) {
+  phy.units.forEach((u, uIdx) => {
+    u.topics.forEach((_, tIdx) => {
+      const tc = TOPIC_CONTENT[`phy:${uIdx}:${tIdx}`];
+      if (tc) {
+        phyTopicsCovered++;
+        if (!tc.diagram?.svg?.startsWith('<svg') || !tc.diagram?.svg?.endsWith('</svg>')) {
+          phyDiagramsValid = false;
+        }
+        if (!tc.definition || !tc.slip || !tc.examAnswer || tc.examAnswer.length === 0) {
+          phyContentValid = false;
+        }
+      }
+    });
+  });
+}
+
+assertCheck('Physics topics covered with TopicContent', phyTopicsCovered, 57, phyTopicsCovered === 57);
+assertCheck('Physics 2D diagrams XML valid', phyDiagramsValid ? 'All 57 SVGs valid' : 'Invalid SVG found', 'All 57 SVGs valid', phyDiagramsValid);
+assertCheck('Physics TopicContent definitions and exam answers valid', phyContentValid ? 'All 57 entries complete' : 'Incomplete entries', 'All 57 entries complete', phyContentValid);
+
+
 // Print summary
 console.log('--------------------------------------------------');
 console.log('LNJPIT Semester I: Data Integrity Verification');
