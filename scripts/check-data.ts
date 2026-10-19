@@ -196,6 +196,33 @@ assertCheck('AI topics covered with TopicContent', aiTopicsCovered, 39, aiTopics
 assertCheck('AI 2D diagrams XML valid', aiDiagramsValid ? 'All 39 SVGs valid' : 'Invalid SVG found', 'All 39 SVGs valid', aiDiagramsValid);
 assertCheck('AI TopicContent definitions and exam answers valid', aiContentValid ? 'All 39 entries complete' : 'Incomplete entries', 'All 39 entries complete', aiContentValid);
 
+// 14. Phase 3B Topic Content and 2D Diagram validation (CFET)
+const cfet = SUBJECTS.find((s) => s.id === 'cfet');
+let cfetTopicsCovered = 0;
+let cfetDiagramsValid = true;
+let cfetContentValid = true;
+
+if (cfet) {
+  cfet.units.forEach((u, uIdx) => {
+    u.topics.forEach((_, tIdx) => {
+      const tc = TOPIC_CONTENT[`cfet:${uIdx}:${tIdx}`];
+      if (tc) {
+        cfetTopicsCovered++;
+        if (!tc.diagram?.svg?.startsWith('<svg') || !tc.diagram?.svg?.endsWith('</svg>')) {
+          cfetDiagramsValid = false;
+        }
+        if (!tc.definition || !tc.slip || !tc.examAnswer || tc.examAnswer.length === 0) {
+          cfetContentValid = false;
+        }
+      }
+    });
+  });
+}
+
+assertCheck('CFET topics covered with TopicContent', cfetTopicsCovered, 42, cfetTopicsCovered === 42);
+assertCheck('CFET 2D diagrams XML valid', cfetDiagramsValid ? 'All 42 SVGs valid' : 'Invalid SVG found', 'All 42 SVGs valid', cfetDiagramsValid);
+assertCheck('CFET TopicContent definitions and exam answers valid', cfetContentValid ? 'All 42 entries complete' : 'Incomplete entries', 'All 42 entries complete', cfetContentValid);
+
 
 
 // Print summary
