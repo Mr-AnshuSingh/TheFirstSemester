@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Subject } from '@/types/syllabus';
 import { PPS_EXPERIMENTS } from '@/data/ppsExperiments';
+import { useModalA11y } from './useModalA11y';
 
 interface SearchItem {
   id: string;
@@ -42,6 +43,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
   onOpenClasses,
   onOpenTutor,
 }) => {
+  const modalRef = useModalA11y(open, onClose);
   const [query, setQuery] = useState<string>('');
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -272,6 +274,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
 
   return (
     <div
+      ref={modalRef}
       role="dialog"
       aria-modal="true"
       aria-label="Command Palette"

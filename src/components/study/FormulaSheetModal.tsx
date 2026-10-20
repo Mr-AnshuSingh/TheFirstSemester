@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { Subject } from '@/types/syllabus';
 import { KatexText } from './KatexRenderer';
+import { useModalA11y } from './useModalA11y';
 
 interface FormulaSheetModalProps {
   open: boolean;
@@ -15,6 +16,7 @@ export const FormulaSheetModal: React.FC<FormulaSheetModalProps> = ({
   subjects,
   onClose,
 }) => {
+  const modalRef = useModalA11y(open, onClose);
   const [query, setQuery] = useState<string>('');
   const [selectedSubId, setSelectedSubId] = useState<string>('all');
 
@@ -42,12 +44,17 @@ export const FormulaSheetModal: React.FC<FormulaSheetModalProps> = ({
 
   return (
     <div
+      ref={modalRef}
       role="dialog"
       aria-modal="true"
       aria-label="Comprehensive Formula Sheet"
+      onClick={onClose}
       className="fixed inset-0 z-50 overflow-y-auto bg-black/60 flex items-center justify-center p-3 md:p-6"
     >
-      <div className="relative w-full max-w-4xl bg-paper border-2 border-ink rounded-lg shadow-2xl flex flex-col max-h-[90vh] overflow-hidden font-sans text-ink">
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-4xl bg-paper border-2 border-ink rounded-lg shadow-2xl flex flex-col max-h-[90vh] overflow-hidden font-sans text-ink"
+      >
         {/* Header */}
         <div className="p-4 border-b-2 border-ink flex items-center justify-between bg-gold/10">
           <div>

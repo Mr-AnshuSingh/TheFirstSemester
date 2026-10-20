@@ -15,6 +15,7 @@ A visual, interactive study companion presenting all 8 subjects and 43 syllabus 
   7. **PPS Lab** (Programming for Problem Solving Lab): 6 units · 17 topics · 1 credit · 17 C/C++ experiments
   8. **EIC** (Essence of Indian Constitution): 5 units · 17 topics · 0 credits (Mandatory Audit Course)
 - **Worked Problems Status:** `WORKED` provides complete, 100% coverage across all 43 units (all 8 subjects populated with step-by-step derivations and numericals in Phase 5).
+- **Accessibility & Tests (Phase 6):** Standardized WCAG AA dialog focus trap & `Escape` key handling across all 8 modal dialogues via `useModalA11y`, skip-to-study link, and 8 comprehensive Playwright E2E suites (20 tests passing across desktop and 390px mobile).
 
 ## Core Architecture & Guidelines
 

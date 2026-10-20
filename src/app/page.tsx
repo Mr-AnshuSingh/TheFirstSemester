@@ -245,8 +245,26 @@ export default function SemesterOnePage() {
     }));
   };
 
+  // Close lightbox diagram preview on Escape
+  useEffect(() => {
+    if (!diagramModal) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setDiagramModal(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [diagramModal]);
+
   return (
     <div id="app" className="grid h-screen grid-cols-1 lg:grid-cols-[272px_minmax(0,1fr)_440px] grid-rows-[auto_minmax(0,1fr)]">
+      <a
+        href="#study"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[9999] focus:bg-ink focus:text-paper focus:px-4 focus:py-2 focus:rounded-md focus:border-2 focus:border-gold font-bold shadow-lg"
+      >
+        Skip to study content
+      </a>
       <Header
         subjects={SUBJECTS}
         activeSubjectIndex={si}
@@ -765,6 +783,7 @@ export default function SemesterOnePage() {
         <div
           role="dialog"
           aria-modal="true"
+          aria-labelledby="diagram-modal-title"
           onClick={() => setDiagramModal(null)}
           className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-xs"
         >
@@ -773,7 +792,7 @@ export default function SemesterOnePage() {
             className="w-full max-w-lg bg-paper border-2 border-ink rounded-xl p-5 shadow-2xl space-y-3 font-sans text-ink"
           >
             <div className="flex items-center justify-between border-b border-dashed border-ink/30 pb-2">
-              <h3 className="font-hand text-2xl font-bold text-accentRed">
+              <h3 id="diagram-modal-title" className="font-hand text-2xl font-bold text-accentRed">
                 {diagramModal.title}
               </h3>
               <button

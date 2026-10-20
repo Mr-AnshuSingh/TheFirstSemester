@@ -6,6 +6,7 @@ import { SC } from '@/data/scenes';
 import { WORKED } from '@/data/worked';
 import { getTopicContent } from '@/data/topicContent';
 import { KatexText } from './KatexRenderer';
+import { useModalA11y } from './useModalA11y';
 
 interface AllNotesModalProps {
   open: boolean;
@@ -14,6 +15,8 @@ interface AllNotesModalProps {
 }
 
 export const AllNotesModal: React.FC<AllNotesModalProps> = ({ open, subjects, onClose }) => {
+  const modalRef = useModalA11y(open, onClose);
+
   if (!open) return null;
 
   const downloadTxt = () => {
@@ -76,7 +79,7 @@ export const AllNotesModal: React.FC<AllNotesModalProps> = ({ open, subjects, on
   };
 
   return (
-    <div id="nmodal" role="dialog" aria-modal="true" aria-label="All notes" className="on">
+    <div id="nmodal" ref={modalRef} role="dialog" aria-modal="true" aria-label="All notes" className="on">
       <div className="mw">
         <div className="mh noprint">
           <div>

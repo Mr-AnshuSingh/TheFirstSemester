@@ -10,6 +10,7 @@ import {
   exportStudyStateAsJSON,
   validateAndParseImportJSON,
 } from '@/lib/offlineStorage';
+import { useModalA11y } from './useModalA11y';
 
 interface BackupModalProps {
   open: boolean;
@@ -26,6 +27,7 @@ export const BackupModal: React.FC<BackupModalProps> = ({
   onImportState,
   onResetState,
 }) => {
+  const modalRef = useModalA11y(open, onClose);
   const [importText, setImportText] = useState<string>('');
   const [importStatus, setImportStatus] = useState<{
     type: 'idle' | 'success' | 'error';
@@ -98,6 +100,7 @@ export const BackupModal: React.FC<BackupModalProps> = ({
 
   return (
     <div
+      ref={modalRef}
       role="dialog"
       aria-modal="true"
       aria-labelledby="backup-modal-title"

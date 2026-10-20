@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { TT, HUE, UNIVERSITY_HOLIDAYS_2026 } from '@/data/schedule';
 import { UniversityHoliday } from '@/types/syllabus';
+import { useModalA11y } from './useModalA11y';
 
 interface ClassesScheduledModalProps {
   open: boolean;
@@ -30,6 +31,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
   onChangeLabGroup,
   onClose,
 }) => {
+  const modalRef = useModalA11y(open, onClose);
   const [activeTab, setActiveTab] = useState<'timetable' | 'holidays'>('timetable');
   const [monthFilter, setMonthFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -200,7 +202,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
   if (!open) return null;
 
   return (
-    <div id="modal" role="dialog" aria-modal="true" aria-label="Classes Scheduled" className="on">
+    <div id="modal" ref={modalRef} role="dialog" aria-modal="true" aria-label="Classes Scheduled" className="on">
       <div className="mw max-w-4xl max-h-[92vh] flex flex-col">
         {/* Modal Header */}
         <div className="mh pb-3 border-b-2 border-ink">

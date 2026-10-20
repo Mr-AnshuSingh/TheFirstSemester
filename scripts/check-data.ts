@@ -544,6 +544,9 @@ const testFiles = [
   'quiz.spec.ts',
   'backup-roundtrip.spec.ts',
   'mobile-390px.spec.ts',
+  'accessibility.spec.ts',
+  'ai-tutor.spec.ts',
+  'worked-examples.spec.ts',
 ];
 let allE2ETestsExist = true;
 for (const tf of testFiles) {
@@ -551,7 +554,7 @@ for (const tf of testFiles) {
     allE2ETestsExist = false;
   }
 }
-assertCheck('All 5 Playwright E2E test suites present in tests/e2e/', allE2ETestsExist, true, allE2ETestsExist);
+assertCheck('All 8 Playwright E2E test suites present in tests/e2e/', allE2ETestsExist, true, allE2ETestsExist);
 
 // Print summary
 console.log('--------------------------------------------------');

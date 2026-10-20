@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { Subject, Flashcard, FlashcardProgress } from '@/types/syllabus';
 import { FLASHCARDS } from '@/data/flashcards';
 import { KatexText } from './KatexRenderer';
+import { useModalA11y } from './useModalA11y';
 
 interface FlashcardsModalProps {
   open: boolean;
@@ -20,6 +21,7 @@ export const FlashcardsModal: React.FC<FlashcardsModalProps> = ({
   onUpdateProgress,
   onClose,
 }) => {
+  const modalRef = useModalA11y(open, onClose);
   const [selectedSubId, setSelectedSubId] = useState<string>('all');
   const [filterDueOnly, setFilterDueOnly] = useState<boolean>(false);
   const [currentIdx, setCurrentIdx] = useState<number>(0);
@@ -108,12 +110,17 @@ export const FlashcardsModal: React.FC<FlashcardsModalProps> = ({
 
   return (
     <div
+      ref={modalRef}
       role="dialog"
       aria-modal="true"
       aria-label="SM-2 Spaced Repetition Flashcards"
+      onClick={onClose}
       className="fixed inset-0 z-50 overflow-y-auto bg-black/60 flex items-center justify-center p-3 md:p-6"
     >
-      <div className="relative w-full max-w-2xl bg-paper border-2 border-ink rounded-lg shadow-2xl overflow-hidden font-sans text-ink flex flex-col max-h-[92vh]">
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-2xl bg-paper border-2 border-ink rounded-lg shadow-2xl overflow-hidden font-sans text-ink flex flex-col max-h-[92vh]"
+      >
         {/* Header */}
         <div className="p-4 border-b-2 border-ink flex items-center justify-between bg-gold/10">
           <div>

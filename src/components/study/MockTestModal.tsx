@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { QuizQuestion } from '@/types/syllabus';
 import { getRandomMockQuestions } from '@/data/quizBank';
 import { KatexText } from './KatexRenderer';
+import { useModalA11y } from './useModalA11y';
 
 interface MockTestModalProps {
   open: boolean;
@@ -16,6 +17,7 @@ export const MockTestModal: React.FC<MockTestModalProps> = ({
   onClose,
   onRecordWeakSpots,
 }) => {
+  const modalRef = useModalA11y(open, onClose);
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [userAnswers, setUserAnswers] = useState<Record<string, number>>({});
   const [currentIdx, setCurrentIdx] = useState<number>(0);
@@ -83,12 +85,17 @@ export const MockTestModal: React.FC<MockTestModalProps> = ({
 
   return (
     <div
+      ref={modalRef}
       role="dialog"
       aria-modal="true"
       aria-label="Semester-1 Mock Test"
+      onClick={onClose}
       className="fixed inset-0 z-50 overflow-y-auto bg-black/60 flex items-center justify-center p-3 md:p-6"
     >
-      <div className="relative w-full max-w-4xl bg-paper border-2 border-ink rounded-lg shadow-2xl max-h-[90vh] flex flex-col overflow-hidden font-sans text-ink">
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-4xl bg-paper border-2 border-ink rounded-lg shadow-2xl max-h-[90vh] flex flex-col overflow-hidden font-sans text-ink"
+      >
         {/* Header */}
         <div className="p-4 border-b-2 border-ink flex items-center justify-between bg-gold/10">
           <div>

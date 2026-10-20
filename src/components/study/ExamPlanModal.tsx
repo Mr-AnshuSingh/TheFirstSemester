@@ -3,6 +3,7 @@
 import React from 'react';
 import { Subject } from '@/types/syllabus';
 import { WEEKS, RULES } from '@/data/schedule';
+import { useModalA11y } from './useModalA11y';
 
 interface ExamPlanModalProps {
   open: boolean;
@@ -21,12 +22,14 @@ export const ExamPlanModal: React.FC<ExamPlanModalProps> = ({
   onChangeExamDate,
   onClose,
 }) => {
+  const modalRef = useModalA11y(open, onClose);
+
   if (!open) return null;
 
   const fmCount = subjects.reduce((n, s) => n + s.fm.length, 0);
 
   return (
-    <div id="modal" role="dialog" aria-modal="true" aria-label="Exam plan" className="on">
+    <div id="modal" ref={modalRef} role="dialog" aria-modal="true" aria-label="Exam plan" className="on">
       <div className="mw">
         <div className="mh">
           <div>
