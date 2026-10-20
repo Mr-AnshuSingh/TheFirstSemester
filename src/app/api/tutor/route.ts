@@ -68,6 +68,11 @@ export async function POST(req: NextRequest) {
 
   const { subjectId, unitIndex, stepIndex, question, image } = parsed.data;
 
+  // Sanitize question: strip control characters and limit excessive whitespace
+  const sanitizedQuestion = question
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/g, '')
+    .trim();
+
   // 3. Locate syllabus context
   const subject = SUBJECTS.find((s) => s.id === subjectId) || SUBJECTS[0];
   const safeUnitIdx = Math.max(0, Math.min(subject.units.length - 1, unitIndex));
@@ -79,7 +84,7 @@ export async function POST(req: NextRequest) {
   const workedExample = WORKED[sceneKey] || '';
 
   // Match key moves relevant to question
-  const qLower = question.toLowerCase();
+  const qLower = sanitizedQuestion.toLowerCase();
   const matchedMoves = unit.k.filter((move) =>
     qLower
       .split(/\s+/)
@@ -88,23 +93,22 @@ export async function POST(req: NextRequest) {
   );
   const formulaHighlight = matchedMoves.length > 0 ? matchedMoves : unit.k.slice(0, 4);
 
-  // Template answer generator for offline / fallback scenarios (no technical API debug text)
+  // Template answer generator for offline / fallback scenarios (clean markdown, zero UI emojis)
   const generateTemplateAnswer = (): string => {
     return [
-      image ? '📸 [Attached Problem Analyzed]' : '',
-      `[Academic Syllabus Solution · ${subject.name} (${subject.code}) · Unit ${safeUnitIdx + 1}: ${unit.t}]`,
+      image ? '**[Attached Problem Analyzed]**\n' : '',
+      `### Academic Syllabus Solution: ${subject.name} (${subject.code}) — Unit ${safeUnitIdx + 1}: ${unit.t}`,
       ``,
-      `1. Core Principle (${activeStep.t}):`,
+      `#### 1. Core Principle (${activeStep.t})`,
       `${activeStep.d}`,
       ``,
-      `2. Concept Explanation:`,
+      `#### 2. Concept Explanation & Working`,
       `${unit.s}`,
       workedExample
-        ? `\n3. University Exam Worked Pattern:\n${workedExample.replace(/<[^>]+>/g, '')}`
+        ? `\n#### 3. University Exam Worked Pattern\n${workedExample.replace(/<[^>]+>/g, '')}`
         : '',
       ``,
-      `4. Exam Chant to Remember:`,
-      `"${subject.hook}"`,
+      `> **Exam Chant to Remember**: "${subject.hook}"`,
     ]
       .filter(Boolean)
       .join('\n');
@@ -137,15 +141,16 @@ export async function POST(req: NextRequest) {
   // 5. Call Live AI with resilient dual-model fallback (flash-latest -> flash-lite-latest)
   try {
     const systemInstructionText =
-      `You are the Senior Academic AI Doubt Solver & Tutor for B.Tech Semester I Engineering.\n` +
+      `You are the Senior Academic AI Doubt Solver & Tutor for B.Tech Semester I Engineering (LNJPIT Chapra).\n` +
       `Your mission is to help engineering students resolve ANY doubt, conceptual question, camera-captured problem, handwritten equation, derivation, numerical calculation, exam trap, or coding question related to their Semester I subjects.\n` +
-      `Pedagogical Guidelines:\n` +
-      `1. Provide clear, structured, step-by-step explanations. Start with intuitive conceptual explanations, followed by formal mathematical or scientific definitions.\n` +
-      `2. Format all mathematical equations and variables using standard LaTeX enclosed in single dollar signs like $f'(c) = 0$ or $\\nabla \\times \\mathbf{B}$ for KaTeX rendering.\n` +
-      `3. When an image is attached (photo of a problem, handwritten work, textbook page, diagram, or calculation): carefully inspect the image, transcribe the problem accurately, check every step, pinpoint any calculation or conceptual errors if reviewing work, and provide a full step-by-step solution.\n` +
-      `4. For derivations or numericals, provide numbered procedural steps with substitutions and explicit units.\n` +
-      `5. Highlight typical university examination traps and the essential points needed for full marks.\n` +
-      `6. Never fabricate university regulations or passing marks.`;
+      `Pedagogical & Formatting Guidelines:\n` +
+      `1. Provide clear, structured, step-by-step explanations using Markdown (##, ###, bullet points, and numbered lists).\n` +
+      `2. Format inline mathematical equations and variables using standard LaTeX enclosed in single dollar signs like $f'(c) = 0$ or $\\nabla \\times \\mathbf{B}$.\n` +
+      `3. Format standalone formulas or multi-line derivations using display math blocks with double dollar signs: $$\\dots$$.\n` +
+      `4. When an image is attached (photo of a problem, handwritten work, textbook page, diagram, or calculation): carefully inspect the image, transcribe the problem accurately, check every step, pinpoint any calculation or conceptual errors if reviewing work, and provide a full step-by-step solution.\n` +
+      `5. For derivations or numericals, provide numbered procedural steps with substitutions and explicit units.\n` +
+      `6. Highlight typical university examination traps and the essential points needed for full marks.\n` +
+      `7. Do not use UI emojis in your explanation text; maintain a clean, authoritative academic textbook tone.`;
 
     const allUnitTopics = unit.topics.join(', ');
     const userPromptText =
@@ -157,7 +162,7 @@ export async function POST(req: NextRequest) {
       (image
         ? `[ATTACHED IMAGE]: A photo/screenshot of a problem, diagram, or handwritten work has been uploaded by the student. Please read, transcribe, analyze, and solve it in detail.\n\n`
         : '') +
-      `Student Question / Doubt: "${question}"\n\n` +
+      `Student Question / Doubt: "${sanitizedQuestion}"\n\n` +
       `Provide a comprehensive, step-by-step academic explanation with LaTeX formulas addressing the student's doubt.`;
 
     // Parse image into inline_data format if provided

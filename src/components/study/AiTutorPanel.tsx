@@ -2,7 +2,22 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Subject, SceneStep, TutorResponsePayload } from '@/types/syllabus';
-import { KatexText } from './KatexRenderer';
+import { SafeMarkdownText, KatexText } from './KatexRenderer';
+import {
+  GraduationCap,
+  Camera,
+  Upload,
+  Mic,
+  MicOff,
+  RefreshCw,
+  Copy,
+  Check,
+  X,
+  AlertTriangle,
+  FileText,
+  Sparkles,
+  BookOpen,
+} from 'lucide-react';
 
 interface AiTutorPanelProps {
   subject: Subject;
@@ -29,6 +44,7 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
   const [question, setQuestion] = useState('');
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState<TutorResponsePayload | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
   const [attachedImage, setAttachedImage] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [history, setHistory] = useState<DoubtHistoryItem[]>([]);
@@ -119,7 +135,7 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
         videoRef.current.play();
       }
     } catch {
-      setCameraError('Camera access denied or unavailable. Use the "Upload / Snap" button below.');
+      setCameraError('Camera access denied or unavailable. Use the "Upload Image" or "Snap Photo" button below.');
     }
   };
 
@@ -210,8 +226,30 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
     } catch (err) {
       console.error('Failed to process image file:', err);
     }
-    // reset input
     e.target.value = '';
+  };
+
+  // Offline grounded syllabus answer builder
+  const buildOfflineAnswer = (q: string, hasPhoto: boolean): string => {
+    return [
+      hasPhoto ? '**[Attached Problem Analyzed]**\n' : '',
+      `### Academic Syllabus Solution: ${subject.name} (${subject.code}) — Unit ${unitIndex + 1}: ${unit.t}`,
+      ``,
+      `#### 1. Core Governing Principle (${activeStep.t})`,
+      `${activeStep.d}`,
+      ``,
+      `#### 2. Analytical Working & Method`,
+      `- **Question Addressed**: "${q.slice(0, 90)}${q.length > 90 ? '...' : ''}" for ${subject.co}.`,
+      `- **Standard Examination Procedure**: State all governing equations, substitute given parameters with SI units, and box the final result.`,
+      `- **Key Syllabus Relation**: Directly addresses Unit ${unitIndex + 1} topics (${unit.topics.slice(0, 3).join(', ')}).`,
+      ``,
+      `#### 3. Essential Formulas & Notation`,
+      ...unit.k.slice(0, 3).map((f) => `- $${f}$`),
+      ``,
+      `> **Examiner Note**: Always conclude derivations and numericals with standard engineering units and a concluding sentence explaining the physical significance.`,
+    ]
+      .filter(Boolean)
+      .join('\n');
   };
 
   // Main Ask / Solve doubt function
@@ -219,7 +257,6 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
     const query = (qText ?? question).trim();
     const currentImg = imagePayload !== undefined ? imagePayload : attachedImage;
 
-    // Default question if only photo is attached
     const finalQuestion =
       query ||
       (currentImg
@@ -229,6 +266,8 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
     if (!finalQuestion) return;
 
     setLoading(true);
+    setApiError(null);
+
     try {
       const res = await fetch('/api/tutor', {
         method: 'POST',
@@ -241,8 +280,36 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
           ...(currentImg ? { image: currentImg } : {}),
         }),
       });
-      const data: TutorResponsePayload = await res.json();
-      setResponse(data);
+
+      const data = await res.json();
+
+      if (!res.ok || !data || !data.answer) {
+        const errorMsg =
+          data?.error ||
+          (res.status === 429
+            ? 'Rate limit reached (15 requests/min). Displaying offline syllabus-grounded solution.'
+            : `Server responded with status ${res.status}. Displaying offline syllabus-grounded solution.`);
+        setApiError(errorMsg);
+
+        const fallbackPayload: TutorResponsePayload = {
+          answer: buildOfflineAnswer(finalQuestion, Boolean(currentImg)),
+          markingSchemeSteps: subject.ex.a,
+          formulaHighlight: unit.k.slice(0, 4),
+          trapWarning: subject.ex.x[0] || 'Always write units and final conclusions clearly.',
+          contextUsed: {
+            subjectName: subject.name,
+            subjectCode: subject.code,
+            unitTitle: unit.t,
+            activeStepTitle: activeStep.t,
+          },
+          isLiveAi: false,
+          source: 'offline_template',
+        };
+        setResponse(fallbackPayload);
+        return;
+      }
+
+      setResponse(data as TutorResponsePayload);
 
       // Save to recent doubt session history
       setHistory((prev) => [
@@ -251,17 +318,16 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
           question: finalQuestion,
           hasImage: Boolean(currentImg),
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          response: data,
+          response: data as TutorResponsePayload,
         },
         ...prev.slice(0, 9),
       ]);
     } catch {
+      setApiError('Network connection issue. Displaying offline syllabus-grounded solution.');
       const fallbackPayload: TutorResponsePayload = {
-        answer: currentImg
-          ? `📸 [Problem Photo Attached]\nFor ${subject.name} (${subject.code}) — Unit ${unitIndex + 1}: ${unit.t}\n\n1. Core Governing Principle (${activeStep.t}):\n${activeStep.d}\n\n2. Method to Solve:\n- Identify all given parameters and state governing formulas.\n- Carry out stepwise substitution with explicit units.\n- State final boxed result with units and sign.`
-          : `For ${subject.name} (${subject.code}) — Unit ${unitIndex + 1}: ${unit.t}, start by stating the core principle (${activeStep.t}): ${activeStep.d}`,
+        answer: buildOfflineAnswer(finalQuestion, Boolean(currentImg)),
         markingSchemeSteps: subject.ex.a,
-        formulaHighlight: unit.k.slice(0, 3),
+        formulaHighlight: unit.k.slice(0, 4),
         trapWarning: subject.ex.x[0] || 'Always write units and final conclusions clearly.',
         contextUsed: {
           subjectName: subject.name,
@@ -311,8 +377,8 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
         {/* Header Section */}
         <div className="flex items-start justify-between gap-2 border-b border-dashed border-ink/20 pb-2">
           <div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-base">🎓</span>
+            <div className="flex items-center gap-2">
+              <GraduationCap className="w-5 h-5 text-accentRed" />
               <h3 className="font-hand text-2xl font-bold text-accentRed tracking-wide">
                 AI Doubt Solver &amp; Tutor
               </h3>
@@ -352,14 +418,37 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
 
         {/* Injected Syllabus Context Bar */}
         <div className="text-sm text-dim bg-paper2/70 p-2.5 rounded border border-ink/20 font-sans flex items-center justify-between flex-wrap gap-1">
-          <div>
-            Context: <strong>{subject.co}</strong> ({subject.code}) · Unit {unitIndex + 1}:{' '}
-            <strong>{unit.t}</strong>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <BookOpen className="w-4 h-4 text-accentTeal" />
+            <span>
+              Context: <strong>{subject.co}</strong> ({subject.code}) · Unit {unitIndex + 1}:{' '}
+              <strong>{unit.t}</strong>
+            </span>
           </div>
           <span className="text-xs font-mono text-accentRed font-bold">
             Step {stepIndex + 1}: {activeStep.t}
           </span>
         </div>
+
+        {/* API Error / Rate Limit Banner */}
+        {apiError && (
+          <div className="p-3 rounded-lg bg-amber-50 border border-amber-300 text-amber-900 text-xs font-mono flex items-start justify-between gap-2 animate-fadeIn">
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+              <div>
+                <span className="font-bold">Notice:</span> {apiError}
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setApiError(null)}
+              className="text-amber-700 hover:text-amber-900 p-0.5"
+              aria-label="Dismiss notice"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
 
         {activeTab === 'history' ? (
           /* Doubt History View */
@@ -375,7 +464,19 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                 className="p-2.5 rounded-lg border border-ink/30 bg-[#fffdf7] hover:border-ink hover:shadow-sm cursor-pointer transition text-left space-y-1"
               >
                 <div className="flex items-center justify-between text-xs text-dim font-mono">
-                  <span>{item.hasImage ? '📸 Image Doubt' : '📝 Text Question'}</span>
+                  <span className="flex items-center gap-1">
+                    {item.hasImage ? (
+                      <>
+                        <Camera className="w-3.5 h-3.5 text-accentRed" />
+                        <span>Image Doubt</span>
+                      </>
+                    ) : (
+                      <>
+                        <FileText className="w-3.5 h-3.5 text-dim" />
+                        <span>Text Question</span>
+                      </>
+                    )}
+                  </span>
                   <span>{item.timestamp}</span>
                 </div>
                 <div className="text-sm font-sans text-ink font-medium line-clamp-2">
@@ -398,8 +499,9 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                     className="w-14 h-14 object-cover rounded border border-ink shadow-sm shrink-0 bg-paper"
                   />
                   <div className="min-w-0">
-                    <span className="text-xs font-bold text-accentRed font-mono block">
-                      📸 Problem Photo Attached
+                    <span className="text-xs font-bold text-accentRed font-mono flex items-center gap-1">
+                      <Camera className="w-3.5 h-3.5" />
+                      <span>Problem Photo Attached</span>
                     </span>
                     <span className="text-sm text-dim truncate block font-sans">
                       Ready for multi-modal OCR and step-by-step solving.
@@ -409,9 +511,10 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                 <button
                   type="button"
                   onClick={() => setAttachedImage(null)}
-                  className="px-2.5 py-1 text-xs font-mono font-bold text-accentRed bg-paper border border-accentRed/40 rounded hover:bg-accentRed hover:text-paper transition shrink-0"
+                  className="px-2.5 py-1 text-xs font-mono font-bold text-accentRed bg-paper border border-accentRed/40 rounded hover:bg-accentRed hover:text-paper transition shrink-0 flex items-center gap-1"
                 >
-                  ✕ Remove
+                  <X className="w-3.5 h-3.5" />
+                  <span>Remove</span>
                 </button>
               </div>
             )}
@@ -494,9 +597,9 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                     type="button"
                     onClick={openCameraModal}
                     title="Open live camera viewfinder to snap problem photo"
-                    className="btn px-3 py-1 text-sm flex items-center gap-1 bg-paper hover:bg-gold/20"
+                    className="btn px-3 py-1 text-sm flex items-center gap-1.5 bg-paper hover:bg-gold/20"
                   >
-                    <span>📷</span>
+                    <Camera className="w-4 h-4 text-ink" />
                     <span>Camera</span>
                   </button>
 
@@ -505,9 +608,9 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                     type="button"
                     onClick={() => nativeCameraInputRef.current?.click()}
                     title="Capture directly with phone camera"
-                    className="btn px-3 py-1 text-sm flex items-center gap-1 bg-paper hover:bg-gold/20"
+                    className="btn px-3 py-1 text-sm flex items-center gap-1.5 bg-paper hover:bg-gold/20"
                   >
-                    <span>📸</span>
+                    <Camera className="w-4 h-4 text-ink" />
                     <span>Snap Photo</span>
                   </button>
 
@@ -516,9 +619,9 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     title="Upload problem photo or screenshot"
-                    className="btn px-3 py-1 text-sm flex items-center gap-1 bg-paper hover:bg-gold/20"
+                    className="btn px-3 py-1 text-sm flex items-center gap-1.5 bg-paper hover:bg-gold/20"
                   >
-                    <span>📁</span>
+                    <Upload className="w-4 h-4 text-ink" />
                     <span>Upload Image</span>
                   </button>
 
@@ -527,11 +630,11 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                     type="button"
                     onClick={toggleSpeechRecognition}
                     title="Speak your doubt via microphone"
-                    className={`btn px-3 py-1 text-sm flex items-center gap-1 ${
+                    className={`btn px-3 py-1 text-sm flex items-center gap-1.5 ${
                       isListening ? 'bg-accentRed text-paper' : 'bg-paper hover:bg-gold/20'
                     }`}
                   >
-                    <span>🎤</span>
+                    {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4 text-ink" />}
                     <span>{isListening ? 'Stop' : 'Voice'}</span>
                   </button>
                 </div>
@@ -552,9 +655,15 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                         Solving...
                       </span>
                     ) : attachedImage ? (
-                      '📸 Solve Photo Problem'
+                      <span className="flex items-center gap-1.5">
+                        <Camera className="w-4 h-4" />
+                        <span>Solve Photo Problem</span>
+                      </span>
                     ) : (
-                      'Ask Tutor'
+                      <span className="flex items-center gap-1.5">
+                        <Sparkles className="w-4 h-4" />
+                        <span>Ask Tutor</span>
+                      </span>
                     )}
                   </button>
                 </div>
@@ -569,8 +678,8 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-ink/75 backdrop-blur-sm animate-fadeIn">
           <div className="bg-paper max-w-lg w-full rounded-xl border-2 border-ink shadow-sketchy p-4 space-y-3">
             <div className="flex items-center justify-between border-b border-ink/30 pb-2">
-              <div className="flex items-center gap-1.5">
-                <span className="text-lg">📷</span>
+              <div className="flex items-center gap-2">
+                <Camera className="w-5 h-5 text-ink" />
                 <h4 className="font-hand text-xl font-bold text-ink">
                   Capture Problem with Camera
                 </h4>
@@ -632,16 +741,18 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                   <button
                     type="button"
                     onClick={toggleCameraFacing}
-                    className="btn text-xs px-2.5 py-1"
+                    className="btn text-xs px-2.5 py-1 flex items-center gap-1"
                   >
-                    🔄 Switch Camera
+                    <RefreshCw className="w-3.5 h-3.5" />
+                    <span>Switch Camera</span>
                   </button>
                   <button
                     type="button"
                     onClick={capturePhoto}
-                    className="btn red text-sm font-hand font-bold px-5 py-2 shadow-sm"
+                    className="btn red text-sm font-hand font-bold px-5 py-2 shadow-sm flex items-center gap-1.5"
                   >
-                    📸 Snap Photo &amp; Attach
+                    <Camera className="w-4 h-4" />
+                    <span>Snap Photo &amp; Attach</span>
                   </button>
                 </div>
               </div>
@@ -666,8 +777,9 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                 {response.isLiveAi ? 'Live Cloud AI (Multimodal)' : 'Offline Syllabus Grounded'}
               </span>
               {attachedImage && (
-                <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-accentRed/10 text-accentRed border border-accentRed/30">
-                  📸 Vision Analyzed
+                <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-accentRed/10 text-accentRed border border-accentRed/30 flex items-center gap-1">
+                  <Camera className="w-3 h-3" />
+                  <span>Vision Analyzed</span>
                 </span>
               )}
             </div>
@@ -676,13 +788,23 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
               <button
                 type="button"
                 onClick={copySolutionToClipboard}
-                className="btn text-sm px-2.5 py-0.5 bg-paper hover:bg-gold/20"
+                className="btn text-sm px-2.5 py-1 bg-paper hover:bg-gold/20 flex items-center gap-1.5"
                 title="Copy complete solution to clipboard"
               >
-                {copied ? '✓ Copied!' : '📋 Copy Solution'}
+                {copied ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-accentTeal" />
+                    <span>Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5 text-ink" />
+                    <span>Copy Solution</span>
+                  </>
+                )}
               </button>
               <span className="text-xs text-dim font-mono">
-                {response.contextUsed.subjectCode} · Unit {unitIndex + 1}
+                {response.contextUsed?.subjectCode || subject.code} · Unit {unitIndex + 1}
               </span>
             </div>
           </div>
@@ -692,8 +814,8 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
             <strong className="text-accentTeal uppercase tracking-wider block text-xs mb-1.5 font-mono font-bold">
               University Marking-Scheme Answer &amp; Derivation:
             </strong>
-            <div className="text-base text-ink whitespace-pre-line leading-relaxed font-sans bg-paper/60 p-3.5 rounded-lg border border-ink/20">
-              <KatexText htmlOrText={response.answer} />
+            <div className="text-base text-ink leading-relaxed font-sans bg-paper/70 p-4 rounded-lg border border-ink/20 shadow-sm overflow-x-auto">
+              <SafeMarkdownText content={response.answer} />
             </div>
           </div>
 
@@ -730,9 +852,10 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
           {/* Examiner Trap Warning */}
           {response.trapWarning && (
             <div className="p-3 rounded bg-[#fff1e8] border border-accentRed text-ink space-y-1">
-              <strong className="text-accentRed font-bold font-mono text-xs block">
-                ⚠️ EXAMINER TRAP ALERT:
-              </strong>
+              <div className="flex items-center gap-1.5 text-accentRed font-bold font-mono text-xs">
+                <AlertTriangle className="w-4 h-4" />
+                <span>EXAMINER TRAP ALERT:</span>
+              </div>
               <p className="text-sm md:text-base font-sans">{response.trapWarning}</p>
             </div>
           )}

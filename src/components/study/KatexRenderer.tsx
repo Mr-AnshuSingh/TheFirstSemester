@@ -37,24 +37,214 @@ const MATH_REPLACEMENTS: [RegExp, string][] = [
   [/P\(A\|B\) = P\(B\|A\)·P\(A\)\/P\(B\)/g, '$P(A\\mid B) = \\frac{P(B\\mid A)P(A)}{P(B)}$'],
 ];
 
-export function renderRichMathHtml(rawText: string): string {
-  let processed = rawText;
+export function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+export function renderRichMathHtml(rawText: string | null | undefined): string {
+  if (!rawText) return '';
+  let processed = String(rawText);
+
+  // 1. Display math $$...$$
+  processed = processed.replace(/\$\$([\s\S]+?)\$\$/g, (_, tex) => {
+    try {
+      return `<div class="katex-display my-2 overflow-x-auto text-center">${katex.renderToString(tex.trim(), {
+        displayMode: true,
+        throwOnError: false,
+      })}</div>`;
+    } catch {
+      return `<div class="katex-error my-2 font-mono text-xs text-accentRed">${escapeHtml(tex)}</div>`;
+    }
+  });
+
+  // 2. Syllabus math substitutions
   for (const [pattern, replacement] of MATH_REPLACEMENTS) {
     processed = processed.replace(pattern, replacement);
   }
-  return processed.replace(/\$([^$]+)\$/g, (_, tex) => {
+
+  // 3. Inline math $...$
+  processed = processed.replace(/\$([^$\n]+?)\$/g, (_, tex) => {
     try {
-      return katex.renderToString(tex, { throwOnError: false, displayMode: false });
+      return katex.renderToString(tex.trim(), {
+        displayMode: false,
+        throwOnError: false,
+      });
     } catch {
-      return tex;
+      return `$${tex}$`;
     }
   });
+
+  return processed;
 }
 
-export const KatexText: React.FC<{ htmlOrText: string; className?: string }> = ({
+/**
+ * Safely parses markdown prose, syllabus KaTeX formulas, and prevents XSS.
+ * Eliminates whitespace-pre-line KaTeX layout destruction.
+ */
+export function renderSafeMarkdownAndMathHtml(rawText: string | null | undefined): string {
+  if (!rawText) return '';
+
+  const mathPlaceholders: string[] = [];
+  const placeholderPrefix = '___KATEX_PH_';
+
+  let text = String(rawText);
+
+  // 1. Extract Display Math $$...$$
+  text = text.replace(/\$\$([\s\S]+?)\$\$/g, (_, tex) => {
+    try {
+      const rendered = katex.renderToString(tex.trim(), {
+        displayMode: true,
+        throwOnError: false,
+      });
+      const id = `${placeholderPrefix}${mathPlaceholders.length}___`;
+      mathPlaceholders.push(`<div class="katex-display my-3 overflow-x-auto text-center">${rendered}</div>`);
+      return id;
+    } catch {
+      const id = `${placeholderPrefix}${mathPlaceholders.length}___`;
+      mathPlaceholders.push(`<pre class="font-mono text-xs my-2 text-accentRed">${escapeHtml(tex)}</pre>`);
+      return id;
+    }
+  });
+
+  // 2. Extract Inline Math $...$
+  text = text.replace(/\$([^$\n]+?)\$/g, (_, tex) => {
+    try {
+      const rendered = katex.renderToString(tex.trim(), {
+        displayMode: false,
+        throwOnError: false,
+      });
+      const id = `${placeholderPrefix}${mathPlaceholders.length}___`;
+      mathPlaceholders.push(rendered);
+      return id;
+    } catch {
+      const id = `${placeholderPrefix}${mathPlaceholders.length}___`;
+      mathPlaceholders.push(escapeHtml(tex));
+      return id;
+    }
+  });
+
+  // 3. Apply syllabus formula replacements if any raw syllabus notations are present
+  for (const [pattern, replacement] of MATH_REPLACEMENTS) {
+    text = text.replace(pattern, (match) => {
+      try {
+        const cleanTex = replacement.replace(/^\$|\$$/g, '');
+        const rendered = katex.renderToString(cleanTex, {
+          displayMode: false,
+          throwOnError: false,
+        });
+        const id = `${placeholderPrefix}${mathPlaceholders.length}___`;
+        mathPlaceholders.push(rendered);
+        return id;
+      } catch {
+        return match;
+      }
+    });
+  }
+
+  // 4. Safe HTML escape on surrounding text
+  text = escapeHtml(text);
+
+  // 5. Code blocks ```lang\ncode\n```
+  text = text.replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g, (_, _lang, code) => {
+    return `<pre class="my-2.5 p-3 rounded-lg bg-paper2/90 border border-ink/30 font-mono text-xs overflow-x-auto text-ink"><code>${code.trim()}</code></pre>`;
+  });
+
+  // 6. Inline code `code`
+  text = text.replace(/`([^`\n]+)`/g, '<code class="px-1.5 py-0.5 rounded bg-ink/10 font-mono text-xs text-accentRed font-semibold">$1</code>');
+
+  // 7. Headings
+  text = text.replace(/^### (.*$)/gim, '<h4 class="text-base font-bold font-hand text-accentRed mt-3.5 mb-1">$1</h4>');
+  text = text.replace(/^## (.*$)/gim, '<h3 class="text-lg font-bold font-hand text-ink mt-4 mb-1.5 border-b border-dashed border-ink/20 pb-0.5">$1</h3>');
+  text = text.replace(/^# (.*$)/gim, '<h2 class="text-xl font-bold font-hand text-ink mt-4 mb-2">$1</h2>');
+
+  // 8. Blockquotes
+  text = text.replace(/^> (.*$)/gim, '<blockquote class="border-l-4 border-accentRed pl-3 py-1 my-2 bg-gold/10 text-ink/90 font-sans text-sm md:text-base">$1</blockquote>');
+
+  // 9. Bold & Italic
+  text = text.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-ink">$1</strong>');
+  text = text.replace(/\*([^*]+)\*/g, '<em class="italic text-ink/90">$1</em>');
+
+  // 10. Split lines to parse unordered & ordered lists vs paragraphs
+  const lines = text.split('\n');
+  const outLines: string[] = [];
+  let inUl = false;
+  let inOl = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const ulMatch = line.match(/^[\s]*[-*]\s+(.*)$/);
+    const olMatch = line.match(/^[\s]*\d+\.\s+(.*)$/);
+
+    if (ulMatch) {
+      if (inOl) {
+        outLines.push('</ol>');
+        inOl = false;
+      }
+      if (!inUl) {
+        outLines.push('<ul class="list-disc pl-5 my-2 space-y-1 font-sans text-sm md:text-base">');
+        inUl = true;
+      }
+      outLines.push(`<li>${ulMatch[1]}</li>`);
+    } else if (olMatch) {
+      if (inUl) {
+        outLines.push('</ul>');
+        inUl = false;
+      }
+      if (!inOl) {
+        outLines.push('<ol class="list-decimal pl-5 my-2 space-y-1 font-sans text-sm md:text-base">');
+        inOl = true;
+      }
+      outLines.push(`<li>${olMatch[1]}</li>`);
+    } else {
+      if (inUl) {
+        outLines.push('</ul>');
+        inUl = false;
+      }
+      if (inOl) {
+        outLines.push('</ol>');
+        inOl = false;
+      }
+      if (!line.trim()) {
+        outLines.push('');
+      } else if (line.startsWith('<h') || line.startsWith('<pre') || line.startsWith('<blockquote')) {
+        outLines.push(line);
+      } else {
+        outLines.push(`<p class="my-1.5 leading-relaxed font-sans text-sm md:text-base text-ink/90">${line}</p>`);
+      }
+    }
+  }
+
+  if (inUl) outLines.push('</ul>');
+  if (inOl) outLines.push('</ol>');
+
+  text = outLines.join('\n');
+
+  // 11. Re-inject KaTeX math placeholders
+  for (let i = 0; i < mathPlaceholders.length; i++) {
+    const placeholder = `${placeholderPrefix}${i}___`;
+    text = text.replace(placeholder, mathPlaceholders[i]);
+  }
+
+  return text;
+}
+
+export const KatexText: React.FC<{ htmlOrText: string | null | undefined; className?: string }> = ({
   htmlOrText,
   className,
 }) => {
   const rendered = useMemo(() => renderRichMathHtml(htmlOrText), [htmlOrText]);
   return <span className={className} dangerouslySetInnerHTML={{ __html: rendered }} />;
+};
+
+export const SafeMarkdownText: React.FC<{ content: string | null | undefined; className?: string }> = ({
+  content,
+  className,
+}) => {
+  const rendered = useMemo(() => renderSafeMarkdownAndMathHtml(content), [content]);
+  return <div className={className} dangerouslySetInnerHTML={{ __html: rendered }} />;
 };
