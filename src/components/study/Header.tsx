@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import {
   Search,
   Wrench,
@@ -79,12 +80,22 @@ export const Header: React.FC<HeaderProps> = ({
     <header id="hd" className="col-span-full flex flex-col border-b-2 border-ink bg-paper select-none z-30">
       {/* ROW 1: Brand, Search, Progress, Quick Actions & Tools */}
       <div className="flex items-center justify-between gap-2.5 px-3.5 py-1.5 border-b border-dashed border-ink/20 flex-wrap min-h-[44px]">
-        {/* Brand */}
-        <div id="brand" className="font-hand text-[22px] md:text-[24px] leading-none font-bold whitespace-nowrap">
-          Semester I, unit by unit
-          <small className="block font-sans text-xs font-medium text-dim mt-0.5">
-            Mathematics &amp; Computing · LNJPIT Chapra · Group A
-          </small>
+        {/* Brand with Application Logo */}
+        <div className="flex items-center gap-2.5">
+          <Image
+            src="/logo.svg"
+            alt="The First Semester Logo"
+            className="w-7 h-7 md:w-8 md:h-8 shrink-0 drop-shadow-xs"
+            width={32}
+            height={32}
+            priority
+          />
+          <div id="brand" className="font-hand text-[22px] md:text-[24px] leading-none font-bold whitespace-nowrap">
+            Semester I, unit by unit
+            <small className="block font-sans text-xs font-medium text-dim mt-0.5">
+              Mathematics &amp; Computing · LNJPIT Chapra · Group A
+            </small>
+          </div>
         </div>
 
         {/* Center / Right Control Cluster */}

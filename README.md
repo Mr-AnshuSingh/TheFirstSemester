@@ -1,10 +1,14 @@
 <div align="center">
 
-# 📐 Semester I, Unit by Unit, in 3D
-### Interactive Study Platform for B.Tech Mathematics & Computing (Group A)
+<img src="docs/logo.png" alt="The First Semester Logo" width="112" height="112" />
+
+# 📐 The First Semester — Unit by Unit, in 3D
+### Full-Stack Study Companion for B.Tech Mathematics & Computing (Group A)
 **Lok Nayak Jai Prakash Institute of Technology (LNJPIT), Chapra**
 
-[![Live on Vercel](https://img.shields.io/badge/Vercel-Live%20Demo-black?style=for-the-badge&logo=vercel)](https://the-first-semester.vercel.app)
+<br />
+
+[![Live on Vercel](https://img.shields.io/badge/Vercel-Live%20at%20the--first--semester.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://the-first-semester.vercel.app)
 [![Next.js](https://img.shields.io/badge/Next.js-14.2.16%20App%20Router-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
@@ -13,11 +17,14 @@
 [![PWA Ready](https://img.shields.io/badge/PWA-Offline%20First-ff6b6b?style=for-the-badge)](https://web.dev/progressive-web-apps/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
+<br /><br />
+
+> 🚀 **Official Production Website:** **[https://the-first-semester.vercel.app](https://the-first-semester.vercel.app)**  
+> *The entire LNJPIT Chapra B.Tech Semester I curriculum is live, free, globally accessible, and 100% offline-first.*
+
 <br />
 
-### 🌐 Live Production Website: [https://the-first-semester.vercel.app](https://the-first-semester.vercel.app)
-
-**A full-stack, offline-first study companion presenting the entire 20-credit B.Tech Semester I curriculum in hand-drawn 3D wireframes, interactive mathematical visualizers, step-by-step derivations, worked numerical problems, and a multimodal AI doubt tutor.**
+**An interactive 3D notebook companion presenting all 8 subjects and 43 syllabus units in hand-drawn wireframes, KaTeX derivations, worked numerical problems, and a multimodal AI tutor.**
 
 </div>
 
