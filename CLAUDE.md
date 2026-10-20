@@ -14,8 +14,7 @@ A visual, interactive study companion presenting all 8 subjects and 43 syllabus 
   6. **UHV** (Universal Human Values): 5 units · 18 topics · 2 credits
   7. **PPS Lab** (Programming for Problem Solving Lab): 6 units · 17 topics · 1 credit · 17 C/C++ experiments
   8. **EIC** (Essence of Indian Constitution): 5 units · 17 topics · 0 credits (Mandatory Audit Course)
-- **Totals:** 8 subjects, 43 units, 291 topics, 20 total credits, 43 3D scenes, 17 PPS experiments, 86 quiz questions (2 per unit).
-- **Worked Problems Status:** `WORKED` currently provides coverage for 15 of 43 units (the remaining 28 units will be populated in Phase 5).
+- **Worked Problems Status:** `WORKED` provides complete, 100% coverage across all 43 units (all 8 subjects populated with step-by-step derivations and numericals in Phase 5).
 
 ## Core Architecture & Guidelines
 
@@ -46,8 +45,7 @@ A visual, interactive study companion presenting all 8 subjects and 43 syllabus 
 
 ### 5. Known Limitations
 - Progress synchronization (`/api/progress`) requires Supabase Auth and PostgreSQL. Without them, app runs 100% local-first via browser IndexedDB.
-- Speech recognition (`SpeechRecognition`) is supported only on Chromium-based browsers; fallback allows typing.
-- 28 units currently lack worked numerical solutions in `src/data/worked.ts`.
+- Worked numerical solutions are completely populated across all 43 units in `src/data/worked.ts`.
 - 3D scene rotations are rendered on CPU 2D canvas via custom trigonometric projection matrices.
 
 ## Development Commands

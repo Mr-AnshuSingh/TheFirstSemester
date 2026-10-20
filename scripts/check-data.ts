@@ -3,6 +3,7 @@ import { SC } from '../src/data/scenes';
 import { PPS_EXPERIMENTS } from '../src/data/ppsExperiments';
 import { QUIZ_BANK } from '../src/data/quizBank';
 import { TOPIC_CONTENT } from '../src/data/topicContent';
+import { WORKED } from '../src/data/worked';
 import {
   migrateStudyState,
   exportStudyStateAsJSON,
@@ -99,6 +100,27 @@ const unitsWithTwoQuestions = SUBJECTS.every((s) =>
   })
 );
 assertCheck('All 43 units have at least 2 quiz questions', unitsWithTwoQuestions ? 'All 43 units covered' : 'Missing questions', 'All 43 units covered', unitsWithTwoQuestions);
+
+// 9B. Phase 5: Worked numerical and exam model solutions coverage
+const workedKeys = Object.keys(WORKED);
+assertCheck('Total worked examples count in WORKED', workedKeys.length, 43, workedKeys.length === 43);
+
+const missingWorkedUnits: string[] = [];
+for (const s of SUBJECTS) {
+  for (let uIdx = 0; uIdx < s.units.length; uIdx++) {
+    const key = `${s.id}:${uIdx}`;
+    const entry = WORKED[key];
+    if (!entry || entry.trim().length < 40) {
+      missingWorkedUnits.push(key);
+    }
+  }
+}
+assertCheck(
+  'All 43 units have detailed worked examples in WORKED',
+  missingWorkedUnits.length === 0 ? 'All 43 units covered' : `Missing: ${missingWorkedUnits.join(', ')}`,
+  'All 43 units covered',
+  missingWorkedUnits.length === 0
+);
 
 // 10. Phase 3B Topic Content and 2D Diagram validation (Math-I)
 const math = SUBJECTS.find((s) => s.id === 'math');
