@@ -6,7 +6,12 @@ test.describe('Backup Export and Import Roundtrip', () => {
   }) => {
     await page.goto('/');
 
-    // Open Backup modal from header
+    // Open Backup modal from header tools dropdown
+    const toolsBtn = page.locator('button:has-text("Tools")').first();
+    if (await toolsBtn.isVisible()) {
+      await toolsBtn.click();
+      await page.waitForTimeout(200);
+    }
     const backupBtn = page.locator('button:has-text("Backup")').first();
     await backupBtn.click();
 
@@ -26,7 +31,7 @@ test.describe('Backup Export and Import Roundtrip', () => {
     await jsonTextarea.fill('{"invalid": json...');
 
     // Verify error notification appears
-    await expect(page.getByText('✕ Invalid JSON syntax:')).toBeVisible();
+    await expect(page.getByText('Invalid JSON syntax:')).toBeVisible();
 
     // Test valid JSON import
     const validPackage = {

@@ -37,10 +37,7 @@ const NotebookCanvas3D = dynamic(
     ),
   }
 );
-const SvgDiagramViewer = dynamic(
-  () => import('@/components/study/SvgDiagramViewer').then((m) => m.SvgDiagramViewer),
-  { loading: () => <div className="p-4 text-center font-hand text-dim">Loading diagrams...</div> }
-);
+
 const PpsCodeRunner = dynamic(
   () => import('@/components/study/PpsCodeRunner').then((m) => m.PpsCodeRunner)
 );
@@ -85,7 +82,7 @@ import {
   saveStudyState,
 } from '@/lib/offlineStorage';
 
-const TABS = ['Explain', '2D Diagrams', 'Notes', 'Topics', 'Quiz', 'Exam', 'AI Tutor'] as const;
+const TABS = ['Explain', 'Notes', 'Topics', 'Quiz', 'Exam', 'AI Tutor'] as const;
 
 export default function SemesterOnePage() {
   const [st, setSt] = useState<PersistedStudyState>(DEFAULT_STUDY_STATE);
@@ -282,27 +279,31 @@ export default function SemesterOnePage() {
         unitTitle={activeUnit.t}
         step={step}
         onStepChange={setStep}
+        diagrams={activeSubject.dg}
       />
 
       <aside id="study" aria-label="Study this unit" className="border-l-2 border-ink flex flex-col min-h-0 bg-paper2">
         <div id="tabs" role="tablist" className="flex border-b-2 border-ink overflow-x-auto">
-          {TABS.map((tLabel, idx) => (
-            <button
-              key={tLabel}
-              type="button"
-              role="tab"
-              aria-selected={st.tab === idx}
-              onClick={() => persist((prev) => ({ ...prev, tab: idx }))}
-              className={st.tab === idx ? 'on' : ''}
-            >
-              {tLabel}
-            </button>
-          ))}
+          {TABS.map((tLabel, idx) => {
+            const activeTab = Math.min(st.tab, TABS.length - 1);
+            return (
+              <button
+                key={tLabel}
+                type="button"
+                role="tab"
+                aria-selected={activeTab === idx}
+                onClick={() => persist((prev) => ({ ...prev, tab: idx }))}
+                className={activeTab === idx ? 'on' : ''}
+              >
+                {tLabel}
+              </button>
+            );
+          })}
         </div>
 
         <div id="tab-content" className="flex-1 overflow-y-auto p-4 space-y-4">
           {/* TAB 0: EXPLAIN ("Understand it") */}
-          {st.tab === 0 && (
+          {Math.min(st.tab, TABS.length - 1) === 0 && (
             <div className="space-y-5">
               {/* 3-Part Unit Big Picture Story */}
               {unitStory ? (
@@ -398,13 +399,8 @@ export default function SemesterOnePage() {
             </div>
           )}
 
-          {/* TAB 1: 2D DIAGRAMS GALLERY */}
-          {st.tab === 1 && (
-            <SvgDiagramViewer diagrams={activeSubject.dg} subjectShortName={activeSubject.co} />
-          )}
-
-          {/* TAB 2: NOTES ("Revise it fast, exam-ready") */}
-          {st.tab === 2 && (
+          {/* TAB 1: NOTES ("Revise it fast, exam-ready") */}
+          {Math.min(st.tab, TABS.length - 1) === 1 && (
             <div className="space-y-6">
               <div className="flex items-center justify-between pb-1 border-b-2 border-ink">
                 <div>
@@ -533,8 +529,8 @@ export default function SemesterOnePage() {
             </div>
           )}
 
-          {/* TAB 3: TOPICS (Checklist + Diagram Thumbnails) */}
-          {st.tab === 3 && (
+          {/* TAB 2: TOPICS (Checklist + Diagram Thumbnails) */}
+          {Math.min(st.tab, TABS.length - 1) === 2 && (
             <div>
               <div className="ct flex items-center justify-between">
                 <span className="font-medium">{activeUnit.t}: {unitDoneCount(si, ui)}/{activeUnit.topics.length} cleared</span>
@@ -617,8 +613,8 @@ export default function SemesterOnePage() {
             </div>
           )}
 
-          {/* TAB 4: QUIZ */}
-          {st.tab === 4 && (
+          {/* TAB 3: QUIZ */}
+          {Math.min(st.tab, TABS.length - 1) === 3 && (
             <UnitQuiz
               subject={activeSubject}
               unitIndex={ui}
@@ -637,8 +633,8 @@ export default function SemesterOnePage() {
             />
           )}
 
-          {/* TAB 5: EXAM */}
-          {st.tab === 5 && (
+          {/* TAB 4: EXAM */}
+          {Math.min(st.tab, TABS.length - 1) === 4 && (
             <div>
               <div className="box">
                 <h4>Almost-guaranteed questions · {activeSubject.co}</h4>
@@ -677,8 +673,8 @@ export default function SemesterOnePage() {
             </div>
           )}
 
-          {/* TAB 6: AI TUTOR */}
-          {st.tab === 6 && (
+          {/* TAB 5: AI TUTOR */}
+          {Math.min(st.tab, TABS.length - 1) === 5 && (
             <AiTutorPanel
               subject={activeSubject}
               unitIndex={ui}

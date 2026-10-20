@@ -136,11 +136,24 @@ SC['beee:1']={cam:{yaw:-.4,pitch:.3},
   B.T([-4.8,1.6,0],'V',{c:COL.red,b:1,sz:26});B.T([-4.8,-1.6,0],'I',{c:COL.teal,b:1,sz:26});B.T([4.6,-2.4,0],'I lags V by φ',{b:1,sz:22});B.T([-1,2.8,0],'inductive circuit: current peaks later',{c:COL.gray,sz:20});
   B.s(2);axes(B,4.6,['t','v','']);sineW(B,-4.2,4.2,0,2,PI/4.2*1.0,0,{c:COL.teal,w:3.2});const vm=2;[[vm,'Vm',COL.ink],[vm*.707,'V_rms = 0.707 Vm',COL.red],[vm*.637,'V_avg = 0.637 Vm',COL.gold]].forEach(([y,l,c])=>{B.L([[-4.2,y,0],[4.5,y,0]],{c,w:1.8,d:[6,4]});B.T([4.6,y,0],l,{c,b:1,sz:19,a:'left'})});
   B.T([0,-2.9,0],'form factor = 1.11,  peak factor = 1.414',{b:1,sz:24});
-  B.s(3);B.P([[-3,-1.5,0],[2.5,-1.5,0],[2.5,1.7,0]],{f:COL.red,a:.15,c:COL.red,w:2.8});B.T([-.3,-2.0,0],'P = VI cosφ (kW)',{c:COL.red,b:1});B.T([3.3,.1,0],'Q = VI sinφ',{c:COL.gold,b:1,a:'left'});B.T([-.4,.7,0],'S = VI (kVA)',{b:1,sz:24});B.F(a=>[-3+cos(a)*.9,-1.5+sin(a)*.9,0],0,.6,{c:COL.ink,w:2});B.T([-1.9,-1.2,0],'φ',{b:1,sz:24});
-  B.P([[-3,-1.5,-3],[1.5,-1.5,-3],[1.5,.8,-3]],{f:COL.teal,a:.12,c:COL.teal,w:2});B.T([-.8,-1.9,-3],'R',{c:COL.teal,b:1});B.T([1.9,-.3,-3],'X',{c:COL.teal,b:1});B.T([-1,.2,-3],'Z',{c:COL.teal,b:1});B.T([0,3.1,0],'pf = cosφ = P/S = R/Z',{b:1,sz:26});
+  B.s(3);B.P([[-3,-1.5,0],[2.5,-1.5,0],[2.5,1.7,0]],{f:COL.red,a:.15,c:COL.red,w:2.8});
+  B.L([[2.15,-1.5,0],[2.15,-1.15,0],[2.5,-1.15,0]],{c:COL.red,w:2});
+  B.F(a=>[-3+cos(a)*1.0,-1.5+sin(a)*1.0,0],0,0.527,{c:COL.ink,w:2.2});
+  B.T([-1.75,-1.25,0],'φ',{b:1,sz:24,c:COL.ink});
+  B.T([-.25,-2.05,0],'P = VI cosφ (kW)',{c:COL.red,b:1,sz:22});
+  B.T([3.3,0.1,0],'Q = VI sinφ (kVAr)',{c:COL.gold,b:1,a:'left',sz:20});
+  B.T([-.65,.75,0],'S = VI (kVA)',{b:1,sz:24,c:COL.ink});
+  B.P([[-3,-1.5,-3],[1.5,-1.5,-3],[1.5,1.12,-3]],{f:COL.teal,a:.14,c:COL.teal,w:2.4});
+  B.L([[1.2,-1.5,-3],[1.2,-1.2,-3],[1.5,-1.2,-3]],{c:COL.teal,w:1.8});
+  B.F(a=>[-3+cos(a)*0.9,-1.5+sin(a)*0.9,-3],0,0.527,{c:COL.teal,w:1.8});
+  B.T([-1.8,-1.2,-3],'φ',{c:COL.teal,b:1,sz:22});
+  B.T([-.75,-2.0,-3],'R (Ω)',{c:COL.teal,b:1,sz:22});
+  B.T([2.1,-.2,-3],'X = X_L − X_C',{c:COL.teal,b:1,sz:20,a:'left'});
+  B.T([-1.1,.5,-3],'Z = √(R² + X²)',{c:COL.teal,b:1,sz:22});
+  B.T([0,3.1,0],'pf = cosφ = P/S = R/Z',{b:1,sz:26});
   B.s(4);B.dyn((t,b)=>{const a=t*1.4,cs=[COL.red,COL.gold,COL.blue];b.C([-4.4,0,0],1.6,{n:'z',c:COL.gray,w:1.4});for(let k=0;k<3;k++){const g=a-k*2*PI/3;b.A([-4.4,0,0],[-4.4+cos(g)*1.6,sin(g)*1.6,0],{c:cs[k],w:3.2});b.F(x=>[x,sin(1.2*x-a*1+k*2*PI/3)*1.4,0],-2,5,{c:cs[k],w:2.8,seg:100})}});
   B.T([-4.4,-2.3,0],'120° apart',{b:1,sz:22});B.T([1.5,2.2,0],'R   Y   B  sequence',{b:1,sz:22});B.T([1.5,-2.5,0],'star: V_L = √3 V_ph   P = √3 V_L I_L cosφ',{c:COL.red,b:1,sz:21});
-  B.s(5);B.dyn((t,b,p={})=>{const R=p.resistance??4,X=p.reactanceX??3,Z=sqrt(R*R+X*X),pf=R/Z,phiDeg=(Math.atan2(X,R)*180)/PI,sc=0.45;b.P([[-3,-1.2,0],[-3+R*sc,-1.2,0],[-3+R*sc,-1.2+X*sc,0]],{f:X>=0?COL.red:COL.blue,a:0.2,c:COL.ink,w:2.8});b.T([-3+(R*sc)/2,-1.8,0],`R = ${R} Ω`,{c:COL.teal,b:1});b.T([-3+R*sc+0.6,-1.2+(X*sc)/2,0],`X = ${X} Ω`,{c:COL.gold,b:1});b.T([-3+(R*sc)/2,-1.2+(X*sc)/2+0.4,0],`Z = ${Z.toFixed(2)} Ω`,{c:COL.red,b:1});b.T([0,3.0,0],`Power Factor cos φ = ${pf.toFixed(3)} (${X>0?'Lagging':X<0?'Leading':'Unity'})`,{c:COL.red,sz:24,b:1});b.T([0,-2.8,0],`Phase Angle φ = ${phiDeg.toFixed(1)}°`,{c:COL.ink,sz:22});});
+  B.s(5);B.dyn((t,b,p={})=>{const R=p.resistance??4,X=p.reactanceX??3,Z=sqrt(R*R+X*X),pf=R/Z,phiDeg=(Math.atan2(X,R)*180)/PI,sc=0.45;const v0=[-3,-1.2,0],v1=[-3+R*sc,-1.2,0],v2=[-3+R*sc,-1.2+X*sc,0];b.P([v0,v1,v2],{f:X>=0?COL.red:COL.blue,a:0.2,c:COL.ink,w:2.8});const sx=X<0?-1:1,sq=0.22;if(Math.abs(X)>0.3){b.L([[v1[0]-sq,v1[1],0],[v1[0]-sq,v1[1]+sx*sq,0],[v1[0],v1[1]+sx*sq,0]],{c:COL.ink,w:1.8});}const phi=Math.atan2(X,R);if(X>=0){b.F(a=>[v0[0]+cos(a)*0.75,v0[1]+sin(a)*0.75,0],0,phi,{c:COL.ink,w:2});}else{b.F(a=>[v0[0]+cos(a)*0.75,v0[1]+sin(a)*0.75,0],phi,0,{c:COL.ink,w:2});}b.T([v0[0]+cos(phi*0.5)*1.1,v0[1]+sin(phi*0.5)*1.1,0],'φ',{b:1,sz:20,c:COL.ink});b.T([v0[0]+(R*sc)/2,-1.7,0],`R = ${R} Ω`,{c:COL.teal,b:1,sz:21});b.T([v1[0]+0.6,-1.2+(X*sc)/2,0],`${X>=0?'+jX':'-jX'} = ${Math.abs(X)} Ω`,{c:COL.gold,b:1,a:'left',sz:20});const midX=v0[0]+(R*sc)/2,midY=-1.2+(X*sc)/2;const nx=X>=0?-X/Z:X/Z,ny=X>=0?R/Z:-R/Z;const offset=0.45;b.T([midX+nx*offset,midY+ny*offset,0],`Z = ${Z.toFixed(2)} Ω`,{c:COL.red,b:1,sz:22});b.T([0,3.0,0],`Power Factor cos φ = ${pf.toFixed(3)} (${X>0?'Lagging':X<0?'Leading':'Unity'})`,{c:COL.red,sz:24,b:1});b.T([0,-2.8,0],`Impedance Z = ${Z.toFixed(2)} Ω   |   Phase Angle φ = ${phiDeg.toFixed(1)}°`,{c:COL.ink,sz:22,b:1});});
 }};
 
 SC['beee:2']={cam:{yaw:-.4,pitch:.3},

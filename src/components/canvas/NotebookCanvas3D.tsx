@@ -2,7 +2,8 @@
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Builder, COL, PrimitiveItem, DynamicCallback, cos, sin, PI } from './Builder';
-import { SceneDefinition, Vec3 } from '@/types/syllabus';
+import { SceneDefinition, SvgDiagram, Vec3 } from '@/types/syllabus';
+import { SvgDiagramViewer } from '@/components/study/SvgDiagramViewer';
 
 export interface NotebookCanvas3DProps {
   scene: SceneDefinition;
@@ -15,6 +16,7 @@ export interface NotebookCanvas3DProps {
   initialSpin?: boolean;
   initialPlaying?: boolean;
   initialZoom?: number;
+  diagrams?: SvgDiagram[];
 }
 
 interface ProjectedEntity {
@@ -34,14 +36,15 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
   initialSpin = false,
   initialPlaying = true,
   initialZoom = 1,
+  diagrams = [],
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const capRef = useRef<HTMLDivElement | null>(null);
+  const [stageViewMode, setStageViewMode] = useState<'3d' | '2d'>('3d');
   const [spin, setSpin] = useState<boolean>(initialSpin);
   const [playing, setPlaying] = useState<boolean>(initialPlaying);
   const [showHint, setShowHint] = useState<boolean>(true);
   const [slidersOpen, setSlidersOpen] = useState<boolean>(true);
-  const [slidersVisible, setSlidersVisible] = useState<boolean>(true);
 
   // Mutable engine state stored in ref to avoid re-creating RAF loop on every frame
   const engineRef = useRef<{
@@ -197,11 +200,7 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
         }
       }
       eng.bg = b;
-      if (capRef.current && window.innerWidth > 900) {
-        eng.ofsY = Math.round(capRef.current.offsetHeight * 0.45);
-      } else {
-        eng.ofsY = 0;
-      }
+      eng.ofsY = 0;
     };
 
     const proj = (
@@ -544,124 +543,119 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
   const isLabStep = labStepIndex !== -1 ? step === labStepIndex : true;
 
   return (
-    <section id="stage" className="relative min-w-0 min-h-0 overflow-hidden h-full">
-      <canvas
-        ref={canvasRef}
-        id="cv"
-        aria-label={`Interactive 3D diagram for ${unitTitle}`}
-        className="absolute inset-0 w-full h-full block cursor-grab active:cursor-grabbing touch-none"
-      />
-      <div id="ovt" className="absolute left-4 top-3.5 pointer-events-none max-w-[52%]">
-        <div className="text-xs font-mono font-bold tracking-[0.12em] uppercase text-accentRed">
-          {subjectShortName} · unit {unitIndex + 1} of {totalUnits}
-        </div>
-        <h1 className="font-hand text-[30px] leading-[1.0] font-bold mt-0.5 text-ink">
-          {unitTitle}
-        </h1>
-      </div>
-
-      <div id="tools" className="absolute right-3.5 top-3.5 flex gap-1.5">
-        <button
-          type="button"
-          onClick={() => setSpin((s) => !s)}
-          aria-label="Toggle auto-spin"
-          title="Spin 3D model"
-          className={`tl ${spin ? 'on' : ''}`}
-        >
-          <svg viewBox="0 0 24 24">
-            <path d="M21 12a9 9 0 1 1-3-6.7" />
-            <path d="M21 3v6h-6" />
-          </svg>
-        </button>
-        <button
-          type="button"
-          onClick={() => setPlaying((p) => !p)}
-          aria-label={playing ? 'Pause animation' : 'Play animation'}
-          title="Pause or play motion"
-          className={`tl ${!playing ? 'on' : ''}`}
-        >
-          {playing ? (
-            <svg viewBox="0 0 24 24">
-              <path d="M8 5v14M16 5v14" />
-            </svg>
-          ) : (
-            <svg viewBox="0 0 24 24">
-              <path d="M7 4l13 8-13 8z" />
-            </svg>
-          )}
-        </button>
-        <button
-          type="button"
-          onClick={() => handleZoom(1.2)}
-          aria-label="Zoom in"
-          className="tl"
-        >
-          +
-        </button>
-        <button
-          type="button"
-          onClick={() => handleZoom(1 / 1.2)}
-          aria-label="Zoom out"
-          className="tl"
-        >
-          −
-        </button>
-        <button
-          type="button"
-          onClick={resetView}
-          aria-label="Reset camera view"
-          title="Reset view"
-          className="tl"
-        >
-          <svg viewBox="0 0 24 24">
-            <path d="M3 12a9 9 0 1 0 3-6.7" />
-            <path d="M3 3v6h6" />
-          </svg>
-        </button>
-      </div>
-
-      <div
-        id="hint"
-        style={{ opacity: showHint ? 1 : 0 }}
-        className="absolute right-4 top-14 font-hand text-lg text-dim pointer-events-none transition-opacity duration-500"
-      >
-        drag to turn it, scroll or pinch to zoom
-      </div>
-
-      {scene.params && scene.params.length > 0 && (
-        <>
-          {/* If current step is not the live lab step, show quick-jump badge */}
-          {!isLabStep && labStepIndex !== -1 ? (
+    <section id="stage" className="h-full">
+      <div id="stage-viewport">
+        {stageViewMode === '3d' ? (
+          <>
+            <canvas
+              ref={canvasRef}
+              id="cv"
+              aria-label={`Interactive 3D diagram for ${unitTitle}`}
+            />
+            <div id="ovt">
+              <div className="k">
+                {subjectShortName} · UNIT {unitIndex + 1} OF {totalUnits}
+              </div>
+              <h1>{unitTitle}</h1>
+            </div>
             <div
-              onPointerDown={(e) => e.stopPropagation()}
-              onTouchStart={(e) => e.stopPropagation()}
-              className="absolute left-4 bottom-24 md:bottom-28 z-20"
+              id="hint"
+              style={{ opacity: showHint ? 1 : 0 }}
             >
+              drag to turn it, scroll or pinch to zoom
+            </div>
+          </>
+        ) : (
+          <div className="w-full h-full overflow-y-auto p-4 md:p-6 bg-paper">
+            <div className="max-w-3xl mx-auto pt-8 pb-4">
+              <SvgDiagramViewer diagrams={diagrams} subjectShortName={subjectShortName} />
+            </div>
+          </div>
+        )}
+
+        <div id="tools">
+          <button
+            type="button"
+            onClick={() => setStageViewMode((m) => (m === '3d' ? '2d' : '3d'))}
+            aria-label={stageViewMode === '3d' ? 'Switch to 2D Exam Sketchbook' : 'Switch to 3D Canvas'}
+            title={stageViewMode === '3d' ? 'Switch to 2D Exam Sketchbook' : 'Switch to 3D Canvas'}
+            className={`tl font-hand font-bold text-sm ${stageViewMode === '2d' ? 'on' : ''}`}
+          >
+            {stageViewMode === '3d' ? '2D' : '3D'}
+          </button>
+          {stageViewMode === '3d' && (
+            <>
               <button
                 type="button"
-                onClick={() => onStepChange(labStepIndex)}
-                className="flex items-center gap-2 bg-paper/95 border-[1.5px] border-ink rounded-lg px-3 py-1.5 text-sm font-hand font-bold shadow-sketchy hover:bg-gold/20 transition-all text-ink cursor-pointer"
-                title="Jump to the interactive live lab step"
+                onClick={() => setSpin((s) => !s)}
+                aria-label="Toggle auto-spin"
+                title="Spin 3D model"
+                className={`tl ${spin ? 'on' : ''}`}
               >
-                <span className="text-accentRed font-sans text-sm animate-pulse">⚡</span>
-                <span>Live Experiment Lab on <strong>Step {labStepIndex + 1}</strong> · Click to open</span>
-                <span className="text-xs font-mono px-1.5 py-0.5 rounded border border-ink/40 bg-gold/20">→</span>
+                <svg viewBox="0 0 24 24">
+                  <path d="M21 12a9 9 0 1 1-3-6.7" />
+                  <path d="M21 3v6h-6" />
+                </svg>
               </button>
-            </div>
-          ) : slidersVisible ? (
-            /* When on the live lab step: active real-time parameter sliders */
-            <div
-              onPointerDown={(e) => e.stopPropagation()}
-              onPointerMove={(e) => e.stopPropagation()}
-              onTouchStart={(e) => e.stopPropagation()}
-              onTouchMove={(e) => e.stopPropagation()}
-              className="absolute left-4 bottom-24 md:bottom-28 z-20 max-w-[340px] w-[calc(100%-2rem)] md:w-80 bg-paper/95 border-[1.5px] border-ink rounded-lg p-3 shadow-sketchy backdrop-blur-xs font-hand"
-            >
-              <div className="flex items-center justify-between pb-1 mb-2 border-b border-dashed border-ink/30">
+              <button
+                type="button"
+                onClick={() => setPlaying((p) => !p)}
+                aria-label={playing ? 'Pause animation' : 'Play animation'}
+                title="Pause or play motion"
+                className={`tl ${!playing ? 'on' : ''}`}
+              >
+                {playing ? (
+                  <svg viewBox="0 0 24 24">
+                    <path d="M8 5v14M16 5v14" />
+                  </svg>
+                ) : (
+                  <svg viewBox="0 0 24 24">
+                    <path d="M7 4l13 8-13 8z" />
+                  </svg>
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => handleZoom(1.2)}
+                aria-label="Zoom in"
+                className="tl"
+              >
+                +
+              </button>
+              <button
+                type="button"
+                onClick={() => handleZoom(1 / 1.2)}
+                aria-label="Zoom out"
+                className="tl"
+              >
+                −
+              </button>
+              <button
+                type="button"
+                onClick={resetView}
+                aria-label="Reset camera view"
+                title="Reset view"
+                className="tl"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path d="M3 12a9 9 0 1 0 3-6.7" />
+                  <path d="M3 3v6h6" />
+                </svg>
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
+      {stageViewMode === '3d' && scene.params && scene.params.length > 0 && (
+        <div id="live-dock">
+          {isLabStep ? (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between pb-1 border-b border-dashed border-ink/30">
                 <div className="flex items-center gap-1.5">
                   <span className="text-accentRed font-sans text-sm">⚡</span>
                   <span className="text-xs font-mono font-bold tracking-[0.14em] uppercase text-accentRed">
-                    LIVE EXPERIMENT SLIDERS
+                    LIVE EXPERIMENT PARAMETERS (STEP {labStepIndex + 1})
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -675,37 +669,29 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
                       engineRef.current.params = reset;
                       setParamValues(reset);
                     }}
-                    className="text-sm text-dim hover:text-ink underline decoration-dashed transition-colors"
+                    className="text-xs font-mono text-dim hover:text-ink underline decoration-dashed transition-colors"
                     title="Reset sliders to defaults"
                   >
-                    reset
+                    Reset
                   </button>
                   <button
                     type="button"
                     onClick={() => setSlidersOpen((o) => !o)}
-                    className="text-sm text-dim hover:text-ink font-sans px-1"
+                    className="text-xs font-mono text-dim hover:text-ink px-1.5 py-0.5 rounded border border-ink/30"
                     title={slidersOpen ? 'Collapse sliders' : 'Expand sliders'}
                   >
-                    {slidersOpen ? '▲' : '▼'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setSlidersVisible(false)}
-                    className="text-sm text-dim hover:text-ink font-sans px-1"
-                    title="Hide slider panel"
-                  >
-                    ✕
+                    {slidersOpen ? '▲ Collapse' : '▼ Expand'}
                   </button>
                 </div>
               </div>
               {slidersOpen && (
-                <div className="space-y-2.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                   {scene.params.map((p) => {
                     const val = paramValues[p.id] ?? p.defaultVal;
                     return (
                       <div key={p.id} className="flex flex-col gap-1">
                         <div className="flex justify-between items-baseline text-sm">
-                          <label htmlFor={`param-${p.id}`} className="font-bold text-ink">
+                          <label htmlFor={`param-${p.id}`} className="font-semibold text-ink font-sans text-sm">
                             {p.label}
                           </label>
                           <span className="font-bold text-accentRed text-sm font-mono">
@@ -727,7 +713,7 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
                             };
                             setParamValues((prev) => ({ ...prev, [p.id]: num }));
                           }}
-                          className="w-full accent-ink cursor-pointer h-1.5 bg-ink/15 rounded-full"
+                          className="w-full accent-ink cursor-pointer h-2 bg-ink/15 rounded-full"
                         />
                       </div>
                     );
@@ -735,25 +721,24 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
                 </div>
               )}
             </div>
-          ) : (
-            /* Minimized toggle button to re-open sliders */
-            <div
-              onPointerDown={(e) => e.stopPropagation()}
-              onTouchStart={(e) => e.stopPropagation()}
-              className="absolute left-4 bottom-24 md:bottom-28 z-20"
-            >
+          ) : labStepIndex !== -1 ? (
+            <div className="flex items-center justify-between text-sm py-0.5">
+              <div className="flex items-center gap-2">
+                <span className="text-accentRed font-sans text-sm animate-pulse">⚡</span>
+                <span className="font-sans text-sm font-semibold text-ink">
+                  Interactive Live Lab on <strong>Step {labStepIndex + 1}</strong>
+                </span>
+              </div>
               <button
                 type="button"
-                onClick={() => setSlidersVisible(true)}
-                className="flex items-center gap-1.5 bg-paper/95 border-[1.5px] border-ink rounded-lg px-2.5 py-1 text-sm font-hand font-bold shadow-sketchy hover:bg-gold/20 transition-all text-ink cursor-pointer"
-                title="Show experiment sliders"
+                onClick={() => onStepChange(labStepIndex)}
+                className="btn py-1 px-3 text-xs font-sans font-bold text-accentRed hover:text-white hover:bg-accentRed transition-all"
               >
-                <span className="text-accentRed font-sans">⚡</span>
-                <span>Experiment Sliders</span>
+                Jump to Lab →
               </button>
             </div>
-          )}
-        </>
+          ) : null}
+        </div>
       )}
 
       <div ref={capRef} id="cap">

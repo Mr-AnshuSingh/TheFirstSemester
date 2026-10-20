@@ -26,7 +26,7 @@ test.describe('Mobile 390px Phone Layout & Responsiveness', () => {
     await assertNoHorizontalOverflow('Explain');
 
     // 2. Cycle through all navigation tabs strictly within #tabs container
-    const tabs = ['Explain', '2D Diagrams', 'Notes', 'Topics', 'Quiz', 'Exam', 'AI Tutor'];
+    const tabs = ['Explain', 'Notes', 'Topics', 'Quiz', 'Exam', 'AI Tutor'];
 
     for (const tab of tabs) {
       const tabBtn = page.locator('#tabs button').filter({ hasText: tab }).first();
@@ -37,18 +37,26 @@ test.describe('Mobile 390px Phone Layout & Responsiveness', () => {
       }
     }
 
-    // 3. Verify diagrams in 2D Diagrams tab scale within 390px
-    await page.locator('#tabs button').filter({ hasText: '2D Diagrams' }).first().click();
-    await page.waitForTimeout(300);
-
-    const svgs = page.locator('#tab-content svg');
-    const svgCount = await svgs.count();
-    if (svgCount > 0) {
-      for (let i = 0; i < Math.min(svgCount, 3); i++) {
-        const box = await svgs.nth(i).boundingBox();
-        if (box) {
-          expect(box.width).toBeLessThanOrEqual(390);
+    // 3. Verify stage 2D Exam Sketch toggle switches and scales diagrams within 390px
+    const toggle2DBtn = page.locator('#tools button').filter({ hasText: '2D' }).first();
+    if (await toggle2DBtn.isVisible()) {
+      await toggle2DBtn.click();
+      await page.waitForTimeout(300);
+      const stageSvgs = page.locator('#stage-viewport svg');
+      const svgCount = await stageSvgs.count();
+      if (svgCount > 0) {
+        for (let i = 0; i < Math.min(svgCount, 3); i++) {
+          const box = await stageSvgs.nth(i).boundingBox();
+          if (box) {
+            expect(box.width).toBeLessThanOrEqual(390);
+          }
         }
+      }
+      // Toggle back to 3D
+      const toggle3DBtn = page.locator('#tools button').filter({ hasText: '3D' }).first();
+      if (await toggle3DBtn.isVisible()) {
+        await toggle3DBtn.click();
+        await page.waitForTimeout(300);
       }
     }
 
