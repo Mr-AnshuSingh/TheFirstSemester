@@ -1,0 +1,70 @@
+name: Production Readiness & Release Audit
+
+on:
+  schedule:
+    # Run weekly on Monday at 04:00 UTC
+    - cron: '0 4 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: production-readiness-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: 'true'
+  DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/semester_one?schema=public'
+
+jobs:
+  production-audit:
+    name: Full Syllabus & Bundle Health Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check for high/critical security vulnerabilities
+        run: npm audit --audit-level=high || true
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Verify Full 43-Unit Data & Worked Problems
+        run: npm run check:data
+
+      - name: TypeScript Static Typing Audit
+        run: npm run typecheck
+
+      - name: Lint Codebase
+        run: npm run lint
+
+      - name: Next.js Production Build
+        run: npm run build
+        env:
+          NODE_ENV: 'production'
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Execute Full End-to-End Test Suite
+        run: npm run test:e2e
+        env:
+          NODE_ENV: 'production'
+
+      - name: Upload Test Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-readiness-report
+          path: playwright-report/
+          retention-days: 30
