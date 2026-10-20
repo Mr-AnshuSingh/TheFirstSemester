@@ -5,6 +5,10 @@ node_modules/
 *.db
 *.db-journal
 *.tsbuildinfo
-node_modules
 test-results/
+playwright-report/
 lighthouse*.json
+.vercel
+*.log
+coverage
+.DS_Store
