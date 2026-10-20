@@ -20,16 +20,16 @@ const NotebookCanvas3D = dynamic(
           Loading 3D workspace...
         </div>
         <div id="ovt" className="absolute left-4 top-3.5 pointer-events-none max-w-[52%]">
-          <div className="text-[11px] font-bold tracking-[0.12em] uppercase text-accentRed">
+          <div className="text-xs font-mono font-bold tracking-[0.12em] uppercase text-accentRed">
             LNJPIT · Mathematics &amp; Computing
           </div>
-          <h1 className="font-hand text-[32px] leading-[0.95] font-bold mt-0.5 text-ink">
+          <h1 className="font-hand text-[30px] leading-[1.0] font-bold mt-0.5 text-ink">
             Semester I in 3D
           </h1>
         </div>
         <div id="cap" className="border-t-2 border-b-2 border-ink lg:absolute lg:bottom-4 lg:left-4 lg:right-4 p-3 bg-paper2">
-          <h3 className="font-hand text-xl font-bold text-ink">Step 1: Setup &amp; Principle</h3>
-          <p className="text-xs md:text-sm font-sans text-ink/90 leading-relaxed">
+          <h3 className="font-hand text-2xl font-bold text-ink">Step 1: Setup &amp; Principle</h3>
+          <p className="text-base font-sans text-ink/90 leading-relaxed">
             Interactive 3D notebook and visual intuition for B.Tech Semester I, Group A at LNJPIT Chapra.
           </p>
         </div>
@@ -310,17 +310,17 @@ export default function SemesterOnePage() {
                   <h4 className="font-hand text-xl font-bold text-accentRed pb-1 border-b border-dashed border-ink/20">
                     Unit Big Picture
                   </h4>
-                  <div className="space-y-2 text-xs md:text-sm text-ink/90 font-medium leading-relaxed font-sans">
+                  <div className="space-y-2 text-base text-ink/90 font-normal leading-relaxed font-sans">
                     <div>
-                      <strong className="text-accentRed uppercase tracking-wider text-[11px] block font-mono">1. What It Is:</strong>
+                      <strong className="text-accentRed uppercase tracking-wider text-xs block font-mono font-bold">1. What It Is:</strong>
                       <p><KatexText htmlOrText={unitStory.whatItIs} /></p>
                     </div>
                     <div>
-                      <strong className="text-accentRed uppercase tracking-wider text-[11px] block font-mono">2. Why It Matters:</strong>
+                      <strong className="text-accentRed uppercase tracking-wider text-xs block font-mono font-bold">2. Why It Matters:</strong>
                       <p><KatexText htmlOrText={unitStory.whyItMatters} /></p>
                     </div>
                     <div>
-                      <strong className="text-accentRed uppercase tracking-wider text-[11px] block font-mono">3. How It Works:</strong>
+                      <strong className="text-accentRed uppercase tracking-wider text-xs block font-mono font-bold">3. How It Works:</strong>
                       <p><KatexText htmlOrText={unitStory.howItWorks} /></p>
                     </div>
                   </div>
@@ -328,7 +328,7 @@ export default function SemesterOnePage() {
               ) : (
                 <div className="box">
                   <h4>Unit Big Picture</h4>
-                  <p className="text-sm leading-relaxed text-ink/90 font-medium font-sans">
+                  <p className="text-base leading-relaxed text-ink/90 font-normal font-sans">
                     <KatexText htmlOrText={activeUnit.s} />
                   </p>
                 </div>
@@ -338,7 +338,7 @@ export default function SemesterOnePage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between pb-1 border-b-2 border-ink">
                   <h4 className="font-hand text-xl font-bold">Topic-by-Topic Intuition &amp; 2D Diagrams</h4>
-                  <span className="text-xs text-dim font-mono">{activeUnit.topics.length} topics</span>
+                  <span className="text-sm text-dim font-mono">{activeUnit.topics.length} topics</span>
                 </div>
 
                 {activeUnit.topics.map((top, tIdx) => {
@@ -349,23 +349,23 @@ export default function SemesterOnePage() {
                   return (
                     <div key={tIdx} className="topic-card p-3.5 bg-paper border-[1.5px] border-ink rounded-lg shadow-sketchy space-y-2.5">
                       <div className="flex items-start justify-between gap-2 pb-1 border-b border-dashed border-ink/20">
-                        <h5 className="font-hand text-lg font-bold text-ink leading-snug">
+                        <h5 className="font-hand text-xl font-bold text-ink leading-snug">
                           {star && <span className="text-accentRed mr-1">★</span>}
                           {cleanTitle}
                         </h5>
-                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-ink/30 bg-gold/10 text-dim shrink-0">
+                        <span className="text-xs font-mono px-2 py-0.5 rounded border border-ink/30 bg-gold/10 text-dim shrink-0">
                           Topic {tIdx + 1}
                         </span>
                       </div>
 
                       {topicData ? (
-                        <div className="text-xs md:text-sm text-ink/90 leading-relaxed font-sans space-y-1.5">
+                        <div className="text-base text-ink/90 leading-relaxed font-sans space-y-2">
                           {topicData.explain.map((sent, sIdx) => (
                             <p key={sIdx}><KatexText htmlOrText={sent} /></p>
                           ))}
                         </div>
                       ) : (
-                        <p className="text-xs text-dim italic">Concept overview being compiled...</p>
+                        <p className="text-sm text-dim not-italic">Concept overview being compiled...</p>
                       )}
 
                       {/* Inline 2D Diagram */}
@@ -373,9 +373,9 @@ export default function SemesterOnePage() {
                         <div className="mt-2 pt-2 border-t border-dashed border-ink/20">
                           <div
                             dangerouslySetInnerHTML={{ __html: topicData.diagram.svg }}
-                            className="w-full bg-paper rounded border border-ink/20 p-2 overflow-x-auto [&_svg]:w-full [&_svg]:h-auto [&_svg_.l]:stroke-[#2b2a28] [&_svg_.l]:fill-none [&_svg_.l]:stroke-[1.8] [&_svg_.a]:stroke-[#d4572b] [&_svg_.a]:fill-none [&_svg_.a]:stroke-[2.2] [&_svg_.d]:stroke-[#6b665b] [&_svg_.d]:fill-none [&_svg_.d]:stroke-dasharray-[4,3] [&_svg_.fa]:fill-[#f6e3b4] [&_svg_.fa]:stroke-[#2b2a28] [&_svg_.t]:fill-[#2b2a28] [&_svg_.t]:text-[11px] [&_svg_.ta]:fill-[#d4572b] [&_svg_.ta]:font-bold [&_svg_.ta]:text-[11.5px]"
+                            className="w-full bg-paper rounded border border-ink/20 p-2 overflow-x-auto [&_svg]:w-full [&_svg]:h-auto [&_svg_.l]:stroke-[#2b2a28] [&_svg_.l]:fill-none [&_svg_.l]:stroke-[1.8] [&_svg_.a]:stroke-[#c85025] [&_svg_.a]:fill-none [&_svg_.a]:stroke-[2.2] [&_svg_.d]:stroke-[#6b665b] [&_svg_.d]:fill-none [&_svg_.d]:stroke-dasharray-[4,3] [&_svg_.fa]:fill-[#f6e3b4] [&_svg_.fa]:stroke-[#2b2a28] [&_svg_.t]:fill-[#2b2a28] [&_svg_.t]:text-[13px] [&_svg_.ta]:fill-[#c85025] [&_svg_.ta]:font-bold [&_svg_.ta]:text-[13.5px]"
                           />
-                          <p className="text-[11px] text-dim font-hand mt-1 italic text-center">
+                          <p className="text-sm text-dim font-hand mt-1 not-italic text-center">
                             Figure {ui + 1}.{tIdx + 1}: {topicData.diagram.caption}
                           </p>
                         </div>
@@ -388,7 +388,7 @@ export default function SemesterOnePage() {
               {workedExample && (
                 <div className="box">
                   <h4>Exam Model Worked Problem</h4>
-                  <div className="text-xs font-mono bg-paper p-3 rounded-lg border-[1.5px] border-ink whitespace-pre-wrap leading-relaxed">
+                  <div className="text-sm md:text-base font-mono bg-paper p-3.5 rounded-lg border-[1.5px] border-ink whitespace-pre-wrap leading-relaxed">
                     <KatexText htmlOrText={workedExample} />
                   </div>
                 </div>
@@ -409,12 +409,12 @@ export default function SemesterOnePage() {
               <div className="flex items-center justify-between pb-1 border-b-2 border-ink">
                 <div>
                   <h4 className="font-hand text-2xl font-bold">Exam Revision Notes · {activeSubject.co} U{ui + 1}</h4>
-                  <p className="text-xs text-dim">Structured definition, formulas, steps, diagrams &amp; marking schemes</p>
+                  <p className="text-sm text-dim">Structured definition, formulas, steps, diagrams &amp; marking schemes</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => window.print()}
-                  className="text-xs px-2.5 py-1 border-[1.5px] border-ink rounded font-hand font-bold bg-paper hover:bg-gold/20"
+                  className="text-sm px-3 py-1 border-[1.5px] border-ink rounded font-hand font-bold bg-paper hover:bg-gold/20"
                 >
                   Print Unit Notes
                 </button>
@@ -432,17 +432,17 @@ export default function SemesterOnePage() {
                         {star && <span className="text-accentRed mr-1">★</span>}
                         {cleanTitle}
                       </h5>
-                      <span className="text-[11px] font-mono text-dim">Topic {tIdx + 1}</span>
+                      <span className="text-xs font-mono text-dim">Topic {tIdx + 1}</span>
                     </div>
 
                     {topicData ? (
-                      <div className="space-y-3 text-xs md:text-sm">
+                      <div className="space-y-3.5 text-base">
                         {/* 1. Definition (1 line) */}
                         <div>
-                          <span className="font-bold text-accentRed uppercase tracking-wider text-[11px] block font-mono">
+                          <span className="font-bold text-accentRed uppercase tracking-wider text-xs block font-mono">
                             1. DEFINITION
                           </span>
-                          <p className="font-medium text-ink/90 leading-relaxed">
+                          <p className="font-normal text-ink/90 leading-relaxed">
                             <KatexText htmlOrText={topicData.definition} />
                           </p>
                         </div>
@@ -450,10 +450,10 @@ export default function SemesterOnePage() {
                         {/* 2. Formula or rule (boxed) */}
                         {topicData.formula && (
                           <div>
-                            <span className="font-bold text-dim uppercase tracking-wider text-[11px] block font-mono">
+                            <span className="font-bold text-dim uppercase tracking-wider text-xs block font-mono">
                               2. FORMULA / RULE
                             </span>
-                            <div className="p-2 bg-gold/10 border-[1.5px] border-ink rounded font-mono text-xs my-1">
+                            <div className="p-2.5 bg-gold/10 border-[1.5px] border-ink rounded font-mono text-base my-1.5">
                               <KatexText htmlOrText={topicData.formula} />
                             </div>
                           </div>
@@ -462,10 +462,10 @@ export default function SemesterOnePage() {
                         {/* 3. Derivation or procedure steps */}
                         {topicData.steps && topicData.steps.length > 0 && (
                           <div>
-                            <span className="font-bold text-dim uppercase tracking-wider text-[11px] block font-mono">
+                            <span className="font-bold text-dim uppercase tracking-wider text-xs block font-mono">
                               3. STEP-BY-STEP PROCEDURE / DERIVATION
                             </span>
-                            <ul className="space-y-1 list-none pl-1 text-ink/90 text-xs">
+                            <ul className="space-y-1.5 list-none pl-1 text-ink/90 text-base">
                               {topicData.steps.map((stItem, sIdx) => (
                                 <li key={sIdx} className="leading-relaxed">
                                   <KatexText htmlOrText={stItem} />
@@ -478,22 +478,22 @@ export default function SemesterOnePage() {
                         {/* 4. 2D Diagram */}
                         {topicData.diagram && (
                           <div>
-                            <span className="font-bold text-dim uppercase tracking-wider text-[11px] block font-mono">
+                            <span className="font-bold text-dim uppercase tracking-wider text-xs block font-mono">
                               4. EXAM DIAGRAM
                             </span>
                             <div
                               dangerouslySetInnerHTML={{ __html: topicData.diagram.svg }}
-                              className="w-full bg-paper rounded border border-ink/20 p-2 my-1 overflow-x-auto [&_svg]:w-full [&_svg]:h-auto [&_svg_.l]:stroke-[#2b2a28] [&_svg_.l]:fill-none [&_svg_.l]:stroke-[1.8] [&_svg_.a]:stroke-[#d4572b] [&_svg_.a]:fill-none [&_svg_.a]:stroke-[2.2] [&_svg_.d]:stroke-[#6b665b] [&_svg_.d]:fill-none [&_svg_.d]:stroke-dasharray-[4,3] [&_svg_.fa]:fill-[#f6e3b4] [&_svg_.fa]:stroke-[#2b2a28] [&_svg_.t]:fill-[#2b2a28] [&_svg_.t]:text-[11px] [&_svg_.ta]:fill-[#d4572b] [&_svg_.ta]:font-bold [&_svg_.ta]:text-[11.5px]"
+                              className="w-full bg-paper rounded border border-ink/20 p-2 my-1 overflow-x-auto [&_svg]:w-full [&_svg]:h-auto [&_svg_.l]:stroke-[#2b2a28] [&_svg_.l]:fill-none [&_svg_.l]:stroke-[1.8] [&_svg_.a]:stroke-[#c85025] [&_svg_.a]:fill-none [&_svg_.a]:stroke-[2.2] [&_svg_.d]:stroke-[#6b665b] [&_svg_.d]:fill-none [&_svg_.d]:stroke-dasharray-[4,3] [&_svg_.fa]:fill-[#f6e3b4] [&_svg_.fa]:stroke-[#2b2a28] [&_svg_.t]:fill-[#2b2a28] [&_svg_.t]:text-[13px] [&_svg_.ta]:fill-[#c85025] [&_svg_.ta]:font-bold [&_svg_.ta]:text-[13.5px]"
                             />
                           </div>
                         )}
 
                         {/* 5. Write this for full marks */}
                         <div>
-                          <span className="font-bold text-accentTeal uppercase tracking-wider text-[11px] block font-mono">
+                          <span className="font-bold text-accentTeal uppercase tracking-wider text-xs block font-mono">
                             5. WRITE THIS FOR FULL MARKS
                           </span>
-                          <ul className="list-disc list-inside space-y-0.5 text-xs text-ink/90">
+                          <ul className="list-disc list-inside space-y-1 text-base text-ink/90">
                             {topicData.examAnswer.map((ans, aIdx) => (
                               <li key={aIdx}><KatexText htmlOrText={ans} /></li>
                             ))}
@@ -501,13 +501,13 @@ export default function SemesterOnePage() {
                         </div>
 
                         {/* 6. Common slip */}
-                        <div className="p-2 bg-accentRed/10 border-l-2 border-accentRed rounded-r text-xs text-accentRed font-medium">
-                          <span className="font-bold font-mono uppercase text-[10px] block">COMMON EXAM SLIP:</span>
+                        <div className="p-2.5 bg-accentRed/10 border-l-2 border-accentRed rounded-r text-sm md:text-base text-accentRed font-normal">
+                          <span className="font-bold font-mono uppercase text-xs block">COMMON EXAM SLIP:</span>
                           {topicData.slip}
                         </div>
                       </div>
                     ) : (
-                      <p className="text-xs text-dim italic">Notes being compiled for this topic...</p>
+                      <p className="text-sm text-dim not-italic">Notes being compiled for this topic...</p>
                     )}
                   </div>
                 );
@@ -537,8 +537,8 @@ export default function SemesterOnePage() {
           {st.tab === 3 && (
             <div>
               <div className="ct flex items-center justify-between">
-                <span>{activeUnit.t}: {unitDoneCount(si, ui)}/{activeUnit.topics.length} cleared</span>
-                <span className="text-[11px] text-dim normal-case">
+                <span className="font-medium">{activeUnit.t}: {unitDoneCount(si, ui)}/{activeUnit.topics.length} cleared</span>
+                <span className="text-xs text-dim normal-case">
                   Dot: ○ Unstudied · ◐ Familiar · ● Mastered
                 </span>
               </div>
@@ -563,7 +563,7 @@ export default function SemesterOnePage() {
                           <path d="M5 12l5 5 9-10" />
                         </svg>
                       </span>
-                      <span className="tx text-sm">
+                      <span className="tx text-base">
                         {star && <span className="st">★</span>}
                         {label}
                       </span>
@@ -581,7 +581,7 @@ export default function SemesterOnePage() {
                               caption: topicData.diagram.caption,
                             })
                           }
-                          className="px-1.5 py-0.5 text-[10px] font-mono border border-ink/30 rounded bg-paper hover:bg-gold/20 text-dim hover:text-ink"
+                          className="px-2 py-0.5 text-xs font-mono border border-ink/30 rounded bg-paper hover:bg-gold/20 text-dim hover:text-ink"
                           title="Preview 2D Diagram"
                         >
                           2D Diagram
@@ -791,9 +791,9 @@ export default function SemesterOnePage() {
             </div>
             <div
               dangerouslySetInnerHTML={{ __html: diagramModal.svg }}
-              className="w-full bg-paper rounded border border-ink/20 p-3 overflow-x-auto [&_svg]:w-full [&_svg]:h-auto [&_svg_.l]:stroke-[#2b2a28] [&_svg_.l]:fill-none [&_svg_.l]:stroke-[1.8] [&_svg_.a]:stroke-[#d4572b] [&_svg_.a]:fill-none [&_svg_.a]:stroke-[2.2] [&_svg_.d]:stroke-[#6b665b] [&_svg_.d]:fill-none [&_svg_.d]:stroke-dasharray-[4,3] [&_svg_.fa]:fill-[#f6e3b4] [&_svg_.fa]:stroke-[#2b2a28] [&_svg_.t]:fill-[#2b2a28] [&_svg_.t]:text-[11px] [&_svg_.ta]:fill-[#d4572b] [&_svg_.ta]:font-bold [&_svg_.ta]:text-[11.5px]"
+              className="w-full bg-paper rounded border border-ink/20 p-3 overflow-x-auto [&_svg]:w-full [&_svg]:h-auto [&_svg_.l]:stroke-[#2b2a28] [&_svg_.l]:fill-none [&_svg_.l]:stroke-[1.8] [&_svg_.a]:stroke-[#c85025] [&_svg_.a]:fill-none [&_svg_.a]:stroke-[2.2] [&_svg_.d]:stroke-[#555046] [&_svg_.d]:fill-none [&_svg_.d]:stroke-dasharray-[4,3] [&_svg_.fa]:fill-[#f6e3b4] [&_svg_.fa]:stroke-[#2b2a28] [&_svg_.t]:fill-[#2b2a28] [&_svg_.t]:text-xs [&_svg_.ta]:fill-[#c85025] [&_svg_.ta]:font-bold [&_svg_.ta]:text-xs"
             />
-            <p className="text-xs font-hand text-dim italic text-center">
+            <p className="text-sm font-hand text-dim not-italic text-center">
               {diagramModal.caption}
             </p>
           </div>

@@ -11,15 +11,21 @@ export const lerp = (a: number, b: number, t: number): number => a + (b - a) * t
 
 export const COL = {
   ink: '#2b2a28',
-  red: '#d4572b',
-  teal: '#2a7f78',
-  gold: '#d49a14',
-  blue: '#3567a6',
-  green: '#5b8a39',
-  gray: '#8d877a',
-  pink: '#c8577a',
+  red: '#c85025',
+  teal: '#1e6e67',
+  gold: '#b8810b',
+  blue: '#2c5890',
+  green: '#4e7a2e',
+  gray: '#6b665b',
+  pink: '#b84d6e',
   paper: '#f6f0e1',
   bg: '#f6f0e1',
+} as const;
+
+export const TEXT_SIZE = {
+  title: 26,
+  label: 20,
+  small: 16,
 } as const;
 
 export const v3 = {

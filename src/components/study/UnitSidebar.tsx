@@ -19,7 +19,7 @@ export const UnitSidebar: React.FC<UnitSidebarProps> = ({
   return (
     <aside id="units" aria-label="Units" className="border-r-2 border-ink overflow-y-auto p-3 bg-paper2">
       <h2 className="font-hand text-[26px] leading-tight mx-1 mb-0.5">{subject.name}</h2>
-      <p className="text-xs text-dim mx-1 mb-3">
+      <p className="text-sm text-dim mx-1 mb-3">
         {subject.code} · {subject.cr} credits · {subject.fac}
       </p>
       {subject.units.map((u, uIdx) => {

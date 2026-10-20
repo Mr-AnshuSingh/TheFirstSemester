@@ -31,7 +31,7 @@ export const ExamPlanModal: React.FC<ExamPlanModalProps> = ({
         <div className="mh">
           <div>
             <h2>Exam plan</h2>
-            <p className="text-[13px] text-dim mt-1.5">
+            <p className="text-sm text-dim mt-1.5">
               From your real timetable (revised, w.e.f. 28.09.26, Room 13) and the Group A syllabus credits.
             </p>
           </div>

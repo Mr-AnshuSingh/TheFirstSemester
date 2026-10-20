@@ -41,7 +41,7 @@ export const Header: React.FC<HeaderProps> = ({
     <header id="hd" className="col-span-full flex items-center gap-3 px-4 py-2 border-b-2 border-ink bg-paper flex-wrap">
       <div id="brand" className="font-hand text-[28px] leading-none font-bold whitespace-nowrap">
         Semester I, unit by unit
-        <small className="block font-sans text-[11px] font-medium text-dim mt-0.5">
+        <small className="block font-sans text-xs font-medium text-dim mt-0.5">
           Mathematics &amp; Computing · LNJPIT Chapra · Group A
         </small>
       </div>
@@ -63,8 +63,8 @@ export const Header: React.FC<HeaderProps> = ({
         ))}
       </nav>
 
-      <div id="prog" className="min-w-[110px] text-right text-[11px] text-dim hidden sm:block">
-        <b className="block font-hand text-[20px] text-ink leading-none">
+      <div id="prog" className="min-w-[110px] text-right text-xs text-dim hidden sm:block">
+        <b className="block font-hand text-2xl text-ink leading-none">
           {totalClearedAll}/{totalTopicsAll}
         </b>
         topics cleared
@@ -76,7 +76,7 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="flex items-center gap-1.5 flex-wrap">
         <button
           type="button"
-          className="btn flex items-center gap-1"
+          className="btn flex items-center gap-1 text-sm font-medium"
           onClick={onOpenCommandPalette}
           title="Spotlight Search (Ctrl+K)"
         >
@@ -85,7 +85,7 @@ export const Header: React.FC<HeaderProps> = ({
             <path d="M21 21l-4.35-4.35" />
           </svg>
           <span className="hidden md:inline">Search</span>
-          <kbd className="hidden lg:inline font-mono text-[9px] px-1 rounded border border-ink/40 bg-paper text-dim">
+          <kbd className="hidden lg:inline font-mono text-xs px-1 rounded border border-ink/40 bg-paper text-dim">
             Ctrl+K
           </kbd>
         </button>

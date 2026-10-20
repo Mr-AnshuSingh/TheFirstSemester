@@ -209,7 +209,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
               <span className="w-2.5 h-2.5 rounded-full bg-accentRed animate-ping" />
               <h2 className="font-hand text-3xl font-bold text-ink">Classes Scheduled &amp; University Calendar</h2>
             </div>
-            <p className="text-[13px] text-dim mt-1 font-sans">
+            <p className="text-sm text-dim mt-1 font-sans">
               Room 13 Weekly Timetable (w.e.f. 28.09.26) · Official 2026 University Holiday Calendar
             </p>
           </div>
@@ -405,7 +405,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
               <div className="overflow-x-auto border-2 border-ink rounded-lg shadow-sketchy bg-paper">
                 <table className="w-full text-center text-xs font-sans border-collapse">
                   <thead>
-                    <tr className="bg-paper2 border-b-2 border-ink text-[13px] font-hand font-bold">
+                    <tr className="bg-paper2 border-b-2 border-ink text-sm font-sans font-bold">
                       <th className="p-2.5 border-r-2 border-ink text-left w-20">Day</th>
                       <th colSpan={2} className={`p-2.5 border-r border-ink ${activeClass.dayIndex >= 0 && activeClass.slotIndex === 0 ? 'bg-gold/25 font-bold text-accentRed' : ''}`}>
                         10:00–12:00 (2h)
@@ -461,7 +461,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
                                 {showBreakCol && (
                                   <td
                                     rowSpan={6}
-                                    className={`border-r border-ink/40 p-1 font-mono text-[11px] font-bold text-dim bg-paper2/50 ${
+                                    className={`border-r border-ink/40 p-1 font-mono text-xs font-bold text-dim bg-paper2/50 ${
                                       activeClass.status === 'break' ? 'bg-gold/30 text-accentRed border-2 border-accentRed' : ''
                                     }`}
                                   >
@@ -485,7 +485,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
                                   style={{ borderLeftColor: HUE[cell.k] || HUE.x }}
                                 >
                                   {isSlotActive && (
-                                    <span className="absolute -top-1.5 right-1 px-1.5 py-0.2 rounded-full text-[9px] font-mono font-bold bg-accentRed text-paper shadow-sm animate-pulse">
+                                    <span className="absolute -top-2 right-1 px-1.5 py-0.5 rounded-full text-xs font-mono font-bold bg-accentRed text-paper shadow-sm animate-pulse">
                                       RUNNING
                                     </span>
                                   )}
@@ -493,7 +493,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
                                     {cell.l}
                                   </div>
                                   {cell.g && (
-                                    <span className="text-[10px] font-mono text-dim block mt-0.5">
+                                    <span className="text-xs font-mono text-dim block mt-0.5">
                                       Batch {cell.g} ({span * 60}m)
                                     </span>
                                   )}
@@ -510,7 +510,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
 
               {/* Subject Color Legend */}
               <div className="p-3 bg-paper rounded-lg border border-dashed border-ink/30">
-                <div className="text-[11px] font-mono uppercase tracking-wider text-dim font-bold mb-1.5">
+                <div className="text-xs font-mono uppercase tracking-wider text-dim font-bold mb-1.5">
                   Subject Color Reference (Group A Syllabus · Room 13):
                 </div>
                 <div className="flex gap-2 flex-wrap">
@@ -532,7 +532,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
               <div className="p-3.5 bg-paper rounded-lg border-[1.5px] border-ink shadow-sketchy">
                 <div className="flex items-start justify-between gap-3 flex-wrap">
                   <div>
-                    <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-accentRed font-mono block">
+                    <span className="text-xs font-bold tracking-[0.14em] uppercase text-accentRed font-mono block">
                       OFFICIAL NOTIFICATION · 2026 CALENDAR
                     </span>
                     <h3 className="font-hand text-2xl font-bold text-ink mt-0.5">
@@ -545,7 +545,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
 
                   {upcomingHoliday && (
                     <div className="p-2.5 rounded border border-ink/30 bg-gold/10 text-right font-sans shrink-0">
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-dim block">
+                      <span className="text-xs font-mono uppercase tracking-wider text-dim block">
                         Upcoming Holiday:
                       </span>
                       <strong className="text-sm font-hand font-bold text-accentRed block">
@@ -582,7 +582,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
                 </div>
 
                 <div className="flex items-center gap-1.5 overflow-x-auto text-xs font-mono">
-                  <span className="text-dim text-[11px]">Month:</span>
+                  <span className="text-dim text-xs">Month:</span>
                   {[
                     ['all', 'All'],
                     ['01', 'Jan'],
@@ -617,7 +617,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
               <div className="border-[1.5px] border-ink rounded-lg overflow-x-auto shadow-sketchy bg-paper">
                 <table className="w-full text-left text-xs font-sans border-collapse">
                   <thead>
-                    <tr className="bg-paper2 border-b-2 border-ink font-hand text-[14px] font-bold">
+                    <tr className="bg-paper2 border-b-2 border-ink font-sans text-sm font-bold">
                       <th className="p-2.5 border-r border-ink w-10 text-center">क्र०</th>
                       <th className="p-2.5 border-r border-ink">अवकाश का नाम (Holiday Name)</th>
                       <th className="p-2.5 border-r border-ink">तिथि (Date Range)</th>
@@ -641,11 +641,11 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
                             <div className="font-hand text-base font-bold text-ink">
                               {h.name}
                             </div>
-                            <div className="text-[11px] text-dim font-sans">
+                            <div className="text-xs text-dim font-sans">
                               {h.englishName}
                             </div>
                             {h.note && (
-                              <div className="text-[10px] text-accentRed font-mono mt-0.5 italic">
+                              <div className="text-xs text-accentRed font-mono mt-0.5 font-medium">
                                 * {h.note}
                               </div>
                             )}
@@ -689,7 +689,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
                 <p><strong>टिप्पणी:</strong></p>
                 <p>1. मुस्लिम त्योहारों में चाँद के दृष्टिगोचर होने के अनुसार अवकाश की तिथि में तत्संबंधी सरकारी आदेशानुसार परिवर्तन हो सकता है।</p>
                 <p>2. अतिरिक्त अवकाश सरकारी आदेशानुसार देय होगा।</p>
-                <p className="pt-1 text-[11px] font-mono text-ink">
+                <p className="pt-1 text-xs font-mono text-ink">
                   आदेशानुसार: कुलसचिव, विश्वविद्यालय प्रशासन
                 </p>
               </div>

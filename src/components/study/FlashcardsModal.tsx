@@ -121,11 +121,11 @@ export const FlashcardsModal: React.FC<FlashcardsModalProps> = ({
               <h2 className="font-hand text-2xl md:text-3xl font-bold leading-tight">
                 Spaced Repetition Flashcards
               </h2>
-              <span className="text-[11px] font-mono px-2 py-0.5 rounded-full border border-ink bg-paper font-bold">
+              <span className="text-xs font-mono px-2 py-0.5 rounded-full border border-ink bg-paper font-bold">
                 SM-2 Algorithm
               </span>
             </div>
-            <p className="text-xs text-dim">
+            <p className="text-sm text-dim">
               {totalDueCount} cards due today · Flip to review formulas, definitions, and theorems
             </p>
           </div>
@@ -140,7 +140,7 @@ export const FlashcardsModal: React.FC<FlashcardsModalProps> = ({
         </div>
 
         {/* Filter bar */}
-        <div className="p-3 border-b border-dashed border-ink/30 bg-paper/60 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div className="p-3 border-b border-dashed border-ink/30 bg-paper/60 flex flex-wrap items-center justify-between gap-2 text-sm">
           <div className="flex items-center gap-2">
             <label htmlFor="sub-select" className="font-bold text-dim">
               Subject:
@@ -153,7 +153,7 @@ export const FlashcardsModal: React.FC<FlashcardsModalProps> = ({
                 setCurrentIdx(0);
                 setIsFlipped(false);
               }}
-              className="p-1 bg-paper border border-ink rounded text-xs font-hand font-bold"
+              className="p-1.5 bg-paper border border-ink rounded text-sm font-sans font-medium"
             >
               <option value="all">All Subjects (43 Units)</option>
               {subjects.map((s) => (
@@ -203,7 +203,7 @@ export const FlashcardsModal: React.FC<FlashcardsModalProps> = ({
                   <span className="font-hand font-bold text-base text-accentRed">
                     {currentCard.unitTitle}
                   </span>
-                  <span className="text-[11px] text-dim/70 underline decoration-dotted">
+                  <span className="text-xs text-dim/80 underline decoration-dotted">
                     {isFlipped ? 'Click to show front' : 'Click to flip'}
                   </span>
                 </div>
@@ -212,7 +212,7 @@ export const FlashcardsModal: React.FC<FlashcardsModalProps> = ({
                 <div className="my-auto py-4 text-center">
                   {!isFlipped ? (
                     <div>
-                      <span className="text-[11px] font-mono tracking-widest uppercase text-dim block mb-2">
+                      <span className="text-xs font-mono tracking-widest uppercase text-dim block mb-2 font-semibold">
                         PROMPT / CONCEPT
                       </span>
                       <h3 className="font-hand text-2xl md:text-3xl font-bold text-ink leading-snug">
@@ -221,10 +221,10 @@ export const FlashcardsModal: React.FC<FlashcardsModalProps> = ({
                     </div>
                   ) : (
                     <div className="text-left">
-                      <span className="text-[11px] font-mono tracking-widest uppercase text-accentTeal block mb-2">
+                      <span className="text-xs font-mono tracking-widest uppercase text-accentTeal block mb-2 font-semibold">
                         EXPLANATION / DERIVATION
                       </span>
-                      <div className="text-sm md:text-base font-medium text-ink leading-relaxed whitespace-pre-line font-hand">
+                      <div className="text-sm md:text-base font-medium text-ink leading-relaxed whitespace-pre-line font-sans">
                         <KatexText htmlOrText={currentCard.back} />
                       </div>
                     </div>
@@ -232,7 +232,7 @@ export const FlashcardsModal: React.FC<FlashcardsModalProps> = ({
                 </div>
 
                 {/* Card Footer Progress Info */}
-                <div className="flex items-center justify-between text-[11px] text-dim font-mono border-t border-dashed border-ink/20 pt-2">
+                <div className="flex items-center justify-between text-xs text-dim font-mono border-t border-dashed border-ink/20 pt-2">
                   <span>Interval: {cardProg.interval}d</span>
                   <span>Reps: {cardProg.repetition}</span>
                   <span>Ease: {cardProg.easeFactor}</span>
@@ -276,9 +276,9 @@ export const FlashcardsModal: React.FC<FlashcardsModalProps> = ({
                   <button
                     type="button"
                     onClick={() => setIsFlipped(true)}
-                    className="w-full py-2.5 bg-ink text-paper font-hand text-lg font-bold rounded border-[1.5px] border-ink shadow-sketchy hover:bg-ink/90 transition-all"
+                    className="w-full py-2.5 bg-ink text-paper font-sans text-base font-bold rounded border-[1.5px] border-ink shadow-sketchy hover:bg-ink/90 transition-all"
                   >
-                    Reveal Answer & Formula (Space or Click)
+                    Reveal Answer &amp; Formula (Space or Click)
                   </button>
                 )}
               </div>

@@ -95,7 +95,7 @@ export const MockTestModal: React.FC<MockTestModalProps> = ({
             <h2 className="font-hand text-2xl md:text-3xl font-bold leading-tight">
               Semester-I Comprehensive Mock Test
             </h2>
-            <p className="text-xs text-dim">
+            <p className="text-sm text-dim">
               20 questions spanning all 8 subjects · Strict LNJPIT Group A syllabus weighting
             </p>
           </div>
@@ -173,7 +173,7 @@ export const MockTestModal: React.FC<MockTestModalProps> = ({
                       type="button"
                       disabled={currentIdx === 0}
                       onClick={() => setCurrentIdx((i) => Math.max(0, i - 1))}
-                      className="px-3 py-1.5 border-[1.5px] border-ink rounded font-hand text-sm disabled:opacity-40"
+                      className="px-3 py-1.5 border-[1.5px] border-ink rounded font-sans text-sm font-semibold disabled:opacity-40"
                     >
                       ← Previous
                     </button>
@@ -184,7 +184,7 @@ export const MockTestModal: React.FC<MockTestModalProps> = ({
                       type="button"
                       disabled={currentIdx === questions.length - 1}
                       onClick={() => setCurrentIdx((i) => Math.min(questions.length - 1, i + 1))}
-                      className="px-3 py-1.5 border-[1.5px] border-ink rounded font-hand text-sm disabled:opacity-40"
+                      className="px-3 py-1.5 border-[1.5px] border-ink rounded font-sans text-sm font-semibold disabled:opacity-40"
                     >
                       Next →
                     </button>
@@ -244,7 +244,7 @@ export const MockTestModal: React.FC<MockTestModalProps> = ({
                     Your Score: {correctCount} / {questions.length} (
                     {Math.round((correctCount / questions.length) * 100)}%)
                   </h3>
-                  <p className="text-xs text-dim mt-0.5">
+                  <p className="text-sm text-dim mt-1 leading-relaxed">
                     {correctCount >= 16
                       ? 'Distinction level mastery! Ready for university end-semester examinations.'
                       : correctCount >= 10
@@ -313,7 +313,7 @@ export const MockTestModal: React.FC<MockTestModalProps> = ({
                           return (
                             <div
                               key={optIdx}
-                              className={`p-2 rounded border-[1.5px] text-xs flex items-start gap-2 ${style}`}
+                              className={`p-2.5 rounded border-[1.5px] text-sm flex items-start gap-2 ${style}`}
                             >
                               <span className="font-mono font-bold">{optLetter}.</span>
                               <span>
@@ -324,8 +324,8 @@ export const MockTestModal: React.FC<MockTestModalProps> = ({
                         })}
                       </div>
 
-                      <div className="p-2.5 bg-paper/90 border-t border-dashed border-ink/30 text-xs font-hand leading-relaxed">
-                        <span className="font-bold text-accentRed font-sans text-[11px] uppercase block mb-0.5">
+                      <div className="p-2.5 bg-paper/90 border-t border-dashed border-ink/30 text-sm font-sans text-ink leading-relaxed">
+                        <span className="font-bold text-accentRed font-sans text-xs uppercase block mb-0.5">
                           Step-by-Step Rationale:
                         </span>
                         <KatexText htmlOrText={q.explanation} />

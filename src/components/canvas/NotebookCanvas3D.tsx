@@ -418,14 +418,16 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
 
       for (const e of texts) {
         const it = e.it;
+        const o = it.o || {};
         ctx.globalAlpha = it.step === cur && cur > 0 ? fade : 1;
         const [x, y] = e.pp[0];
-        const o = it.o;
-        const sz =
-          (o.sz || 19) *
-          Math.max(0.85, Math.min(1.25, Math.sqrt(eng.zoom))) *
-          Math.min(1, Math.max(0.6, eng.W / 760));
-        ctx.font = `${o.b ? 700 : 500} ${sz}px Caveat,"Segoe Print","Bradley Hand","Comic Sans MS",cursive`;
+        const labelScale = Math.min(1.15, Math.max(0.8, eng.W / 900));
+        const baseSz = o.sz || 20;
+        const sz = Math.max(
+          14,
+          Math.round(baseSz * labelScale * Math.max(0.85, Math.min(1.25, Math.sqrt(eng.zoom))))
+        );
+        ctx.font = `${o.b ? 700 : 500} ${sz}px var(--font-caveat), Caveat, "Segoe Print", "Bradley Hand", cursive`;
         ctx.textAlign = (o.a as CanvasTextAlign) || 'center';
         ctx.textBaseline = 'middle';
         const tx = x + (o.dx || 0);
@@ -550,10 +552,10 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
         className="absolute inset-0 w-full h-full block cursor-grab active:cursor-grabbing touch-none"
       />
       <div id="ovt" className="absolute left-4 top-3.5 pointer-events-none max-w-[52%]">
-        <div className="text-[11px] font-bold tracking-[0.12em] uppercase text-accentRed">
+        <div className="text-xs font-mono font-bold tracking-[0.12em] uppercase text-accentRed">
           {subjectShortName} · unit {unitIndex + 1} of {totalUnits}
         </div>
-        <h1 className="font-hand text-[32px] leading-[0.95] font-bold mt-0.5 text-ink">
+        <h1 className="font-hand text-[30px] leading-[1.0] font-bold mt-0.5 text-ink">
           {unitTitle}
         </h1>
       </div>
@@ -638,12 +640,12 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
               <button
                 type="button"
                 onClick={() => onStepChange(labStepIndex)}
-                className="flex items-center gap-2 bg-paper/95 border-[1.5px] border-ink rounded-lg px-3 py-1.5 text-xs font-hand font-bold shadow-sketchy hover:bg-gold/20 transition-all text-ink cursor-pointer"
+                className="flex items-center gap-2 bg-paper/95 border-[1.5px] border-ink rounded-lg px-3 py-1.5 text-sm font-hand font-bold shadow-sketchy hover:bg-gold/20 transition-all text-ink cursor-pointer"
                 title="Jump to the interactive live lab step"
               >
                 <span className="text-accentRed font-sans text-sm animate-pulse">⚡</span>
                 <span>Live Experiment Lab on <strong>Step {labStepIndex + 1}</strong> · Click to open</span>
-                <span className="text-[11px] font-mono px-1 py-0.5 rounded border border-ink/40 bg-gold/20">→</span>
+                <span className="text-xs font-mono px-1.5 py-0.5 rounded border border-ink/40 bg-gold/20">→</span>
               </button>
             </div>
           ) : slidersVisible ? (
@@ -657,8 +659,8 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
             >
               <div className="flex items-center justify-between pb-1 mb-2 border-b border-dashed border-ink/30">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-accentRed font-sans text-xs">⚡</span>
-                  <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-accentRed font-sans">
+                  <span className="text-accentRed font-sans text-sm">⚡</span>
+                  <span className="text-xs font-mono font-bold tracking-[0.14em] uppercase text-accentRed">
                     LIVE EXPERIMENT SLIDERS
                   </span>
                 </div>
@@ -673,7 +675,7 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
                       engineRef.current.params = reset;
                       setParamValues(reset);
                     }}
-                    className="text-[12px] text-dim hover:text-ink underline decoration-dashed transition-colors"
+                    className="text-sm text-dim hover:text-ink underline decoration-dashed transition-colors"
                     title="Reset sliders to defaults"
                   >
                     reset
@@ -681,7 +683,7 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
                   <button
                     type="button"
                     onClick={() => setSlidersOpen((o) => !o)}
-                    className="text-[12px] text-dim hover:text-ink font-sans px-1"
+                    className="text-sm text-dim hover:text-ink font-sans px-1"
                     title={slidersOpen ? 'Collapse sliders' : 'Expand sliders'}
                   >
                     {slidersOpen ? '▲' : '▼'}
@@ -689,7 +691,7 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
                   <button
                     type="button"
                     onClick={() => setSlidersVisible(false)}
-                    className="text-[12px] text-dim hover:text-ink font-sans px-1"
+                    className="text-sm text-dim hover:text-ink font-sans px-1"
                     title="Hide slider panel"
                   >
                     ✕
@@ -702,11 +704,11 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
                     const val = paramValues[p.id] ?? p.defaultVal;
                     return (
                       <div key={p.id} className="flex flex-col gap-1">
-                        <div className="flex justify-between items-baseline text-[14px]">
+                        <div className="flex justify-between items-baseline text-sm">
                           <label htmlFor={`param-${p.id}`} className="font-bold text-ink">
                             {p.label}
                           </label>
-                          <span className="font-bold text-accentRed text-[15px] font-mono">
+                          <span className="font-bold text-accentRed text-sm font-mono">
                             {typeof val === 'number' && Number.isInteger(p.step) ? val : val.toFixed(2)} {p.unit}
                           </span>
                         </div>
@@ -743,7 +745,7 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
               <button
                 type="button"
                 onClick={() => setSlidersVisible(true)}
-                className="flex items-center gap-1.5 bg-paper/95 border-[1.5px] border-ink rounded-lg px-2.5 py-1 text-xs font-hand font-bold shadow-sketchy hover:bg-gold/20 transition-all text-ink cursor-pointer"
+                className="flex items-center gap-1.5 bg-paper/95 border-[1.5px] border-ink rounded-lg px-2.5 py-1 text-sm font-hand font-bold shadow-sketchy hover:bg-gold/20 transition-all text-ink cursor-pointer"
                 title="Show experiment sliders"
               >
                 <span className="text-accentRed font-sans">⚡</span>

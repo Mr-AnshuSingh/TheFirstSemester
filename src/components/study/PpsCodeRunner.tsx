@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Play, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
 import { PPS_EXPERIMENTS } from '@/data/ppsExperiments';
 
 interface PpsCodeRunnerProps {
@@ -57,7 +58,7 @@ export const PpsCodeRunner: React.FC<PpsCodeRunnerProps> = ({ unitIndex }) => {
 
       <div className="mb-2">
         <div className="font-bold text-sm text-ink">{exp.title}</div>
-        <div className="text-xs text-dim leading-relaxed">{exp.problem}</div>
+        <div className="text-sm text-dim leading-relaxed">{exp.problem}</div>
       </div>
 
       <div className="bg-[#1e1e1c] text-[#f6f0e1] rounded-lg p-3 font-mono text-xs overflow-x-auto leading-relaxed mb-3 border border-ink">
@@ -79,32 +80,35 @@ export const PpsCodeRunner: React.FC<PpsCodeRunnerProps> = ({ unitIndex }) => {
       </div>
 
       <div className="flex items-center justify-between gap-2 flex-wrap mb-2">
-        <div className="flex gap-1.5">
+        <div className="flex gap-1.5 items-center">
           <button
             type="button"
             onClick={() => {
               setHasRun(true);
               setTraceIdx(0);
             }}
-            className="btn red text-xs py-1 px-3"
+            className="btn red text-xs py-1 px-3 flex items-center gap-1.5"
           >
-            ▶ Run / Reset
+            <Play className="w-3.5 h-3.5" />
+            <span>Run / Reset</span>
           </button>
           <button
             type="button"
             disabled={traceIdx === 0}
             onClick={() => setTraceIdx((i) => Math.max(0, i - 1))}
-            className="btn text-xs py-1 px-2.5 disabled:opacity-40"
+            className="btn text-xs py-1 px-2.5 disabled:opacity-40 flex items-center gap-1"
           >
-            ← Prev Step
+            <ChevronLeft className="w-3.5 h-3.5" />
+            <span>Prev Step</span>
           </button>
           <button
             type="button"
             disabled={traceIdx >= exp.traceFrames.length - 1}
             onClick={() => setTraceIdx((i) => Math.min(exp.traceFrames.length - 1, i + 1))}
-            className="btn text-xs py-1 px-2.5 disabled:opacity-40"
+            className="btn text-xs py-1 px-2.5 disabled:opacity-40 flex items-center gap-1"
           >
-            Step Forward →
+            <span>Step Forward</span>
+            <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
         <span className="text-xs font-semibold text-dim">
@@ -114,14 +118,14 @@ export const PpsCodeRunner: React.FC<PpsCodeRunnerProps> = ({ unitIndex }) => {
 
       {currentFrame && (
         <div className="grid grid-cols-1 gap-2 mt-2">
-          <div className="p-2.5 rounded bg-[#fff9e8] border border-ink text-xs">
+          <div className="p-2.5 rounded bg-[#fff9e8] border border-ink text-sm">
             <strong className="text-accentTeal block mb-1">Stack / Memory Trace:</strong>
-            <p className="text-ink mb-2">{currentFrame.explanation}</p>
+            <p className="text-ink mb-2 leading-relaxed">{currentFrame.explanation}</p>
             <div className="flex flex-wrap gap-2">
               {Object.entries(currentFrame.variables).map(([k, v]) => (
                 <div
                   key={k}
-                  className="px-2 py-1 rounded bg-paper2 border border-ink/40 font-mono text-[11px]"
+                  className="px-2 py-1 rounded bg-paper2 border border-ink/40 font-mono text-xs"
                 >
                   <span className="text-dim">{k}:</span>{' '}
                   <strong className="text-accentRed">{String(v)}</strong>
@@ -131,7 +135,7 @@ export const PpsCodeRunner: React.FC<PpsCodeRunnerProps> = ({ unitIndex }) => {
           </div>
 
           <div className="p-2.5 rounded bg-[#1b1a17] text-[#e8e2d2] font-mono text-xs border border-ink">
-            <div className="text-[10px] uppercase tracking-wider text-accentGold mb-1">
+            <div className="text-xs uppercase tracking-wider text-accentGold mb-1 font-semibold">
               Terminal Output (stdout) · Input: {exp.sampleInput}
             </div>
             <pre className="whitespace-pre-wrap m-0 text-emerald-300">
@@ -139,8 +143,8 @@ export const PpsCodeRunner: React.FC<PpsCodeRunnerProps> = ({ unitIndex }) => {
             </pre>
           </div>
 
-          <div className="text-xs text-dim bg-paper2 p-2 rounded border-l-4 border-accentGold">
-            <strong className="text-ink">Viva Examiner Tip:</strong> {exp.vivaTip}
+          <div className="text-sm text-dim bg-paper2 p-2.5 rounded border-l-4 border-accentGold leading-relaxed">
+            <strong className="text-ink font-semibold">Viva Examiner Tip:</strong> {exp.vivaTip}
           </div>
         </div>
       )}

@@ -81,7 +81,7 @@ export const AllNotesModal: React.FC<AllNotesModalProps> = ({ open, subjects, on
         <div className="mh noprint">
           <div>
             <h2>All notes</h2>
-            <p className="text-[13px] text-dim mt-1.5">
+            <p className="text-sm text-dim mt-1.5">
               Generated from your syllabus: simple-English notes, step-by-step explanations, worked examples, key formulas and exam traps for every unit.
             </p>
           </div>
@@ -168,25 +168,25 @@ export const AllNotesModal: React.FC<AllNotesModalProps> = ({ open, subjects, on
                           const isStar = t.startsWith('★');
                           const tClean = isStar ? t.slice(1).trim() : t;
                           return (
-                            <div key={ti} className="p-3 bg-paper2 rounded border border-rule/60 text-[13px] break-inside-avoid">
-                              <div className="flex items-center gap-2 font-bold text-[14px] text-ink border-b border-rule/40 pb-1 mb-2">
+                            <div key={ti} className="p-3 bg-paper2 rounded border border-rule/60 text-sm break-inside-avoid">
+                              <div className="flex items-center gap-2 font-bold text-sm text-ink border-b border-rule/40 pb-1 mb-2">
                                 {isStar && <span className="text-gold font-serif">★</span>}
                                 <span>{ti + 1}. {tClean}</span>
                               </div>
                               <div className="mb-2">
-                                <span className="font-semibold text-ink uppercase text-[11px] tracking-wide">Definition: </span>
+                                <span className="font-semibold text-ink uppercase text-xs tracking-wide">Definition: </span>
                                 <KatexText htmlOrText={tc.definition} />
                               </div>
                               {tc.formula && (
-                                <div className="mb-2 p-1.5 bg-paper rounded border border-rule/50 text-[12px] font-mono text-ink">
-                                  <span className="font-sans font-semibold text-ink uppercase text-[11px] tracking-wide">Formula: </span>
+                                <div className="mb-2 p-1.5 bg-paper rounded border border-rule/50 text-sm font-mono text-ink">
+                                  <span className="font-sans font-semibold text-ink uppercase text-xs tracking-wide">Formula: </span>
                                   <KatexText htmlOrText={tc.formula} />
                                 </div>
                               )}
                               {tc.steps && tc.steps.length > 0 && (
                                 <div className="mb-2">
-                                  <span className="font-semibold text-ink uppercase text-[11px] tracking-wide block mb-0.5">Steps / Method:</span>
-                                  <ol className="list-decimal pl-4 space-y-0.5 text-[12.5px]">
+                                  <span className="font-semibold text-ink uppercase text-xs tracking-wide block mb-0.5">Steps / Method:</span>
+                                  <ol className="list-decimal pl-4 space-y-0.5 text-sm">
                                     {tc.steps.map((st, si) => (
                                       <li key={si}><KatexText htmlOrText={st} /></li>
                                     ))}
@@ -199,15 +199,15 @@ export const AllNotesModal: React.FC<AllNotesModalProps> = ({ open, subjects, on
                                     className="w-full max-w-[340px] [&_svg]:w-full [&_svg]:h-auto text-ink"
                                     dangerouslySetInnerHTML={{ __html: tc.diagram.svg }}
                                   />
-                                  <div className="text-[11px] text-dim mt-1 italic">
+                                  <div className="text-xs text-dim mt-1 font-medium">
                                     Fig: {tc.diagram.caption}
                                   </div>
                                 </div>
                               )}
                               {tc.examAnswer && tc.examAnswer.length > 0 && (
                                 <div className="mb-1 text-ink/90">
-                                  <span className="font-semibold text-green-800 uppercase text-[11px] tracking-wide block mb-0.5">Write This for Full Marks:</span>
-                                  <ul className="list-disc pl-4 space-y-0.5 text-[12.5px]">
+                                  <span className="font-semibold text-accentTeal uppercase text-xs tracking-wide block mb-0.5">Write This for Full Marks:</span>
+                                  <ul className="list-disc pl-4 space-y-0.5 text-sm">
                                     {tc.examAnswer.map((ans, ai) => (
                                       <li key={ai}><KatexText htmlOrText={ans} /></li>
                                     ))}
@@ -215,8 +215,8 @@ export const AllNotesModal: React.FC<AllNotesModalProps> = ({ open, subjects, on
                                 </div>
                               )}
                               {tc.slip && (
-                                <div className="mt-2 p-1.5 bg-red/5 rounded border border-red/20 text-[12px] text-red">
-                                  <b>Common Exam Slip: </b>
+                                <div className="mt-2 p-1.5 bg-accentRed/10 rounded border border-accentRed/30 text-sm text-accentRed">
+                                  <b className="font-semibold">Common Exam Slip: </b>
                                   <KatexText htmlOrText={tc.slip} />
                                 </div>
                               )}

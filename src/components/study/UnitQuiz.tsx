@@ -49,7 +49,7 @@ export const UnitQuiz: React.FC<UnitQuizProps> = ({
           <h3 className="font-hand text-2xl font-bold leading-tight">
             Unit Concept Check · {subject.co} U{unitIndex + 1}
           </h3>
-          <p className="text-xs text-dim">
+          <p className="text-sm text-dim">
             Curated syllabus diagnostic questions · {questions.length} questions
           </p>
         </div>
@@ -58,7 +58,7 @@ export const UnitQuiz: React.FC<UnitQuizProps> = ({
             <button
               type="button"
               onClick={resetQuiz}
-              className="text-xs px-2.5 py-1 border-[1.5px] border-ink rounded font-hand bg-paper hover:bg-gold/20"
+              className="text-xs px-2.5 py-1 border-[1.5px] border-ink rounded font-sans font-semibold bg-paper hover:bg-gold/20"
             >
               Reset
             </button>
@@ -106,7 +106,7 @@ export const UnitQuiz: React.FC<UnitQuizProps> = ({
               </span>
               {isAnswered && (
                 <span
-                  className={`text-[11px] font-bold uppercase px-2 py-0.5 rounded ${
+                  className={`text-xs font-bold uppercase px-2 py-0.5 rounded ${
                     isCorrect ? 'bg-accentTeal/20 text-accentTeal' : 'bg-accentRed/20 text-accentRed'
                   }`}
                 >
@@ -140,7 +140,7 @@ export const UnitQuiz: React.FC<UnitQuizProps> = ({
                     type="button"
                     disabled={isAnswered}
                     onClick={() => handleSelect(q, optIdx)}
-                    className={`w-full text-left p-2 rounded border-[1.5px] text-xs transition-all flex items-start gap-2.5 ${optStyle}`}
+                    className={`w-full text-left p-2.5 rounded border-[1.5px] text-sm transition-all flex items-start gap-2.5 ${optStyle}`}
                   >
                     <span className="font-mono font-bold text-dim shrink-0">{optLetter}.</span>
                     <span className="flex-1">
@@ -152,9 +152,9 @@ export const UnitQuiz: React.FC<UnitQuizProps> = ({
             </div>
 
             {showExplanations[q.id] && (
-              <div className="mt-3 p-2.5 bg-paper border-t border-dashed border-ink/30 text-xs text-ink/90 font-hand leading-relaxed">
-                <span className="font-bold text-accentRed block mb-0.5 uppercase tracking-wide font-sans text-[11px]">
-                  Reasoning & Marking Scheme:
+              <div className="mt-3 p-2.5 bg-paper border-t border-dashed border-ink/30 text-sm text-ink leading-relaxed font-sans">
+                <span className="font-bold text-accentRed block mb-0.5 uppercase tracking-wide font-sans text-xs">
+                  Reasoning &amp; Marking Scheme:
                 </span>
                 <KatexText htmlOrText={q.explanation} />
               </div>

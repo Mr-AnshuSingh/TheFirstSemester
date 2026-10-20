@@ -52,9 +52,9 @@ export const FormulaSheetModal: React.FC<FormulaSheetModalProps> = ({
         <div className="p-4 border-b-2 border-ink flex items-center justify-between bg-gold/10">
           <div>
             <h2 className="font-hand text-2xl md:text-3xl font-bold leading-tight">
-              Formula & Definition Quick Reference
+              Formula &amp; Definition Quick Reference
             </h2>
-            <p className="text-xs text-dim">
+            <p className="text-sm text-dim">
               Key mathematical theorems, physical relations, and electronic equations across 43 units
             </p>
           </div>
@@ -62,7 +62,7 @@ export const FormulaSheetModal: React.FC<FormulaSheetModalProps> = ({
             <button
               type="button"
               onClick={() => window.print()}
-              className="text-xs px-2.5 py-1 border-[1.5px] border-ink rounded bg-paper font-hand font-bold hover:bg-gold/20"
+              className="text-xs px-2.5 py-1 border-[1.5px] border-ink rounded bg-paper font-sans font-semibold hover:bg-gold/20"
             >
               Print Sheet
             </button>
@@ -78,14 +78,14 @@ export const FormulaSheetModal: React.FC<FormulaSheetModalProps> = ({
         </div>
 
         {/* Filter bar */}
-        <div className="p-3 border-b border-dashed border-ink/30 bg-paper/80 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="p-3 border-b border-dashed border-ink/30 bg-paper/80 flex flex-wrap items-center justify-between gap-3 text-sm">
           <div className="flex items-center gap-2 flex-1 min-w-[200px]">
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search formulas (e.g. curvature, Poynting, resonance, Euler, Beta)..."
-              className="w-full p-1.5 bg-paper border border-ink rounded text-xs font-hand font-bold placeholder:text-dim/60"
+              className="w-full p-2 bg-paper border border-ink rounded text-sm font-sans font-medium placeholder:text-dim/60"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -93,7 +93,7 @@ export const FormulaSheetModal: React.FC<FormulaSheetModalProps> = ({
             <select
               value={selectedSubId}
               onChange={(e) => setSelectedSubId(e.target.value)}
-              className="p-1 bg-paper border border-ink rounded text-xs font-hand font-bold"
+              className="p-1.5 bg-paper border border-ink rounded text-sm font-sans font-medium"
             >
               <option value="all">All 8 Subjects</option>
               {subjects.map((s) => (
@@ -128,14 +128,14 @@ export const FormulaSheetModal: React.FC<FormulaSheetModalProps> = ({
                       <h4 className="font-hand text-lg font-bold text-ink mb-2 border-b border-dashed border-ink/20 pb-1">
                         Unit {u.unitIndex + 1}: {u.unitTitle}
                       </h4>
-                      <ul className="space-y-2 text-xs md:text-sm">
+                      <ul className="space-y-2 text-sm">
                         {u.formulas.map((fm, idx) => (
                           <li
                             key={idx}
                             className="flex items-start gap-2 p-1.5 rounded hover:bg-gold/10 transition-colors font-medium leading-relaxed"
                           >
                             <span className="text-accentRed font-bold font-mono shrink-0">▪</span>
-                            <span className="flex-1 font-mono text-xs">
+                            <span className="flex-1 font-mono text-sm">
                               <KatexText htmlOrText={fm} />
                             </span>
                           </li>

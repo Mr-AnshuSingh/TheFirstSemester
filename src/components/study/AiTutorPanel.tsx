@@ -313,11 +313,11 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
           <div>
             <div className="flex items-center gap-1.5">
               <span className="text-base">🎓</span>
-              <h3 className="font-hand text-xl font-bold text-accentRed tracking-wide">
+              <h3 className="font-hand text-2xl font-bold text-accentRed tracking-wide">
                 AI Doubt Solver &amp; Tutor
               </h3>
             </div>
-            <p className="text-[11px] text-dim font-sans mt-0.5">
+            <p className="text-sm text-dim font-sans mt-0.5">
               Camera Problem Solver · Step-by-Step Numericals &amp; Derivations · LaTeX Formatted
             </p>
           </div>
@@ -326,7 +326,7 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
             <button
               type="button"
               onClick={() => setActiveTab('solve')}
-              className={`text-xs px-2.5 py-1 rounded font-mono font-bold transition-colors ${
+              className={`text-sm px-3 py-1 rounded font-mono font-bold transition-colors ${
                 activeTab === 'solve'
                   ? 'bg-ink text-paper'
                   : 'bg-paper2 text-dim hover:text-ink'
@@ -338,7 +338,7 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
               <button
                 type="button"
                 onClick={() => setActiveTab('history')}
-                className={`text-xs px-2.5 py-1 rounded font-mono font-bold transition-colors ${
+                className={`text-sm px-3 py-1 rounded font-mono font-bold transition-colors ${
                   activeTab === 'history'
                     ? 'bg-ink text-paper'
                     : 'bg-paper2 text-dim hover:text-ink'
@@ -351,12 +351,12 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
         </div>
 
         {/* Injected Syllabus Context Bar */}
-        <div className="text-[11px] text-dim bg-paper2/70 p-2 rounded border border-ink/20 font-sans flex items-center justify-between flex-wrap gap-1">
+        <div className="text-sm text-dim bg-paper2/70 p-2.5 rounded border border-ink/20 font-sans flex items-center justify-between flex-wrap gap-1">
           <div>
             Context: <strong>{subject.co}</strong> ({subject.code}) · Unit {unitIndex + 1}:{' '}
             <strong>{unit.t}</strong>
           </div>
-          <span className="text-[10px] font-mono text-accentRed font-bold">
+          <span className="text-xs font-mono text-accentRed font-bold">
             Step {stepIndex + 1}: {activeStep.t}
           </span>
         </div>
@@ -374,11 +374,11 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                 }}
                 className="p-2.5 rounded-lg border border-ink/30 bg-[#fffdf7] hover:border-ink hover:shadow-sm cursor-pointer transition text-left space-y-1"
               >
-                <div className="flex items-center justify-between text-[11px] text-dim font-mono">
+                <div className="flex items-center justify-between text-xs text-dim font-mono">
                   <span>{item.hasImage ? '📸 Image Doubt' : '📝 Text Question'}</span>
                   <span>{item.timestamp}</span>
                 </div>
-                <div className="text-xs font-sans text-ink font-medium line-clamp-2">
+                <div className="text-sm font-sans text-ink font-medium line-clamp-2">
                   {item.question}
                 </div>
               </div>
@@ -401,7 +401,7 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                     <span className="text-xs font-bold text-accentRed font-mono block">
                       📸 Problem Photo Attached
                     </span>
-                    <span className="text-[11px] text-dim truncate block font-sans">
+                    <span className="text-sm text-dim truncate block font-sans">
                       Ready for multi-modal OCR and step-by-step solving.
                     </span>
                   </div>
@@ -409,7 +409,7 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                 <button
                   type="button"
                   onClick={() => setAttachedImage(null)}
-                  className="px-2 py-1 text-xs font-mono font-bold text-accentRed bg-paper border border-accentRed/40 rounded hover:bg-accentRed hover:text-paper transition shrink-0"
+                  className="px-2.5 py-1 text-xs font-mono font-bold text-accentRed bg-paper border border-accentRed/40 rounded hover:bg-accentRed hover:text-paper transition shrink-0"
                 >
                   ✕ Remove
                 </button>
@@ -432,7 +432,7 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                         setQuestion(preset);
                         askTutor(preset);
                       }}
-                      className="text-[11px] px-2.5 py-1 rounded-full bg-gold/15 hover:bg-ink hover:text-paper border border-ink/40 transition text-left font-sans"
+                      className="text-sm px-3 py-1 rounded-full bg-gold/15 hover:bg-ink hover:text-paper border border-ink/40 transition text-left font-sans"
                     >
                       {preset}
                     </button>
@@ -451,7 +451,7 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                         setQuestion(preset);
                         askTutor(preset);
                       }}
-                      className="text-[11px] px-2.5 py-1 rounded-full bg-paper2 hover:bg-ink hover:text-paper border border-ink/40 transition text-left font-sans"
+                      className="text-sm px-3 py-1 rounded-full bg-paper2 hover:bg-ink hover:text-paper border border-ink/40 transition text-left font-sans"
                     >
                       {preset}
                     </button>
@@ -476,10 +476,10 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                       ? `Add any specific instructions (e.g. "solve step 2 only", "find my mistake"), or click Solve...`
                       : `Ask any question, numerical, or snap a photo of paper/textbook... (Ctrl+V to paste screenshot)`
                   }
-                  className="w-full px-3 py-2 text-xs md:text-sm bg-[#fffdf7] border-[1.5px] border-ink rounded-lg focus:outline-none focus:ring-1 focus:ring-ink font-sans resize-none"
+                  className="w-full px-3 py-2 text-base bg-[#fffdf7] border-[1.5px] border-ink rounded-lg focus:outline-none focus:ring-1 focus:ring-ink font-sans resize-none"
                 />
                 {isListening && (
-                  <span className="absolute bottom-2 right-2 text-[10px] font-mono text-accentRed animate-pulse flex items-center gap-1 bg-paper px-1.5 py-0.5 rounded border border-accentRed/40">
+                  <span className="absolute bottom-2 right-2 text-xs font-mono text-accentRed animate-pulse flex items-center gap-1 bg-paper px-2 py-0.5 rounded border border-accentRed/40">
                     <span className="w-2 h-2 rounded-full bg-accentRed inline-block" />
                     Listening...
                   </span>
@@ -494,7 +494,7 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                     type="button"
                     onClick={openCameraModal}
                     title="Open live camera viewfinder to snap problem photo"
-                    className="btn px-2.5 py-1 text-xs flex items-center gap-1 bg-paper hover:bg-gold/20"
+                    className="btn px-3 py-1 text-sm flex items-center gap-1 bg-paper hover:bg-gold/20"
                   >
                     <span>📷</span>
                     <span>Camera</span>
@@ -505,7 +505,7 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                     type="button"
                     onClick={() => nativeCameraInputRef.current?.click()}
                     title="Capture directly with phone camera"
-                    className="btn px-2.5 py-1 text-xs flex items-center gap-1 bg-paper hover:bg-gold/20"
+                    className="btn px-3 py-1 text-sm flex items-center gap-1 bg-paper hover:bg-gold/20"
                   >
                     <span>📸</span>
                     <span>Snap Photo</span>
@@ -516,7 +516,7 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     title="Upload problem photo or screenshot"
-                    className="btn px-2.5 py-1 text-xs flex items-center gap-1 bg-paper hover:bg-gold/20"
+                    className="btn px-3 py-1 text-sm flex items-center gap-1 bg-paper hover:bg-gold/20"
                   >
                     <span>📁</span>
                     <span>Upload Image</span>
@@ -527,7 +527,7 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                     type="button"
                     onClick={toggleSpeechRecognition}
                     title="Speak your doubt via microphone"
-                    className={`btn px-2.5 py-1 text-xs flex items-center gap-1 ${
+                    className={`btn px-3 py-1 text-sm flex items-center gap-1 ${
                       isListening ? 'bg-accentRed text-paper' : 'bg-paper hover:bg-gold/20'
                     }`}
                   >
@@ -537,14 +537,14 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono text-dim hidden sm:inline">
+                  <span className="text-xs font-mono text-dim hidden sm:inline">
                     Ctrl+Enter to send
                   </span>
                   <button
                     type="button"
                     onClick={() => askTutor()}
                     disabled={loading || (!question.trim() && !attachedImage)}
-                    className="btn red text-xs px-4 py-1.5 font-bold shadow-sm disabled:opacity-50"
+                    className="btn red text-sm px-4 py-1.5 font-bold shadow-sm disabled:opacity-50"
                   >
                     {loading ? (
                       <span className="flex items-center gap-1">
@@ -622,7 +622,7 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                   />
                   {/* Framing Overlay Grid */}
                   <div className="absolute inset-4 border-2 border-dashed border-white/60 pointer-events-none rounded flex items-center justify-center">
-                    <span className="bg-black/60 text-white text-[10px] font-mono px-2 py-1 rounded">
+                    <span className="bg-black/60 text-white text-xs font-mono px-2 py-1 rounded">
                       Align equation / problem inside frame
                     </span>
                   </div>
@@ -652,12 +652,12 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
 
       {/* Answer / Solution Card */}
       {response && (
-        <div className="p-4 rounded-xl bg-[#fff9e8] border-2 border-ink shadow-sketch space-y-3.5 text-xs leading-relaxed animate-fadeIn">
+        <div className="p-4 rounded-xl bg-[#fff9e8] border-2 border-ink shadow-sketch space-y-3.5 text-base leading-relaxed animate-fadeIn">
           {/* Header Status Bar */}
           <div className="flex items-center justify-between pb-2 border-b border-ink/20 flex-wrap gap-2">
             <div className="flex items-center gap-1.5 flex-wrap">
               <span
-                className={`text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full border ${
+                className={`text-xs font-mono font-bold px-2.5 py-0.5 rounded-full border ${
                   response.isLiveAi
                     ? 'bg-amber-100 text-amber-900 border-amber-400'
                     : 'bg-paper text-dim border-ink/30'
@@ -666,7 +666,7 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                 {response.isLiveAi ? 'Live Cloud AI (Multimodal)' : 'Offline Syllabus Grounded'}
               </span>
               {attachedImage && (
-                <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-accentRed/10 text-accentRed border border-accentRed/30">
+                <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-accentRed/10 text-accentRed border border-accentRed/30">
                   📸 Vision Analyzed
                 </span>
               )}
@@ -676,12 +676,12 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
               <button
                 type="button"
                 onClick={copySolutionToClipboard}
-                className="btn text-xs px-2 py-0.5 bg-paper hover:bg-gold/20"
+                className="btn text-sm px-2.5 py-0.5 bg-paper hover:bg-gold/20"
                 title="Copy complete solution to clipboard"
               >
                 {copied ? '✓ Copied!' : '📋 Copy Solution'}
               </button>
-              <span className="text-[11px] text-dim font-mono">
+              <span className="text-xs text-dim font-mono">
                 {response.contextUsed.subjectCode} · Unit {unitIndex + 1}
               </span>
             </div>
@@ -689,10 +689,10 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
 
           {/* Solution Body */}
           <div>
-            <strong className="text-accentTeal uppercase tracking-wider block text-[11px] mb-1.5 font-mono">
+            <strong className="text-accentTeal uppercase tracking-wider block text-xs mb-1.5 font-mono font-bold">
               University Marking-Scheme Answer &amp; Derivation:
             </strong>
-            <div className="text-sm text-ink whitespace-pre-line leading-relaxed font-sans bg-paper/60 p-3 rounded-lg border border-ink/20">
+            <div className="text-base text-ink whitespace-pre-line leading-relaxed font-sans bg-paper/60 p-3.5 rounded-lg border border-ink/20">
               <KatexText htmlOrText={response.answer} />
             </div>
           </div>
@@ -700,10 +700,10 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
           {/* Key Formulas */}
           {response.formulaHighlight && response.formulaHighlight.length > 0 && (
             <div>
-              <strong className="text-accentRed uppercase tracking-wider block text-[11px] mb-1 font-mono">
+              <strong className="text-accentRed uppercase tracking-wider block text-xs mb-1 font-mono font-bold">
                 Key Formulas &amp; Moves to Write on Paper:
               </strong>
-              <ul className="keys space-y-1">
+              <ul className="keys space-y-1 text-base font-mono">
                 {response.formulaHighlight.map((f, i) => (
                   <li key={i}>
                     <KatexText htmlOrText={f} />
@@ -716,10 +716,10 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
           {/* Step-by-Step Rubric */}
           {response.markingSchemeSteps && response.markingSchemeSteps.length > 0 && (
             <div>
-              <strong className="text-ink uppercase tracking-wider block text-[11px] mb-1 font-mono">
+              <strong className="text-ink uppercase tracking-wider block text-xs mb-1 font-mono font-bold">
                 Step-by-Step Full-Marks Rubric:
               </strong>
-              <ol className="list-decimal pl-5 space-y-1 text-dim">
+              <ol className="list-decimal pl-5 space-y-1 text-dim text-sm md:text-base">
                 {response.markingSchemeSteps.map((s, i) => (
                   <li key={i}>{s}</li>
                 ))}
@@ -729,17 +729,17 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
 
           {/* Examiner Trap Warning */}
           {response.trapWarning && (
-            <div className="p-2.5 rounded bg-[#fff1e8] border border-accentRed text-ink space-y-0.5">
-              <strong className="text-accentRed font-bold font-mono text-[11px] block">
+            <div className="p-3 rounded bg-[#fff1e8] border border-accentRed text-ink space-y-1">
+              <strong className="text-accentRed font-bold font-mono text-xs block">
                 ⚠️ EXAMINER TRAP ALERT:
               </strong>
-              <p className="text-xs font-sans">{response.trapWarning}</p>
+              <p className="text-sm md:text-base font-sans">{response.trapWarning}</p>
             </div>
           )}
 
           {/* Follow-up Prompts */}
           <div className="pt-2 border-t border-dashed border-ink/20 flex items-center gap-1.5 flex-wrap">
-            <span className="text-[10px] font-mono text-dim">Follow-up:</span>
+            <span className="text-xs font-mono text-dim">Follow-up:</span>
             {[
               'Explain step 1 in more detail',
               'Give me another similar numerical to practice',
@@ -752,7 +752,7 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                   setQuestion(fu);
                   askTutor(fu);
                 }}
-                className="text-[10px] px-2 py-0.5 rounded bg-paper hover:bg-ink hover:text-paper border border-ink/30 transition font-sans"
+                className="text-xs px-2.5 py-1 rounded bg-paper hover:bg-ink hover:text-paper border border-ink/30 transition font-sans"
               >
                 {fu}
               </button>

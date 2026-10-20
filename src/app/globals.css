@@ -7,14 +7,14 @@
   --paper2: #efe7d2;
   --paper3: #e6dcc3;
   --ink: #2b2a28;
-  --dim: #6b665b;
-  --hair: rgba(43, 42, 40, 0.2);
-  --red: #d4572b;
-  --teal: #2a7f78;
-  --gold: #d49a14;
+  --dim: #555046; /* WCAG AA contrast >= 5.5:1 against paper */
+  --hair: rgba(43, 42, 40, 0.22);
+  --red: #c85025;
+  --teal: #1e6e67;
+  --gold: #b8810b;
   --hand: var(--font-caveat), Caveat, "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
-  --body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --rail: 272px;
+  --body: var(--font-inter), Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --rail: 264px;
   --study: 440px;
 }
 
@@ -24,12 +24,24 @@
   padding: 0;
 }
 
+::selection {
+  background: rgba(184, 129, 11, 0.22);
+  color: var(--ink);
+}
+
 html, body {
   height: 100%;
   background: var(--paper);
   color: var(--ink);
   font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+}
+
+button, [role="button"], [role="tab"], h1, h2, h3, h4, h5, h6, .sn, #tabs, #hd {
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 button {
@@ -73,7 +85,7 @@ button {
 #brand small {
   display: block;
   font-family: var(--body);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--dim);
   margin-top: 3px;
@@ -102,7 +114,7 @@ button {
   border: 1.5px solid var(--ink);
   border-radius: 255px 14px 225px 14px / 14px 225px 14px 255px;
   background: transparent;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   transition: background 0.15s;
 }
@@ -119,7 +131,7 @@ button {
 .chip i {
   font-style: normal;
   font-family: var(--hand);
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--red);
 }
@@ -130,22 +142,23 @@ button {
 
 .chip em {
   font-style: normal;
-  font-size: 11px;
+  font-family: var(--body);
+  font-size: 12px;
   font-weight: 500;
-  opacity: 0.7;
+  opacity: 0.75;
 }
 
 #prog {
   min-width: 120px;
   text-align: right;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--dim);
 }
 
 #prog b {
   display: block;
   font-family: var(--hand);
-  font-size: 22px;
+  font-size: 24px;
   color: var(--ink);
   line-height: 1;
 }
@@ -171,7 +184,7 @@ button {
   border: 1.5px solid var(--ink);
   border-radius: 255px 14px 225px 14px / 14px 225px 14px 255px;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 14px;
   background: var(--paper);
 }
 
@@ -206,7 +219,7 @@ button {
 }
 
 #units .meta {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--dim);
   margin: 0 4px 12px;
   line-height: 1.45;
@@ -253,9 +266,10 @@ button {
 }
 
 .un .a b {
-  font-size: 13.5px;
+  font-family: var(--body);
+  font-size: 15px;
   font-weight: 600;
-  line-height: 1.25;
+  line-height: 1.3;
   flex: 1;
 }
 
@@ -263,7 +277,8 @@ button {
   display: flex;
   justify-content: space-between;
   margin: 4px 0 0 34px;
-  font-size: 11px;
+  font-family: var(--body);
+  font-size: 12px;
   color: var(--dim);
 }
 
@@ -461,10 +476,12 @@ button {
 }
 
 #cap p {
-  font-size: 14px;
-  line-height: 1.55;
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.6;
   margin-top: 5px;
-  color: #3a3833;
+  color: var(--ink);
+  font-style: normal;
 }
 
 #study {
@@ -787,7 +804,7 @@ button {
 }
 
 .ttab th {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--dim);
   padding: 4px;
@@ -796,9 +813,9 @@ button {
 .ttab td {
   height: 50px;
   padding: 6px 8px;
-  font-size: 12.5px;
+  font-size: 13.5px;
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.25;
   vertical-align: top;
   background: color-mix(in srgb, var(--c) 22%, var(--paper));
   border-left: 4px solid var(--c);
@@ -820,7 +837,7 @@ button {
   border: 0;
   text-align: center;
   vertical-align: middle;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--dim);
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -831,7 +848,7 @@ button {
   font-weight: 500;
   color: var(--dim);
   margin-top: 2px;
-  font-size: 10.5px;
+  font-size: 12px;
 }
 
 .sx {
@@ -879,7 +896,7 @@ button {
 
 .wk small {
   display: block;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--dim);
   letter-spacing: 0.06em;
@@ -889,7 +906,7 @@ button {
 
 .wk li {
   list-style: none;
-  font-size: 13.5px;
+  font-size: 14px;
   line-height: 1.5;
   padding: 2px 0 2px 16px;
   position: relative;
@@ -911,7 +928,7 @@ button {
   align-items: center;
   flex-wrap: wrap;
   margin-bottom: 10px;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .xd input {
@@ -939,8 +956,8 @@ button {
 
 .fm li {
   list-style: none;
-  font-size: 13px;
-  line-height: 1.45;
+  font-size: 14px;
+  line-height: 1.5;
   padding: 2px 0 2px 14px;
   position: relative;
 }
@@ -1037,7 +1054,7 @@ button {
 }
 
 .nm {
-  font-size: 12.5px;
+  font-size: 13.5px;
   color: var(--dim);
   margin: 6px 0 8px;
 }
@@ -1069,14 +1086,14 @@ button {
 .nun h5 small,
 .unotes h5 small {
   font-family: var(--body);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--dim);
   font-weight: 600;
   margin-left: 8px;
 }
 
 .nl {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -1086,7 +1103,7 @@ button {
 
 .nun p,
 .unotes p {
-  font-size: 13.5px;
+  font-size: 14.5px;
   line-height: 1.6;
 }
 
@@ -1096,8 +1113,8 @@ button {
 
 .nt li {
   list-style: none;
-  font-size: 13px;
-  line-height: 1.5;
+  font-size: 14px;
+  line-height: 1.55;
   padding: 2px 0 2px 18px;
   position: relative;
 }
@@ -1130,7 +1147,7 @@ button {
 }
 
 .nst li {
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.55;
   padding: 2px 0;
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
+import { Download, Copy, Check, FolderOpen, AlertCircle, CheckCircle2 } from 'lucide-react';
 import {
   PersistedStudyState,
   CURRENT_STORAGE_VERSION,
@@ -131,22 +132,22 @@ export const BackupModal: React.FC<BackupModalProps> = ({
         <div className="box bg-paper2 p-3 rounded-lg border-[1.5px] border-ink space-y-1.5 text-xs font-mono">
           <div className="flex justify-between items-center text-ink/90 font-bold border-b border-ink/10 pb-1">
             <span>STORAGE HEALTH &amp; ENGINE</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-accentGreen/20 text-accentGreen border border-accentGreen/40">
+            <span className="text-xs px-2 py-0.5 rounded bg-accentGreen/20 text-accentGreen border border-accentGreen/40 font-semibold">
               {isServerSyncEnabled() ? 'Server Sync Enabled' : '100% Local-First Offline Mode'}
             </span>
           </div>
           <div className="grid grid-cols-3 gap-2 text-center pt-1 font-sans">
             <div className="p-1.5 rounded border border-ink/20 bg-paper">
               <span className="text-lg font-hand font-bold block">{totalCleared}</span>
-              <span className="text-[11px] text-dim">Topics Cleared</span>
+              <span className="text-xs text-dim">Topics Cleared</span>
             </div>
             <div className="p-1.5 rounded border border-ink/20 bg-paper">
               <span className="text-lg font-hand font-bold block">{totalNotes}</span>
-              <span className="text-[11px] text-dim">Custom Notes</span>
+              <span className="text-xs text-dim">Custom Notes</span>
             </div>
             <div className="p-1.5 rounded border border-ink/20 bg-paper">
               <span className="text-lg font-hand font-bold block">{totalCards}</span>
-              <span className="text-[11px] text-dim">Cards Reviewed</span>
+              <span className="text-xs text-dim">Cards Reviewed</span>
             </div>
           </div>
         </div>
@@ -154,23 +155,34 @@ export const BackupModal: React.FC<BackupModalProps> = ({
         {/* Section 1: Export Backup */}
         <div className="space-y-2">
           <h4 className="font-hand text-lg font-bold text-accentRed">1. Export &amp; Backup Progress</h4>
-          <p className="text-xs text-ink/80 leading-relaxed font-sans">
+          <p className="text-sm text-ink/80 leading-relaxed font-sans">
             Download your full study history, flashcards, confidence ratings, and custom notes as a portable JSON file.
           </p>
           <div className="flex gap-2">
             <button
               type="button"
-              className="btn flex-1 py-2 font-hand text-base"
+              className="btn flex-1 py-2 font-sans text-sm font-semibold flex items-center justify-center gap-2"
               onClick={() => downloadStudyStateBackup(currentState)}
             >
-              📥 Download Backup (.json)
+              <Download className="w-4 h-4" />
+              <span>Download Backup (.json)</span>
             </button>
             <button
               type="button"
-              className="btn py-2 px-3 text-xs font-mono"
+              className="btn py-2 px-3 text-xs font-mono flex items-center gap-1.5"
               onClick={handleCopyJSON}
             >
-              {copied ? '✓ Copied!' : '📋 Copy JSON'}
+              {copied ? (
+                <>
+                  <Check className="w-3.5 h-3.5 text-accentGreen" />
+                  <span>Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3.5 h-3.5 text-dim" />
+                  <span>Copy JSON</span>
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -178,7 +190,7 @@ export const BackupModal: React.FC<BackupModalProps> = ({
         {/* Section 2: Import Backup */}
         <div className="space-y-2 pt-2 border-t border-dashed border-ink/30">
           <h4 className="font-hand text-lg font-bold text-accentGreen">2. Restore / Import Progress</h4>
-          <p className="text-xs text-ink/80 leading-relaxed font-sans">
+          <p className="text-sm text-ink/80 leading-relaxed font-sans">
             Upload a previously exported backup file or paste JSON content directly. All data will be validated against schema v{CURRENT_STORAGE_VERSION} and migrated.
           </p>
 
@@ -190,15 +202,16 @@ export const BackupModal: React.FC<BackupModalProps> = ({
             onChange={handleFileChange}
           />
 
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
             <button
               type="button"
-              className="btn text-xs font-mono py-1.5"
+              className="btn text-xs font-mono py-1.5 flex items-center gap-1.5"
               onClick={() => fileInputRef.current?.click()}
             >
-              📂 Browse File...
+              <FolderOpen className="w-3.5 h-3.5" />
+              <span>Browse File...</span>
             </button>
-            <span className="text-xs text-dim self-center">or paste JSON below:</span>
+            <span className="text-sm text-dim self-center">or paste JSON below:</span>
           </div>
 
           <textarea
@@ -209,22 +222,26 @@ export const BackupModal: React.FC<BackupModalProps> = ({
               validateInputText(e.target.value);
             }}
             placeholder="Paste your JSON backup payload here..."
-            className="w-full p-2 text-xs font-mono bg-paper border border-ink/40 rounded focus:border-ink outline-none"
+            className="w-full p-2 text-sm font-mono bg-paper border border-ink/40 rounded focus:border-ink outline-none"
           />
 
           {importStatus.type === 'error' && (
-            <div className="p-2 text-xs text-accentRed bg-accentRed/10 border border-accentRed/40 rounded">
-              ✕ {importStatus.message}
+            <div className="p-2.5 text-sm text-accentRed bg-accentRed/10 border border-accentRed/40 rounded flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{importStatus.message}</span>
             </div>
           )}
 
           {importStatus.type === 'success' && (
-            <div className="p-2 text-xs text-accentGreen bg-accentGreen/10 border border-accentGreen/40 rounded flex items-center justify-between">
-              <span>✓ {importStatus.message}</span>
+            <div className="p-2.5 text-sm text-accentGreen bg-accentGreen/10 border border-accentGreen/40 rounded flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>{importStatus.message}</span>
+              </div>
               {importStatus.previewData && (
                 <button
                   type="button"
-                  className="btn red text-xs font-bold py-1 px-3"
+                  className="btn red text-xs font-bold py-1 px-3 shrink-0"
                   onClick={handleApplyImport}
                 >
                   Apply Import
@@ -236,12 +253,12 @@ export const BackupModal: React.FC<BackupModalProps> = ({
 
         {/* Section 3: Reset Storage Option */}
         <div className="pt-2 border-t border-dashed border-ink/30 flex items-center justify-between">
-          <span className="text-[11px] text-dim font-sans">
+          <span className="text-xs text-dim font-sans">
             Need a clean slate for next semester?
           </span>
           <button
             type="button"
-            className="text-xs text-accentRed hover:underline font-mono"
+            className="text-xs text-accentRed hover:underline font-mono font-semibold"
             onClick={() => {
               if (window.confirm('Are you sure you want to reset all study progress? This will clear all checked topics and notes from IndexedDB.')) {
                 onResetState();

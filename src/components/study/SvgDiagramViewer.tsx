@@ -44,11 +44,11 @@ export const SvgDiagramViewer: React.FC<SvgDiagramViewerProps> = ({
 
       <div className="p-3 bg-paper border-2 border-ink rounded-xl shadow-sketch">
         <div
-          className="w-full overflow-x-auto [&_svg]:w-full [&_svg]:h-auto [&_svg_.l]:stroke-[#2b2a28] [&_svg_.l]:fill-none [&_svg_.l]:stroke-[1.8] [&_svg_.a]:stroke-[#d4572b] [&_svg_.a]:fill-none [&_svg_.a]:stroke-[2.2] [&_svg_.d]:stroke-[#6b665b] [&_svg_.d]:fill-none [&_svg_.d]:stroke-dasharray-[4,3] [&_svg_.fa]:fill-[#f6e3b4] [&_svg_.fa]:stroke-[#2b2a28] [&_svg_.t]:fill-[#2b2a28] [&_svg_.t]:text-[11px] [&_svg_.ta]:fill-[#d4572b] [&_svg_.ta]:font-bold [&_svg_.ta]:text-[11.5px]"
+          className="w-full overflow-x-auto [&_svg]:w-full [&_svg]:h-auto [&_svg_.l]:stroke-[#2b2a28] [&_svg_.l]:fill-none [&_svg_.l]:stroke-[1.8] [&_svg_.a]:stroke-[#c85025] [&_svg_.a]:fill-none [&_svg_.a]:stroke-[2.2] [&_svg_.d]:stroke-[#555046] [&_svg_.d]:fill-none [&_svg_.d]:stroke-dasharray-[4,3] [&_svg_.fa]:fill-[#f6e3b4] [&_svg_.fa]:stroke-[#2b2a28] [&_svg_.t]:fill-[#2b2a28] [&_svg_.t]:text-xs [&_svg_.ta]:fill-[#c85025] [&_svg_.ta]:font-bold [&_svg_.ta]:text-xs"
           dangerouslySetInnerHTML={{ __html: current.svg }}
         />
-        <p className="mt-2.5 pt-2 border-t border-dashed border-ink/25 text-xs text-ink leading-relaxed">
-          <strong className="text-accentTeal">Exam Sketch Caption:</strong> {current.c}
+        <p className="mt-2.5 pt-2 border-t border-dashed border-ink/25 text-sm text-ink leading-relaxed">
+          <strong className="text-accentTeal font-semibold">Exam Sketch Caption:</strong> {current.c}
         </p>
       </div>
     </div>

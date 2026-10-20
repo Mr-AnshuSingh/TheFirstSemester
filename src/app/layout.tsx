@@ -1,8 +1,15 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import 'katex/dist/katex.min.css';
-import { Caveat } from 'next/font/google';
+import { Inter, Caveat } from 'next/font/google';
 import { ServiceWorkerRegistration } from '@/components/pwa/ServiceWorkerRegistration';
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-inter',
+  display: 'swap',
+});
 
 const caveat = Caveat({
   subsets: ['latin'],
@@ -32,7 +39,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#1a1a1a',
+  themeColor: '#f6f0e1',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
@@ -40,11 +47,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={caveat.variable}>
+    <html lang="en" className={`${inter.variable} ${caveat.variable}`}>
       <head>
         <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
       </head>
-      <body className={caveat.className}>
+      <body className={`${inter.className} font-sans bg-paper text-ink antialiased`}>
         <ServiceWorkerRegistration />
         {children}
       </body>

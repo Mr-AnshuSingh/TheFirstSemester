@@ -298,9 +298,9 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
             }}
             onKeyDown={handleKeyDown}
             placeholder="Search subjects, units, 291 topics, code, actions... (↑↓ to navigate, Enter to select)"
-            className="w-full bg-transparent outline-hidden text-sm md:text-base font-hand font-bold placeholder:text-dim/60"
+            className="w-full bg-transparent outline-hidden text-sm md:text-base font-sans font-medium placeholder:text-dim/60 text-ink"
           />
-          <kbd className="hidden sm:inline-block font-mono text-[10px] uppercase px-1.5 py-0.5 rounded border border-ink/40 bg-paper text-dim">
+          <kbd className="hidden sm:inline-block font-mono text-xs font-semibold uppercase px-1.5 py-0.5 rounded border border-ink/40 bg-paper text-dim">
             ESC
           </kbd>
         </div>
@@ -320,15 +320,15 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
                   }`}
                 >
                   <div className="min-w-0 flex-1">
-                    <div className="font-hand text-base font-bold truncate">
+                    <div className="font-sans text-sm md:text-base font-semibold truncate">
                       {item.title}
                     </div>
-                    <div className={`text-xs truncate ${isSelected ? 'text-paper/80' : 'text-dim'}`}>
+                    <div className={`text-xs md:text-sm truncate ${isSelected ? 'text-paper/80' : 'text-dim'}`}>
                       {item.subtitle}
                     </div>
                   </div>
                   <span
-                    className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded border shrink-0 ${
+                    className={`text-xs font-mono uppercase px-2 py-0.5 rounded border shrink-0 ${
                       isSelected
                         ? 'border-paper text-paper bg-paper/20'
                         : item.badge.includes('★')
@@ -342,14 +342,14 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
               );
             })
           ) : (
-            <div className="text-center py-8 font-hand text-lg text-dim">
+            <div className="text-center py-8 font-sans text-sm text-dim">
               No matching topics, units or experiments found for &quot;{query}&quot;
             </div>
           )}
         </div>
 
         {/* Footer shortcuts */}
-        <div className="p-2 border-t border-ink/20 bg-gold/5 flex items-center justify-between text-[11px] text-dim font-mono">
+        <div className="p-2.5 border-t border-ink/20 bg-gold/5 flex items-center justify-between text-xs text-dim font-mono">
           <span>Tip: Press Ctrl+K anywhere to reopen</span>
           <span>{filteredItems.length} results</span>
         </div>
