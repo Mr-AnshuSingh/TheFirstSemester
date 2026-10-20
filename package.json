@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "check:data": "tsx scripts/check-data.ts",
+    "typecheck": "tsc --noEmit",
     "test:e2e": "playwright test",
     "db:push": "prisma db push",
     "db:studio": "prisma studio"
