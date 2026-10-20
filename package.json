@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "description": "Semester I, unit by unit, in 3D — LNJPIT Chapra (Mathematics & Computing, Group A) Next.js Full-Stack Study Platform",
+  "homepage": "https://the-first-semester.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mr-AnshuSingh/TheFirstSemester.git"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",

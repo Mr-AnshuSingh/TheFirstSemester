@@ -1,6 +1,8 @@
 <div align="center">
 
-<img src="docs/logo.png" alt="The First Semester Logo" width="112" height="112" />
+<a href="https://the-first-semester.vercel.app" target="_blank" rel="noopener noreferrer">
+  <img src="docs/logo.png" alt="The First Semester Logo" width="128" height="128" />
+</a>
 
 # 📐 The First Semester — Unit by Unit, in 3D
 ### Full-Stack Study Companion for B.Tech Mathematics & Computing (Group A)
@@ -9,6 +11,7 @@
 <br />
 
 [![Live on Vercel](https://img.shields.io/badge/Vercel-Live%20at%20the--first--semester.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://the-first-semester.vercel.app)
+[![Live Site](https://img.shields.io/badge/🌐_Official_Site-the--first--semester.vercel.app-0284c7?style=for-the-badge)](https://the-first-semester.vercel.app)
 [![Next.js](https://img.shields.io/badge/Next.js-14.2.16%20App%20Router-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
@@ -188,14 +191,27 @@ npm run test:e2e
 
 ---
 
-## ☁️ Deployment to Vercel
+## 🌐 Live Production Deployment
 
-The application is optimized for instantaneous deployment on [Vercel](https://vercel.com):
+The web application is live in production and accessible worldwide:
 
-1. Fork or push this repository to your GitHub account.
-2. In the Vercel dashboard, click **Add New Project** and select this repository.
-3. Keep default settings (`Framework: Next.js`, `Node.js: 20.x`).
-4. (Optional) Add `GEMINI_API_KEY` under **Environment Variables** if live AI tutoring is desired.
+<p align="center">
+  <a href="https://the-first-semester.vercel.app" target="_blank" rel="noopener noreferrer">
+    <img src="https://img.shields.io/badge/Production%20URL-https%3A%2F%2Fthe--first--semester.vercel.app-success?style=for-the-badge&logo=vercel&logoColor=white" alt="Production URL" />
+  </a>
+</p>
+
+### 🚀 Production Features
+- **URL:** **[`https://the-first-semester.vercel.app`](https://the-first-semester.vercel.app)**
+- **Global Edge Network:** Hosted on Vercel Serverless Edge with automatic SSL/TLS certificates and zero cold-start latency.
+- **PWA & Offline First:** Works seamlessly without an active internet connection after initial load; can be installed to home screens on Android, iOS, Windows, and macOS.
+- **Continuous Deployment:** Every push to the `main` branch on GitHub triggers automated quality checks and instant zero-downtime redeployment on Vercel.
+
+### Deploying Your Own Fork
+1. Fork or push this repository to your GitHub account (`https://github.com/Mr-AnshuSingh/TheFirstSemester`).
+2. In the [Vercel Dashboard](https://vercel.com/new), select **Add New Project** and import the repository.
+3. Vercel automatically detects the [`vercel.json`](vercel.json) build configuration (`prisma generate && next build`).
+4. *(Optional)* Provide `GEMINI_API_KEY` under **Project Settings → Environment Variables** to enable live Gemini 2.5 Flash math tutoring (offline curriculum solver is built in).
 5. Click **Deploy**.
 
 ---
