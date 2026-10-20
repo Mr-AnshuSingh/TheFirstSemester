@@ -115,8 +115,8 @@ Every unit adheres strictly to the official AKU Patna / LNJPIT Chapra B.Tech Fir
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/Mr-AnshuSingh/semester-one-nextjs.git
-cd semester-one-nextjs
+git clone https://github.com/Mr-AnshuSingh/TheFirstSemester.git
+cd TheFirstSemester
 
 # 2. Install dependencies cleanly
 npm ci
