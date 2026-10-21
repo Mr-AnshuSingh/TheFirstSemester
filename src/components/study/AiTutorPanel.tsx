@@ -17,7 +17,10 @@ import {
   X,
   AlertTriangle,
   FileText,
-  Sparkles,
+  Send,
+  History,
+  Wifi,
+  WifiOff,
   BookOpen,
   Brain,
   ChevronDown,
@@ -76,6 +79,8 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
   const [unitMenuOpen, setUnitMenuOpen] = useState(false);
   const [showAllDiagrams, setShowAllDiagrams] = useState(false);
   const [diagramModal, setDiagramModal] = useState<{ svg: string; title: string; caption: string } | null>(null);
+  const [tutorMode, setTutorMode] = useState<'ai' | 'offline'>('ai');
+  const [showHistory, setShowHistory] = useState<boolean>(true);
 
   // Camera & live scanner states
   const [showCameraModal, setShowCameraModal] = useState(false);
@@ -438,6 +443,31 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
       };
     };
 
+    if (tutorMode === 'offline') {
+      const fallbackPayload = createFallback();
+      const assistantMsg: ChatMessage = {
+        id: `asst-${Date.now()}`,
+        role: 'assistant',
+        content: fallbackPayload.answer,
+        unitKey: targetUnitKey,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        payload: fallbackPayload,
+      };
+
+      setThreads((prev) => ({
+        ...prev,
+        [targetUnitKey]: [...(prev[targetUnitKey] || []), assistantMsg],
+      }));
+      setLoading(false);
+      return;
+    }
+
+    let isTimeout = false;
+    const timeoutId = setTimeout(() => {
+      isTimeout = true;
+      controller.abort();
+    }, 12000);
+
     try {
       const res = await fetch('/api/tutor', {
         method: 'POST',
@@ -495,11 +525,13 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
         [targetUnitKey]: [...(prev[targetUnitKey] || []), assistantMsg],
       }));
     } catch (err: any) {
-      if (err.name === 'AbortError') {
+      if (err.name === 'AbortError' && !isTimeout) {
         // Request was canceled by user or unmount; ignore
         return;
       }
-      const errorMsg = 'Network connection issue. Displaying offline syllabus-grounded solution.';
+      const errorMsg = isTimeout
+        ? 'Online request timed out (12s). Displaying instant syllabus-grounded solution.'
+        : 'Network connection issue. Displaying offline syllabus-grounded solution.';
       setApiError(errorMsg);
 
       const fallbackPayload = createFallback();
@@ -518,6 +550,7 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
         [targetUnitKey]: [...(prev[targetUnitKey] || []), assistantMsg],
       }));
     } finally {
+      clearTimeout(timeoutId);
       setLoading(false);
       abortControllerRef.current = null;
     }
@@ -552,6 +585,274 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
     setTimeout(() => setSavedNoteId(null), 2000);
   };
 
+  // Group messages into Q&A conversation exchanges
+  const conversations = useMemo(() => {
+    const list: Array<{ id: string; user: ChatMessage; assistant?: ChatMessage }> = [];
+    for (let i = 0; i < currentMessages.length; i++) {
+      const msg = currentMessages[i];
+      if (msg.role === 'user') {
+        list.push({ id: msg.id, user: msg });
+      } else if (msg.role === 'assistant' && list.length > 0) {
+        list[list.length - 1].assistant = msg;
+      }
+    }
+    return list;
+  }, [currentMessages]);
+
+  const latestConversation = conversations.length > 0 ? conversations[conversations.length - 1] : null;
+  const previousConversations =
+    conversations.length > 1 ? conversations.slice(0, conversations.length - 1).reverse() : [];
+
+  const renderUserMessage = (msg: ChatMessage) => (
+    <div key={msg.id} className="flex justify-end animate-fadeIn">
+      <div className="max-w-[85%] bg-ink text-paper rounded-xl p-3 shadow-sm space-y-2 text-sm">
+        {msg.image && (
+          <div className="rounded overflow-hidden border border-paper/30 bg-black/30">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={msg.image} alt="User doubt attachment" className="max-h-48 object-contain w-full" />
+          </div>
+        )}
+        <p className="font-sans leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+        <div className="text-[10px] font-mono text-paper/70 text-right">{msg.timestamp}</div>
+      </div>
+    </div>
+  );
+
+  const renderAssistantCard = (msg: ChatMessage) => {
+    const payload = msg.payload;
+    if (!payload) return null;
+
+    return (
+      <div
+        key={msg.id}
+        className="p-4 rounded-xl bg-[#fff9e8] border-2 border-ink shadow-sketch space-y-3.5 text-base leading-relaxed animate-fadeIn"
+      >
+        {/* Header Status Bar */}
+        <div className="flex items-center justify-between pb-2 border-b border-ink/20 flex-wrap gap-2">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span
+              className={`text-xs font-mono font-bold px-2.5 py-0.5 rounded-full border ${
+                payload.isLiveAi
+                  ? 'bg-amber-100 text-amber-900 border-amber-400'
+                  : 'bg-paper text-dim border-ink/30'
+              }`}
+            >
+              {payload.isLiveAi ? 'Live Cloud AI (Multimodal)' : 'Offline Syllabus Grounded'}
+            </span>
+            {payload.source && payload.source !== 'offline_template' && (
+              <span className="text-[11px] font-mono text-dim px-2 py-0.5 rounded bg-paper border border-ink/20">
+                Cloud AI
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {/* Copy as Markdown Button */}
+            <button
+              type="button"
+              onClick={() => copySolutionToClipboard(payload)}
+              className="btn text-xs px-2.5 py-1 bg-paper hover:bg-gold/20 flex items-center gap-1"
+              title="Copy complete solution as Markdown"
+            >
+              {copiedId === payload.answer ? (
+                <>
+                  <Check className="w-3.5 h-3.5 text-accentTeal" />
+                  <span>Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3.5 h-3.5 text-ink" />
+                  <span>Copy as Markdown</span>
+                </>
+              )}
+            </button>
+
+            {/* Save to My Notes Button */}
+            {onSaveNote && (
+              <button
+                type="button"
+                onClick={() => saveSolutionToNotes(payload)}
+                className="btn text-xs px-2.5 py-1 bg-paper hover:bg-gold/20 flex items-center gap-1"
+                title="Save answer to personal unit study notes"
+              >
+                {savedNoteId === payload.answer ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-accentTeal" />
+                    <span>Saved!</span>
+                  </>
+                ) : (
+                  <>
+                    <Bookmark className="w-3.5 h-3.5 text-ink" />
+                    <span>Save to My Notes</span>
+                  </>
+                )}
+              </button>
+            )}
+
+            {/* Retry Button on Error/Fallback */}
+            {msg.error && (
+              <button
+                type="button"
+                onClick={() => askTutor(msg.content)}
+                className="btn text-xs px-2.5 py-1 bg-paper hover:bg-gold/20 flex items-center gap-1 text-accentRed"
+                title="Retry sending question to AI"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Retry</span>
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Solution Body */}
+        <div>
+          <strong className="text-accentTeal uppercase tracking-wider block text-xs mb-1.5 font-mono font-bold">
+            University Marking-Scheme Answer &amp; Derivation:
+          </strong>
+          <div className="text-base text-ink leading-relaxed font-sans bg-paper/70 p-4 rounded-lg border border-ink/20 shadow-sm overflow-x-auto">
+            <SafeMarkdownText content={payload.answer} />
+          </div>
+        </div>
+
+        {/* Key Formulas */}
+        {payload.formulaHighlight && payload.formulaHighlight.length > 0 && (
+          <div>
+            <strong className="text-accentRed uppercase tracking-wider block text-xs mb-1 font-mono font-bold">
+              Key Formulas &amp; Moves to Write on Paper:
+            </strong>
+            <ul className="keys space-y-1 text-base font-mono">
+              {payload.formulaHighlight.map((f, i) => (
+                <li key={i}>
+                  <KatexText htmlOrText={f} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Step-by-Step Rubric */}
+        {payload.markingSchemeSteps && payload.markingSchemeSteps.length > 0 && (
+          <div>
+            <strong className="text-ink uppercase tracking-wider block text-xs mb-1 font-mono font-bold">
+              Step-by-Step Full-Marks Rubric:
+            </strong>
+            <ol className="list-decimal pl-5 space-y-1 text-dim text-sm md:text-base">
+              {payload.markingSchemeSteps.map((s, i) => (
+                <li key={i}>{s}</li>
+              ))}
+            </ol>
+          </div>
+        )}
+
+        {/* Examiner Trap Warning */}
+        {payload.trapWarning && (
+          <div className="p-3 rounded bg-[#fff1e8] border border-accentRed text-ink space-y-1">
+            <div className="flex items-center gap-1.5 text-accentRed font-bold font-mono text-xs">
+              <AlertTriangle className="w-4 h-4" />
+              <span>EXAMINER TRAP ALERT:</span>
+            </div>
+            <p className="text-sm md:text-base font-sans">{payload.trapWarning}</p>
+          </div>
+        )}
+
+        {/* Unit-Level Diagrams Section: "From this unit's notes" */}
+        {unitDiagrams.length > 0 && (
+          <div className="pt-3 border-t border-dashed border-ink/20 space-y-2">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center gap-1.5">
+                <BookOpen className="w-4 h-4 text-accentTeal" />
+                <span className="font-hand text-base font-bold text-ink">
+                  From this unit&apos;s notes ({unitDiagrams.length} diagrams)
+                </span>
+              </div>
+
+              <div className="flex items-center gap-1.5">
+                {onOpenNotes && (
+                  <button
+                    type="button"
+                    onClick={onOpenNotes}
+                    className="btn text-xs px-2 py-0.5 bg-paper hover:bg-gold/20 flex items-center gap-1"
+                  >
+                    <BookOpen className="w-3 h-3 text-ink" />
+                    <span>Open in Notes</span>
+                  </button>
+                )}
+                {onOpenQuiz && (
+                  <button
+                    type="button"
+                    onClick={onOpenQuiz}
+                    className="btn text-xs px-2 py-0.5 bg-paper hover:bg-gold/20 flex items-center gap-1"
+                  >
+                    <Brain className="w-3 h-3 text-ink" />
+                    <span>Quiz this unit</span>
+                  </button>
+                )}
+                {unitDiagrams.length > 4 && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAllDiagrams((prev) => !prev)}
+                    className="text-xs font-mono font-bold text-accentRed underline px-1 py-0.5"
+                  >
+                    {showAllDiagrams ? 'Show less' : `Show all (${unitDiagrams.length})`}
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Diagrams Thumbnail Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {(showAllDiagrams ? unitDiagrams : unitDiagrams.slice(0, 4)).map((d, dIdx) => (
+                <button
+                  key={dIdx}
+                  type="button"
+                  onClick={() =>
+                    setDiagramModal({
+                      svg: d.svg,
+                      title: d.topicTitle,
+                      caption: d.caption,
+                    })
+                  }
+                  className="group text-left p-1.5 rounded-lg border border-ink/20 bg-paper hover:border-ink hover:shadow-sm transition flex flex-col justify-between"
+                >
+                  <div
+                    className="aspect-video w-full rounded bg-paper2 flex items-center justify-center overflow-hidden pointer-events-none p-1"
+                    dangerouslySetInnerHTML={{ __html: d.svg }}
+                  />
+                  <div className="mt-1 flex items-center justify-between text-[11px] font-sans font-medium text-ink w-full">
+                    <span className="truncate">{d.topicTitle}</span>
+                    <Maximize2 className="w-3 h-3 text-dim group-hover:text-ink shrink-0 ml-1" />
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Follow-up Prompts */}
+        <div className="pt-2 border-t border-dashed border-ink/20 flex items-center gap-1.5 flex-wrap">
+          <span className="text-xs font-mono text-dim">Follow-up:</span>
+          {[
+            'Explain step 1 in more detail',
+            'Give me another similar numerical to practice',
+            'How to draw the diagram for this in exam?',
+          ].map((fu, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => {
+                setQuestion(fu);
+                askTutor(fu);
+              }}
+              className="text-xs px-2.5 py-1 rounded bg-paper hover:bg-ink hover:text-paper border border-ink/30 transition font-sans"
+            >
+              {fu}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="box space-y-4 max-w-full">
       {/* Hidden File & Camera Inputs */}
@@ -574,33 +875,67 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
       {/* Main Solver Card */}
       <div className="p-3.5 sm:p-4 rounded-xl bg-paper border-2 border-ink shadow-sketch space-y-3">
         {/* Header Section */}
-        <div className="flex items-start justify-between gap-2 border-b border-dashed border-ink/20 pb-2.5">
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
+        <div className="border-b border-dashed border-ink/20 pb-2.5 space-y-1.5">
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <div className="flex items-center gap-2 min-w-0">
               <GraduationCap className="w-5 h-5 text-accentRed shrink-0" />
-              <h3 className="font-hand text-xl sm:text-2xl font-bold text-accentRed tracking-wide truncate">
+              <h3 className="font-hand text-xl sm:text-2xl font-bold text-accentRed tracking-wide">
                 AI Doubt Solver &amp; Tutor
               </h3>
             </div>
-            <p className="text-xs sm:text-sm text-dim font-sans mt-0.5">
-              Unit-Level Syllabus Problem Solver · Step-by-Step Numericals &amp; Derivations · LaTeX
-            </p>
-          </div>
 
-          {currentMessages.length > 0 && (
-            <button
-              type="button"
-              onClick={() => {
-                setThreads((prev) => ({ ...prev, [unitKey]: [] }));
-                setApiError(null);
-              }}
-              title="Clear this unit's chat history"
-              className="text-xs px-2.5 py-1 rounded font-mono font-bold border border-ink/30 bg-paper2 hover:bg-gold/20 text-dim hover:text-ink shrink-0 flex items-center gap-1 transition"
-            >
-              <RotateCcw className="w-3 h-3" />
-              <span className="hidden sm:inline">Reset</span>
-            </button>
-          )}
+            <div className="flex items-center gap-2 shrink-0">
+              {/* Online / Offline Mode Toggle */}
+              <div
+                className="flex items-center rounded-full border border-ink/40 bg-paper2 p-0.5 text-xs font-mono font-bold"
+                role="group"
+                aria-label="Tutor AI connectivity mode"
+              >
+                <button
+                  type="button"
+                  onClick={() => setTutorMode('ai')}
+                  aria-pressed={tutorMode === 'ai'}
+                  title="Online AI: Cloud Multimodal Reasoning & OCR"
+                  className={`px-2 py-0.5 rounded-full transition-colors flex items-center gap-1 ${
+                    tutorMode === 'ai' ? 'bg-accentRed text-paper' : 'text-dim hover:text-ink'
+                  }`}
+                >
+                  <Wifi className="w-3 h-3" />
+                  <span>Online</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTutorMode('offline')}
+                  aria-pressed={tutorMode === 'offline'}
+                  title="Offline Mode: Instant syllabus-grounded derivations with zero network latency"
+                  className={`px-2 py-0.5 rounded-full transition-colors flex items-center gap-1 ${
+                    tutorMode === 'offline' ? 'bg-ink text-paper' : 'text-dim hover:text-ink'
+                  }`}
+                >
+                  <WifiOff className="w-3 h-3" />
+                  <span>Offline</span>
+                </button>
+              </div>
+
+              {currentMessages.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setThreads((prev) => ({ ...prev, [unitKey]: [] }));
+                    setApiError(null);
+                  }}
+                  title="Clear this unit's chat history"
+                  className="text-xs px-2 py-1 rounded font-mono font-bold border border-ink/30 bg-paper2 hover:bg-gold/20 text-dim hover:text-ink shrink-0 flex items-center gap-1 transition"
+                >
+                  <RotateCcw className="w-3 h-3" />
+                  <span>Reset</span>
+                </button>
+              )}
+            </div>
+          </div>
+          <p className="text-xs sm:text-sm text-dim font-sans">
+            Unit-Level Syllabus Problem Solver · Step-by-Step Numericals &amp; Derivations · LaTeX
+          </p>
         </div>
 
         {/* Unit Context Chip Bar with Keyboard-Accessible Change Unit Menu */}
@@ -872,7 +1207,7 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                     </>
                   ) : (
                     <>
-                      <Sparkles className="w-4 h-4" />
+                      <Send className="w-4 h-4" />
                       <span>Ask Tutor</span>
                     </>
                   )}
@@ -989,8 +1324,8 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
         aria-live="polite"
         className="space-y-4"
       >
-        {/* Loading Skeleton Pulse when asking tutor */}
-        {loading && (
+        {/* Loading Skeleton Pulse when asking tutor without any conversation started yet */}
+        {loading && conversations.length === 0 && (
           <div
             aria-busy="true"
             className="p-4 rounded-xl bg-paper2/60 border-2 border-dashed border-ink/30 animate-pulse space-y-3.5"
@@ -1017,259 +1352,89 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
           </div>
         )}
 
-        {/* Message Thread List (rendered in order, latest at bottom) */}
-        {currentMessages.map((msg) => {
-          if (msg.role === 'user') {
-            return (
-              <div key={msg.id} className="flex justify-end animate-fadeIn">
-                <div className="max-w-[85%] bg-ink text-paper rounded-xl p-3 shadow-sm space-y-2 text-sm">
-                  {msg.image && (
-                    <div className="rounded overflow-hidden border border-paper/30 bg-black/30">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={msg.image} alt="User doubt attachment" className="max-h-48 object-contain w-full" />
-                    </div>
-                  )}
-                  <p className="font-sans leading-relaxed whitespace-pre-wrap">{msg.content}</p>
-                  <div className="text-[10px] font-mono text-paper/70 text-right">{msg.timestamp}</div>
-                </div>
-              </div>
-            );
-          }
+        {/* LATEST CONVERSATION: ALWAYS DISPLAYED AT THE TOP */}
+        {latestConversation && (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-xs font-mono font-bold text-accentRed uppercase tracking-wider pb-1 border-b border-dashed border-ink/20">
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-accentRed" />
+                Latest Conversation
+              </span>
+              <span className="text-dim">{latestConversation.user.timestamp}</span>
+            </div>
 
-          // Assistant Response Card
-          const payload = msg.payload;
-          if (!payload) return null;
+            {renderUserMessage(latestConversation.user)}
 
-          return (
-            <div
-              key={msg.id}
-              className="p-4 rounded-xl bg-[#fff9e8] border-2 border-ink shadow-sketch space-y-3.5 text-base leading-relaxed animate-fadeIn"
-            >
-              {/* Header Status Bar */}
-              <div className="flex items-center justify-between pb-2 border-b border-ink/20 flex-wrap gap-2">
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span
-                    className={`text-xs font-mono font-bold px-2.5 py-0.5 rounded-full border ${
-                      payload.isLiveAi
-                        ? 'bg-amber-100 text-amber-900 border-amber-400'
-                        : 'bg-paper text-dim border-ink/30'
-                    }`}
-                  >
-                    {payload.isLiveAi ? 'Live Cloud AI (Multimodal)' : 'Offline Syllabus Grounded'}
-                  </span>
-                  {payload.source && payload.source !== 'offline_template' && (
-                    <span className="text-[11px] font-mono text-dim px-2 py-0.5 rounded bg-paper border border-ink/20">
-                      {payload.source}
+            {latestConversation.assistant ? (
+              renderAssistantCard(latestConversation.assistant)
+            ) : loading ? (
+              <div
+                aria-busy="true"
+                className="p-4 rounded-xl bg-paper2/60 border-2 border-dashed border-ink/30 animate-pulse space-y-3.5"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-accentRed animate-ping" />
+                    <span className="font-mono text-xs text-ink font-bold">
+                      AI Tutor is formulating solution...
                     </span>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  {/* Copy as Markdown Button */}
+                  </div>
                   <button
                     type="button"
-                    onClick={() => copySolutionToClipboard(payload)}
-                    className="btn text-xs px-2.5 py-1 bg-paper hover:bg-gold/20 flex items-center gap-1"
-                    title="Copy complete solution as Markdown"
+                    onClick={stopGeneration}
+                    className="text-xs font-mono font-bold text-accentRed underline p-1"
                   >
-                    {copiedId === payload.answer ? (
-                      <>
-                        <Check className="w-3.5 h-3.5 text-accentTeal" />
-                        <span>Copied!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-3.5 h-3.5 text-ink" />
-                        <span>Copy as Markdown</span>
-                      </>
-                    )}
+                    Stop
                   </button>
-
-                  {/* Save to My Notes Button */}
-                  {onSaveNote && (
-                    <button
-                      type="button"
-                      onClick={() => saveSolutionToNotes(payload)}
-                      className="btn text-xs px-2.5 py-1 bg-paper hover:bg-gold/20 flex items-center gap-1"
-                      title="Save answer to personal unit study notes"
-                    >
-                      {savedNoteId === payload.answer ? (
-                        <>
-                          <Check className="w-3.5 h-3.5 text-accentTeal" />
-                          <span>Saved!</span>
-                        </>
-                      ) : (
-                        <>
-                          <Bookmark className="w-3.5 h-3.5 text-ink" />
-                          <span>Save to My Notes</span>
-                        </>
-                      )}
-                    </button>
-                  )}
-
-                  {/* Retry Button on Error/Fallback */}
-                  {msg.error && (
-                    <button
-                      type="button"
-                      onClick={() => askTutor(msg.content)}
-                      className="btn text-xs px-2.5 py-1 bg-paper hover:bg-gold/20 flex items-center gap-1 text-accentRed"
-                      title="Retry sending question to AI"
-                    >
-                      <RotateCcw className="w-3.5 h-3.5" />
-                      <span>Retry</span>
-                    </button>
-                  )}
                 </div>
+                <div className="h-4 bg-ink/10 rounded w-3/4" />
+                <div className="h-4 bg-ink/10 rounded w-5/6" />
+                <div className="h-16 bg-ink/5 rounded w-full" />
+                <div className="h-4 bg-ink/10 rounded w-2/3" />
               </div>
+            ) : null}
+          </div>
+        )}
 
-              {/* Solution Body */}
-              <div>
-                <strong className="text-accentTeal uppercase tracking-wider block text-xs mb-1.5 font-mono font-bold">
-                  University Marking-Scheme Answer &amp; Derivation:
-                </strong>
-                <div className="text-base text-ink leading-relaxed font-sans bg-paper/70 p-4 rounded-lg border border-ink/20 shadow-sm overflow-x-auto">
-                  <SafeMarkdownText content={payload.answer} />
-                </div>
+        {/* PREVIOUS CHATS HISTORY SECTION */}
+        {previousConversations.length > 0 && (
+          <div className="pt-3 border-t-2 border-dashed border-ink/30 space-y-3">
+            <div className="flex items-center justify-between p-2.5 rounded-xl bg-paper border border-ink/30 shadow-sketchy">
+              <div className="flex items-center gap-2 min-w-0">
+                <History className="w-4 h-4 text-accentRed shrink-0" />
+                <span className="font-hand text-lg font-bold text-ink truncate">
+                  Previous Chats in this Unit ({previousConversations.length})
+                </span>
               </div>
+              <button
+                type="button"
+                onClick={() => setShowHistory((h) => !h)}
+                className="btn text-xs px-3 py-1 font-mono font-bold shrink-0"
+              >
+                {showHistory ? '▲ Hide History' : '▼ View History'}
+              </button>
+            </div>
 
-              {/* Key Formulas */}
-              {payload.formulaHighlight && payload.formulaHighlight.length > 0 && (
-                <div>
-                  <strong className="text-accentRed uppercase tracking-wider block text-xs mb-1 font-mono font-bold">
-                    Key Formulas &amp; Moves to Write on Paper:
-                  </strong>
-                  <ul className="keys space-y-1 text-base font-mono">
-                    {payload.formulaHighlight.map((f, i) => (
-                      <li key={i}>
-                        <KatexText htmlOrText={f} />
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Step-by-Step Rubric */}
-              {payload.markingSchemeSteps && payload.markingSchemeSteps.length > 0 && (
-                <div>
-                  <strong className="text-ink uppercase tracking-wider block text-xs mb-1 font-mono font-bold">
-                    Step-by-Step Full-Marks Rubric:
-                  </strong>
-                  <ol className="list-decimal pl-5 space-y-1 text-dim text-sm md:text-base">
-                    {payload.markingSchemeSteps.map((s, i) => (
-                      <li key={i}>{s}</li>
-                    ))}
-                  </ol>
-                </div>
-              )}
-
-              {/* Examiner Trap Warning */}
-              {payload.trapWarning && (
-                <div className="p-3 rounded bg-[#fff1e8] border border-accentRed text-ink space-y-1">
-                  <div className="flex items-center gap-1.5 text-accentRed font-bold font-mono text-xs">
-                    <AlertTriangle className="w-4 h-4" />
-                    <span>EXAMINER TRAP ALERT:</span>
-                  </div>
-                  <p className="text-sm md:text-base font-sans">{payload.trapWarning}</p>
-                </div>
-              )}
-
-              {/* Unit-Level Diagrams Section: "From this unit's notes" */}
-              {unitDiagrams.length > 0 && (
-                <div className="pt-3 border-t border-dashed border-ink/20 space-y-2">
-                  <div className="flex items-center justify-between flex-wrap gap-2">
-                    <div className="flex items-center gap-1.5">
-                      <BookOpen className="w-4 h-4 text-accentTeal" />
-                      <span className="font-hand text-base font-bold text-ink">
-                        From this unit&apos;s notes ({unitDiagrams.length} diagrams)
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-1.5">
-                      {onOpenNotes && (
-                        <button
-                          type="button"
-                          onClick={onOpenNotes}
-                          className="btn text-xs px-2 py-0.5 bg-paper hover:bg-gold/20 flex items-center gap-1"
-                        >
-                          <BookOpen className="w-3 h-3 text-ink" />
-                          <span>Open in Notes</span>
-                        </button>
-                      )}
-                      {onOpenQuiz && (
-                        <button
-                          type="button"
-                          onClick={onOpenQuiz}
-                          className="btn text-xs px-2 py-0.5 bg-paper hover:bg-gold/20 flex items-center gap-1"
-                        >
-                          <Brain className="w-3 h-3 text-ink" />
-                          <span>Quiz this unit</span>
-                        </button>
-                      )}
-                      {unitDiagrams.length > 4 && (
-                        <button
-                          type="button"
-                          onClick={() => setShowAllDiagrams((prev) => !prev)}
-                          className="text-xs font-mono font-bold text-accentRed underline px-1 py-0.5"
-                        >
-                          {showAllDiagrams ? 'Show less' : `Show all (${unitDiagrams.length})`}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Diagrams Thumbnail Grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {(showAllDiagrams ? unitDiagrams : unitDiagrams.slice(0, 4)).map((d, dIdx) => (
-                      <button
-                        key={dIdx}
-                        type="button"
-                        onClick={() =>
-                          setDiagramModal({
-                            svg: d.svg,
-                            title: d.topicTitle,
-                            caption: d.caption,
-                          })
-                        }
-                        className="group text-left p-1.5 rounded-lg border border-ink/20 bg-paper hover:border-ink hover:shadow-sm transition flex flex-col justify-between"
-                      >
-                        <div
-                          className="aspect-video w-full rounded bg-paper2 flex items-center justify-center overflow-hidden pointer-events-none p-1"
-                          dangerouslySetInnerHTML={{ __html: d.svg }}
-                        />
-                        <div className="mt-1 flex items-center justify-between text-[11px] font-sans font-medium text-ink w-full">
-                          <span className="truncate">{d.topicTitle}</span>
-                          <Maximize2 className="w-3 h-3 text-dim group-hover:text-ink shrink-0 ml-1" />
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Follow-up Prompts */}
-              <div className="pt-2 border-t border-dashed border-ink/20 flex items-center gap-1.5 flex-wrap">
-                <span className="text-xs font-mono text-dim">Follow-up:</span>
-                {[
-                  'Explain step 1 in more detail',
-                  'Give me another similar numerical to practice',
-                  'How to draw the diagram for this in exam?',
-                ].map((fu, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => {
-                      setQuestion(fu);
-                      askTutor(fu);
-                    }}
-                    className="text-xs px-2.5 py-1 rounded bg-paper hover:bg-ink hover:text-paper border border-ink/30 transition font-sans"
+            {showHistory && (
+              <div className="space-y-4 animate-fadeIn">
+                {previousConversations.map((conv) => (
+                  <div
+                    key={conv.id}
+                    className="space-y-3 p-3.5 rounded-xl bg-paper2/60 border border-ink/30 shadow-sm"
                   >
-                    {fu}
-                  </button>
+                    <div className="flex items-center justify-between text-[11px] font-mono text-dim pb-1 border-b border-ink/15">
+                      <span>Previous Question</span>
+                      <span>{conv.user.timestamp}</span>
+                    </div>
+                    {renderUserMessage(conv.user)}
+                    {conv.assistant && renderAssistantCard(conv.assistant)}
+                  </div>
                 ))}
               </div>
-            </div>
-          );
-        })}
+            )}
+          </div>
+        )}
+
         <div ref={messagesEndRef} />
       </div>
     </div>

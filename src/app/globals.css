@@ -347,10 +347,10 @@ button {
 
 #ovt {
   position: absolute;
-  left: 18px;
-  top: 14px;
+  left: 16px;
+  top: 12px;
   pointer-events: none;
-  max-width: 48%;
+  max-width: calc(100% - 310px);
   z-index: 10;
 }
 
@@ -360,14 +360,18 @@ button {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--red);
+  display: block;
 }
 
 #ovt h1 {
   font-family: var(--hand);
-  font-size: 32px;
-  line-height: 0.95;
+  font-size: clamp(20px, 2.2vw, 28px);
+  line-height: 1.05;
   font-weight: 700;
   margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 #tools {

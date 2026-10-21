@@ -610,14 +610,75 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
     rebuildPaperBackground();
     startLoop();
 
-    // Event listeners
-    const onPointerDown = (e: PointerEvent) => {
-      engineRef.current.drag = { x: e.clientX, y: e.clientY };
-      cv.setPointerCapture(e.pointerId);
+    // Touch event variables for multi-touch pinch zoom & 1-finger rotate
+    let touchStartDist: number | null = null;
+    let touchStartZoom = 1;
+
+    // Dedicated Touch Event Listeners (iOS Safari, Android Chrome, touchscreens)
+    const onTouchStart = (e: TouchEvent) => {
       engineRef.current.idle = 0;
+      if (e.touches.length === 1) {
+        // Single finger: rotate model
+        engineRef.current.drag = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        touchStartDist = null;
+      } else if (e.touches.length >= 2) {
+        // Two fingers: initialize pinch-to-zoom
+        engineRef.current.drag = null;
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        touchStartDist = Math.hypot(dx, dy);
+        touchStartZoom = engineRef.current.zoom;
+      }
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      engineRef.current.idle = 0;
+      const eng = engineRef.current;
+      const drag = eng.drag;
+      if (e.touches.length === 1 && drag) {
+        e.preventDefault();
+        eng.yaw += (e.touches[0].clientX - drag.x) * 0.008;
+        eng.pitch = Math.max(-1.35, Math.min(1.35, eng.pitch + (e.touches[0].clientY - drag.y) * 0.006));
+        eng.drag = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        onCameraChange?.({ yaw: eng.yaw, pitch: eng.pitch, zoom: eng.zoom });
+      } else if (e.touches.length >= 2 && touchStartDist && touchStartDist > 0) {
+        e.preventDefault();
+        engineRef.current.drag = null;
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const currentDist = Math.hypot(dx, dy);
+        if (currentDist > 0) {
+          const ratio = currentDist / touchStartDist;
+          const nextZoom = Math.max(0.45, Math.min(3.2, touchStartZoom * ratio));
+          engineRef.current.zoom = nextZoom;
+          onCameraChange?.({ yaw: engineRef.current.yaw, pitch: engineRef.current.pitch, zoom: nextZoom });
+        }
+      }
+    };
+
+    const onTouchEnd = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        // Finger lifted, 1 finger left: resume drag
+        engineRef.current.drag = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        touchStartDist = null;
+      } else if (e.touches.length === 0) {
+        engineRef.current.drag = null;
+        touchStartDist = null;
+      }
+    };
+
+    // Pointer Event Listeners (strictly mouse / pen)
+    const onPointerDown = (e: PointerEvent) => {
+      if (e.pointerType === 'touch') return;
+      engineRef.current.drag = { x: e.clientX, y: e.clientY };
+      engineRef.current.idle = 0;
+      try {
+        cv.setPointerCapture(e.pointerId);
+      } catch {}
     };
 
     const onPointerMove = (e: PointerEvent) => {
+      if (e.pointerType === 'touch') return;
       const eng = engineRef.current;
       if (!eng.drag) return;
       eng.yaw += (e.clientX - eng.drag.x) * 0.008;
@@ -627,8 +688,14 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
       onCameraChange?.({ yaw: eng.yaw, pitch: eng.pitch, zoom: eng.zoom });
     };
 
-    const onPointerUp = () => {
+    const onPointerUp = (e: PointerEvent) => {
+      if (e.pointerType === 'touch') return;
       engineRef.current.drag = null;
+      try {
+        if (cv.hasPointerCapture(e.pointerId)) {
+          cv.releasePointerCapture(e.pointerId);
+        }
+      } catch {}
     };
 
     const onWheel = (e: WheelEvent) => {
@@ -640,40 +707,16 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
       onCameraChange?.({ yaw: eng.yaw, pitch: eng.pitch, zoom: nextZoom });
     };
 
-    const onTouchStart = (e: TouchEvent) => {
-      if (e.touches.length === 2) {
-        const dx = e.touches[0].clientX - e.touches[1].clientX;
-        const dy = e.touches[0].clientY - e.touches[1].clientY;
-        engineRef.current.pinchDist = Math.hypot(dx, dy);
-      }
-    };
-
-    const onTouchMove = (e: TouchEvent) => {
-      if (e.touches.length === 2 && engineRef.current.pinchDist) {
-        const dx = e.touches[0].clientX - e.touches[1].clientX;
-        const dy = e.touches[0].clientY - e.touches[1].clientY;
-        const nextDist = Math.hypot(dx, dy);
-        const ratio = nextDist / engineRef.current.pinchDist;
-        const nextZoom = Math.max(0.45, Math.min(3.2, engineRef.current.zoom * ratio));
-        engineRef.current.zoom = nextZoom;
-        engineRef.current.pinchDist = nextDist;
-        engineRef.current.idle = 0;
-        onCameraChange?.({ yaw: engineRef.current.yaw, pitch: engineRef.current.pitch, zoom: nextZoom });
-      }
-    };
-
-    const onTouchEnd = () => {
-      engineRef.current.pinchDist = null;
-    };
-
+    // Attach listeners
+    cv.addEventListener('touchstart', onTouchStart, { passive: false });
+    cv.addEventListener('touchmove', onTouchMove, { passive: false });
+    cv.addEventListener('touchend', onTouchEnd);
+    cv.addEventListener('touchcancel', onTouchEnd);
     cv.addEventListener('pointerdown', onPointerDown);
     cv.addEventListener('pointermove', onPointerMove);
     cv.addEventListener('pointerup', onPointerUp);
     cv.addEventListener('pointercancel', onPointerUp);
     cv.addEventListener('wheel', onWheel, { passive: false });
-    cv.addEventListener('touchstart', onTouchStart, { passive: true });
-    cv.addEventListener('touchmove', onTouchMove, { passive: true });
-    cv.addEventListener('touchend', onTouchEnd);
 
     // ResizeObserver
     const resizeObserver = new ResizeObserver(() => rebuildPaperBackground());

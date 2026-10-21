@@ -102,14 +102,14 @@ export const SvgDiagramViewer: React.FC<SvgDiagramViewerProps> = ({
   };
 
   return (
-    <div className="w-full h-full flex flex-col justify-between overflow-y-auto p-3 sm:p-5 bg-paper space-y-3">
-      {/* 2D Viewer Controls Header */}
-      <div className="flex items-center justify-between gap-2 flex-wrap border-b border-dashed border-ink/20 pb-2">
+    <div className="w-full h-full flex flex-col justify-between overflow-y-auto pt-3 pb-3 px-3 sm:px-5 bg-paper space-y-2">
+      {/* 2D Viewer Controls Header with right clearance for floating #tools */}
+      <div className="flex items-center justify-between gap-2 flex-wrap border-b border-dashed border-ink/20 pb-1.5 pr-32 sm:pr-40 min-h-[40px]">
         <div className="min-w-0">
           <span className="text-[11px] font-mono font-bold uppercase text-accentRed tracking-wider block">
-            2D Exam Sketchbook · {subjectShortName}
+            2D Exam Sketchbook · {subjectShortName} ({activeIdx + 1}/{diagrams.length})
           </span>
-          <h4 className="font-hand text-lg sm:text-xl font-bold text-ink truncate m-0">
+          <h4 className="font-hand text-base sm:text-lg font-bold text-ink truncate m-0">
             {current.title}
           </h4>
         </div>
@@ -128,7 +128,7 @@ export const SvgDiagramViewer: React.FC<SvgDiagramViewerProps> = ({
               title={redrawMode ? 'Exit Redraw Practice Mode' : 'Redraw Mode: Hide labels for memory sketch test'}
             >
               {redrawMode ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-              <span>{redrawMode ? 'Redraw On' : 'Redraw Mode'}</span>
+              <span>{redrawMode ? 'Redraw On' : 'Redraw'}</span>
             </button>
           )}
 
@@ -145,14 +145,14 @@ export const SvgDiagramViewer: React.FC<SvgDiagramViewerProps> = ({
         </div>
       </div>
 
-      {/* Main SVG Diagram Display Card with responsive text scaling >= 13px */}
+      {/* Main SVG Diagram Display Card with cleanly scaled text and proportional font */}
       <div
-        className="relative p-3 sm:p-4 bg-paper border-2 border-ink rounded-xl shadow-sketch flex-1 flex flex-col justify-center items-center overflow-hidden cursor-zoom-in"
+        className="relative p-3 sm:p-5 bg-paper border-2 border-ink rounded-xl shadow-sketch flex-1 flex flex-col justify-center items-center overflow-hidden cursor-zoom-in min-h-[220px]"
         onClick={() => setLightboxOpen(true)}
         title="Click to enlarge diagram"
       >
         <div
-          className="w-full max-w-2xl max-h-[52vh] flex items-center justify-center overflow-auto [&_svg]:w-full [&_svg]:h-auto [&_svg]:max-h-[50vh] [&_svg_.l]:stroke-[#2b2a28] [&_svg_.l]:fill-none [&_svg_.l]:stroke-[1.8] [&_svg_.a]:stroke-[#c85025] [&_svg_.a]:fill-none [&_svg_.a]:stroke-[2.2] [&_svg_.d]:stroke-[#555046] [&_svg_.d]:fill-none [&_svg_.d]:stroke-dasharray-[4,3] [&_svg_.fa]:fill-[#f6e3b4] [&_svg_.fa]:stroke-[#2b2a28] [&_svg_.t]:fill-[#2b2a28] [&_svg_.t]:text-[13px] sm:[&_svg_.t]:text-[14px] [&_svg_.t]:font-mono [&_svg_.ta]:fill-[#c85025] [&_svg_.ta]:font-bold [&_svg_.ta]:text-[13px] sm:[&_svg_.ta]:text-[14px]"
+          className="w-full max-w-2xl flex-1 flex items-center justify-center overflow-auto [&_svg]:w-full [&_svg]:h-auto [&_svg]:max-h-[52vh] [&_svg]:overflow-visible [&_svg_.l]:stroke-[#2b2a28] [&_svg_.l]:fill-none [&_svg_.l]:stroke-[1.8] [&_svg_.a]:stroke-[#c85025] [&_svg_.a]:fill-none [&_svg_.a]:stroke-[2.2] [&_svg_.d]:stroke-[#555046] [&_svg_.d]:fill-none [&_svg_.d]:stroke-dasharray-[4,3] [&_svg_.fa]:fill-[#f6e3b4] [&_svg_.fa]:stroke-[#2b2a28] [&_svg_.t]:fill-[#2b2a28] [&_svg_.t]:font-sans [&_svg_.t]:text-[9.5px] [&_svg_.ta]:fill-[#c85025] [&_svg_.ta]:font-bold [&_svg_.ta]:font-sans [&_svg_.ta]:text-[10px]"
           dangerouslySetInnerHTML={{ __html: renderSvgContent(current.svg) }}
         />
         {redrawMode && (
@@ -194,7 +194,7 @@ export const SvgDiagramViewer: React.FC<SvgDiagramViewerProps> = ({
             </div>
 
             <div
-              className="p-4 bg-paper2 rounded-xl border border-ink/20 flex-1 overflow-auto flex items-center justify-center [&_svg]:w-full [&_svg]:h-auto [&_svg]:max-h-[65vh] [&_svg_.l]:stroke-[#2b2a28] [&_svg_.l]:fill-none [&_svg_.l]:stroke-[1.8] [&_svg_.a]:stroke-[#c85025] [&_svg_.a]:fill-none [&_svg_.a]:stroke-[2.2] [&_svg_.d]:stroke-[#555046] [&_svg_.d]:fill-none [&_svg_.d]:stroke-dasharray-[4,3] [&_svg_.fa]:fill-[#f6e3b4] [&_svg_.fa]:stroke-[#2b2a28] [&_svg_.t]:fill-[#2b2a28] [&_svg_.t]:text-[14px] [&_svg_.ta]:fill-[#c85025] [&_svg_.ta]:font-bold [&_svg_.ta]:text-[14px]"
+              className="p-4 bg-paper2 rounded-xl border border-ink/20 flex-1 overflow-auto flex items-center justify-center [&_svg]:w-full [&_svg]:h-auto [&_svg]:max-h-[65vh] [&_svg_.l]:stroke-[#2b2a28] [&_svg_.l]:fill-none [&_svg_.l]:stroke-[1.8] [&_svg_.a]:stroke-[#c85025] [&_svg_.a]:fill-none [&_svg_.a]:stroke-[2.2] [&_svg_.d]:stroke-[#555046] [&_svg_.d]:fill-none [&_svg_.d]:stroke-dasharray-[4,3] [&_svg_.fa]:fill-[#f6e3b4] [&_svg_.fa]:stroke-[#2b2a28] [&_svg_.t]:fill-[#2b2a28] [&_svg_.t]:font-sans [&_svg_.t]:text-[11.5px] [&_svg_.ta]:fill-[#c85025] [&_svg_.ta]:font-bold [&_svg_.ta]:font-sans [&_svg_.ta]:text-[12px]"
               dangerouslySetInnerHTML={{ __html: renderSvgContent(current.svg) }}
             />
 
