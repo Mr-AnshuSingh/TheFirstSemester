@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Subject, SceneStep, TutorResponsePayload } from '@/types/syllabus';
+import { buildUnitContext, buildOfflineTutorAnswer } from '@/lib/tutorContext';
 import { SafeMarkdownText, KatexText } from './KatexRenderer';
 import {
   GraduationCap,
@@ -229,29 +230,6 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
     e.target.value = '';
   };
 
-  // Offline grounded syllabus answer builder
-  const buildOfflineAnswer = (q: string, hasPhoto: boolean): string => {
-    return [
-      hasPhoto ? '**[Attached Problem Analyzed]**\n' : '',
-      `### Academic Syllabus Solution: ${subject.name} (${subject.code}) — Unit ${unitIndex + 1}: ${unit.t}`,
-      ``,
-      `#### 1. Core Governing Principle (${activeStep.t})`,
-      `${activeStep.d}`,
-      ``,
-      `#### 2. Analytical Working & Method`,
-      `- **Question Addressed**: "${q.slice(0, 90)}${q.length > 90 ? '...' : ''}" for ${subject.co}.`,
-      `- **Standard Examination Procedure**: State all governing equations, substitute given parameters with SI units, and box the final result.`,
-      `- **Key Syllabus Relation**: Directly addresses Unit ${unitIndex + 1} topics (${unit.topics.slice(0, 3).join(', ')}).`,
-      ``,
-      `#### 3. Essential Formulas & Notation`,
-      ...unit.k.slice(0, 3).map((f) => `- $${f}$`),
-      ``,
-      `> **Examiner Note**: Always conclude derivations and numericals with standard engineering units and a concluding sentence explaining the physical significance.`,
-    ]
-      .filter(Boolean)
-      .join('\n');
-  };
-
   // Main Ask / Solve doubt function
   const askTutor = async (qText?: string, imagePayload?: string | null) => {
     const query = (qText ?? question).trim();
@@ -267,6 +245,24 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
 
     setLoading(true);
     setApiError(null);
+
+    const unitCtx = buildUnitContext(subject.id, unitIndex);
+    const createFallback = (msg?: string): TutorResponsePayload => {
+      const ans = unitCtx
+        ? buildOfflineTutorAnswer(unitCtx, finalQuestion)
+        : `### Academic Solution\nUnit ${unitIndex + 1}: ${unit.t}\n\n${unit.s}`;
+      return {
+        answer: ans,
+        source: 'offline_template',
+        isLiveAi: false,
+        contextUsed: {
+          subjectName: subject.name,
+          subjectCode: subject.code,
+          unitNumber: unitIndex + 1,
+          unitTitle: unit.t,
+        },
+      };
+    };
 
     try {
       const res = await fetch('/api/tutor', {
@@ -291,20 +287,7 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
             : `Server responded with status ${res.status}. Displaying offline syllabus-grounded solution.`);
         setApiError(errorMsg);
 
-        const fallbackPayload: TutorResponsePayload = {
-          answer: buildOfflineAnswer(finalQuestion, Boolean(currentImg)),
-          markingSchemeSteps: subject.ex.a,
-          formulaHighlight: unit.k.slice(0, 4),
-          trapWarning: subject.ex.x[0] || 'Always write units and final conclusions clearly.',
-          contextUsed: {
-            subjectName: subject.name,
-            subjectCode: subject.code,
-            unitTitle: unit.t,
-            activeStepTitle: activeStep.t,
-          },
-          isLiveAi: false,
-          source: 'offline_template',
-        };
+        const fallbackPayload = createFallback();
         setResponse(fallbackPayload);
         return;
       }
@@ -324,21 +307,7 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
       ]);
     } catch {
       setApiError('Network connection issue. Displaying offline syllabus-grounded solution.');
-      const fallbackPayload: TutorResponsePayload = {
-        answer: buildOfflineAnswer(finalQuestion, Boolean(currentImg)),
-        markingSchemeSteps: subject.ex.a,
-        formulaHighlight: unit.k.slice(0, 4),
-        trapWarning: subject.ex.x[0] || 'Always write units and final conclusions clearly.',
-        contextUsed: {
-          subjectName: subject.name,
-          subjectCode: subject.code,
-          unitTitle: unit.t,
-          activeStepTitle: activeStep.t,
-        },
-        isLiveAi: false,
-        source: 'offline_template',
-      };
-      setResponse(fallbackPayload);
+      setResponse(createFallback());
     } finally {
       setLoading(false);
     }
@@ -346,7 +315,17 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
 
   const copySolutionToClipboard = () => {
     if (!response) return;
-    const textToCopy = `[AI Doubt Solver Solution]\n${response.answer}\n\nKey Formulas:\n${response.formulaHighlight.join('\n')}\n\nMarking Scheme:\n${response.markingSchemeSteps.map((s, i) => `${i + 1}. ${s}`).join('\n')}\n\nExaminer Trap Alert:\n${response.trapWarning}`;
+    const textParts = [response.answer];
+    if (response.formulaHighlight && response.formulaHighlight.length > 0) {
+      textParts.push(`\nKey Formulas:\n${response.formulaHighlight.join('\n')}`);
+    }
+    if (response.markingSchemeSteps && response.markingSchemeSteps.length > 0) {
+      textParts.push(`\nMarking Scheme:\n${response.markingSchemeSteps.map((s, i) => `${i + 1}. ${s}`).join('\n')}`);
+    }
+    if (response.trapWarning) {
+      textParts.push(`\nExaminer Trap Alert:\n${response.trapWarning}`);
+    }
+    const textToCopy = textParts.join('\n\n');
     navigator.clipboard.writeText(textToCopy).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);

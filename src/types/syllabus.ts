@@ -184,17 +184,18 @@ export interface TutorRequestPayload {
 
 export interface TutorResponsePayload {
   answer: string;
-  markingSchemeSteps: string[];
-  formulaHighlight: string[];
-  trapWarning: string;
+  source: 'gemini' | 'offline_template';
+  isLiveAi: boolean;
   contextUsed: {
     subjectName: string;
     subjectCode: string;
+    unitNumber: number;
     unitTitle: string;
-    activeStepTitle: string;
+    activeStepTitle?: string;
   };
-  isLiveAi?: boolean;
-  source?: 'gemini' | 'offline_template';
+  markingSchemeSteps?: string[];
+  formulaHighlight?: string[];
+  trapWarning?: string;
 }
 
 export interface QuizQuestion {
