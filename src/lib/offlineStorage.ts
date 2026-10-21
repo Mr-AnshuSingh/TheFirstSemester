@@ -23,6 +23,7 @@ export interface PersistedStudyState {
   flashcards: Record<string, FlashcardProgress>;
   unitViews?: Record<string, UnitViewState>;
   batterySaver?: boolean;
+  lastMode?: '3d' | '2d';
   lastSavedAt?: string;
 }
 
@@ -43,6 +44,7 @@ export const DEFAULT_STUDY_STATE: PersistedStudyState = {
   flashcards: {},
   unitViews: {},
   batterySaver: false,
+  lastMode: '3d',
 };
 
 /**
@@ -98,9 +100,10 @@ export function migrateStudyState(raw: unknown): PersistedStudyState {
     migrated.confidence = cleanConf;
   }
 
-  // Sanitize unitViews & batterySaver
+  // Sanitize unitViews & batterySaver & lastMode
   migrated.unitViews = typeof obj.unitViews === 'object' && obj.unitViews !== null ? obj.unitViews : {};
   migrated.batterySaver = Boolean(obj.batterySaver);
+  migrated.lastMode = obj.lastMode === '2d' || obj.lastMode === '3d' ? obj.lastMode : '3d';
 
   return {
     ...DEFAULT_STUDY_STATE,

@@ -14,7 +14,7 @@ const config: Config = {
         paper3: '#e6dcc3',
         ink: '#2b2a28',
         dim: '#555046', // WCAG AA contrast >= 5.5:1 against paper
-        accentRed: '#c85025',
+        accentRed: '#9e3512', // WCAG AA contrast >= 5.2:1 against paper
         accentTeal: '#1e6e67',
         accentGold: '#b8810b',
         accentBlue: '#2c5890',

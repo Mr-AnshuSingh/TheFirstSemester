@@ -1,4 +1,5 @@
 // LNJPIT Semester I Study Notebook Service Worker
+// Versioned cache name for study shell
 const CACHE_NAME = 'lnjpit-study-shell-v1';
 const FONT_CACHE_NAME = 'lnjpit-fonts-v1';
 
@@ -11,6 +12,13 @@ const APP_SHELL_URLS = [
   '/icons/icon-maskable-512.png',
 ];
 
+// Message: listen for SKIP_WAITING from update notification
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
 // Install: pre-cache app shell assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -18,7 +26,6 @@ self.addEventListener('install', (event) => {
       return cache.addAll(APP_SHELL_URLS);
     })
   );
-  self.skipWaiting();
 });
 
 // Activate: clean up outdated caches

@@ -9,7 +9,7 @@
   --ink: #2b2a28;
   --dim: #555046; /* WCAG AA contrast >= 5.5:1 against paper */
   --hair: rgba(43, 42, 40, 0.22);
-  --red: #c85025;
+  --red: #9e3512;
   --teal: #1e6e67;
   --gold: #b8810b;
   --hand: var(--font-caveat), Caveat, "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
@@ -146,7 +146,7 @@ button {
 }
 
 .chip.on i {
-  color: var(--gold);
+  color: #fbbf24;
 }
 
 .chip em {
@@ -422,20 +422,33 @@ button {
 #live-dock {
   border-top: 1.5px dashed var(--ink);
   background: var(--paper2);
-  padding: 10px 16px;
+  padding: 8px 16px;
   z-index: 10;
+  min-height: 40px;
+  box-sizing: border-box;
 }
 
 #cap {
   position: static;
   max-width: none;
   width: 100%;
+  min-height: 86px;
   padding: 12px 18px 14px;
   background: var(--paper);
   border-top: 2px solid var(--ink);
   border-radius: 0;
   box-shadow: none;
   z-index: 10;
+  box-sizing: border-box;
+}
+
+#cap h2,
+#cap h3 {
+  min-height: 28px;
+}
+
+#cap-text {
+  min-height: 24px;
 }
 
 .sn {

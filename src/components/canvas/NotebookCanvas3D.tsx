@@ -5,7 +5,7 @@ import { Builder, COL, PrimitiveItem, DynamicCallback, cos, sin, PI } from './Bu
 import { SceneDefinition, SvgDiagram, Vec3 } from '@/types/syllabus';
 import { SvgDiagramViewer, UnitDiagramItem } from '@/components/study/SvgDiagramViewer';
 import { StageErrorBoundary } from './StageErrorBoundary';
-import { BatteryCharging, BatteryLow, Zap } from 'lucide-react';
+import { BatteryCharging, BatteryLow, Zap, Link2, Check } from 'lucide-react';
 
 export interface NotebookCanvas3DProps {
   scene: SceneDefinition;
@@ -85,6 +85,33 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
   const [slidersOpen, setSlidersOpen] = useState<boolean>(true);
   const [redrawMode, setRedrawMode] = useState<boolean>(false);
   const [canvasError, setCanvasError] = useState<string | null>(null);
+  const [copiedLink, setCopiedLink] = useState<boolean>(false);
+
+  const handleCopyLink = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    const url = window.location.href;
+    const doFeedback = () => {
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(doFeedback).catch(doFeedback);
+    } else {
+      try {
+        const textArea = document.createElement('textarea');
+        textArea.value = url;
+        textArea.style.position = 'fixed';
+        textArea.style.opacity = '0';
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        doFeedback();
+      } catch {
+        doFeedback();
+      }
+    }
+  }, []);
 
   // Controlled mode state
   const stageMode = mode;
@@ -753,9 +780,9 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
               pointerEvents: 'none',
             }}
           >
-            <div className="k">
+            <span className="k">
               {subjectShortName} · UNIT {unitIndex + 1} OF {totalUnits}
-            </div>
+            </span>
             <h1>{unitTitle}</h1>
           </div>
 
@@ -820,6 +847,24 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
               >
                 2D
               </button>
+            </div>
+
+            {/* Copy Link to this Unit ("Open this unit") */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={handleCopyLink}
+                aria-label="Open this unit"
+                title={copiedLink ? 'Link copied to clipboard!' : 'Open this unit (copy link)'}
+                className={`tl ${copiedLink ? 'on text-accentRed' : ''}`}
+              >
+                {copiedLink ? <Check className="w-4 h-4 text-accentRed" /> : <Link2 className="w-4 h-4" />}
+              </button>
+              {copiedLink && (
+                <span className="absolute top-full mt-1.5 right-0 text-[11px] font-mono font-bold text-accentRed bg-paper border border-ink/40 px-2 py-0.5 rounded shadow-sketchy whitespace-nowrap animate-fade-in pointer-events-none z-20">
+                  Link copied!
+                </span>
+              )}
             </div>
 
             {/* Battery Saver / Low Power Toggle */}
@@ -1073,7 +1118,7 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
             )}
           </div>
 
-          <h3>{stageMode === '3d' ? currentStepObj.t : currentDiagramObj?.title || '2D Exam Diagram'}</h3>
+          <h2>{stageMode === '3d' ? currentStepObj.t : currentDiagramObj?.title || '2D Exam Diagram'}</h2>
           <p>{stageMode === '3d' ? currentStepObj.d : currentDiagramObj?.caption || ''}</p>
         </div>
       </section>
