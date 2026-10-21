@@ -50,13 +50,22 @@ export function renderRichMathHtml(rawText: string | null | undefined): string {
   if (!rawText) return '';
   let processed = String(rawText);
 
+  const KATEX_OPTIONS_DISPLAY = {
+    displayMode: true,
+    throwOnError: false,
+    macros: { '\\oiint': '\\oint\\!\\oint' },
+  };
+
+  const KATEX_OPTIONS_INLINE = {
+    displayMode: false,
+    throwOnError: false,
+    macros: { '\\oiint': '\\oint\\!\\oint' },
+  };
+
   // 1. Display math $$...$$
   processed = processed.replace(/\$\$([\s\S]+?)\$\$/g, (_, tex) => {
     try {
-      return `<div class="katex-display my-2 overflow-x-auto text-center">${katex.renderToString(tex.trim(), {
-        displayMode: true,
-        throwOnError: false,
-      })}</div>`;
+      return `<div class="katex-display my-2 overflow-x-auto text-center">${katex.renderToString(tex.trim(), KATEX_OPTIONS_DISPLAY)}</div>`;
     } catch {
       return `<div class="katex-error my-2 font-mono text-xs text-accentRed">${escapeHtml(tex)}</div>`;
     }
@@ -70,10 +79,7 @@ export function renderRichMathHtml(rawText: string | null | undefined): string {
   // 3. Inline math $...$
   processed = processed.replace(/\$([^$\n]+?)\$/g, (_, tex) => {
     try {
-      return katex.renderToString(tex.trim(), {
-        displayMode: false,
-        throwOnError: false,
-      });
+      return katex.renderToString(tex.trim(), KATEX_OPTIONS_INLINE);
     } catch {
       return `$${tex}$`;
     }
@@ -92,15 +98,24 @@ export function renderSafeMarkdownAndMathHtml(rawText: string | null | undefined
   const mathPlaceholders: string[] = [];
   const placeholderPrefix = '___KATEX_PH_';
 
+  const KATEX_OPTIONS_DISPLAY = {
+    displayMode: true,
+    throwOnError: false,
+    macros: { '\\oiint': '\\oint\\!\\oint' },
+  };
+
+  const KATEX_OPTIONS_INLINE = {
+    displayMode: false,
+    throwOnError: false,
+    macros: { '\\oiint': '\\oint\\!\\oint' },
+  };
+
   let text = String(rawText);
 
   // 1. Extract Display Math $$...$$
   text = text.replace(/\$\$([\s\S]+?)\$\$/g, (_, tex) => {
     try {
-      const rendered = katex.renderToString(tex.trim(), {
-        displayMode: true,
-        throwOnError: false,
-      });
+      const rendered = katex.renderToString(tex.trim(), KATEX_OPTIONS_DISPLAY);
       const id = `${placeholderPrefix}${mathPlaceholders.length}___`;
       mathPlaceholders.push(`<div class="katex-display my-3 overflow-x-auto text-center">${rendered}</div>`);
       return id;
@@ -114,10 +129,7 @@ export function renderSafeMarkdownAndMathHtml(rawText: string | null | undefined
   // 2. Extract Inline Math $...$
   text = text.replace(/\$([^$\n]+?)\$/g, (_, tex) => {
     try {
-      const rendered = katex.renderToString(tex.trim(), {
-        displayMode: false,
-        throwOnError: false,
-      });
+      const rendered = katex.renderToString(tex.trim(), KATEX_OPTIONS_INLINE);
       const id = `${placeholderPrefix}${mathPlaceholders.length}___`;
       mathPlaceholders.push(rendered);
       return id;
@@ -133,10 +145,7 @@ export function renderSafeMarkdownAndMathHtml(rawText: string | null | undefined
     text = text.replace(pattern, (match) => {
       try {
         const cleanTex = replacement.replace(/^\$|\$$/g, '');
-        const rendered = katex.renderToString(cleanTex, {
-          displayMode: false,
-          throwOnError: false,
-        });
+        const rendered = katex.renderToString(cleanTex, KATEX_OPTIONS_INLINE);
         const id = `${placeholderPrefix}${mathPlaceholders.length}___`;
         mathPlaceholders.push(rendered);
         return id;

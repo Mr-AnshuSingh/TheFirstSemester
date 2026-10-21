@@ -698,6 +698,25 @@ export default function SemesterOnePage() {
               unitIndex={ui}
               stepIndex={step}
               activeStep={activeScene.steps[step] || activeScene.steps[0]}
+              onSelectUnit={(idx) => selectSubjectUnit(si, idx)}
+              onOpenNotes={() => persist((prev) => ({ ...prev, tab: 1 }))}
+              onOpenQuiz={() => persist((prev) => ({ ...prev, tab: 3 }))}
+              onSaveNote={(noteText) => {
+                const key = `${activeSubject.id}:${ui}`;
+                persist((prev) => {
+                  const existing = prev.customNotes[key] || '';
+                  const updated = existing
+                    ? `${existing}\n\n---\n**AI Tutor Solution:**\n${noteText}`
+                    : `**AI Tutor Solution:**\n${noteText}`;
+                  return {
+                    ...prev,
+                    customNotes: {
+                      ...prev.customNotes,
+                      [key]: updated,
+                    },
+                  };
+                });
+              }}
             />
           )}
         </div>
