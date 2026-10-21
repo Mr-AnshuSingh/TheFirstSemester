@@ -60,6 +60,17 @@ export interface SceneStep {
   d: string;
   /** Whether items in this step are rendered exclusively during this step */
   only?: boolean;
+  /** Optional interactive parameter slider for this step */
+  param?: {
+    label: string;
+    min: number;
+    max: number;
+    val: number;
+    step: number;
+    unit?: string;
+  };
+  /** Optional camera preset for this step */
+  cam?: CameraConfig;
 }
 
 export interface CameraConfig {
@@ -84,6 +95,7 @@ export interface DrawOptions {
   n?: 'x' | 'y' | 'z';
   seg?: number;
   nostroke?: boolean;
+  ax?: 'x' | 'y' | 'z';
 }
 
 export interface SceneBuilderAPI {

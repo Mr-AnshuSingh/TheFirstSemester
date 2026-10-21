@@ -166,6 +166,8 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
     dyns: DynamicCallback[];
     scene: SceneDefinition;
     params: Record<string, number>;
+    pv?: Record<number, number>;
+    dirty?: boolean;
   }>({
     yaw: camera?.yaw ?? scene.cam?.yaw ?? -0.55,
     pitch: camera?.pitch ?? scene.cam?.pitch ?? 0.3,
@@ -189,7 +191,11 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
     dyns: [],
     scene,
     params: {},
+    pv: {},
+    dirty: true,
   });
+
+  const [stepSliderValues, setStepSliderValues] = useState<Record<number, number>>({});
 
   // Keep camera state synced
   useEffect(() => {
@@ -224,6 +230,14 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
       }
     }
     eng.params = initParams;
+
+    const initPv: Record<number, number> = {};
+    scene.steps.forEach((s, idx) => {
+      if (s.param) {
+        initPv[idx] = s.param.val;
+      }
+    });
+    eng.pv = initPv;
   }, [scene, camera, sliderValues, step]);
 
   useEffect(() => {
@@ -233,9 +247,17 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
   }, [sliderValues]);
 
   useEffect(() => {
-    engineRef.current.step = Math.max(0, Math.min(scene.steps.length - 1, step));
-    engineRef.current.stepT = performance.now();
-  }, [step, scene.steps.length]);
+    const eng = engineRef.current;
+    const nextStep = Math.max(0, Math.min(scene.steps.length - 1, step));
+    eng.step = nextStep;
+    eng.stepT = performance.now();
+    if (!camera && scene.steps[nextStep]?.cam) {
+      const c = scene.steps[nextStep].cam!;
+      if (c.yaw !== undefined) eng.yaw = c.yaw;
+      if (c.pitch !== undefined) eng.pitch = c.pitch;
+      if (c.zoom !== undefined) eng.zoom = c.zoom;
+    }
+  }, [step, scene.steps, camera]);
 
   useEffect(() => {
     engineRef.current.spin = spin;
@@ -451,34 +473,62 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
       } else if (it.k === 'T') {
         const pt = pp[0];
         const sc = pt[3];
-        const sz = Math.max(11, Math.round((o.sz || 15) * zs * (0.8 + 0.3 * sc)));
+        const sz = Math.max(12, Math.round((o.sz || 17) * zs * (0.8 + 0.3 * sc)));
         ctx.font = `${o.b ? 'bold ' : ''}${sz}px Caveat, cursive`;
-        ctx.fillStyle = col;
         ctx.textAlign = (o.a as CanvasTextAlign) || 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(it.str || '', pt[0] + (o.dx || 0) * zs, pt[1] + (o.dy || 0) * zs);
+        const tx = pt[0] + (o.dx || 0) * zs;
+        const ty = pt[1] + (o.dy || 0) * zs;
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = '#f6f0e1';
+        ctx.lineJoin = 'round';
+        ctx.strokeText(it.str || '', tx, ty);
+        ctx.fillStyle = col;
+        ctx.fillText(it.str || '', tx, ty);
       } else if (it.k === 'D') {
         const pt = pp[0];
-        const r = Math.max(2, (it.r || 3) * zs * pt[3]);
-        ctx.fillStyle = col;
+        const sc = pt[3];
+        const baseR = it.r ?? 0.25;
+        const r = Math.max(3, Math.min(32, baseR > 2 ? baseR * zs : baseR * sc * eng.unit * 0.9));
+        const f = o.f || col;
+        const oldAlpha = ctx.globalAlpha;
+        const itemAlpha = o.a === undefined ? 0.9 : (typeof o.a === 'number' ? o.a : parseFloat(o.a as string) || 0.9);
+        ctx.globalAlpha = oldAlpha * itemAlpha;
+        ctx.fillStyle = f;
         ctx.beginPath();
         ctx.arc(pt[0], pt[1], r, 0, PI * 2);
         ctx.fill();
-      } else if (it.k === 'A') {
-        const w = (o.w || 2.2) * zs;
-        stroke(pp, it, w, col, lite, false);
-        const p1 = pp[pp.length - 1];
-        const p0 = pp[pp.length - 2] || pp[0];
-        const ang = Math.atan2(p1[1] - p0[1], p1[0] - p0[0]);
-        const ah = Math.max(7, 9 * zs);
-        ctx.fillStyle = col;
+        ctx.globalAlpha = oldAlpha * 0.7;
+        ctx.lineWidth = 1.3;
+        ctx.strokeStyle = COL.ink;
+        ctx.stroke();
+        ctx.globalAlpha = oldAlpha * 0.55;
+        ctx.fillStyle = '#ffffff';
         ctx.beginPath();
-        ctx.moveTo(p1[0], p1[1]);
-        ctx.lineTo(p1[0] - ah * cos(ang - 0.42), p1[1] - ah * sin(ang - 0.42));
-        ctx.lineTo(p1[0] - ah * 0.4 * cos(ang), p1[1] - ah * 0.4 * sin(ang));
-        ctx.lineTo(p1[0] - ah * cos(ang + 0.42), p1[1] - ah * sin(ang + 0.42));
-        ctx.closePath();
+        ctx.arc(pt[0] - r * 0.3, pt[1] - r * 0.3, r * 0.24, 0, PI * 2);
         ctx.fill();
+        ctx.globalAlpha = oldAlpha;
+      } else if (it.k === 'A') {
+        const p = pp[0];
+        const q = pp[1] || pp[pp.length - 1];
+        const dx = q[0] - p[0];
+        const dy = q[1] - p[1];
+        const l = Math.hypot(dx, dy);
+        if (l >= 2) {
+          const ux = dx / l;
+          const uy = dy / l;
+          const hl = Math.min(13 * zs, l * 0.6);
+          const bx = q[0] - ux * hl;
+          const by = q[1] - uy * hl;
+          stroke([p, [bx, by]], it, (o.w || 2.4) * zs, col, true);
+          ctx.fillStyle = col;
+          ctx.beginPath();
+          ctx.moveTo(q[0], q[1]);
+          ctx.lineTo(bx - uy * hl * 0.42, by + ux * hl * 0.42);
+          ctx.lineTo(bx + uy * hl * 0.42, by - ux * hl * 0.42);
+          ctx.closePath();
+          ctx.fill();
+        }
       }
     };
 
@@ -515,10 +565,28 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
         if (eng.dyns.length > 0) {
           const dB = new Builder(eng.scene.steps);
           dB.s(eng.step);
+          const currentStepParamVal = eng.pv?.[eng.step] ?? eng.scene.steps[eng.step]?.param?.val ?? 0;
+          const paramProxy = new Proxy(eng.params || {}, {
+            get(target, prop, receiver) {
+              if (prop === Symbol.toPrimitive) {
+                return (hint: string) => (hint === 'string' ? String(currentStepParamVal) : currentStepParamVal);
+              }
+              if (prop === 'valueOf') {
+                return () => currentStepParamVal;
+              }
+              if (prop === 'toFixed') {
+                return (digits?: number) => currentStepParamVal.toFixed(digits);
+              }
+              if (prop === 'val' || prop === 'stepVal') {
+                return currentStepParamVal;
+              }
+              return Reflect.get(target, prop, receiver);
+            },
+          });
           for (const d of eng.dyns) {
             if (d.step > eng.step) continue;
             if (d.only && d.step !== eng.step) continue;
-            d.fn(eng.time, dB, eng.params);
+            d.fn(eng.time, dB, paramProxy as any);
           }
           for (const it of dB.items) {
             ents.push({
@@ -910,20 +978,6 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
               )}
             </div>
 
-            {/* Battery Saver / Low Power Toggle */}
-            {onToggleBatterySaver && (
-              <button
-                type="button"
-                onClick={onToggleBatterySaver}
-                aria-pressed={batterySaver}
-                aria-label={batterySaver ? 'Battery Saver Active (30fps, 1x DPR)' : 'Toggle Battery Saver (caps 30fps)'}
-                title={batterySaver ? 'Battery Saver Active (30fps, 1x DPR)' : 'Toggle Battery Saver (caps 30fps)'}
-                className={`tl ${batterySaver ? 'on text-accentRed' : ''}`}
-              >
-                {batterySaver ? <BatteryCharging className="w-4 h-4 text-accentRed" /> : <BatteryLow className="w-4 h-4 text-ink" />}
-              </button>
-            )}
-
             {/* 3D-Exclusive Camera Tools */}
             {stageMode === '3d' && (
               <>
@@ -1163,6 +1217,39 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
 
           <h2>{stageMode === '3d' ? currentStepObj.t : currentDiagramObj?.title || '2D Exam Diagram'}</h2>
           <p>{stageMode === '3d' ? currentStepObj.d : currentDiagramObj?.caption || ''}</p>
+
+          {/* Interactive Step Parameter Slider */}
+          {stageMode === '3d' && currentStepObj?.param && (
+            <div className="par mt-2.5 pt-2 border-t border-dashed border-ink/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-sm font-sans">
+              <label htmlFor="step-param-range" className="font-semibold text-ink shrink-0 text-xs sm:text-sm">
+                {currentStepObj.param.label}
+              </label>
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <input
+                  id="step-param-range"
+                  type="range"
+                  min={currentStepObj.param.min}
+                  max={currentStepObj.param.max}
+                  step={currentStepObj.param.step}
+                  value={stepSliderValues[step] ?? currentStepObj.param.val}
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value);
+                    setStepSliderValues((prev) => ({ ...prev, [step]: val }));
+                    if (!engineRef.current.pv) engineRef.current.pv = {};
+                    engineRef.current.pv[step] = val;
+                    engineRef.current.dirty = true;
+                  }}
+                  className="flex-1 accent-accentRed cursor-pointer h-2 bg-ink/20 rounded-full"
+                />
+                <output htmlFor="step-param-range" className="font-mono font-bold text-accentRed text-xs sm:text-sm min-w-[70px] text-right shrink-0">
+                  {((stepSliderValues[step] ?? currentStepObj.param.val) < 1 && currentStepObj.param.step < 1
+                    ? (stepSliderValues[step] ?? currentStepObj.param.val).toFixed(currentStepObj.param.step < 0.1 ? 2 : 1)
+                    : (stepSliderValues[step] ?? currentStepObj.param.val).toFixed(0))}
+                  {currentStepObj.param.unit || ''}
+                </output>
+              </div>
+            </div>
+          )}
         </div>
       </section>
     </StageErrorBoundary>

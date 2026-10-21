@@ -19,8 +19,6 @@ import {
   FileText,
   Send,
   History,
-  Wifi,
-  WifiOff,
   BookOpen,
   Brain,
   ChevronDown,
@@ -79,7 +77,6 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
   const [unitMenuOpen, setUnitMenuOpen] = useState(false);
   const [showAllDiagrams, setShowAllDiagrams] = useState(false);
   const [diagramModal, setDiagramModal] = useState<{ svg: string; title: string; caption: string } | null>(null);
-  const [tutorMode, setTutorMode] = useState<'ai' | 'offline'>('ai');
   const [showHistory, setShowHistory] = useState<boolean>(true);
 
   // Camera & live scanner states
@@ -442,25 +439,6 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
         },
       };
     };
-
-    if (tutorMode === 'offline') {
-      const fallbackPayload = createFallback();
-      const assistantMsg: ChatMessage = {
-        id: `asst-${Date.now()}`,
-        role: 'assistant',
-        content: fallbackPayload.answer,
-        unitKey: targetUnitKey,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        payload: fallbackPayload,
-      };
-
-      setThreads((prev) => ({
-        ...prev,
-        [targetUnitKey]: [...(prev[targetUnitKey] || []), assistantMsg],
-      }));
-      setLoading(false);
-      return;
-    }
 
     let isTimeout = false;
     const timeoutId = setTimeout(() => {
@@ -885,38 +863,6 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
-              {/* Online / Offline Mode Toggle */}
-              <div
-                className="flex items-center rounded-full border border-ink/40 bg-paper2 p-0.5 text-xs font-mono font-bold"
-                role="group"
-                aria-label="Tutor AI connectivity mode"
-              >
-                <button
-                  type="button"
-                  onClick={() => setTutorMode('ai')}
-                  aria-pressed={tutorMode === 'ai'}
-                  title="Online AI: Cloud Multimodal Reasoning & OCR"
-                  className={`px-2 py-0.5 rounded-full transition-colors flex items-center gap-1 ${
-                    tutorMode === 'ai' ? 'bg-accentRed text-paper' : 'text-dim hover:text-ink'
-                  }`}
-                >
-                  <Wifi className="w-3 h-3" />
-                  <span>Online</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTutorMode('offline')}
-                  aria-pressed={tutorMode === 'offline'}
-                  title="Offline Mode: Instant syllabus-grounded derivations with zero network latency"
-                  className={`px-2 py-0.5 rounded-full transition-colors flex items-center gap-1 ${
-                    tutorMode === 'offline' ? 'bg-ink text-paper' : 'text-dim hover:text-ink'
-                  }`}
-                >
-                  <WifiOff className="w-3 h-3" />
-                  <span>Offline</span>
-                </button>
-              </div>
-
               {currentMessages.length > 0 && (
                 <button
                   type="button"

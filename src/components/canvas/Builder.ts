@@ -159,23 +159,32 @@ export class Builder implements SceneBuilderAPI {
   }
 
   Y(c: Vec3, r: number, h: number, o: DrawOptions = {}): this {
+    const ax = o.ax || 'y';
     const n = 18;
-    const [x, y, z] = c;
+    const pt = (t: number, a: number): Vec3 => {
+      const u = cos(a) * r;
+      const v = sin(a) * r;
+      return ax === 'y'
+        ? [c[0] + u, c[1] + t, c[2] + v]
+        : ax === 'x'
+        ? [c[0] + t, c[1] + u, c[2] + v]
+        : [c[0] + u, c[1] + v, c[2] + t];
+    };
     for (let i = 0; i < n; i++) {
       const a0 = (i / n) * 2 * PI;
       const a1 = ((i + 1) / n) * 2 * PI;
       this.P(
-        [
-          [x + cos(a0) * r, y, z + sin(a0) * r],
-          [x + cos(a1) * r, y, z + sin(a1) * r],
-          [x + cos(a1) * r, y + h, z + sin(a1) * r],
-          [x + cos(a0) * r, y + h, z + sin(a0) * r],
-        ],
+        [pt(0, a0), pt(0, a1), pt(h, a1), pt(h, a0)],
         Object.assign({ a: 0.2, nostroke: true }, o)
       );
     }
-    this.C([x, y + h, z], r, Object.assign({ f: o.f, a: 0.3 }, o));
-    this.C([x, y, z], r, Object.assign({}, o, { f: null }));
+    const ring = (t: number): Vec3[] => {
+      const p: Vec3[] = [];
+      for (let i = 0; i <= 28; i++) p.push(pt(t, (i / 28) * 2 * PI));
+      return p;
+    };
+    this.L(ring(0), Object.assign({}, o, { f: null }));
+    this.L(ring(h), Object.assign({}, o, { f: null }));
     return this;
   }
 

@@ -424,141 +424,957 @@ SC['math:4']={cam:{yaw:-.6,pitch:.5},steps:[
   B.s(2);for(let i=-2;i<=2;i++)for(let j=-2;j<=2;j++){const x=i*1.1,z=j*1.1,r=Math.hypot(x,z);if(r<.3||r>2.8)continue;const v=[-z/r*.5,0,x/r*.5];B.A([x,0,z],[x+v[0],0,z+v[2]],{c:COL.teal,w:2.2})}
   B.dyn((t,b)=>{const a=t*2.2;b.L([[0,0,0],[0,2.2,0]],{c:COL.gray,w:2});for(let k=0;k<4;k++){const aa=a+k*PI/2;b.L([[0,2.2,0],[cos(aa)*.8,2.2,sin(aa)*.8]],{c:COL.red,w:3})}b.D([0,2.2,0],.1,{f:COL.red})});
   B.A([0,0,0],[0,1.4,0],{c:COL.red,w:2.6});B.T([.2,3.2,0],'paddle wheel spins → curl ≠ 0',{c:COL.red,b:1,sz:22});B.T([0,-.3,3.4],'F = (−y, x, 0)',{c:COL.teal,b:1});
-  B.s(3);B.P(Array.from({length:30},(_,i)=>[-3.8+cos(i/30*2*PI)*1.2,0,-1.5+sin(i/30*2*PI)*1.2]),{f:COL.teal,a:.18,c:COL.teal,w:2.2});B.T([-3.8,0,0],'Green: loop → area',{c:COL.teal,b:1,sz:20});
   B.F(a=>[cos(a)*1.2,.9,sin(a)*1.2],0,2*PI,{c:COL.red,w:3});for(let k=0;k<8;k++){const a=k*PI/4;B.L([[cos(a)*1.2,.9,sin(a)*1.2],[cos(a)*.6,.2,sin(a)*.6],[0,.1,0]],{c:COL.red,w:1,d:[3,3]})}B.T([0,-.9,0],'Stokes: loop → surface',{c:COL.red,b:1,sz:20});
   B.C([3.8,.4,-1],1.3,{n:'x',c:COL.gold,w:1.5});B.C([3.8,.4,-1],1.3,{n:'y',c:COL.gold,w:1.5});B.C([3.8,.4,-1],1.3,{n:'z',c:COL.gold,w:1.5});B.T([3.8,-1.3,-1],'Gauss: surface → volume',{c:COL.gold,b:1,sz:20})}};
-function cylx(B,x0,x1,r,o={}){const n=16;for(let i=0;i<n;i++){const a0=i/n*2*PI,a1=(i+1)/n*2*PI;B.P([[x0,cos(a0)*r,sin(a0)*r],[x1,cos(a0)*r,sin(a0)*r],[x1,cos(a1)*r,sin(a1)*r],[x0,cos(a1)*r,sin(a1)*r]],Object.assign({a:.16,nostroke:true},o))}B.C([x0,0,0],r,Object.assign({n:'x'},o,{f:null}));B.C([x1,0,0],r,Object.assign({n:'x'},o,{f:null}))}
-function plot(B,o,w,h,xl,yl,t0){B.A([o[0],o[1],o[2]],[o[0]+w,o[1],o[2]],{c:COL.ink,w:2});B.A([o[0],o[1],o[2]],[o[0],o[1]+h,o[2]],{c:COL.ink,w:2});B.T([o[0]+w,o[1]-.35,o[2]],xl,{sz:18});B.T([o[0]-.2,o[1]+h+.35,o[2]],yl,{sz:18});if(t0)B.T([o[0]+w/2,o[1]+h+.5,o[2]],t0,{b:1,sz:22})}
-const rnd=(n)=>{let a=n*9301+49297;a=(a*233280+7)%233280;return a/233280};
-SC['phy:0']={cam:{yaw:-.5,pitch:.3},
- params:[
-  {id:'phaseShift',label:'Phase Diff δ',min:0,max:2,step:0.05,defaultVal:0.0,unit:'π'},
-  {id:'wavelength',label:'Wave Number k',min:1.0,max:4.0,step:0.2,defaultVal:2.0,unit:''}
- ],
- steps:[
-  {t:'Interference: add the waves',d:'Two waves of the same wavelength meet. Where crest meets crest (phase difference 0, 2π…, path difference nλ) the sum doubles: bright. Where crest meets trough (path difference (n + ½)λ) the sum cancels: dark. Watch the red sum change as the phase difference slides.'},
-  {t:'Newton’s rings: a curved lens on flat glass',d:'The air film between lens and plate grows steadily from the touching point, so the path difference grows too, giving alternate dark and bright circles. With reflected light the centre is dark. For the nth dark ring D² = 4nλR, so λ = (D²ₙ₊ₚ − D²ₙ)/(4pR) from two rings p apart.',only:true},
-  {t:'Single slit: a wide central bright band',d:'Light bending through a narrow slit of width a spreads onto the screen. Dark fringes occur where a sinθ = mλ (m = ±1, ±2…). The central maximum is twice as wide as the others, and a narrower slit gives a wider pattern.',only:true},
-  {t:'Grating: sharp, bright orders',d:'A grating has thousands of slits with spacing (a + b). Bright orders appear at (a + b) sinθ = nλ, and sinθ ≤ 1 limits the highest order to n < (a + b)/λ. More slits means sharper lines, which is why a grating measures wavelength well. Rayleigh: two sources are just resolved when one peak sits on the other’s first minimum, sinθ ≈ 1.22λ/D.',only:true},
-  {t:'Polarisation: Malus’ law',d:'Natural light vibrates in every direction across its path. A polariser passes only one direction. A second polariser (analyser) at angle θ passes the component cosθ of the amplitude, so intensity I = I₀cos²θ. A Nicol prism makes plane-polarised light using double refraction.',only:true},
-  {t:'Live parameter lab: wave superposition',d:'Adjust the phase difference δ and wave number k to watch constructive vs destructive interference live.',only:true}],
- build(B){
-  B.s(0);B.dyn((t,b)=>{const ph=t*1.8,d=PI*(.5+.5*sin(t*.5))*1.0;b.F(x=>[x,2.3+sin(x*2-ph)*.7,0],-4.5,4.5,{c:COL.teal,w:3,seg:90});b.F(x=>[x,.3+sin(x*2-ph-d)*.7,0],-4.5,4.5,{c:COL.gold,w:3,seg:90});b.F(x=>[x,-2+(sin(x*2-ph)+sin(x*2-ph-d))*.5*1.0,0],-4.5,4.5,{c:COL.red,w:3.6,seg:90});
-   b.T([-4.6,2.3,0],'ψ₁',{c:COL.teal,b:1,sz:24});b.T([-4.6,.3,0],'ψ₂',{c:COL.gold,b:1,sz:24});b.T([-4.6,-2,0],'sum',{c:COL.red,b:1,sz:24});b.T([0,-3.5,0],'phase difference = '+(d/PI).toFixed(2)+' π  →  amplitude ×'+(2*abs(cos(d/2))).toFixed(2),{sz:22,b:1})});
-  B.s(1);B.P([[-4,0,-4],[4,0,-4],[4,0,4],[-4,0,4]],{f:COL.gray,a:.14});for(let n=1;n<=8;n++)B.C([0,.01,0],Math.sqrt(n)*1.0,{c:n%2?COL.ink:COL.red,w:n%2?2.4:1.4});
-  const R=13,hh=r=>R-sqrt(R*R-r*r);[1,2,3].forEach(r=>B.C([0,hh(r)+.01,0],r,{c:COL.teal,w:1.4,d:[4,3]}));B.C([0,2.2,0],3.1,{c:COL.teal,w:2.4});B.C([0,.9,0],3.1,{c:COL.teal,w:1.2,d:[4,3]});
-  [[-3.1,.9],[3.1,.9],[0,0]].forEach(()=>0);B.L([[3.1,2.2,0],[3.1,.9,0]],{c:COL.teal,w:2.2});B.L([[-3.1,2.2,0],[-3.1,.9,0]],{c:COL.teal,w:2.2});
-  [[-1.5,0],[1.5,0],[0,1.5],[0,-1.5]].forEach(p=>B.A([p[0],4.2,p[1]],[p[0],3.1,p[1]],{c:COL.gold,w:2.4}));B.T([0,4.6,0],'monochromatic light',{c:COL.gold,b:1});B.T([0,2.9,0],'plano-convex lens',{c:COL.teal,b:1});B.T([4.4,0,3.4],'Dₙ² = 4nλR',{c:COL.red,b:1,sz:24});B.T([-4.2,0,3.6],'centre is dark',{c:COL.ink});
-  B.s(2);B.X([0,0,-.2],[.4,3.4,.4],{f:COL.gray});B.X([0,2.6,-.2],[.4,1.4,.4],{f:COL.gray});B.X([0,-2.6,-.2],[.4,1.4,.4],{f:COL.gray});B.T([-.8,0,.6],'slit a',{c:COL.ink,b:1});
-  B.P([[-3.4,-3,-7],[3.4,-3,-7],[3.4,3,-7],[-3.4,3,-7]],{f:COL.paper,a:.5,c:COL.ink,w:2});const sinc=x=>{const u=x*2.2;return abs(u)<1e-3?1:(sin(u)/u)**2};B.F(x=>[x,-3+4.6*sinc(x),-7],-3.3,3.3,{c:COL.red,w:3.4,seg:120});
-  [-2.85,-1.43,1.43,2.85].forEach(x=>{B.D([x,-3,-7],.1,{f:COL.ink});B.L([[0,0,0],[x,-3,-7]],{c:COL.gold,w:1.2,d:[4,4]})});B.L([[0,0,-.2],[0,1.6,-7]],{c:COL.gold,w:1.6});B.T([0,2.4,-7],'central maximum',{c:COL.red,b:1});B.T([3.2,-3.6,-7],'a sinθ = mλ',{c:COL.ink,b:1,sz:22});
-  B.s(3);for(let i=-3;i<=3;i++)B.X([i*.35,0,0],[.1,3,.3],{f:COL.gray});B.P([[-4.4,-3,-7],[4.4,-3,-7],[4.4,3,-7],[-4.4,3,-7]],{f:COL.paper,a:.5,c:COL.ink,w:2});
-  [-2,-1,0,1,2].forEach(n=>{const x=n*1.7,h=[.35,.7,1,.7,.35][n+2]*3.6;B.L([[x,-3,-7],[x,-3+h,-7]],{c:COL.red,w:5});B.L([[0,0,0],[x,-1,-7]],{c:COL.gold,w:1.2,d:[4,4]});B.T([x,-3.45,-7],'n = '+n,{sz:18})});B.T([0,2.7,0],'(a + b) sinθ = nλ',{c:COL.red,b:1,sz:24});B.T([0,3.5,0],'sharp lines: many slits',{c:COL.ink});
-  B.s(4);const pol=(z,ang,col)=>{const u=[cos(ang),sin(ang)],p=[-u[1],u[0]];B.C([0,0,z],2,{n:'z',f:col,a:.15,c:col,w:2.4});for(let k=-3;k<=3;k++){const o=k*.5,h=sqrt(4-o*o);B.L([[p[0]*o-u[0]*h,p[1]*o-u[1]*h,z],[p[0]*o+u[0]*h,p[1]*o+u[1]*h,z]],{c:col,w:1.2})}};
-  const an=.7;pol(-3,PI/2,COL.teal);pol(1.5,an,COL.gold);
-  for(let a=0;a<8;a++){const g=a*PI/8;B.A([-cos(g)*.7,-sin(g)*.7,-7],[cos(g)*.7,sin(g)*.7,-7],{c:COL.ink,w:1.6})}
-  B.A([0,-.9,-5],[0,.9,-5],{c:COL.ink,w:2});B.A([0,0,-1],[0,1.5,-1],{c:COL.teal,w:3.2});const tr=1.5*cos(PI/2-an);B.A([0,0,3.4],[cos(an)*tr,sin(an)*tr,3.4],{c:COL.gold,w:3.2});
-  B.L([[0,0,-7],[0,0,5]],{c:COL.gray,d:[5,5],w:1.4});
-  B.T([0,-1.2,-7],'natural light',{c:COL.ink});B.T([0,2.6,-3],'polariser',{c:COL.teal,b:1});B.T([0,2.6,1.5],'analyser at θ',{c:COL.gold,b:1});B.T([0,-2.7,1.5],'I = I₀ cos²θ',{c:COL.red,b:1,sz:24});
-  B.s(5);B.dyn((t,b,p={})=>{const delta=(p.phaseShift??0)*PI,k=p.wavelength??2.0,ph=t*1.8;b.F(x=>[x,2.0+sin(x*k-ph)*0.7,0],-4.5,4.5,{c:COL.teal,w:2.8,seg:90});b.F(x=>[x,0.2+sin(x*k-ph-delta)*0.7,0],-4.5,4.5,{c:COL.gold,w:2.8,seg:90});b.F(x=>[x,-2.0+(sin(x*k-ph)+sin(x*k-ph-delta))*0.5,0],-4.5,4.5,{c:COL.red,w:3.6,seg:90});const ampFactor=2*abs(cos(delta/2));b.T([0,3.2,0],`Phase δ = ${(delta/PI).toFixed(2)}π | Net Amp = ${ampFactor.toFixed(2)}x`,{c:COL.ink,sz:24,b:1});b.T([0,-3.5,0],ampFactor>1.8?'CONSTRUCTIVE INTERFERENCE (BRIGHT)':ampFactor<0.3?'DESTRUCTIVE INTERFERENCE (DARK)':'PARTIAL INTERFERENCE',{c:ampFactor>1.8?COL.teal:ampFactor<0.3?COL.red:COL.gold,sz:21,b:1});});
-}};
+function cylx(B: any, x0: number, x1: number, r: number, o: any = {}) { const n = 16; for (let i = 0; i < n; i++) { const a0 = i / n * 2 * PI, a1 = (i + 1) / n * 2 * PI; B.P([[x0, cos(a0) * r, sin(a0) * r], [x1, cos(a0) * r, sin(a0) * r], [x1, cos(a1) * r, sin(a1) * r], [x0, cos(a1) * r, sin(a1) * r]], Object.assign({ a: .16, nostroke: true }, o)); } B.C([x0, 0, 0], r, Object.assign({ n: 'x' }, o, { f: null })); B.C([x1, 0, 0], r, Object.assign({ n: 'x' }, o, { f: null })); }
+function plot(B: any, o: number[], w: number, h: number, xl: string, yl: string, t0?: string) { B.A([o[0], o[1], o[2]], [o[0] + w, o[1], o[2]], { c: COL.ink, w: 2 }); B.A([o[0], o[1], o[2]], [o[0], o[1] + h, o[2]], { c: COL.ink, w: 2 }); B.T([o[0] + w, o[1] - .35, o[2]], xl, { sz: 18 }); B.T([o[0] - .2, o[1] + h + .35, o[2]], yl, { sz: 18 }); if (t0) B.T([o[0] + w / 2, o[1] + h + .5, o[2]], t0, { b: 1, sz: 22 }); }
+const rnd = (n: number) => { let a = n * 9301 + 49297; a = (a * 233280 + 7) % 233280; return a / 233280; };
 
-SC['phy:1']={cam:{yaw:-.5,pitch:.3},
- params:[
-  {id:'coreIndex',label:'Core Index n₁',min:1.45,max:1.70,step:0.01,defaultVal:1.55,unit:''},
-  {id:'cladIndex',label:'Cladding Index n₂',min:1.40,max:1.50,step:0.01,defaultVal:1.45,unit:''}
- ],
- steps:[
-  {t:'Three ways light meets an atom',d:'Absorption: an atom in the low level E₁ swallows a photon of energy hν = E₂ − E₁ and jumps up. Spontaneous emission: an excited atom drops by itself, at a random time and direction. Stimulated emission: a passing photon makes an excited atom emit a clone, same direction, same phase. Einstein: B₁₂ = B₂₁ and A₂₁/B₂₁ = 8πhν³/c³.'},
-  {t:'Population inversion',d:'Normally most atoms sit in the low level (left), so light is absorbed more than it is amplified. A laser needs the opposite: more atoms in the upper level than the lower one (right). That is population inversion, made by pumping, and it needs at least three energy levels.',only:true},
-  {t:'The laser cavity (ruby laser)',d:'A ruby rod sits between a fully reflecting mirror and a partly reflecting one. A flash lamp wound round it pumps Cr³⁺ ions to the upper state. Photons travelling along the axis bounce back and forth, stimulating more photons each pass, and a fraction leaks out as the laser beam. The He–Ne laser uses the same idea with a gas tube excited by an electric discharge.',only:true},
-  {t:'Optical fibre: light in a glass pipe',d:'Light stays in the core by total internal reflection because the core index n₁ is higher than the cladding index n₂. It must enter inside the acceptance cone: sin θ₀ = NA = √(n₁² − n₂²). Attenuation is α = (10/L) log₁₀(Pin/Pout) dB/km. Step-index and graded-index, single-mode and multimode are the main types.',only:true},
-  {t:'Live parameter lab: numerical aperture & acceptance cone',d:'Change the core (n₁) and cladding (n₂) refractive indices to calculate NA = √(n₁² − n₂²) and the critical acceptance angle in real time.',only:true}],
- build(B){
-  const lv=(x,tag)=>{B.L([[x-1.5,-1.6,0],[x+1.5,-1.6,0]],{c:COL.ink,w:3});B.L([[x-1.5,1.6,0],[x+1.5,1.6,0]],{c:COL.ink,w:3});B.T([x+1.9,-1.6,0],'E₁',{sz:20});B.T([x+1.9,1.6,0],'E₂',{sz:20});B.T([x,-2.6,0],tag,{b:1,sz:22,c:COL.red})};
-  B.s(0);lv(-4,'absorption');lv(0,'spontaneous');lv(4,'stimulated');
-  B.D([-4,-1.4,0],.2,{f:COL.teal});B.F(y=>[-5.4+sin(y*5)*.18,y,0],1.3,-1.2,{c:COL.gold,w:3});B.A([-5.4,-1.2,0],[-4.3,-1.2,0],{c:COL.gold,w:2.6});B.T([-5.9,.2,0],'hν',{c:COL.gold,b:1,sz:24});B.A([-4,-1.1,0],[-4,1.3,0],{c:COL.teal,w:2.4});
-  B.D([0,1.8,0],.2,{f:COL.red});B.A([0,1.4,0],[0,-1.2,0],{c:COL.teal,w:2.4});B.F(x=>[x,-.7+sin(x*7)*.14,0],.3,2.4,{c:COL.gold,w:3});B.A([2.1,-.7,0],[2.5,-.7,0],{c:COL.gold,w:2.6});B.D([0,-1.4,0],.2,{f:COL.teal});
-  B.D([4,1.8,0],.2,{f:COL.red});B.F(x=>[x,2.7+sin(x*7)*.14,0],1.6,3.5,{c:COL.gold,w:3});B.A([3.3,2.7,0],[3.7,2.7,0],{c:COL.gold,w:2.6});B.F(x=>[x,.2+sin(x*7)*.14,0],4.4,6.2,{c:COL.gold,w:3});B.F(x=>[x,.55+sin(x*7)*.14,0],4.4,6.2,{c:COL.gold,w:3});B.T([5.5,1.2,0],'two identical photons',{c:COL.gold,b:1,sz:19});
-  B.s(1);const pile=(x,n1,n2,tag)=>{lv(x,tag);for(let i=0;i<n1;i++)B.D([x-1.1+(i%4)*.7,-1.4+Math.floor(i/4)*.35,0],.15,{f:COL.teal});for(let i=0;i<n2;i++)B.D([x-1.1+(i%4)*.7,1.8+Math.floor(i/4)*.35,0],.15,{f:COL.red})};
-  pile(-3.5,12,2,'normal: N₁ ≫ N₂');pile(3.5,3,11,'inverted: N₂ > N₁');
-  B.s(2);cylx(B,-3,3,.8,{f:COL.red,c:COL.red});B.X([-3.4,0,0],[.25,2.4,2.4],{f:COL.ink});B.X([3.4,0,0],[.25,2.2,2.2],{f:COL.gray,a:.1});B.F(a=>[-2.6+a*5.2,1.25*cos(a*18),1.25*sin(a*18)],0,1,{c:COL.gold,w:2,seg:120});
-  B.dyn((t,b)=>{for(let i=0;i<5;i++){const u=((t*.5+i*.2)%1),x=-3+6*(u<.5?u*2:2-u*2);b.D([x,((i%3)-1)*.25,((i%2)-.5)*.3],.1,{f:COL.gold})}b.A([3.5,0,0],[5.6,0,0],{c:COL.red,w:3.4})});
-  B.T([-3.4,1.9,0],'mirror (100%)',{b:1,sz:18});B.T([3.4,1.9,0],'partial mirror',{b:1,sz:18});B.T([0,-2.1,0],'ruby rod',{c:COL.red,b:1});B.T([0,2.4,0],'flash lamp pumps Cr³⁺ ions',{c:COL.gold,b:1});B.T([5.2,.7,0],'laser',{c:COL.red,b:1,sz:24});
-  B.s(3);cylx(B,-5,5,.6,{f:COL.teal,c:COL.teal});cylx(B,-5,5,1.1,{f:COL.gray,c:COL.gray,a:.06});
-  const zz=[[-5,0],[-3.9,.5],[-2.3,-.5],[-.7,.5],[.9,-.5],[2.5,.5],[4.1,-.5],[5,0]];B.L(zz.map(p=>[p[0],p[1],0]),{c:COL.red,w:2.8});
-  B.L([[-5,0,0],[-7,1.6,0]],{c:COL.gold,w:1.6,d:[4,3]});B.L([[-5,0,0],[-7,-1.6,0]],{c:COL.gold,w:1.6,d:[4,3]});B.A([-6.6,0,0],[-5.2,0,0],{c:COL.gold,w:2.6});B.T([-6.4,2.1,0],'acceptance cone θ₀',{c:COL.gold,b:1,sz:19});
-  B.T([0,1.9,0],'cladding n₂',{c:COL.gray,b:1});B.T([0,-1.2,0],'core n₁ > n₂',{c:COL.teal,b:1,sz:19});B.T([0,-2.6,0],'NA = sinθ₀ = √(n₁² − n₂²)',{c:COL.red,b:1,sz:24});
-  B.s(4);B.dyn((t,b,p={})=>{const n1=p.coreIndex??1.55,n2=Math.min(n1-0.01,p.cladIndex??1.45);const na=sqrt(Math.max(0,n1*n1-n2*n2));const thetaDeg=(Math.asin(Math.min(1,na))*180)/PI;cylx(b,-5,5,0.6,{f:COL.teal,c:COL.teal});cylx(b,-5,5,1.1,{f:COL.gray,c:COL.gray,a:0.06});const coneR=Math.tan((thetaDeg*PI)/180)*1.8;b.L([[-5,0,0],[-6.8,coneR,0]],{c:COL.gold,w:2});b.L([[-5,0,0],[-6.8,-coneR,0]],{c:COL.gold,w:2});b.A([-6.8,0,0],[-5,0,0],{c:COL.gold,w:2.5});b.T([0,2.6,0],`n₁ = ${n1.toFixed(2)}, n₂ = ${n2.toFixed(2)}  →  NA = ${na.toFixed(3)}`,{c:COL.red,sz:24,b:1});b.T([0,-2.6,0],`Acceptance angle θ₀ = ${thetaDeg.toFixed(1)}°`,{c:COL.ink,sz:22});});
-}};
+function lamCol(l: number): string {
+  let r = 0, g = 0, b = 0;
+  if (l < 440) { r = (440 - l) / 60; b = 1; } else if (l < 490) { g = (l - 440) / 50; b = 1; } else if (l < 510) { g = 1; b = (510 - l) / 20; }
+  else if (l < 580) { r = (l - 510) / 70; g = 1; } else if (l < 645) { r = 1; g = (645 - l) / 65; } else { r = 1; }
+  const f = l < 420 ? .35 + .65 * (l - 380) / 40 : l > 700 ? .35 + .65 * (780 - l) / 80 : 1;
+  const c = (v: number) => Math.round(255 * Math.pow(Math.max(0, v) * f, .8));
+  return 'rgb(' + c(r) + ',' + c(g) + ',' + c(b) + ')';
+}
 
-SC['phy:2']={cam:{yaw:-.5,pitch:.3},steps:[
- {t:'Dielectric in a capacitor',d:'Between two charged plates the field E₀ points from + to −. Slide in an insulator: its atoms stretch into tiny dipoles that line up against the field, their own field opposes E₀, and the net field falls to E = E₀/K. For the same charge the voltage drops, so capacitance rises: C = K·C₀. Gauss’ law in dielectrics uses D: ∮D·dA = q_free, with D = ε₀E + P.'},
- {t:'Dia, para and ferromagnetic materials',d:'Diamagnetic atoms have no permanent dipole; the field induces a weak opposing one (χ slightly negative). Paramagnetic atoms have dipoles that only partly line up with the field (χ small positive). Ferromagnetic materials have domains that line up strongly and stay aligned (large χ, hysteresis, lost above the Curie temperature).',only:true},
- {t:'Maxwell’s four equations in pictures',d:'1. Gauss (electric): ∮E·dA = q/ε₀, field lines start on charges. 2. Gauss (magnetic): ∮B·dA = 0, magnetic lines close on themselves. 3. Faraday: ∮E·dl = −dΦ_B/dt, a changing B makes a circulating E. 4. Ampère–Maxwell: ∮B·dl = μ₀(I + ε₀dΦ_E/dt), current and a changing E make a circulating B.',only:true},
- {t:'Electromagnetic wave and Poynting vector',d:'E and B oscillate at right angles to each other and to the travel direction, always in step, with c = 1/√(μ₀ε₀) and E = cB. Energy flows along S = E × H (the Poynting vector); its average in free space is ½ε₀cE₀².',only:true}],
- build(B){
-  B.s(0);B.X([-3.2,0,0],[.25,4.2,3.6],{f:COL.red});B.X([3.2,0,0],[.25,4.2,3.6],{f:COL.blue});B.T([-3.2,2.5,0],'+',{c:COL.red,b:1,sz:34});B.T([3.2,2.5,0],'−',{c:COL.blue,b:1,sz:34});
-  B.X([0,0,0],[2.2,3.4,3],{f:COL.gold,a:.2});for(let i=-1;i<=1;i++)for(let j=-1;j<=1;j+=2){B.A([-.4,i*1.1,j*.9],[.4,i*1.1,j*.9],{c:COL.teal,w:2});B.D([-.45,i*1.1,j*.9],.07,{f:COL.blue});B.D([.45,i*1.1,j*.9],.07,{f:COL.red})}
-  for(let i=-1;i<=1;i++){B.A([-2.9,i*1.2,1.9],[-1.3,i*1.2,1.9],{c:COL.ink,w:3});B.A([1.3,i*1.2,1.9],[2.9,i*1.2,1.9],{c:COL.ink,w:1.6})}
-  B.T([-2.1,2.6,1.9],'E₀',{b:1,sz:24});B.T([2.1,2.6,1.9],'E = E₀/K (weaker)',{b:1,sz:20});B.T([0,-2.7,0],'C = K·C₀',{c:COL.red,b:1,sz:26});B.T([0,2.8,0],'dipoles oppose E₀',{c:COL.gold,b:1,sz:20});
-  B.s(1);const grp=(x,tag,f)=>{B.X([x,0,0],[2.6,3.4,2],{f:COL.gray,a:.12});for(let i=0;i<9;i++){const ix=x-.8+(i%3)*.8,iz=-.5+Math.floor(i/3)*.5,u=f(rnd(i+x*7+3));B.A([ix,-.1-u*.6,iz],[ix,-.1+u*.6,iz],{c:u<0?COL.red:COL.teal,w:2.2})}B.T([x,-2.3,0],tag,{b:1,sz:21,c:COL.red})};
-  grp(-4,'diamagnetic',r=>-.35);grp(0,'paramagnetic',r=>r>.4?.5:-.5);grp(4,'ferromagnetic',r=>.95);B.A([-6.2,-1.8,2],[-6.2,1.8,2],{c:COL.ink,w:3});B.T([-6.2,2.2,2],'B',{b:1,sz:26});
-  B.s(2);const gs=(x,y,tag)=>B.T([x,y-1.95,0],tag,{b:1,sz:17,c:COL.red});
-  B.D([-4,1.8,0],.18,{f:COL.red});B.C([-4,1.8,0],1.2,{n:'x',c:COL.gold});B.C([-4,1.8,0],1.2,{n:'y',c:COL.gold});B.C([-4,1.8,0],1.2,{n:'z',c:COL.gold});for(let k=0;k<6;k++){const a=k*PI/3;B.A([-4+cos(a)*.3,1.8+sin(a)*.3,0],[-4+cos(a)*1.9,1.8+sin(a)*1.9,0],{c:COL.ink,w:2})}gs(-4,1.8,'∮E·dA = q/ε₀');
-  B.X([4,1.8,0],[1.8,.7,.7],{f:COL.red});for(let k=1;k<=3;k++)B.F(a=>[4+cos(a)*(.9+k*.4),1.8+sin(a)*(.35+k*.35),0],0,2*PI,{c:COL.teal,w:1.4});gs(4,1.8,'∮B·dA = 0');
-  B.C([-4,-2.1,0],1,{n:'z',c:COL.ink,w:2.2});B.A([-4,-3,.6],[-4,-1.3,.6],{c:COL.teal,w:3});B.F(a=>[-4+cos(a)*1.35,-2.1+sin(a)*1.35,0],.3,5.6,{c:COL.red,w:2});gs(-4,-2.1,'∮E·dl = −dΦ/dt');
-  B.A([4,-3.8,0],[4,-.6,0],{c:COL.ink,w:3});[.7,1.2].forEach(r=>B.C([4,-2.1,0],r,{n:'y',c:COL.teal,w:2}));gs(4,-2.1,'∮B·dl = μ₀(I + ε₀dΦ/dt)');
-  B.s(3);B.dyn((t,b)=>{const ph=t*2.4;b.A([0,0,-5.5],[0,0,5.8],{c:COL.ink,w:2});b.F(z=>[0,sin(z*1.7-ph)*1.7,z],-5.2,5.2,{c:COL.red,w:3.4,seg:100});b.F(z=>[sin(z*1.7-ph)*1.7,0,z],-5.2,5.2,{c:COL.teal,w:3.4,seg:100});for(let k=0;k<9;k++){const z=-4.8+k*1.2,y=sin(z*1.7-ph)*1.7;b.L([[0,0,z],[0,y,z]],{c:COL.red,w:1,d:[3,3]});b.L([[0,0,z],[y,0,z]],{c:COL.teal,w:1,d:[3,3]})}});
-  B.T([0,2.4,-3],'E',{c:COL.red,b:1,sz:28});B.T([2.5,0,-3],'B',{c:COL.teal,b:1,sz:28});B.T([0,-1.3,5.4],'S = E × H, travel',{b:1});B.T([0,3,0],'c = 1/√(μ₀ε₀),  E = cB',{sz:22,b:1})}};
+const wavePts = (x0: number, x1: number, f: (x: number) => [number, number, number], n = 90): [number, number, number][] => {
+  const a: [number, number, number][] = [];
+  for (let i = 0; i <= n; i++) {
+    const x = x0 + (x1 - x0) * i / n;
+    a.push(f(x));
+  }
+  return a;
+};
 
-SC['phy:3']={cam:{yaw:-.4,pitch:.3},
- params:[
-  {id:'quantumN',label:'Quantum Level n',min:1,max:5,step:1,defaultVal:1,unit:''},
-  {id:'boxWidth',label:'Box Width L',min:3.0,max:7.0,step:0.5,defaultVal:6.0,unit:'Å'}
- ],
- steps:[
-  {t:'De Broglie: matter has a wavelength',d:'Every moving particle behaves like a wave with λ = h/p = h/√(2mE). An electron accelerated through V volts has λ ≈ 12.27/√V Å, short enough that electron microscopes see finer detail than light. A stable orbit holds a whole number of waves: nλ = 2πr (here n = 5).'},
-  {t:'Uncertainty: sharp in space, blurred in momentum',d:'A tightly localised wave packet (top) is built from many wavelengths, so its momentum is spread out. A long, almost pure wave (bottom) has a sharp momentum but no definite position. That trade-off is Δx·Δp ≥ ħ/2; it comes from the nature of waves, not from clumsy instruments.',only:true},
-  {t:'Particle in a box: energy comes in steps',d:'A particle trapped between walls can only hold waves that fit, with ψ = 0 at both walls: L = nλ/2. That gives Eₙ = n²h²/(8mL²) and ψₙ = √(2/L) sin(nπx/L). The levels sit at 1 : 4 : 9, and the lowest (n = 1) is never zero: zero-point energy. Normalisation: ∫|ψ|²dx = 1.',only:true},
-  {t:'Tunnelling: leaking through a wall',d:'When a wave meets a barrier taller than its energy it does not stop dead: inside the barrier it dies away exponentially and a smaller wave emerges on the far side. T ≈ e^(−2κa) with κ = √(2m(V₀ − E))/ħ, so thinner or lower barriers leak more.',only:true},
-  {t:'Live parameter lab: particle in a 1D box wavefunctions',d:'Adjust quantum level n and box width L to observe the energy level Eₙ and wave function nodes ψₙ(x) = √(2/L) sin(nπx/L).',only:true}],
- build(B){
-  B.s(0);B.C([0,0,0],2.2,{c:COL.gray,d:[4,4],w:1.6});B.F(a=>{const r=2.2+.35*sin(5*a);return[cos(a)*r,0,sin(a)*r]},0,2*PI,{c:COL.red,w:3.4,seg:120});B.D([0,0,0],.2,{f:COL.ink});B.T([0,0,0],'nucleus',{dy:22,sz:18});B.T([0,2.6,0],'λ = h/p',{c:COL.red,b:1,sz:30});B.T([0,-2.4,3.6],'n λ = 2π r',{b:1,sz:24});
-  B.F(x=>[-5.5+x,sin(x*7)*.5,-4.4],0,3.2,{c:COL.teal,w:3});B.T([-3.9,1.1,-4.4],'electron wave',{c:COL.teal,b:1,sz:18});
-  B.s(1);const gp=(x,s)=>exp(-x*x/s);B.F(x=>[x,2.6+gp(x,.5)*1.2*cos(10*x),0],-4,4,{c:COL.red,w:3,seg:200});B.F(x=>[x,.9+exp(-(x*x)/(2*1.6))*1.2,0],-4,4,{c:COL.teal,w:3,seg:80});
-  B.F(x=>[x,-1+gp(x,6)*1.2*cos(10*x),0],-4,4,{c:COL.red,w:3,seg:200});B.F(x=>[x,-2.8+exp(-((x*x)/(2*.05)))*1.2,0],-1.6,1.6,{c:COL.teal,w:3,seg:100});
-  B.T([-4.2,2.6,0],'small Δx',{c:COL.red,b:1,a:'right'});B.T([-4.2,.9,0],'large Δp',{c:COL.teal,b:1,a:'right'});B.T([-4.2,-1,0],'large Δx',{c:COL.red,b:1,a:'right'});B.T([-4.2,-2.8,0],'small Δp',{c:COL.teal,b:1,a:'right'});B.T([0,3.8,0],'Δx · Δp ≥ ħ/2',{b:1,sz:26});
-  B.s(2);B.X([-3.4,0,0],[.5,6.4,2],{f:COL.gray});B.X([3.4,0,0],[.5,6.4,2],{f:COL.gray});B.L([[-3.15,-3.2,0],[3.15,-3.2,0]],{c:COL.ink,w:3});
-  [1,2,3].forEach(n=>{const E=-3.2+n*n*.42;B.L([[-3.15,E,0],[3.15,E,0]],{c:COL.gray,w:1.4,d:[4,4]});B.F(x=>[x,E+.55*sin(n*PI*(x+3.15)/6.3),0],-3.15,3.15,{c:[COL.teal,COL.gold,COL.red][n-1],w:3,seg:90});B.T([4.1,E,0],'n = '+n,{sz:20,a:'left'})});B.T([0,3.7,0],'Eₙ = n²h²/(8mL²)   1 : 4 : 9',{c:COL.red,b:1,sz:24});B.T([0,-3.8,0],'width L',{c:COL.gray});
-  B.s(3);B.X([0,0,0],[1.6,2.8,1.6],{f:COL.red,a:.3});B.dyn((t,b)=>{const k=7,w=t*4;b.F(x=>{const a=x<-.8?1:x<.8?exp(-(x+.8)*1.4):.28;return[x,a*cos(k*x-w)*.9,0]},-5,5,{c:COL.teal,w:3.2,seg:220})});B.L([[-5,0,0],[5,0,0]],{c:COL.gray,w:1,d:[4,4]});
-  B.T([0,2.2,0],'barrier V₀',{c:COL.red,b:1});B.T([-3,1.6,0],'incident',{c:COL.teal,b:1});B.T([3,1.2,0],'transmitted (smaller)',{c:COL.teal,b:1});B.T([0,-1.9,0],'decays inside: T ≈ e^(−2κa)',{b:1,sz:22});
-  B.s(4);B.dyn((t,b,p={})=>{const n=Math.round(p.quantumN??1),L=p.boxWidth??6.0,halfL=L/2;b.X([-halfL-0.25,0,0],[0.5,6,1.5],{f:COL.gray});b.X([halfL+0.25,0,0],[0.5,6,1.5],{f:COL.gray});b.L([[-halfL,-2.5,0],[halfL,-2.5,0]],{c:COL.ink,w:3});const En=(n*n)/(L*L),yBase=-2.0+Math.min(4.5,n*0.9);b.L([[-halfL,yBase,0],[halfL,yBase,0]],{c:COL.gray,w:1.5,d:[4,4]});b.F(x=>[x,yBase+1.2*sin(n*PI*(x+halfL)/L),0],-halfL,halfL,{c:COL.teal,w:3.2,seg:100});b.T([0,3.2,0],`Level n = ${n} | E_${n} ∝ ${En.toFixed(3)} eV`,{c:COL.red,sz:25,b:1});b.T([0,-3.2,0],`Nodes = ${n-1} | Zero-point energy (n=1) is never 0`,{c:COL.ink,sz:21});});
-}};
+const sinc2 = (a: number) => Math.abs(a) < 1e-6 ? 1 : Math.pow(sin(a) / a, 2);
+const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
 
-SC['phy:4']={cam:{yaw:-.45,pitch:.3},steps:[
- {t:'Metal, semiconductor, insulator',d:'Electrons fill the valence band (VB). To conduct they need empty states in the conduction band (CB). In a metal the bands overlap, so electrons move freely. A semiconductor has a small gap (about 1 eV for silicon) that heat or doping can bridge. An insulator has a wide gap (several eV) that nothing at room temperature crosses.'},
- {t:'Doping and the Fermi level',d:'Donor atoms (n-type) add a level just below the CB and pull the Fermi level up towards it. Acceptor atoms (p-type) add a level just above the VB and pull the Fermi level down. In the pure (intrinsic) crystal it sits near mid-gap. Drift current is J = nqμE; diffusion follows the concentration gradient; D/μ = kT/q.',only:true},
- {t:'The p-n junction',d:'Electrons diffuse from n into p, holes from p into n. They leave behind fixed charged atoms, which form a depletion region with a built-in field pointing from n to p. Drift (pushed by that field) balances diffusion at equilibrium. This one-way valve is the diode; with a third layer it becomes a transistor, and LEDs and photodiodes are junctions too.',only:true},
- {t:'Hall effect',d:'Pass a current I along a slab and put a magnetic field B through it. The moving charges are pushed sideways and pile up on one face, creating a sideways voltage V_H = BI/(nqt). Its sign tells whether the carriers are electrons or holes, and R_H = 1/(nq) gives the carrier density.',only:true},
- {t:'Solar cell',d:'A photon with enough energy creates an electron–hole pair near the junction. The built-in field sweeps the electron to the n side and the hole to the p side, so current flows through the external load. Quality is measured by fill factor FF = Pmax/(I_sc V_oc) and efficiency = Pmax/Pin.',only:true},
- {t:'Nanomaterials: size changes properties',d:'When a material shrinks to a few nanometres a large share of its atoms sit on the surface (surface-to-volume ratio rises) and the electrons are squeezed, which widens the band gap and shifts colour and conductivity. Your syllabus classifies nanostructures by how many dimensions are confined: 0D quantum dot, 1D nanowire.',only:true}],
- build(B){
-  const bd=(x,gap,tag,ne)=>{B.X([x,-1.9,0],[2.4,.6,1.8],{f:COL.blue,a:.3});B.X([x,-1.3+gap,0],[2.4,.6,1.8],{f:COL.gold,a:.3});B.T([x,-3,0],tag,{b:1,sz:21,c:COL.red});for(let i=0;i<ne;i++)B.D([x-.9+(i%4)*.55,-.9+gap,.3-(i%2)*.5],.1,{f:COL.teal})};
-  B.s(0);bd(-4.2,-.3,'metal: bands overlap',8);bd(0,.9,'semiconductor: small gap',3);bd(4.2,2.4,'insulator: wide gap',0);B.T([6.3,1.2,0],'CB',{c:COL.gold,b:1});B.T([6.3,-1.9,0],'VB',{c:COL.blue,b:1});
-  B.s(1);const cbv=x=>{B.L([[x-2,1.8,0],[x+2,1.8,0]],{c:COL.gold,w:3});B.L([[x-2,-1.8,0],[x+2,-1.8,0]],{c:COL.blue,w:3});B.T([x+2.4,1.8,0],'CB',{sz:19});B.T([x+2.4,-1.8,0],'VB',{sz:19})};
-  cbv(-3.6);cbv(3.6);B.L([[-5.6,1.35,0],[-1.6,1.35,0]],{c:COL.red,w:2.4,d:[6,4]});B.T([-3.6,.8,0],'E_F near CB (n-type)',{c:COL.red,b:1,sz:19});B.T([-3.6,2.5,0],'donor level just below CB',{sz:18});
-  B.L([[1.6,-1.35,0],[5.6,-1.35,0]],{c:COL.red,w:2.4,d:[6,4]});B.T([3.6,-.8,0],'E_F near VB (p-type)',{c:COL.red,b:1,sz:19});B.T([0,3.3,0],'intrinsic: E_F near mid-gap',{b:1,sz:21});
-  B.s(2);B.X([-1.7,0,0],[3.4,1.8,2.4],{f:COL.red,a:.14});B.X([1.7,0,0],[3.4,1.8,2.4],{f:COL.blue,a:.14});B.X([0,0,0],[.9,1.8,2.4],{f:COL.gold,a:.4});
-  B.dyn((t,b)=>{for(let i=0;i<7;i++){const w=sin(t*2+i)*.12;b.D([-2.9+(i%4)*.7+w,-.5+Math.floor(i/4)*.8,-.6+(i%3)*.6],.1,{f:COL.red});b.D([.9+(i%4)*.7-w,-.5+Math.floor(i/4)*.8,-.6+(i%3)*.6],.1,{f:COL.teal})}});
-  B.A([.8,1.5,1.4],[-.8,1.5,1.4],{c:COL.red,w:3});B.T([0,2.2,1.4],'built-in field',{c:COL.red,b:1});B.T([-1.7,-1.4,1.3],'p (holes)',{b:1,c:COL.red});B.T([1.7,-1.4,1.3],'n (electrons)',{b:1,c:COL.teal});B.T([0,-2.4,0],'depletion region',{c:COL.gold,b:1});B.T([0,3.1,0],'diffusion balanced by drift',{sz:22,b:1});
-  B.s(3);B.X([0,0,0],[6,2.4,.5],{f:COL.gold,a:.2});B.A([-4.5,0,0],[-3.2,0,0],{c:COL.ink,w:3.2});B.T([-4,.5,0],'I',{b:1,sz:26});B.A([0,0,2],[0,0,.4],{c:COL.teal,w:3.2});B.T([0,0,2.4],'B',{c:COL.teal,b:1,sz:26});
-  B.dyn((t,b)=>{for(let i=0;i<6;i++){const u=((t*.35+i/6)%1),x=-2.8+u*5.6,y=.9-1.5*Math.min(1,u*1.3);b.D([x,y,.35],.1,{f:COL.teal})}for(let k=0;k<5;k++)b.D([-2.4+k*1.2,-1.35,.3],.1,{f:COL.teal})});
-  B.A([3.8,-1.25,.3],[3.8,1.25,.3],{c:COL.red,w:3});B.T([4.5,0,.3],'V_H',{c:COL.red,b:1,sz:26});B.T([0,-2.4,0],'V_H = BI/(nqt),  R_H = 1/(nq)',{b:1,sz:23});
-  B.s(4);B.X([0,1.2,0],[4.6,.3,2.4],{f:COL.teal,a:.3});B.X([0,-.3,0],[4.6,2.7,2.4],{f:COL.red,a:.2});B.T([-3.2,1.2,0],'n',{c:COL.teal,b:1,sz:22});B.T([-3.2,-.3,0],'p',{c:COL.red,b:1,sz:22});
-  [-1.4,0,1.4].forEach(x=>{B.F(y=>[x+sin(y*5)*.12,y,.6],4.4,1.5,{c:COL.gold,w:2.6});B.A([x,1.7,.6],[x,1.45,.6],{c:COL.gold,w:2.4})});B.T([0,4.7,0],'photons hν ≥ E_g',{c:COL.gold,b:1});
-  B.D([-.4,.9,0],.14,{f:COL.teal});B.D([.4,.5,0],.14,{f:COL.red});B.L([[-2.4,1.2,0],[-4.2,1.2,0],[-4.2,-2.4,0],[4.2,-2.4,0],[4.2,-1.3,0]],{c:COL.ink,w:2.4});B.C([-4.2,-.6,0],.45,{n:'z',c:COL.gold,f:COL.gold,a:.5});B.T([-4.9,-.6,0],'load',{b:1});B.T([0,-3.2,0],'FF = Pmax /(I_sc V_oc)',{c:COL.red,b:1,sz:23});
-  B.s(5);B.X([-4,0,0],[2.4,2.4,2.4],{f:COL.gray,a:.2});B.T([-4,-2.1,0],'bulk',{b:1});B.D([0,0,0],.5,{f:COL.teal});B.T([0,-1.3,0],'0D quantum dot',{b:1,c:COL.teal});B.X([4,0,0],[.35,4.4,.35],{f:COL.red,a:.4});B.T([4,-2.9,0],'1D nanowire',{b:1,c:COL.red});B.T([0,3.1,0],'smaller → surface/volume up, band gap wider',{b:1,sz:21})}};
+function alongPath(pts: [number, number, number][], u: number): [number, number, number] {
+  const segs: number[] = []; let tot = 0;
+  for (let i = 1; i < pts.length; i++) {
+    const l = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1], pts[i][2] - pts[i - 1][2]);
+    segs.push(l); tot += l;
+  }
+  let d = clamp(u, 0, .9999) * tot;
+  for (let i = 0; i < segs.length; i++) {
+    if (d <= segs[i]) {
+      const k = d / (segs[i] || 1);
+      return [lerp(pts[i][0], pts[i + 1][0], k), lerp(pts[i][1], pts[i + 1][1], k), lerp(pts[i][2], pts[i + 1][2], k)];
+    }
+    d -= segs[i];
+  }
+  return pts[pts.length - 1];
+}
+
+function photon(b: SceneBuilderAPI, o: [number, number, number], dir: [number, number, number], len: number, t: number, c?: string, amp?: number) {
+  const pts: [number, number, number][] = []; const n = 26;
+  for (let i = 0; i <= n; i++) {
+    const s = i / n * len;
+    pts.push([o[0] + dir[0] * s, o[1] + dir[1] * s + (amp || .22) * Math.sin(s * 7 - t * 9), o[2] + dir[2] * s]);
+  }
+  b.L(pts, { c: c || COL.red, w: 2.6 });
+}
+
+SC['phy:0'] = {
+  cam: { yaw: -.5, pitch: .38 },
+  params: [
+    { id: 'phaseShift', label: 'Phase Diff δ', min: 0, max: 2, step: 0.05, defaultVal: 0.0, unit: 'π' },
+    { id: 'wavelength', label: 'Wave Number k', min: 1.0, max: 4.0, step: 0.2, defaultVal: 2.0, unit: '' }
+  ],
+  steps: [
+    { t: 'Two waves meet', d: 'Wave A (blue) and wave B (red) have the same wavelength. Slide the phase difference. At 0° the crests line up and the sum (green) doubles in height: bright. At 180° crest meets trough and the sum is flat: dark. In between you get something in the middle.', param: { label: 'Phase difference', min: 0, max: 360, val: 0, step: 5, unit: '°' } },
+    { t: 'Thin film: two reflected rays', d: 'Ray 1 reflects from the top of the film and ray 2 from the bottom, so ray 2 travels an extra 2μt cos r inside the film. Ray 1 also gets an extra half wavelength on reflection. Change the thickness and watch the reflected patch switch between bright and dark. This is why oil films and soap bubbles show colours.', param: { label: 'Film thickness t', min: 0, max: 800, val: 100, step: 5, unit: ' nm' }, only: true },
+    { t: 'Newton’s rings', d: 'The air film between the lens and the plate gets thicker as you move out from the touching point, with thickness t = r²/2R. The reflected light makes dark rings where 2t = nλ. The centre is dark because of the extra half wavelength. Slide the wavelength: red light makes bigger rings than blue. Dₙ² = 4nλR.', param: { label: 'Wavelength', min: 400, max: 700, val: 589, step: 5, unit: ' nm' }, cam: { pitch: .62 }, only: true },
+    { t: 'Michelson’s interferometer', d: 'The beam splitter sends half the light to fixed mirror M₂ and half to movable mirror M₁. The beams return and meet again on the screen. Every time M₁ moves by λ/2, one circular fringe appears or disappears at the centre. Counting fringes gives λ, or the tiny difference between two close wavelengths.', cam: { pitch: .8, yaw: -.35 }, only: true },
+    { t: 'Single slit diffraction', d: 'Light spreads out after passing through a narrow slit. The screen shows a wide bright central band with fainter bands on both sides. The first dark band is at a sin θ = λ. Make the slit narrower and the pattern gets wider.', param: { label: 'Slit width a', min: 1, max: 6, val: 2, step: .1, unit: ' μm' }, cam: { pitch: .5, yaw: -.7 }, only: true },
+    { t: 'Diffraction grating', d: 'Many equally spaced slits give sharp bright lines at angles with (a + b) sin θ = nλ. Each order spreads the colours: longer wavelengths bend more. Slide the wavelength and see the lines move. The orders n = 0, ±1, ±2 are drawn.', param: { label: 'Wavelength', min: 400, max: 700, val: 550, step: 5, unit: ' nm' }, cam: { pitch: 1.0, yaw: -.25 }, only: true },
+    { t: 'Rayleigh criterion', d: 'Two point sources are just resolved when the peak of one pattern falls on the first dark band of the other (separation = 1). At that point the dip between the two peaks is about 19% for a slit. Closer than that, they merge into one blob.', param: { label: 'Separation (1 = Rayleigh limit)', min: .3, max: 1.8, val: 1, step: .05, unit: '' }, cam: { pitch: .25, yaw: -.25 }, only: true },
+    { t: 'Live parameter lab: wave superposition', d: 'Adjust the phase difference δ and wave number k to watch constructive vs destructive interference live.', only: true }
+  ],
+  build(B) {
+    /* step 0 */
+    B.s(0);
+    B.L([[-5, 0, 2.2], [5, 0, 2.2]], { c: COL.gray, w: 1, d: [4, 4] });
+    B.L([[-5, 0, 0], [5, 0, 0]], { c: COL.gray, w: 1, d: [4, 4] });
+    B.L([[-5, 0, -2.4], [5, 0, -2.4]], { c: COL.gray, w: 1, d: [4, 4] });
+    B.T([-5.3, 0, 2.2], 'wave A', { c: COL.blue, a: 'right', b: 1 });
+    B.T([-5.3, 0, 0], 'wave B', { c: COL.red, a: 'right', b: 1 });
+    B.T([-5.3, 0, -2.4], 'A + B', { c: COL.teal, a: 'right', b: 1 });
+    B.dyn((t, b, ph) => {
+      const phVal = typeof ph === 'number' ? ph : (ph?.val ?? 0);
+      const phi = phVal * PI / 180, k = 1.6, w = 2.4, amp = Math.abs(2 * cos(phi / 2));
+      b.L(wavePts(-5, 5, x => [x, 1.0 * sin(k * x - w * t), 2.2]), { c: COL.blue, w: 2.4 });
+      b.L(wavePts(-5, 5, x => [x, 1.0 * sin(k * x - w * t + phi), 0]), { c: COL.red, w: 2.4 });
+      b.L(wavePts(-5, 5, x => [x, 1.0 * sin(k * x - w * t) + 1.0 * sin(k * x - w * t + phi), -2.4]), { c: COL.teal, w: 3.4 });
+      const msg = amp > 1.7 ? 'constructive: bright' : amp < .3 ? 'destructive: dark' : 'in between';
+      b.T([0, -2.6, -2.4], 'sum amplitude ' + amp.toFixed(2) + ' (max 2) → ' + msg, { b: 1, sz: 22 });
+    });
+
+    /* step 1 */
+    B.s(1);
+    B.X([0, 0, 0], [8, .7, 3.2], { f: COL.teal, a: .2 });
+    B.T([-3.9, .0, 1.8], 'film (μ = 1.33)', { a: 'left', c: COL.teal, b: 1 });
+    B.T([-3.9, 1.1, 1.8], 'air', { a: 'left', c: COL.gray });
+    B.T([-3.9, -1.1, 1.8], 'air', { a: 'left', c: COL.gray });
+    B.A([-3.6, 3, 0], [-1.5, .35, 0], { c: COL.gold, w: 2.4 });
+    B.A([-1.5, .35, 0], [.9, 3, 0], { c: COL.blue, w: 2.4 });
+    B.L([[-1.5, .35, 0], [-1.15, -.35, 0], [-.8, .35, 0]], { c: COL.red, w: 2.4 });
+    B.A([-.8, .35, 0], [1.7, 3.1, 0], { c: COL.red, w: 2.4 });
+    B.T([-3.4, 3.3, 0], 'incident light', { c: COL.gold, b: 1 });
+    B.T([1.0, 3.35, 0], 'ray 1', { c: COL.blue, b: 1 });
+    B.T([2.0, 3.35, 0], 'ray 2', { c: COL.red, b: 1 });
+    B.A([3.4, .35, 0], [3.4, -.35, 0], { c: COL.ink, w: 1.6 });
+    B.A([3.4, -.35, 0], [3.4, .35, 0], { c: COL.ink, w: 1.6 });
+    B.T([3.7, 0, 0], 't', { a: 'left', b: 1, sz: 24 });
+    B.T([0, -1.8, 0], 'extra path of ray 2 = 2μt cos r', { b: 1, sz: 22 });
+    B.T([0, -2.5, 0], 'ray 1 also gains λ/2 on reflection', { c: COL.blue, b: 1 });
+    B.dyn((t, b, th) => {
+      const thVal = typeof th === 'number' ? th : (th?.val ?? 100);
+      const I = Math.pow(sin(2 * PI * 1.33 * thVal / 550), 2);
+      b.D([4.4, 2.0, 0], .55, { f: COL.teal, a: .12 + .88 * I });
+      b.T([4.4, 1.1, 0], I > .75 ? 'bright' : I < .25 ? 'dark' : 'in between', { b: 1, sz: 22 });
+      b.T([4.4, 2.9, 0], '2μt = ' + (2 * 1.33 * thVal / 550).toFixed(2) + ' λ', { sz: 19, c: COL.dim, b: 1 });
+    });
+
+    /* step 2 */
+    B.s(2);
+    B.X([0, -.15, 0], [9, .3, 9], { f: COL.blue, a: .12 });
+    const Rc = 4.98;
+    for (let r = 1; r <= 3.6; r += .8) B.C([0, .05 + r * r / (2 * Rc), 0], r, { n: 'y', c: COL.dim, w: 1.2 });
+    B.C([0, 1.35, 0], 3.6, { n: 'y', c: COL.ink });
+    B.C([0, 1.9, 0], 3.6, { n: 'y', c: COL.ink });
+    [[3.6, 0], [-3.6, 0], [0, 3.6], [0, -3.6]].forEach(q => B.L([[q[0], 1.35, q[1]], [q[0], 1.9, q[1]]], { c: COL.ink }));
+    B.T([0, 2.5, 0], 'plano-convex lens', { b: 1 });
+    B.T([-4.8, -.4, 3.4], 'glass plate', { c: COL.blue, b: 1, a: 'left' });
+    B.T([0, 1.0, 0], 'air film', { c: COL.teal, b: 1, dy: 6, sz: 17 });
+    [[-1.4, 0], [0, 0], [1.4, 0]].forEach(q => B.A([q[0], 4.6, q[1]], [q[0], 3.0, q[1]], { c: COL.gold, w: 2 }));
+    B.T([0, 4.9, 0], 'monochromatic light', { c: COL.gold, b: 1 });
+    B.dyn((t, b, lam) => {
+      const lamVal = typeof lam === 'number' ? lam : (lam?.val ?? 589);
+      const s = .85 * Math.sqrt(lamVal / 550), col = lamCol(lamVal);
+      for (let n = 1; n <= 9; n++) {
+        b.C([0, .02, 0], s * Math.sqrt(n), { n: 'y', c: COL.ink, w: 2.2 });
+        b.C([0, .02, 0], s * Math.sqrt(n - .5), { n: 'y', c: col, w: 1.6 });
+      }
+      b.D([0, .06, 0], .16, { f: COL.ink });
+      const r4 = s * 2;
+      b.A([-r4, .05, 3.3], [r4, .05, 3.3], { c: COL.red, w: 2 });
+      b.A([r4, .05, 3.3], [-r4, .05, 3.3], { c: COL.red, w: 2 });
+      b.T([0, .05, 3.9], 'D₄ = ' + (s * s * 4).toFixed(2) + ' (relative units)', { c: COL.red, b: 1, sz: 19 });
+      b.T([0, .05, 4.5], 'dark rings (ink), bright rings (colour)', { c: COL.dim, sz: 17 });
+    });
+
+    /* step 3 */
+    B.s(3);
+    B.X([-5.2, 0, 0], [.9, .9, .9], { f: COL.gold, a: .5 });
+    B.T([-5.2, 1.2, 0], 'source', { b: 1 });
+    B.P([[-.9, -1, -.9], [.9, -1, .9], [.9, 1, .9], [-.9, 1, -.9]], { f: COL.gold, a: .35 });
+    B.T([0, 1.6, 0], 'beam splitter', { b: 1 });
+    B.P([[1.1, -.8, -.7], [2.5, -.8, .7], [2.5, .8, .7], [1.1, .8, -.7]], { f: COL.blue, a: .15 });
+    B.T([1.9, 1.3, 0], 'compensator', { sz: 17, c: COL.blue });
+    B.X([0, 0, -4.1], [2, 1.8, .25], { f: COL.blue, a: .35 });
+    B.T([0, 1.5, -4.1], 'M₂ (fixed)', { b: 1 });
+    B.X([0, 0, 4.2], [3, 2.2, .2], { f: COL.gray, a: .2 });
+    B.T([0, 1.8, 4.2], 'screen', { b: 1 });
+    B.A([-4.6, 0, 0], [-.3, 0, 0], { c: COL.red, w: 2.4 });
+    B.L([[0, 0, 0], [0, 0, -3.9]], { c: COL.red, w: 1.8, d: [6, 4] });
+    B.L([[0, 0, 0], [0, 0, 4.0]], { c: COL.gold, w: 2.6 });
+    B.dyn((t, b) => {
+      const d = .3 * sin(t * .7), x1 = 4 + d;
+      b.X([x1, 0, 0], [.25, 1.8, 2], { f: COL.blue, a: .35 });
+      b.T([x1, 1.5, 0], 'M₁ (movable)', { b: 1 });
+      b.A([x1 + 1.1, -1.4, 0], [x1 + 1.1 + (d >= 0 ? .7 : -.7), -1.4, 0], { c: COL.green, w: 2.4 });
+      b.L([[0, 0, 0], [x1, 0, 0]], { c: COL.red, w: 1.8, d: [6, 4] });
+      const frac = ((d * 5) % 1 + 1) % 1;
+      for (let k = 0; k < 6; k++) b.C([0, 0, 3.95], .22 * Math.sqrt(k + 1 - frac), { n: 'z', c: k % 2 ? COL.gold : COL.ink, w: 2 });
+      const pa = [[-5, 0, 0], [0, 0, 0], [x1, 0, 0], [0, 0, 0], [0, 0, 4]] as [number, number, number][];
+      const pb = [[-5, 0, 0], [0, 0, 0], [0, 0, -4.1], [0, 0, 0], [0, 0, 4]] as [number, number, number][];
+      const u = (t * .22) % 1;
+      b.D(alongPath(pa, u), .15, { f: COL.red });
+      b.D(alongPath(pb, u), .15, { f: COL.teal });
+      b.T([0, -1.4, 5.0], 'one fringe appears each time M₁ moves λ/2', { c: COL.dim, b: 1, sz: 19 });
+    });
+
+    /* step 4 */
+    B.s(4);
+    B.X([4.6, 0, 0], [.2, 7, 3], { f: COL.gray, a: .12 });
+    B.T([4.6, 3.8, 0], 'screen', { b: 1 });
+    for (let k = 0; k < 5; k++) B.A([-4.8, -1 + k * .5, 0], [-.7, -1 + k * .5, 0], { c: COL.gold, w: 1.6 });
+    B.T([-3, 1.9, 0], 'plane wave', { c: COL.gold, b: 1 });
+    B.dyn((t, b, a) => {
+      const aVal = typeof a === 'number' ? a : (a?.val ?? 2);
+      const g = aVal * .18, y1 = 2.4 / aVal;
+      b.X([0, g / 2 + 2.0, 0], [.3, 4, 3.4], { f: COL.blue, a: .3 });
+      b.X([0, -g / 2 - 2.0, 0], [.3, 4, 3.4], { f: COL.blue, a: .3 });
+      b.T([0, 4.4, 0], 'slit width a = ' + aVal.toFixed(1) + ' μm', { b: 1 });
+      b.L([[0, 0, 0], [4.5, y1, 0]], { c: COL.red, w: 1.6, d: [6, 4] });
+      b.L([[0, 0, 0], [4.5, -y1, 0]], { c: COL.red, w: 1.6, d: [6, 4] });
+      b.A([5.2, 0, 0], [5.2, y1, 0], { c: COL.red, w: 1.8 });
+      b.A([5.2, 0, 0], [5.2, -y1, 0], { c: COL.red, w: 1.8 });
+      b.T([5.5, 0, 0], 'to first dark', { a: 'left', c: COL.red, sz: 16 });
+      b.L(wavePts(-3.4, 3.4, y => [4.7 + 2.3 * sinc2(PI * y / y1), y, 1.6], 160), { c: COL.teal, w: 2.8 });
+      b.T([6.2, 2.4, 1.6], 'intensity', { c: COL.teal, b: 1 });
+    });
+
+    /* step 5 */
+    B.s(5);
+    for (let i = 0; i < 10; i++) B.X([-1.5, 0, -3.6 + i * .8], [.15, 3.2, .45], { f: COL.blue, a: .35 });
+    B.T([-1.5, 2.2, 0], 'grating', { b: 1 });
+    B.X([1.5, -1.6, 0], [.1, .1, 13], { f: COL.gray, a: .5 });
+    B.T([1.5, -2.2, 0], 'screen', { c: COL.dim, b: 1 });
+    [-2, 0, 2].forEach(z => B.A([-5.2, 0, z], [-2.0, 0, z], { c: COL.gold, w: 2 }));
+    B.dyn((t, b, lam) => {
+      const lamVal = typeof lam === 'number' ? lam : (lam?.val ?? 550);
+      const col = lamCol(lamVal), d = 1600;
+      for (let m = -2; m <= 2; m++) {
+        const sT = m * lamVal / d, th = Math.asin(sT), z = 3 * Math.tan(th);
+        b.L([[-1.5, 0, 0], [1.5, 0, z]], { c: col, w: m === 0 ? 3 : 2.4 });
+        b.D([1.5, -1.6, z], .2, { f: col });
+        b.T([1.5, -2.4, z], 'n = ' + (m > 0 ? '+' : '') + m, { sz: 17, b: 1 });
+      }
+      b.T([-1.5, 3.2, 0], '(a+b) sinθ = nλ', { b: 1, sz: 22 });
+    });
+
+    /* step 6 */
+    B.s(6);
+    B.L([[-5, 0, 0], [5, 0, 0]], { c: COL.gray, w: 1.2 });
+    B.dyn((t, b, s) => {
+      const sVal = typeof s === 'number' ? s : (s?.val ?? 1);
+      const X = 2.4, sc = 3.2, f1 = (u: number) => sinc2(PI * (u + sVal / 2)), f2 = (u: number) => sinc2(PI * (u - sVal / 2));
+      b.L(wavePts(-2, 2, u => [u * X, sc * f1(u) * .95, 0], 160), { c: COL.blue, w: 1.8 });
+      b.L(wavePts(-2, 2, u => [u * X, sc * f2(u) * .95, 0], 160), { c: COL.red, w: 1.8 });
+      b.L(wavePts(-2, 2, u => [u * X, sc * (f1(u) + f2(u)) * .95, 0], 200), { c: COL.ink, w: 3.2 });
+      const mid = 2 * sinc2(PI * sVal / 2), pk = Math.max(1 + sinc2(PI * sVal), mid), dip = 1 - mid / pk;
+      b.L([[-sVal / 2 * X, 0, 0], [-sVal / 2 * X, 3.6, 0]], { c: COL.blue, w: 1, d: [4, 4] });
+      b.L([[sVal / 2 * X, 0, 0], [sVal / 2 * X, 3.6, 0]], { c: COL.red, w: 1, d: [4, 4] });
+      const status = sVal > 1.03 ? 'resolved' : sVal > .97 ? 'just resolved (Rayleigh limit)' : 'not resolved: looks like one source';
+      b.T([0, -1.0, 0], 'dip between peaks: ' + Math.max(0, dip * 100).toFixed(0) + '%', { b: 1, sz: 22 });
+      b.T([0, -1.9, 0], status, { b: 1, c: sVal >= .97 ? COL.teal : COL.red, sz: 24 });
+    });
+
+    /* step 7 */
+    B.s(7);
+    B.L([[-5, 0, 0], [5, 0, 0]], { c: COL.gray, w: 1.4 });
+    B.dyn((t, b, p: any = {}) => {
+      const dVal = p?.phaseShift != null ? p.phaseShift : 0;
+      const kVal = p?.wavelength != null ? p.wavelength : 2.0;
+      const delta = dVal * PI;
+      b.L(wavePts(-5, 5, x => [x, sin(kVal * x - 2 * t), -1.5], 100), { c: COL.blue, w: 2 });
+      b.L(wavePts(-5, 5, x => [x, sin(kVal * x - 2 * t + delta), 1.5], 100), { c: COL.red, w: 2 });
+      b.L(wavePts(-5, 5, x => [x, sin(kVal * x - 2 * t) + sin(kVal * x - 2 * t + delta), 0], 120), { c: COL.teal, w: 3 });
+      b.T([0, 2.5, 0], `Superposition: δ = ${dVal.toFixed(2)}π, k = ${kVal.toFixed(1)}`, { c: COL.ink, sz: 22, b: 1 });
+    });
+  }
+};
+
+SC['phy:1'] = {
+  cam: { yaw: -.45, pitch: .3 },
+  params: [
+    { id: 'coreIndex', label: 'Core Index n₁', min: 1.45, max: 1.70, step: 0.01, defaultVal: 1.55, unit: '' },
+    { id: 'cladIndex', label: 'Cladding Index n₂', min: 1.40, max: 1.50, step: 0.01, defaultVal: 1.45, unit: '' }
+  ],
+  steps: [
+    { t: 'Absorption, spontaneous and stimulated emission', d: 'Left: a photon of energy hν lifts the atom up (absorption). Middle: an excited atom falls by itself and sends a photon in a random direction. Right: a passing photon makes the atom fall and a second, identical photon leaves with it. That copy is the "amplification" in LASER.', cam: { pitch: .25, yaw: -.3 } },
+    { t: 'Population inversion', d: 'At normal temperature most atoms are in the lower level (left). Light is then absorbed more than it is amplified. A laser needs the opposite: pumping energy must put more atoms in the upper metastable level than in the lower one (right), so N₂ > N₁.', only: true },
+    { t: 'The resonator and the He-Ne laser', d: 'A discharge excites helium and helium passes the energy to neon, giving inversion in neon. Photons bounce between the two mirrors and make more photons each trip. The right mirror lets a little light out, which is the beam: red, 632.8 nm. Only waves that fit the cavity length (2L = mλ) survive.', cam: { pitch: .3, yaw: -.35 }, only: true },
+    { t: 'Semiconductor diode laser', d: 'Forward bias pushes electrons from the n side and holes from the p side into the thin junction layer. They recombine and release photons of energy about equal to the band gap. The polished ends of the crystal act as mirrors and the light leaves from the front edge.', cam: { yaw: -.9, pitch: .4 }, only: true },
+    { t: 'Light guided by total internal reflection', d: 'Light enters the fibre end and zigzags inside the core, reflecting at the core-cladding boundary. Move the slider to change the entry angle. Inside the acceptance cone (θ₀ = sin⁻¹√(n₁²−n₂²), here 22.6°) the ray is guided. Outside it the ray leaks into the cladding.', param: { label: 'Entry angle', min: 0, max: 40, val: 12, step: 1, unit: '°' }, cam: { pitch: .15, yaw: -.25 }, only: true },
+    { t: 'Modes and the V-number', d: 'Each spot on the fibre end is one mode. The number of modes is about V²/2 in a step-index fibre, where V = (2πa/λ)·NA. Below V = 2.405 only one mode survives: that is a single-mode fibre. Slide V up to see the number of modes grow.', param: { label: 'V-number', min: 1, max: 12, val: 6, step: .1, unit: '' }, cam: { yaw: -.5, pitch: .2 }, only: true },
+    { t: 'Point-to-point optical link', d: 'The input signal drives a laser or LED at the transmitter. Light pulses travel along the fibre and get weaker. A repeater boosts them again. A photodiode at the receiver turns the light back into an electrical signal for the output.', cam: { yaw: -.25, pitch: .3 }, only: true },
+    { t: 'Live parameter lab: numerical aperture & acceptance cone', d: 'Change the core (n₁) and cladding (n₂) refractive indices to calculate NA = √(n₁² − n₂²) and the critical acceptance angle in real time.', only: true }
+  ],
+  build(B) {
+    /* step 0 */
+    B.s(0);
+    [-4.6, 0, 4.6].forEach((x0, i) => {
+      B.X([x0, 1.3, 0], [3, .12, 1.4], { f: COL.blue, a: .3 });
+      B.X([x0, -1.3, 0], [3, .12, 1.4], { f: COL.blue, a: .3 });
+      B.T([x0 - 1.7, 1.3, 0], 'E₂', { a: 'right', b: 1 });
+      B.T([x0 - 1.7, -1.3, 0], 'E₁', { a: 'right', b: 1 });
+      B.T([x0, -2.6, 0], ['absorption', 'spontaneous emission', 'stimulated emission'][i], { b: 1, sz: 22 });
+    });
+    B.T([4.6, -3.3, 0], '1 photon in → 2 identical photons out', { c: COL.red, b: 1 });
+    B.dyn((t, b) => {
+      const T = 6, u = (t % T) / T, ph = [1, 0, 0] as [number, number, number];
+      /* absorption */
+      {
+        const x0 = -4.6; let y = -1.1;
+        if (u < .4) photon(b, [x0 - 3.2 + u / .4 * 2.6, 0, 0], ph, .7, t);
+        else y = lerp(-1.1, 1.1, clamp((u - .4) / .15, 0, 1));
+        b.D([x0, y, 0], .26, { f: COL.gold });
+      }
+      /* spontaneous */
+      {
+        const x0 = 0; let y = 1.1; const dir = [.55, .15, .82] as [number, number, number];
+        if (u >= .4) {
+          y = lerp(1.1, -1.1, clamp((u - .4) / .15, 0, 1));
+          const s = (u - .5) * 6.5;
+          if (s > 0) photon(b, [x0 + dir[0] * s, dir[1] * s, dir[2] * s], dir, .7, t);
+        }
+        b.D([x0, y, 0], .26, { f: COL.gold });
+      }
+      /* stimulated */
+      {
+        const x0 = 4.6; let y = 1.1;
+        if (u < .4) photon(b, [x0 - 3.2 + u / .4 * 2.6, 0, 0], ph, .7, t);
+        else {
+          y = lerp(1.1, -1.1, clamp((u - .4) / .15, 0, 1));
+          const s = (u - .45) * 6.5;
+          if (s > 0) {
+            photon(b, [x0 + s, 0, .25], ph, .7, t);
+            photon(b, [x0 + s, 0, -.25], ph, .7, t);
+          }
+        }
+        b.D([x0, y, 0], .26, { f: COL.gold });
+      }
+    });
+
+    /* step 1 */
+    B.s(1);
+    [[-3.8, 'thermal equilibrium', 12, 3, 'N₁ > N₂: no laser'], [3.8, 'population inversion', 3, 12, 'N₂ > N₁: laser action']].forEach(p => {
+      const x0 = p[0] as number;
+      B.X([x0, 2, 0], [4.2, .12, 1.6], { f: COL.blue, a: .3 });
+      B.X([x0, -2, 0], [4.2, .12, 1.6], { f: COL.blue, a: .3 });
+      B.T([x0, -3.6, 0], p[1] as string, { b: 1, sz: 22 });
+      B.T([x0, -4.4, 0], p[4] as string, { b: 1, c: x0 < 0 ? COL.red : COL.teal });
+      B.T([x0 - 2.4, 2, 0], 'E₂', { a: 'right', b: 1 });
+      B.T([x0 - 2.4, -2, 0], 'E₁', { a: 'right', b: 1 });
+      for (let i = 0; i < (p[3] as number); i++) B.D([x0 - 1.7 + (i % 6) * .62, 2.3, (Math.floor(i / 6) - .5) * .5], .17, { f: COL.gold });
+      for (let i = 0; i < (p[2] as number); i++) B.D([x0 - 1.7 + (i % 6) * .62, -1.7, (Math.floor(i / 6) - .5) * .5], .17, { f: COL.gold });
+    });
+    B.A([1.5, -2.6, 0], [1.5, 1.4, 0], { c: COL.red, w: 3 });
+    B.T([1.5, -3.1, 0], 'pumping', { c: COL.red, b: 1 });
+
+    /* step 2 */
+    B.s(2);
+    B.Y([-4, 0, 0], 1, 8, { ax: 'x', f: COL.teal, a: .12 });
+    B.X([-4.2, 0, 0], [.25, 2.8, 2.8], { f: COL.blue, a: .4 });
+    B.T([-4.2, 2.1, 0], 'mirror 100%', { b: 1 });
+    B.X([4.2, 0, 0], [.25, 2.8, 2.8], { f: COL.blue, a: .2 });
+    B.T([4.2, 2.1, 0], 'mirror 98%', { b: 1 });
+    B.A([4.5, 0, 0], [7, 0, 0], { c: COL.red, w: 3.2 });
+    B.T([6.2, .6, 0], 'laser beam 632.8 nm', { c: COL.red, b: 1, a: 'center' });
+    B.X([-3.2, 1.35, 0], [.4, .25, .4], { f: COL.gold, a: .5 });
+    B.X([3.2, -1.35, 0], [.4, .25, .4], { f: COL.gold, a: .5 });
+    B.T([0, 2.2, 0], 'He : Ne = 10 : 1, discharge tube', { c: COL.teal, b: 1 });
+    B.dyn((t, b) => {
+      const T = 9, u = (t % T) / T, n = 1 + Math.floor(u * 7);
+      for (let i = 0; i < n; i++) {
+        const x = -4 + (((t * 2.6 + i * 1.15) % 8.1) + 8.1) % 8.1;
+        b.D([x, .1 * sin(i * 2.3), .15 * cos(i * 3.1)], .13, { f: COL.red });
+      }
+      for (let i = 0; i < Math.max(0, n - 2); i++) {
+        const x = 4 - (((t * 2.2 + i * 1.3) % 8.1) + 8.1) % 8.1;
+        b.D([x, -.2 * cos(i * 1.7), .2 * sin(i * 2.9)], .13, { f: COL.red, a: .6 });
+      }
+      b.T([0, -2.3, 0], 'photons: ' + n + ' (they multiply on every trip)', { c: COL.dim, b: 1 });
+    });
+
+    /* step 3 */
+    B.s(3);
+    B.X([-1.5, 0, 0], [3, 2.4, 3], { f: COL.blue, a: .12 });
+    B.X([1.5, 0, 0], [3, 2.4, 3], { f: COL.red, a: .12 });
+    B.X([0, 0, 0], [.35, 2.4, 3], { f: COL.gold, a: .45 });
+    B.T([-1.5, 1.8, 0], 'n-type', { c: COL.blue, b: 1, sz: 24 });
+    B.T([1.5, 1.8, 0], 'p-type', { c: COL.red, b: 1, sz: 24 });
+    B.T([0, -1.8, 1.6], 'junction (active layer)', { c: COL.gold, b: 1 });
+    B.T([-3.4, 0, 0], '−', { sz: 40, b: 1, c: COL.blue });
+    B.T([3.4, 0, 0], '+', { sz: 40, b: 1, c: COL.red });
+    B.T([0, -3.0, 0], 'forward bias', { b: 1 });
+    B.P([[-1.5, -1.2, 1.5], [1.5, -1.2, 1.5], [1.5, 1.2, 1.5], [-1.5, 1.2, 1.5]], { f: COL.violet, a: .08 });
+    B.T([2.4, -1.0, 1.7], 'polished end = mirror', { sz: 16, c: COL.dim, a: 'left' });
+    B.dyn((t, b) => {
+      for (let k = 0; k < 6; k++) {
+        const u = ((t * .5 + k / 6) % 1);
+        const z = -1.1 + ((k * 7) % 5) * .5, y = -.8 + ((k * 3) % 4) * .5;
+        b.D([-2.8 + u * 2.7, y, z], .12, { f: COL.blue });
+        b.D([2.8 - u * 2.7, y + .2, z], .12, { f: COL.red, a: .45 });
+        if (u > .92) photon(b, [0, y, z], [0, 0, 1], .5, t, COL.red);
+      }
+      const s = (t * 1.2) % 2.4;
+      photon(b, [0, 0, 1.5 + s], [0, 0, 1], .8, t, COL.red, .12);
+      photon(b, [0, .6, 1.5 + ((s + 1.2) % 2.4)], [0, 0, 1], .8, t, COL.red, .12);
+      b.T([0, -2.3, 3.8], 'laser light →', { c: COL.red, b: 1 });
+    });
+
+    /* step 4 */
+    B.s(4);
+    B.X([0, .95, 0], [9, .5, 1.6], { f: COL.gold, a: .22 });
+    B.X([0, 0, 0], [9, 1.4, 1.6], { f: COL.teal, a: .18 });
+    B.X([0, -.95, 0], [9, .5, 1.6], { f: COL.gold, a: .22 });
+    B.T([3.2, 1.3, 1.2], 'cladding n₂ = 1.45', { c: COL.gold, b: 1, a: 'left' });
+    B.T([3.2, 0, 1.2], 'core n₁ = 1.50', { c: COL.teal, b: 1, a: 'left' });
+    const th0 = Math.asin(Math.sqrt(1.5 * 1.5 - 1.45 * 1.45)), rr = 2.2;
+    [1, -1].forEach(s => B.L([[-4.5, 0, 0], [-4.5 - rr * cos(th0), s * rr * sin(th0), 0]], { c: COL.red, w: 1.6, d: [5, 4] }));
+    B.C([-4.5 - rr * cos(th0), 0, 0], rr * sin(th0), { n: 'x', c: COL.red, w: 1.4 });
+    [[0, 1], [0, -1], [1, 0], [-1, 0]].forEach(q => B.L([[-4.5, 0, 0], [-4.5 - rr * cos(th0), q[0] * rr * sin(th0), q[1] * rr * sin(th0)]], { c: COL.red, w: 1, d: [4, 5] }));
+    B.T([-6.2, 1.9, 0], 'acceptance cone 2θ₀', { c: COL.red, b: 1 });
+    B.dyn((t, b, ang) => {
+      const angVal = typeof ang === 'number' ? ang : (ang?.val ?? 12);
+      const a = angVal * PI / 180, thr = Math.asin(Math.sin(a) / 1.5), slope = Math.tan(thr), ok = angVal <= th0 * 180 / PI + .01;
+      b.A([-4.5 - 2.4 * cos(a), -2.4 * sin(a), 0], [-4.5, 0, 0], { c: ok ? COL.teal : COL.red, w: 2.8 });
+      let x = -4.5, y = 0, dir = 1;
+      const pts: [number, number, number][] = [[x, y, 0]];
+      while (x < 4.5) {
+        const yb = dir > 0 ? .7 : -.7, dx = (yb - y) / (dir * slope || 1e-9);
+        if (!ok) {
+          pts.push([x + dx, yb, 0]);
+          b.L(pts, { c: COL.red, w: 2.6 });
+          b.A([x + dx, yb, 0], [Math.min(4.5, x + dx + 1.6), yb + dir * 1.5 * 1.6 * (slope + .15) / 1, 0], { c: COL.red, w: 2.2, d: [5, 4] });
+          b.T([x + dx + 1.2, dir * 2.4, 0], 'leaks out', { c: COL.red, b: 1 });
+          pts.length = 0;
+          break;
+        }
+        const nx = x + dx;
+        if (nx >= 4.5) {
+          pts.push([4.5, y + dir * slope * (4.5 - x), 0]);
+          break;
+        }
+        x = nx; y = yb; dir = -dir; pts.push([x, y, 0]);
+      }
+      if (pts.length > 1) b.L(pts, { c: COL.teal, w: 2.8 });
+      b.T([0, -2.2, 0], 'entry angle ' + angVal.toFixed(0) + '° → ' + (ok ? 'guided (TIR)' : 'outside cone: leaks'), { b: 1, sz: 22, c: ok ? COL.teal : COL.red });
+      b.T([0, -3.0, 0], 'NA = √(n₁² − n₂²) = 0.38,  θ₀ = 22.6°', { c: COL.dim, b: 1 });
+    });
+
+    /* step 5 */
+    B.s(5);
+    B.Y([0, 0, -5], 2.4, 5, { ax: 'z', f: COL.gold, a: .1 });
+    B.dyn((t, b, V) => {
+      const vVal = typeof V === 'number' ? V : (V?.val ?? 6);
+      const N = vVal < 2.405 ? 1 : Math.max(2, Math.round(vVal * vVal / 2)), R = 2.4;
+      b.C([0, 0, 0], R, { n: 'z', c: COL.ink, w: 2.4 });
+      b.C([0, 0, 0], R, { n: 'z', f: COL.teal, a: .1 });
+      for (let i = 0; i < N; i++) {
+        const r = N === 1 ? 0 : (R - .3) * Math.sqrt((i + .5) / N), a = i * 2.39996 + (N === 1 ? 0 : t * .15);
+        b.D([r * cos(a), r * sin(a), .05], N === 1 ? .55 : Math.max(.1, .5 / Math.sqrt(N)), { f: COL.red });
+      }
+      b.T([0, -3.4, 0], 'V = ' + vVal.toFixed(1) + '  →  ' + (N === 1 ? 'single mode (V < 2.405)' : 'about ' + N + ' modes (V²/2)'), { b: 1, sz: 24, c: N === 1 ? COL.teal : COL.ink });
+      b.T([0, 3.3, 0], 'fibre end face: each spot is one mode', { c: COL.dim, b: 1 });
+    });
+
+    /* step 6 */
+    B.s(6);
+    const y0 = 0;
+    B.X([-6.6, y0, 0], [1.4, 1.2, 1.2], { f: COL.gold, a: .35 }); B.T([-6.6, 1.2, 0], 'input', { b: 1 });
+    B.X([-4.4, y0, 0], [1.6, 1.4, 1.4], { f: COL.red, a: .35 }); B.T([-4.4, 1.3, 0], 'laser / LED', { b: 1 });
+    B.Y([-3.6, y0, 0], .22, 7.2, { ax: 'x', f: COL.teal, a: .5 }); B.T([-1.6, -.9, 0], 'optical fibre', { c: COL.teal, b: 1 });
+    B.X([0, y0, 0], [.9, 1.2, 1.2], { f: COL.violet, a: .4 }); B.T([0, 1.1, 0], 'repeater', { b: 1 });
+    B.X([4.4, y0, 0], [1.6, 1.4, 1.4], { f: COL.blue, a: .35 }); B.T([4.4, 1.3, 0], 'photodiode', { b: 1 });
+    B.X([6.6, y0, 0], [1.4, 1.2, 1.2], { f: COL.gold, a: .35 }); B.T([6.6, 1.2, 0], 'output', { b: 1 });
+    B.T([0, -2.6, 0], 'electrical signal → light → electrical signal', { c: COL.dim, b: 1 });
+    B.dyn((t, b) => {
+      for (let k = 0; k < 5; k++) {
+        const u = ((t * .16 + k * .2) % 1), x = -3.6 + u * 8, seg = x < 0 ? (x + 3.6) / 3.6 : x / 4, r = .22 * (1 - .5 * clamp(seg, 0, 1)) + .06;
+        b.D([x, y0, 0], r, { f: COL.red });
+      }
+    });
+
+    /* step 7 */
+    B.s(7);
+    cylx(B, -5, 5, 0.6, { f: COL.teal, c: COL.teal });
+    cylx(B, -5, 5, 1.1, { f: COL.gray, c: COL.gray, a: 0.06 });
+    B.T([0, 1.9, 0], 'cladding n₂', { c: COL.gray, b: 1 });
+    B.T([0, -1.2, 0], 'core n₁ > n₂', { c: COL.teal, b: 1, sz: 19 });
+    B.T([0, -2.6, 0], 'NA = sinθ₀ = √(n₁² − n₂²)', { c: COL.red, b: 1, sz: 24 });
+    B.dyn((t, b, p: any = {}) => {
+      const n1 = p?.coreIndex ?? 1.55;
+      const n2 = Math.min(n1 - 0.01, p?.cladIndex ?? 1.45);
+      const na = sqrt(Math.max(0, n1 * n1 - n2 * n2));
+      const thetaDeg = (Math.asin(Math.min(1, na)) * 180) / PI;
+      const coneR = Math.tan((thetaDeg * PI) / 180) * 1.8;
+      b.L([[-5, 0, 0], [-6.8, coneR, 0]], { c: COL.gold, w: 2 });
+      b.L([[-5, 0, 0], [-6.8, -coneR, 0]], { c: COL.gold, w: 2 });
+      b.A([-6.8, 0, 0], [-5, 0, 0], { c: COL.gold, w: 2.5 });
+      b.T([0, 2.6, 0], `n₁ = ${n1.toFixed(2)}, n₂ = ${n2.toFixed(2)}  →  NA = ${na.toFixed(3)}`, { c: COL.red, sz: 24, b: 1 });
+      b.T([0, -3.4, 0], `Acceptance angle θ₀ = ${thetaDeg.toFixed(1)}°`, { c: COL.ink, sz: 22 });
+    });
+  }
+};
+
+SC['phy:2'] = {
+  cam: { yaw: -.4, pitch: .28 },
+  steps: [
+    { t: 'Conductor, semiconductor, insulator', d: 'The valence band is full and the conduction band is where electrons can move freely. In a conductor the bands overlap, so electrons move easily. A semiconductor has a small gap (about 1 eV), so a few electrons jump up with heat. An insulator has a large gap (more than 3 eV), so none do.', cam: { pitch: .2, yaw: -.15 } },
+    { t: 'Fermi function and temperature', d: 'The surface shows the chance f that a state is filled, for different energies (left to right) and temperatures (front to back). At T = 0 it is a sharp step at E_F. As T rises the step softens, but f = ½ exactly at E_F for every temperature. Slide to cut the surface at a temperature of your choice.', param: { label: 'Temperature', min: 0, max: 3, val: 1.5, step: .1, unit: '' }, cam: { yaw: -.9, pitch: .45 }, only: true },
+    { t: 'Electrical conduction in a metal', d: 'Electrons move randomly and fast (Fermi speed) and bump into the lattice. A field adds a slow drift in one direction. The current density is J = n e² τ E / m*, so σ = n e² τ / m*. Move the slider to change the field and see the drift grow.', param: { label: 'Electric field E', min: 0, max: 3, val: 1.5, step: .1, unit: '' }, cam: { pitch: .3, yaw: -.3 }, only: true },
+    { t: 'A dielectric in a capacitor', d: 'In the field between the plates the dipoles in the dielectric line up. Opposite charges appear on its two faces (bound charge) and cancel part of the field, so E = E₀/εr. Slide the field from 0 up and watch the dipoles turn. Polarization P is the dipole moment per unit volume.', param: { label: 'Applied field', min: 0, max: 1, val: .7, step: .05, unit: '' }, cam: { yaw: -.45, pitch: .3 }, only: true },
+    { t: 'Types of polarization and dielectric loss', d: 'The permittivity ε′ falls in steps as the frequency rises: space charge stops first, then orientation, then ionic, then electronic. The loss ε″ (red) peaks near each step, and that is where the dielectric heats up. Drag the slider to a frequency and see which mechanisms still follow the field.', param: { label: 'log₁₀ of frequency (Hz)', min: 1, max: 16, val: 5, step: .2, unit: '' }, cam: { pitch: .15, yaw: -.1 }, only: true },
+    { t: 'Dia, para and ferromagnetic materials', d: 'Diamagnetic atoms have no permanent dipole; the field induces a weak opposing one (χ slightly negative). Paramagnetic atoms have dipoles that only partly line up with the field (χ small positive). Ferromagnetic materials have domains that line up strongly and stay aligned (large χ, hysteresis, lost above the Curie temperature).', only: true },
+    { t: 'Maxwell’s four equations in pictures', d: '1. Gauss (electric): ∮E·dA = q/ε₀, field lines start on charges. 2. Gauss (magnetic): ∮B·dA = 0, magnetic lines close on themselves. 3. Faraday: ∮E·dl = −dΦ_B/dt, a changing B makes a circulating E. 4. Ampère–Maxwell: ∮B·dl = μ₀(I + ε₀dΦ_E/dt), current and a changing E make a circulating B.', only: true },
+    { t: 'Electromagnetic wave and Poynting vector', d: 'E and B oscillate at right angles to each other and to the travel direction, always in step, with c = 1/√(μ₀ε₀) and E = cB. Energy flows along S = E × H (the Poynting vector); its average in free space is ½ε₀cE₀².', only: true }
+  ],
+  build(B) {
+    /* step 0 */
+    B.s(0);
+    const cfg = [[-4.6, 'conductor', 'Eg ≈ 0 (bands overlap)', -.4, 2, .5, 2], [0, 'semiconductor', 'Eg ≈ 1 eV', -1.6, 2.1, 1.6, 2.1], [4.6, 'insulator', 'Eg > 3 eV', -2.6, 2.1, 2.6, 2.1]] as const;
+    cfg.forEach(c => {
+      B.X([c[0], c[3], 0], [2.6, c[4], 1.3], { f: COL.blue, a: .3 }); B.X([c[0], c[5], 0], [2.6, c[6], 1.3], { f: COL.gold, a: .18 });
+      B.T([c[0], -4.7, 0], c[1], { b: 1, sz: 24 }); B.T([c[0], -5.4, 0], c[2], { c: COL.dim, b: 1 });
+      for (let i = 0; i < 8; i++) B.D([c[0] - 1 + (i % 4) * .65, c[3] - .5 + Math.floor(i / 4) * .8, 0], .1, { f: COL.blue });
+    });
+    B.T([-6.4, -1.4, 0], 'valence band', { c: COL.blue, b: 1, a: 'right' }); B.T([-6.4, 1.5, 0], 'conduction band', { c: COL.gold, b: 1, a: 'right' });
+    B.dyn((t, b) => {
+      [[-4.6, .5, 8], [0, 1.6, 2]].forEach(c => { for (let i = 0; i < c[2]; i++) b.D([c[0] + 1.1 * sin(t * (.6 + rnd(i) * .8) + i * 3), c[1] + .8 * cos(t * (.5 + rnd(i + 9) * .7) + i), .3 * sin(t + i)], .11, { f: COL.red }); });
+    });
+
+    /* step 1 */
+    B.s(1);
+    B.W((x, z) => 3 / (1 + Math.exp(x / (.04 + .42 * z))), [-3, 3], [0, 3], 18, { c: COL.blue });
+    B.L([[0, 1.5, 0], [0, 1.5, 3]], { c: COL.gold, w: 3.2 }); B.T([0, 1.9, 3.3], 'f = ½ at E_F', { c: COL.gold, b: 1 });
+    B.A([-3.4, 0, 0], [3.8, 0, 0], { c: COL.gray, w: 1.4 }); B.T([4.3, 0, 0], 'E − E_F', { c: COL.gray, b: 1 });
+    B.A([-3.4, 0, 0], [-3.4, 3.6, 0], { c: COL.gray, w: 1.4 }); B.T([-3.4, 4.0, 0], 'f(E)', { c: COL.gray, b: 1 });
+    B.A([-3.4, 0, 0], [-3.4, 0, 3.6], { c: COL.gray, w: 1.4 }); B.T([-3.4, 0, 4.0], 'T', { c: COL.gray, b: 1 });
+    B.dyn((t, b, T) => {
+      const TVal = typeof T === 'number' ? T : (T?.val ?? 1.5);
+      b.L(wavePts(-3, 3, x => [x, 3 / (1 + Math.exp(x / (.04 + .42 * TVal))), TVal], 120), { c: COL.red, w: 3.4 });
+      b.T([0, -.8, TVal], TVal < .05 ? 'T = 0: sharp step' : 'kT grows with T', { c: COL.red, b: 1 });
+    });
+
+    /* step 2 */
+    B.s(2);
+    B.Y([-4.2, 0, 0], 1.1, 8.4, { ax: 'x', f: COL.teal, a: .1 });
+    B.T([0, 1.9, 0], 'metal wire', { c: COL.teal, b: 1 });
+    B.dyn((t, b, E) => {
+      const EVal = typeof E === 'number' ? E : (E?.val ?? 1.5);
+      for (let i = 0; i < 16; i++) {
+        const base = -4.2 + rnd(i) * 8.4, yy = (rnd(i + 20) - .5) * 1.5, zz = (rnd(i + 40) - .5) * 1.5, drift = -EVal * .35 * t;
+        const x = ((((base + drift + .45 * sin(t * (2 + rnd(i + 3) * 3) + i)) + 4.2) % 8.4) + 8.4) % 8.4 - 4.2;
+        b.D([x, yy + .12 * sin(t * 4 + i), zz + .12 * cos(t * 3 + i)], .13, { f: COL.blue });
+      }
+      b.A([-1.5, 2.8, 0], [1.5, 2.8, 0], { c: COL.red, w: 2 + EVal }); b.T([0, 3.3, 0], 'electric field E', { c: COL.red, b: 1 });
+      b.A([1.5, -2.2, 0], [1.5 - .7 * EVal - .01, -2.2, 0], { c: COL.blue, w: 2.4 }); b.T([0, -2.9, 0], 'electrons: random motion + drift against the field', { c: COL.blue, b: 1 });
+      b.T([0, -3.7, 0], 'σ = n e² τ / m*', { b: 1, sz: 24 });
+    });
+
+    /* step 3 */
+    B.s(3);
+    B.X([0, 2.6, 0], [6.4, .2, 3.6], { f: COL.red, a: .3 }); B.X([0, -2.6, 0], [6.4, .2, 3.6], { f: COL.blue, a: .3 });
+    B.T([-3.9, 2.6, 0], '+Q', { c: COL.red, b: 1, sz: 26, a: 'right' }); B.T([-3.9, -2.6, 0], '−Q', { c: COL.blue, b: 1, sz: 26, a: 'right' });
+    B.X([0, 0, 0], [6, 4.4, 3.2], { f: COL.gold, a: .08 }); B.T([3.6, 0, 1.8], 'dielectric', { c: COL.gold, b: 1, a: 'left' });
+    B.dyn((t, b, F) => {
+      const FVal = typeof F === 'number' ? F : (F?.val ?? 0.7);
+      for (let i = 0; i < 5; i++) for (let j = 0; j < 3; j++) {
+        const x = -2.3 + i * 1.15, y = -1.2 + j * 1.2, z = -.3 + ((i + j) % 2) * .6;
+        const ang = (1 - FVal) * (rnd(i * 7 + j) * 2 * PI - PI) * 1 + .12 * sin(t * 2 + i + j) * (1 - FVal), dx = .38 * sin(ang), dy = .38 * cos(ang);
+        b.L([[x - dx, y - dy, z], [x + dx, y + dy, z]], { c: COL.ink, w: 2 }); b.D([x + dx, y + dy, z], .14, { f: COL.red }); b.D([x - dx, y - dy, z], .14, { f: COL.blue });
+      }
+      for (let i = 0; i < 6; i++) { b.D([-2.5 + i, 2.2, 1.55], .12, { f: COL.blue, a: .15 + .85 * FVal }); b.D([-2.5 + i, -2.2, 1.55], .12, { f: COL.red, a: .15 + .85 * FVal }); }
+      b.A([4.8, 1.7, 0], [4.8, -1.7, 0], { c: COL.red, w: 3 }); b.T([5.6, 0, 0], 'E₀', { c: COL.red, b: 1, sz: 24 });
+      b.A([-4.8, 1.7 - 1.1 * FVal * .9, 0], [-4.8, -1.7 + 1.1 * FVal * .9, 0], { c: COL.teal, w: 3 }); b.T([-5.6, 0, 0], 'E', { c: COL.teal, b: 1, sz: 24 });
+      b.T([0, -3.6, 0], FVal < .05 ? 'no field: dipoles point anywhere, P = 0' : 'field on: dipoles line up, bound charge appears, E < E₀', { b: 1 });
+    });
+
+    /* step 4 */
+    B.s(4);
+    B.A([-5, -2.4, 0], [5.6, -2.4, 0], { c: COL.gray, w: 1.4 }); B.A([-5, -2.4, 0], [-5, 3.4, 0], { c: COL.gray, w: 1.4 });
+    B.T([5.6, -2.9, 0], 'log f', { c: COL.gray, b: 1 }); B.T([-5, 3.8, 0], 'ε′  (black),  ε″ loss (red)', { c: COL.gray, b: 1, a: 'left' });
+    const X = (lf: number) => -5 + (lf - 1) / 15 * 10.4, mech = [[3.5, 'space charge', COL.violet, .7], [9, 'orientation', COL.red, .9], [13, 'ionic', COL.gold, .6], [15.4, 'electronic', COL.teal, .5]] as const;
+    const sg = (lf: number, c: number) => 1 / (1 + Math.exp((lf - c) / .5));
+    const eps = (lf: number) => .3 + mech.reduce((s, m) => s + m[3] * sg(lf, m[0]), 0), loss = (lf: number) => mech.reduce((s, m) => s + m[3] * .5 * Math.exp(-Math.pow((lf - m[0]) / .6, 2)), 0);
+    B.L(wavePts(1, 16, lf => [X(lf), -2.4 + 1.9 * eps(lf), 0], 200), { c: COL.ink, w: 3 }); B.L(wavePts(1, 16, lf => [X(lf), -2.4 + 1.9 * loss(lf), 0], 200), { c: COL.red, w: 2 });
+    mech.forEach((m, i) => { B.T([X(m[0]), -3.3 - (i % 2) * .6, 0], m[1], { c: m[2], b: 1, sz: 18 }); B.L([[X(m[0]), -2.4, 0], [X(m[0]), -2.7 - (i % 2) * .3, 0]], { c: m[2], w: 1.4 }); });
+    B.dyn((t, b, lf) => {
+      const lfVal = typeof lf === 'number' ? lf : (lf?.val ?? 5);
+      b.L([[X(lfVal), -2.4, 0], [X(lfVal), 3.2, 0]], { c: COL.green, w: 2.6, d: [6, 4] });
+      const on = mech.filter(m => lfVal < m[0] - .7).map(m => m[1]);
+      b.T([0, 4.6, 0], on.length ? 'still following the field: ' + on.join(', ') : 'only electronic or nothing follows at this frequency', { b: 1, c: COL.green, sz: 21 });
+    });
+
+    /* step 5 */
+    B.s(5);
+    const grp = (x: number, tag: string, f: (r: number) => number) => {
+      B.X([x, 0, 0], [2.6, 3.4, 2], { f: COL.gray, a: .12 });
+      for (let i = 0; i < 9; i++) {
+        const ix = x - .8 + (i % 3) * .8, iz = -.5 + Math.floor(i / 3) * .5, u = f(rnd(i + x * 7 + 3));
+        B.A([ix, -.1 - u * .6, iz], [ix, -.1 + u * .6, iz], { c: u < 0 ? COL.red : COL.teal, w: 2.2 });
+      }
+      B.T([x, -2.3, 0], tag, { b: 1, sz: 21, c: COL.red });
+    };
+    grp(-4, 'diamagnetic', () => -.35); grp(0, 'paramagnetic', r => r > .4 ? .5 : -.5); grp(4, 'ferromagnetic', () => .95);
+    B.A([-6.2, -1.8, 2], [-6.2, 1.8, 2], { c: COL.ink, w: 3 }); B.T([-6.2, 2.2, 2], 'B', { b: 1, sz: 26 });
+
+    /* step 6 */
+    B.s(6);
+    const gs = (x: number, y: number, tag: string) => B.T([x, y - 1.95, 0], tag, { b: 1, sz: 17, c: COL.red });
+    B.D([-4, 1.8, 0], .18, { f: COL.red });
+    B.C([-4, 1.8, 0], 1.2, { n: 'x', c: COL.gold }); B.C([-4, 1.8, 0], 1.2, { n: 'y', c: COL.gold }); B.C([-4, 1.8, 0], 1.2, { n: 'z', c: COL.gold });
+    for (let k = 0; k < 6; k++) {
+      const a = k * PI / 3;
+      B.A([-4 + cos(a) * .3, 1.8 + sin(a) * .3, 0], [-4 + cos(a) * 1.9, 1.8 + sin(a) * 1.9, 0], { c: COL.ink, w: 2 });
+    }
+    gs(-4, 1.8, '∮E·dA = q/ε₀');
+    B.X([4, 1.8, 0], [1.8, .7, .7], { f: COL.red });
+    for (let k = 1; k <= 3; k++) B.F(a => [4 + cos(a) * (.9 + k * .4), 1.8 + sin(a) * (.35 + k * .35), 0], 0, 2 * PI, { c: COL.teal, w: 1.4 });
+    gs(4, 1.8, '∮B·dA = 0');
+    B.C([-4, -2.1, 0], 1, { n: 'z', c: COL.ink, w: 2.2 }); B.A([-4, -3, .6], [-4, -1.3, .6], { c: COL.teal, w: 3 });
+    B.F(a => [-4 + cos(a) * 1.35, -2.1 + sin(a) * 1.35, 0], .3, 5.6, { c: COL.red, w: 2 });
+    gs(-4, -2.1, '∮E·dl = −dΦ/dt');
+    B.A([4, -3.8, 0], [4, -.6, 0], { c: COL.ink, w: 3 });
+    [.7, 1.2].forEach(r => B.C([4, -2.1, 0], r, { n: 'y', c: COL.teal, w: 2 }));
+    gs(4, -2.1, '∮B·dl = μ₀(I + ε₀dΦ/dt)');
+
+    /* step 7 */
+    B.s(7);
+    B.dyn((t, b) => {
+      const ph = t * 2.4;
+      b.A([0, 0, -5.5], [0, 0, 5.8], { c: COL.ink, w: 2 });
+      b.F(z => [0, sin(z * 1.7 - ph) * 1.7, z], -5.2, 5.2, { c: COL.red, w: 3.4, seg: 100 });
+      b.F(z => [sin(z * 1.7 - ph) * 1.7, 0, z], -5.2, 5.2, { c: COL.teal, w: 3.4, seg: 100 });
+      for (let k = 0; k < 9; k++) {
+        const z = -4.8 + k * 1.2, y = sin(z * 1.7 - ph) * 1.7;
+        b.L([[0, 0, z], [0, y, z]], { c: COL.red, w: 1, d: [3, 3] });
+        b.L([[0, 0, z], [y, 0, z]], { c: COL.teal, w: 1, d: [3, 3] });
+      }
+    });
+    B.T([0, 2.4, -3], 'E', { c: COL.red, b: 1, sz: 28 });
+    B.T([2.5, 0, -3], 'B', { c: COL.teal, b: 1, sz: 28 });
+    B.T([0, -1.3, 5.4], 'S = E × H, travel', { b: 1 });
+    B.T([0, 3, 0], 'c = 1/√(μ₀ε₀),  E = cB', { sz: 22, b: 1 });
+  }
+};
+
+SC['phy:3'] = {
+  cam: { yaw: -.4, pitch: .3 },
+  params: [
+    { id: 'quantumN', label: 'Quantum Level n', min: 1, max: 5, step: 1, defaultVal: 1, unit: '' },
+    { id: 'boxWidth', label: 'Box Width L', min: 3.0, max: 7.0, step: 0.5, defaultVal: 6.0, unit: 'Å' }
+  ],
+  steps: [
+    { t: 'Wave packet: phase and group velocity', d: 'A moving particle is a packet of waves. The crests inside move at the phase velocity (short arrow here), while the envelope that carries the particle moves at the group velocity (long arrow). The envelope speed is the particle speed. For a free particle vp × vg = c².', cam: { pitch: .22, yaw: -.2 } },
+    { t: 'de Broglie waves around an orbit', d: 'An electron orbit is allowed only when a whole number of wavelengths fits around it: 2πr = nλ. The wave goes up and down along the orbit. Try a fractional n and you will see the wave fail to close on itself, which means the orbit is not allowed.', param: { label: 'n (wavelengths around the orbit)', min: 1, max: 8, val: 4, step: .5, unit: '' }, cam: { pitch: .6, yaw: -.4 }, only: true },
+    { t: 'Uncertainty principle', d: 'A narrow wave packet (well-known position) needs many different wavelengths, so its momentum is spread out. A wide packet has a sharp wavelength but an uncertain position. Their product stays at ħ/2 or more: Δx · Δp ≥ ħ/2.', param: { label: 'Position spread Δx', min: .4, max: 2, val: 1, step: .05, unit: '' }, cam: { pitch: .15, yaw: -.15 }, only: true },
+    { t: 'Particle in a box: ψ and |ψ|²', d: 'The wave must be zero at the walls, so only whole numbers of half-wavelengths fit: ψₙ = √(2/L) sin(nπx/L). The energies are Eₙ = n²h²/8mL², so E₂ = 4E₁ and E₃ = 9E₁. The lowest energy is not zero. Blue is the wave ψ, red is the probability |ψ|².', param: { label: 'Highlight level n', min: 1, max: 3, val: 1, step: 1, unit: '' }, cam: { pitch: .3, yaw: -.5 }, only: true },
+    { t: 'Tunnelling: leaking through a wall', d: 'When a wave meets a barrier taller than its energy it does not stop dead: inside the barrier it dies away exponentially and a smaller wave emerges on the far side. T ≈ e^(−2κa) with κ = √(2m(V₀ − E))/ħ, so thinner or lower barriers leak more.', only: true },
+    { t: 'Live parameter lab: particle in a 1D box wavefunctions', d: 'Adjust quantum level n and box width L to observe the energy level Eₙ and wave function nodes ψₙ(x) = √(2/L) sin(nπx/L).', only: true }
+  ],
+  build(B) {
+    /* step 0 */
+    B.s(0);
+    B.L([[-5, 0, 0], [5, 0, 0]], { c: COL.gray, w: 1.2 });
+    B.T([5.2, 0, 0], 'x', { c: COL.gray });
+    B.dyn((t, b) => {
+      const vg = 1, vp = .5, k = 4, xc = -4 + ((t * vg) % 8), env = (x: number) => 1.9 * Math.exp(-Math.pow((x - xc) / 1.3, 2));
+      b.L(wavePts(-5, 5, x => [x, env(x), 0], 120), { c: COL.gray, w: 1.4, d: [5, 4] });
+      b.L(wavePts(-5, 5, x => [x, -env(x), 0], 120), { c: COL.gray, w: 1.4, d: [5, 4] });
+      b.L(wavePts(-5, 5, x => [x, env(x) * cos(k * (x - vp * t)), 0], 260), { c: COL.blue, w: 2.6 });
+      let crest = vp * t; crest = crest - Math.round((crest - xc) / (2 * PI / k)) * (2 * PI / k);
+      b.D([crest, env(crest), 0], .15, { f: COL.red });
+      b.A([crest, 2.5, 0], [crest + .9, 2.5, 0], { c: COL.red, w: 2.4 });
+      b.T([crest + .4, 2.9, 0], 'vₚ (crest)', { c: COL.red, b: 1 });
+      b.A([xc, -2.6, 0], [xc + 1.8, -2.6, 0], { c: COL.teal, w: 3 });
+      b.T([xc + .9, -3.1, 0], 'v_g = particle speed', { c: COL.teal, b: 1 });
+    });
+
+    /* step 1 */
+    B.s(1);
+    B.D([0, 0, 0], .3, { f: COL.red });
+    B.T([0, -.6, 0], 'nucleus', { b: 1, sz: 17 });
+    B.C([0, 0, 0], 2.6, { n: 'y', c: COL.dim, w: 1.2, d: [4, 4] });
+    B.dyn((t, b, n) => {
+      const nVal = typeof n === 'number' ? n : (n?.val ?? 4);
+      const pts: Vec3[] = [];
+      for (let i = 0; i <= 240; i++) {
+        const a = i / 240 * 2 * PI;
+        pts.push([2.6 * cos(a), .9 * sin(nVal * a) * cos(t * 1.2), 2.6 * sin(a)]);
+      }
+      const closes = Math.abs(nVal - Math.round(nVal)) < .01;
+      b.L(pts, { c: closes ? COL.teal : COL.red, w: 3 });
+      const a0 = t * .6;
+      b.D([2.6 * cos(a0), .9 * sin(nVal * a0) * cos(t * 1.2), 2.6 * sin(a0)], .17, { f: COL.blue });
+      b.T([0, -2.2, 0], closes ? 'n = ' + nVal.toFixed(0) + ': the wave closes on itself, orbit allowed' : 'n = ' + nVal.toFixed(1) + ': the wave does not close, orbit not allowed', { b: 1, sz: 23, c: closes ? COL.teal : COL.red });
+      b.T([0, -3.0, 0], '2πr = nλ   and   mvr = nħ', { c: COL.dim, b: 1 });
+    });
+
+    /* step 2 */
+    B.s(2);
+    B.L([[-5, 1.8, 0], [5, 1.8, 0]], { c: COL.gray, w: 1 });
+    B.L([[-5, -2.6, 0], [5, -2.6, 0]], { c: COL.gray, w: 1 });
+    B.T([-5.3, 1.8, 0], 'position', { a: 'right', b: 1, c: COL.blue });
+    B.T([-5.3, -1.6, 0], 'momentum', { a: 'right', b: 1, c: COL.red });
+    B.dyn((t, b, sx) => {
+      const sxVal = typeof sx === 'number' ? sx : (sx?.val ?? 1);
+      const sp = 1 / (2 * sxVal);
+      b.L(wavePts(-5, 5, x => [x, 1.8 + 1.5 * Math.exp(-x * x / (2 * sxVal * sxVal)) * cos(5 * x), 0], 260), { c: COL.blue, w: 2.4 });
+      b.L(wavePts(-5, 5, x => [x, 1.8 + 1.5 * Math.exp(-x * x / (2 * sxVal * sxVal)), 0], 120), { c: COL.gray, w: 1, d: [4, 4] });
+      b.L(wavePts(-5, 5, p => [p, -2.6 + 3.2 * Math.exp(-p * p / (2 * sp * sp * 4)) * .8 / 1, 0], 160), { c: COL.red, w: 3 });
+      b.A([-sxVal, 3.7, 0], [sxVal, 3.7, 0], { c: COL.blue, w: 1.6 });
+      b.A([sxVal, 3.7, 0], [-sxVal, 3.7, 0], { c: COL.blue, w: 1.6 });
+      b.T([0, 4.1, 0], 'Δx', { c: COL.blue, b: 1, sz: 24 });
+      b.A([-sp * 2, -2.0, 0], [sp * 2, -2.0, 0], { c: COL.red, w: 1.6 });
+      b.A([sp * 2, -2.0, 0], [-sp * 2, -2.0, 0], { c: COL.red, w: 1.6 });
+      b.T([0, -3.3, 0], 'Δp', { c: COL.red, b: 1, sz: 24 });
+      b.T([4.6, 0, 0], 'Δx·Δp = ħ/2', { b: 1, sz: 22 });
+    });
+
+    /* step 3 */
+    B.s(3);
+    B.X([-3.1, 2.2, 0], [.2, 4.6, 2.6], { f: COL.blue, a: .35 });
+    B.X([3.1, 2.2, 0], [.2, 4.6, 2.6], { f: COL.blue, a: .35 });
+    B.T([0, -.5, 0], 'V = ∞ outside, V = 0 inside (length L)', { b: 1, c: COL.dim });
+    B.L([[-3, 0, 0], [3, 0, 0]], { c: COL.ink, w: 2 });
+    [1, 2, 3].forEach(n => {
+      const E = n * n * .38;
+      B.L([[-3, E, 0], [3, E, 0]], { c: COL.gray, w: 1, d: [3, 4] });
+      B.T([3.6, E, 0], ['E₁', 'E₂ = 4E₁', 'E₃ = 9E₁'][n - 1], { a: 'left', b: 1, sz: 19 });
+    });
+    B.dyn((t, b, hn) => {
+      const hnVal = typeof hn === 'number' ? hn : (hn?.val ?? 1);
+      [1, 2, 3].forEach(n => {
+        const E = n * n * .38, on = n === Math.round(hnVal), w = on ? 3.4 : 1.4;
+        b.L(wavePts(-3, 3, x => [x, E + .8 * sin(n * PI * (x + 3) / 6) * cos(t * (1 + n)), 0], 120), { c: COL.blue, w: w });
+        b.L(wavePts(-3, 3, x => [x, E + .9 * Math.pow(sin(n * PI * (x + 3) / 6), 2), -2.4], 120), { c: COL.red, w: w });
+        if (on) b.T([0, E + 1.4, 0], 'ψₙ = √(2/L) sin(nπx/L), n = ' + n, { b: 1, sz: 21 });
+      });
+      b.T([-5.2, 4.2, 0], 'blue: wave ψ,  red: probability |ψ|² (behind)', { a: 'left', c: COL.dim, b: 1 });
+    });
+
+    /* step 4 */
+    B.s(4);
+    B.X([0, 0, 0], [1.6, 2.8, 1.6], { f: COL.red, a: .3 });
+    B.dyn((t, b) => {
+      const k = 7, w = t * 4;
+      b.F(x => {
+        const a = x < -.8 ? 1 : x < .8 ? exp(-(x + .8) * 1.4) : .28;
+        return [x, a * cos(k * x - w) * .9, 0];
+      }, -5, 5, { c: COL.teal, w: 3.2, seg: 220 });
+    });
+    B.L([[-5, 0, 0], [5, 0, 0]], { c: COL.gray, w: 1, d: [4, 4] });
+    B.T([0, 2.2, 0], 'barrier V₀', { c: COL.red, b: 1 });
+    B.T([-3, 1.6, 0], 'incident', { c: COL.teal, b: 1 });
+    B.T([3, 1.2, 0], 'transmitted (smaller)', { c: COL.teal, b: 1 });
+    B.T([0, -1.9, 0], 'decays inside: T ≈ e^(−2κa)', { b: 1, sz: 22 });
+
+    /* step 5 */
+    B.s(5);
+    B.dyn((t, b, p: any = {}) => {
+      const n = Math.round(p?.quantumN ?? 1), L = p?.boxWidth ?? 6.0, halfL = L / 2;
+      b.X([-halfL - 0.25, 0, 0], [0.5, 6, 1.5], { f: COL.gray });
+      b.X([halfL + 0.25, 0, 0], [0.5, 6, 1.5], { f: COL.gray });
+      b.L([[-halfL, -2.5, 0], [halfL, -2.5, 0]], { c: COL.ink, w: 3 });
+      const En = (n * n) / (L * L), yBase = -2.0 + Math.min(4.5, n * 0.9);
+      b.L([[-halfL, yBase, 0], [halfL, yBase, 0]], { c: COL.gray, w: 1.5, d: [4, 4] });
+      b.F(x => [x, yBase + 1.2 * sin(n * PI * (x + halfL) / L), 0], -halfL, halfL, { c: COL.teal, w: 3.2, seg: 100 });
+      b.T([0, 3.2, 0], `Level n = ${n} | E_${n} ∝ ${En.toFixed(3)} eV`, { c: COL.red, sz: 25, b: 1 });
+      b.T([0, -3.2, 0], `Nodes = ${n - 1} | Zero-point energy (n=1) is never 0`, { c: COL.ink, sz: 21 });
+    });
+  }
+};
+
+SC['phy:4'] = {
+  cam: { yaw: -.4, pitch: .28 },
+  steps: [
+    { t: 'Direct and indirect bandgap semiconductors', d: 'In a direct gap material (GaAs) the lowest point of the conduction band sits right above the highest point of the valence band. The electron just falls and gives a photon. In an indirect gap material (Si) the minimum is at a different k, so a lattice vibration (phonon) must help, and the energy mostly turns into heat.', cam: { pitch: .15, yaw: -.1 } },
+    { t: 'n-type and p-type material', d: 'Left: a phosphorus atom has one electron more than the silicon bonds need. That electron is almost free and carries current (n-type). Right: a boron atom has one electron too few, which leaves a hole that behaves like a moving positive charge (p-type). Together with thermal electron-hole pairs this gives σ = e(nμₑ + pμₕ).', cam: { pitch: .4, yaw: -.55 }, only: true },
+    { t: 'The Hall effect', d: 'Current flows along x and the magnetic field points along y. The magnetic force pushes the carriers sideways (along z) until a Hall voltage builds up that balances the force. Switch the carrier type: the sign of V_H flips, which is how you tell n-type from p-type. V_H = BI/(nqt).', param: { label: 'Carrier type (0 = electrons, 1 = holes)', min: 0, max: 1, val: 0, step: 1, unit: '' }, cam: { yaw: -.75, pitch: .35 }, only: true },
+    { t: 'Meissner effect', d: 'Below the critical temperature the superconductor pushes the magnetic field out (B = 0 inside), so the magnet floats. Above Tc the field passes through and the magnet just sits on the disk. Slide the temperature across Tc (the value 1).', param: { label: 'Temperature T / Tc', min: .3, max: 1.7, val: .6, step: .05, unit: '' }, cam: { pitch: .15, yaw: -.35 }, only: true },
+    { t: 'Cooper pairs (BCS theory)', d: 'An electron passing through the lattice pulls the positive ions slightly towards itself. That leaves a patch of extra positive charge which attracts a second electron. The two electrons form a Cooper pair with opposite momentum and opposite spin. The pairs move without scattering, so the resistance is zero. This is a cartoon, not to scale.', cam: { pitch: .55, yaw: -.4 }, only: true },
+    { t: 'Application of superconductors: MAGLEV vehicle', d: 'Superconducting magnets under the train repel the magnetic field of the track coils and lift the train by about 10 cm: no wheels, no rolling friction. The track coils then switch polarity so that the coil ahead pulls the train and the coil behind pushes it.', cam: { pitch: .22, yaw: -.5 }, only: true },
+    { t: 'The p-n junction: depletion and built-in field', d: 'Electrons diffuse from n into p, holes from p into n. They leave behind fixed charged atoms, which form a depletion region with a built-in field pointing from n to p. Drift balances diffusion at equilibrium.', only: true },
+    { t: 'Solar cell', d: 'A photon with enough energy creates an electron–hole pair near the junction. The built-in field sweeps the electron to the n side and the hole to the p side, so current flows through the external load. FF = Pmax/(I_sc V_oc).', only: true },
+    { t: 'Nanomaterials: quantum confinement', d: 'When a material shrinks to a few nanometres a large share of its atoms sit on the surface and electrons are squeezed, widening the band gap: 0D quantum dot, 1D nanowire.', only: true }
+  ],
+  build(B) {
+    /* step 0 */
+    B.s(0);
+    [[-4.2, 0, 'direct (GaAs)'], [4.2, 1.5, 'indirect (Si)']].forEach(p => {
+      const x0 = p[0] as number, kc = p[1] as number;
+      B.A([x0 - 3, -3, 0], [x0 + 3, -3, 0], { c: COL.gray, w: 1.2 });
+      B.T([x0 + 3.3, -3, 0], 'k', { c: COL.gray, b: 1 });
+      B.A([x0, -3, 0], [x0, 3.4, 0], { c: COL.gray, w: 1.2 });
+      B.T([x0 - .4, 3.6, 0], 'E', { c: COL.gray, b: 1 });
+      B.L(wavePts(-2.2, 2.2, k => [x0 + k, 1.4 + .35 * (k - kc) * (k - kc), 0], 60), { c: COL.gold, w: 2.8 });
+      B.L(wavePts(-2.2, 2.2, k => [x0 + k, -1.4 - .35 * k * k, 0], 60), { c: COL.blue, w: 2.8 });
+      B.T([x0, -4.3, 0], p[2] as string, { b: 1, sz: 24 });
+      B.T([x0 + 2.4, 2.9, 0], 'conduction band', { c: COL.gold, sz: 17, a: 'center' });
+      B.T([x0 + 2.4, -2.6, 0], 'valence band', { c: COL.blue, sz: 17 });
+      B.A([x0 - 2.6, -1.4, 0], [x0 - 2.6, 1.4, 0], { c: COL.gray, w: 1.2 });
+      B.T([x0 - 2.9, 0, 0], 'Eg', { c: COL.gray, b: 1, a: 'right' });
+    });
+    B.dyn((t, b) => {
+      const T = 5, u = (t % T) / T, e = clamp((u - .15) / .5, 0, 1);
+      /* direct */
+      {
+        const x0 = -4.2, y = lerp(1.4, -1.4, e);
+        b.D([x0, u < .15 ? 1.4 : y, 0], .18, { f: COL.red });
+        if (e >= 1) photon(b, [x0 + .2, -1.4, 0], [1, .3, 0], .9 + (u - .65) * 2, t, COL.red, .12);
+        b.T([x0, -3.6, 0], 'photon comes out: efficient light', { c: COL.red, b: 1, sz: 17 });
+      }
+      /* indirect */
+      {
+        const x0 = 4.2, kx = 1.5;
+        const y = lerp(1.4, -1.4, e), x = x0 + kx * (1 - e) * 1;
+        b.D([u < .15 ? x0 + kx : x, u < .15 ? 1.4 : y, 0], .18, { f: COL.red });
+        if (e > .2 && e < 1) b.T([x0 + .8, 0, 0], 'phonon', { c: COL.violet, b: 1 });
+        b.T([x0, -3.6, 0], 'needs a phonon: mostly heat', { c: COL.violet, b: 1, sz: 17 });
+      }
+    });
+
+    /* step 1 */
+    B.s(1);
+    const lat = (ox: number, donor: boolean) => {
+      for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) for (let k = 0; k < 2; k++) {
+        const p: Vec3 = [ox + i * 1.3, j * 1.3 - 1.3, k * 1.3 - .65], mid = i === 1 && j === 1 && k === 0;
+        if (i < 2) B.L([p, [p[0] + 1.3, p[1], p[2]]], { c: COL.gray, w: 1.2 });
+        if (j < 2) B.L([p, [p[0], p[1] + 1.3, p[2]]], { c: COL.gray, w: 1.2 });
+        if (k < 1) B.L([p, [p[0], p[1], p[2] + 1.3]], { c: COL.gray, w: 1.2 });
+        B.D(p, mid ? .34 : .22, { f: mid ? (donor ? COL.gold : COL.teal) : COL.gray });
+      }
+    };
+    lat(-6.2, true); lat(1.8, false);
+    B.T([-4.8, -2.9, 0], 'n-type: P donor', { c: COL.gold, b: 1, sz: 22 });
+    B.T([3.2, -2.9, 0], 'p-type: B acceptor', { c: COL.teal, b: 1, sz: 22 });
+    B.T([-4.8, -3.6, 0], 'extra electron is almost free', { c: COL.blue, sz: 17 });
+    B.T([3.2, -3.6, 0], 'missing electron = hole', { c: COL.red, sz: 17 });
+    B.dyn((t, b) => {
+      b.D([-4.8 + 1.6 * sin(t * .8), 0 + 1.2 * sin(t * 1.1 + 1), -.65 + .9 * cos(t * .7) + .65], .13, { f: COL.blue });
+      b.D([3.2 + 1.6 * cos(t * .6), 0 + 1.2 * sin(t * .9), -.2 + .8 * sin(t * .5)], .17, { f: COL.paper, a: 1 });
+      b.C([3.2 + 1.6 * cos(t * .6), 0 + 1.2 * sin(t * .9), -.2 + .8 * sin(t * .5)], .2, { n: 'z', c: COL.red, w: 2 });
+    });
+
+    /* step 2 */
+    B.s(2);
+    B.X([0, 0, 0], [7, 1.2, 3.2], { f: COL.teal, a: .14 });
+    B.A([-5.6, 0, 0], [-4, 0, 0], { c: COL.red, w: 3 }); B.T([-5.6, .7, 0], 'I', { c: COL.red, b: 1, sz: 26 });
+    B.A([0, -2.6, 0], [0, -.9, 0], { c: COL.gold, w: 3 }); B.T([0, -3.2, 0], 'B (into the slab)', { c: COL.gold, b: 1 });
+    B.T([0, 1.5, 0], 'thickness t', { c: COL.dim, sz: 17 });
+    B.dyn((t, b, ty) => {
+      const tyVal = typeof ty === 'number' ? ty : (ty?.val ?? 0);
+      const hole = tyVal > .5;
+      for (let i = 0; i < 7; i++) {
+        const u = ((t * .22 + i / 7) % 1), x = hole ? -3.4 + u * 6.8 : 3.4 - u * 6.8, prog = hole ? u : 1 - u, z = lerp(-1.2 + (i % 3) * .5, 1.35, 1 - Math.exp(-prog * 2.2));
+        b.D([x, .1 * (i % 2), z], .12, { f: hole ? COL.red : COL.blue });
+      }
+      for (let i = 0; i < 7; i++) b.D([-3 + i, 0, 1.68], .1, { f: hole ? COL.red : COL.blue, a: .85 });
+      b.A([0, 0, -.5], [0, 0, 1.0 * (hole ? 1 : -1) * .01 + .9], { c: COL.green, w: 2 });
+      b.T([.6, .5, .9], 'magnetic force', { c: COL.green, sz: 16, a: 'left' });
+      b.A([2.2, 0, -1.9], [2.2, 0, 1.9], { c: COL.violet, w: 2.4 });
+      b.A([2.2, 0, 1.9], [2.2, 0, -1.9], { c: COL.violet, w: 2.4 });
+      b.T([2.2, .6, 2.5], hole ? '+ side' : '− side', { c: hole ? COL.red : COL.blue, b: 1, sz: 24 });
+      b.T([2.2, .6, -2.5], hole ? '− side' : '+ side', { c: hole ? COL.blue : COL.red, b: 1, sz: 24 });
+      b.T([0, -4.0, 0], (hole ? 'p-type (holes): ' : 'n-type (electrons): ') + 'Hall coefficient R_H ' + (hole ? 'positive' : 'negative') + ',  R_H = 1/(nq)', { b: 1, sz: 21 });
+    });
+
+    /* step 3 */
+    B.s(3);
+    B.Y([0, -2.3, 0], 2.7, .5, { ax: 'y', f: COL.teal, a: .25 });
+    B.T([0, -3.1, 0], 'superconductor', { c: COL.teal, b: 1 });
+    B.dyn((t, b, r) => {
+      const rVal = typeof r === 'number' ? r : (r?.val ?? .6);
+      const sc = rVal < 1, top = -1.8, my = sc ? 1.5 + .12 * sin(t * 2) : top + .55;
+      if (!sc) b.Y([0, -2.3, 0], 2.7, .5, { ax: 'y', f: COL.gray, a: .35 });
+      b.X([0, my + .35, 0], [1.2, .7, .9], { f: COL.red, a: .5 });
+      b.X([0, my - .35, 0], [1.2, .7, .9], { f: COL.blue, a: .5 });
+      b.T([0, my + .35, .5], 'N', { b: 1, sz: 22, c: COL.red });
+      b.T([0, my - .35, .5], 'S', { b: 1, sz: 22, c: COL.blue });
+      [1.4, 2.2, 3.0].forEach(s => {
+        [0, 1].forEach(pl => {
+          const pts: Vec3[] = [];
+          for (let i = 0; i <= 60; i++) {
+            const a = i / 60 * 2 * PI, x = s * 1.25 * cos(a), y0 = my + s * .95 * sin(a);
+            const y = sc ? Math.max(y0, top + .1) : y0;
+            pts.push(pl ? [x, y, 0] : [0, y, x]);
+          }
+          b.L(pts, { c: COL.gold, w: 1.6, d: sc ? [6, 3] : [] });
+        });
+      });
+      b.T([0, 4.6, 0], sc ? 'T < Tc: field pushed out (B = 0 inside), magnet floats' : 'T > Tc: field goes through, magnet rests on the disk', { b: 1, sz: 22, c: sc ? COL.teal : COL.red });
+    });
+
+    /* step 4 */
+    B.s(4);
+    for (let i = 0; i < 9; i++) for (let j = 0; j < 4; j++) B.D([-4 + i, 0, -1.5 + j], .0, { f: COL.gold });
+    B.dyn((t, b) => {
+      const L = 11, x1 = -5.5 + ((t * 1.0) % L), x2 = x1 - 2.2, z1 = 0;
+      for (let i = 0; i < 9; i++) for (let j = 0; j < 4; j++) {
+        const px = -4 + i, pz = -1.5 + j;
+        const d = Math.hypot(px - x1, pz - z1);
+        const pull = d < 1.8 ? .55 * (1 - d / 1.8) : 0;
+        const dx = x1 - px, dz = z1 - pz, l = Math.hypot(dx, dz) || 1;
+        b.D([px + dx / l * pull, 0, pz + dz / l * pull], .2, { f: COL.gold });
+      }
+      b.D([x1, .5, 0], .22, { f: COL.blue });
+      b.D([x2, .5, 0], .22, { f: COL.blue });
+      b.L([[x1, .5, 0], [x2, .5, 0]], { c: COL.blue, w: 1.6, d: [4, 4] });
+      b.A([x1, 1.2, 0], [x1 + 1, 1.2, 0], { c: COL.red, w: 2.2 });
+      b.A([x2, 1.2, 0], [x2 - 1, 1.2, 0], { c: COL.red, w: 2.2 });
+      b.T([x1, 1.9, 0], 'e⁻  (k, ↑)', { c: COL.blue, b: 1, sz: 18 });
+      b.T([x2, 1.9, 0], 'e⁻  (−k, ↓)', { c: COL.blue, b: 1, sz: 18 });
+      b.T([0, -2.7, 0], 'Cooper pair: total momentum 0, total spin 0', { b: 1, sz: 22 });
+      b.T([0, -3.4, 0], 'gold = positive ions, pulled in by the passing electron', { c: COL.gold, b: 1 });
+    });
+
+    /* step 5 */
+    B.s(5);
+    B.X([0, -2.3, 0], [14, .3, 3.4], { f: COL.gray, a: .25 });
+    B.T([-6, -3.2, 0], 'guideway', { c: COL.gray, b: 1 });
+    B.dyn((t, b) => {
+      const tx = ((t * 1.6) % 14) - 7;
+      for (let i = 0; i < 14; i++) {
+        const cx = -6.5 + i, d = cx - tx, c = d > 0 && d < 3 ? COL.red : d < 0 && d > -3 ? COL.blue : COL.gray;
+        b.X([cx, -1.9, 1.3], [.5, .5, .5], { f: c, a: .55 });
+        b.X([cx, -1.9, -1.3], [.5, .5, .5], { f: c, a: .55 });
+      }
+      b.X([tx, .2, 0], [4.2, 1.6, 2.2], { f: COL.teal, a: .22 });
+      b.T([tx, 1.5, 0], 'train', { b: 1 });
+      [-1.3, 1.3].forEach(z => b.X([tx, -.8, z], [3.6, .4, .5], { f: COL.violet, a: .5 }));
+      [-1.4, -.4, .6, 1.4].forEach(dx => { b.A([tx + dx * 1.1, -1.25, 1.3], [tx + dx * 1.1, -.85, 1.3], { c: COL.green, w: 2 }); });
+      b.T([tx, -1.4, 2.2], 'gap ≈ 10 cm', { c: COL.green, b: 1, sz: 17 });
+      b.A([tx + 2.4, .2, 0], [tx + 3.4, .2, 0], { c: COL.red, w: 3 });
+      b.T([tx + 3.0, .8, 0], 'travel', { c: COL.red, b: 1, sz: 17 });
+      b.T([0, 3.6, 0], 'coil ahead (red) pulls, coil behind (blue) pushes', { b: 1, sz: 21 });
+    });
+
+    /* step 6 */
+    B.s(6);
+    B.X([-1.7, 0, 0], [3.4, 1.8, 2.4], { f: COL.red, a: .14 });
+    B.X([1.7, 0, 0], [3.4, 1.8, 2.4], { f: COL.blue, a: .14 });
+    B.X([0, 0, 0], [.9, 1.8, 2.4], { f: COL.gold, a: .4 });
+    B.dyn((t, b) => {
+      for (let i = 0; i < 7; i++) {
+        const w = sin(t * 2 + i) * .12;
+        b.D([-2.9 + (i % 4) * .7 + w, -.5 + Math.floor(i / 4) * .8, -.6 + (i % 3) * .6], .1, { f: COL.red });
+        b.D([.9 + (i % 4) * .7 - w, -.5 + Math.floor(i / 4) * .8, -.6 + (i % 3) * .6], .1, { f: COL.teal });
+      }
+    });
+    B.A([.8, 1.5, 1.4], [-.8, 1.5, 1.4], { c: COL.red, w: 3 });
+    B.T([0, 2.2, 1.4], 'built-in field', { c: COL.red, b: 1 });
+    B.T([-1.7, -1.4, 1.3], 'p (holes)', { b: 1, c: COL.red });
+    B.T([1.7, -1.4, 1.3], 'n (electrons)', { b: 1, c: COL.teal });
+    B.T([0, -2.4, 0], 'depletion region', { c: COL.gold, b: 1 });
+    B.T([0, 3.1, 0], 'diffusion balanced by drift', { sz: 22, b: 1 });
+
+    /* step 7 */
+    B.s(7);
+    B.X([0, 1.2, 0], [4.6, .3, 2.4], { f: COL.teal, a: .3 });
+    B.X([0, -.3, 0], [4.6, 2.7, 2.4], { f: COL.red, a: .2 });
+    B.T([-3.2, 1.2, 0], 'n', { c: COL.teal, b: 1, sz: 22 });
+    B.T([-3.2, -.3, 0], 'p', { c: COL.red, b: 1, sz: 22 });
+    [-1.4, 0, 1.4].forEach(x => {
+      B.F(y => [x + sin(y * 5) * .12, y, .6], 4.4, 1.5, { c: COL.gold, w: 2.6 });
+      B.A([x, 1.7, .6], [x, 1.45, .6], { c: COL.gold, w: 2.4 });
+    });
+    B.T([0, 4.7, 0], 'photons hν ≥ E_g', { c: COL.gold, b: 1 });
+    B.D([-.4, .9, 0], .14, { f: COL.teal });
+    B.D([.4, .5, 0], .14, { f: COL.red });
+    B.L([[-2.4, 1.2, 0], [-4.2, 1.2, 0], [-4.2, -2.4, 0], [4.2, -2.4, 0], [4.2, -1.3, 0]], { c: COL.ink, w: 2.4 });
+    B.C([-4.2, -.6, 0], .45, { n: 'z', c: COL.gold, f: COL.gold, a: .5 });
+    B.T([-4.9, -.6, 0], 'load', { b: 1 });
+    B.T([0, -3.2, 0], 'FF = Pmax /(I_sc V_oc)', { c: COL.red, b: 1, sz: 23 });
+
+    /* step 8 */
+    B.s(8);
+    B.X([-4, 0, 0], [2.4, 2.4, 2.4], { f: COL.gray, a: .2 });
+    B.T([-4, -2.1, 0], 'bulk', { b: 1 });
+    B.D([0, 0, 0], .5, { f: COL.teal });
+    B.T([0, -1.3, 0], '0D quantum dot', { b: 1, c: COL.teal });
+    B.X([4, 0, 0], [.35, 4.4, .35], { f: COL.red, a: .4 });
+    B.T([4, -2.9, 0], '1D nanowire', { b: 1, c: COL.red });
+    B.T([0, 3.1, 0], 'smaller → surface/volume up, band gap wider', { b: 1, sz: 21 });
+  }
+};
 
 SC['phy:5']={cam:{yaw:-.5,pitch:.4},steps:[
  {t:'Optics bench: Newton’s rings and grating',d:'Newton’s rings: a travelling microscope measures ring diameters; plot D² against ring number n, and the slope is 4λR. Grating on a spectrometer: turn the telescope to each order, read the angle θ, and λ = (a + b) sinθ/n. Polarimeter: S = θ/(l·c) for a sugar solution. Always write precautions and the percentage error.'},
