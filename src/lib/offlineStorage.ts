@@ -2,6 +2,14 @@ import { FlashcardProgress, ConfidenceLevel } from '@/types/syllabus';
 
 export const CURRENT_STORAGE_VERSION = 2;
 
+export interface UnitViewState {
+  mode: '3d' | '2d';
+  step: number;
+  camera: { yaw: number; pitch: number; zoom: number };
+  sliderValues: Record<string, number>;
+  diagramIndex: number;
+}
+
 export interface PersistedStudyState {
   version: number;
   done: Record<string, number>;
@@ -13,6 +21,8 @@ export interface PersistedStudyState {
   tab: number;
   customNotes: Record<string, string>;
   flashcards: Record<string, FlashcardProgress>;
+  unitViews?: Record<string, UnitViewState>;
+  batterySaver?: boolean;
   lastSavedAt?: string;
 }
 
@@ -31,6 +41,8 @@ export const DEFAULT_STUDY_STATE: PersistedStudyState = {
   tab: 0,
   customNotes: {},
   flashcards: {},
+  unitViews: {},
+  batterySaver: false,
 };
 
 /**
@@ -85,6 +97,10 @@ export function migrateStudyState(raw: unknown): PersistedStudyState {
     }
     migrated.confidence = cleanConf;
   }
+
+  // Sanitize unitViews & batterySaver
+  migrated.unitViews = typeof obj.unitViews === 'object' && obj.unitViews !== null ? obj.unitViews : {};
+  migrated.batterySaver = Boolean(obj.batterySaver);
 
   return {
     ...DEFAULT_STUDY_STATE,

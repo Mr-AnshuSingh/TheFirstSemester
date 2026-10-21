@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { Builder, COL, PrimitiveItem, DynamicCallback, cos, sin, PI } from './Builder';
 import { SceneDefinition, SvgDiagram, Vec3 } from '@/types/syllabus';
-import { SvgDiagramViewer } from '@/components/study/SvgDiagramViewer';
+import { SvgDiagramViewer, UnitDiagramItem } from '@/components/study/SvgDiagramViewer';
+import { StageErrorBoundary } from './StageErrorBoundary';
+import { BatteryCharging, BatteryLow, Zap } from 'lucide-react';
 
 export interface NotebookCanvas3DProps {
   scene: SceneDefinition;
@@ -11,12 +13,23 @@ export interface NotebookCanvas3DProps {
   unitIndex: number;
   totalUnits: number;
   unitTitle: string;
+  mode?: '3d' | '2d';
+  onModeChange?: (nextMode: '3d' | '2d') => void;
   step: number;
   onStepChange: (nextStep: number) => void;
+  camera?: { yaw: number; pitch: number; zoom: number };
+  onCameraChange?: (nextCamera: { yaw: number; pitch: number; zoom: number }) => void;
+  sliderValues?: Record<string, number>;
+  onSliderValuesChange?: (nextValues: Record<string, number>) => void;
+  diagramIndex?: number;
+  onDiagramIndexChange?: (nextIdx: number) => void;
+  unitDiagrams?: UnitDiagramItem[];
+  diagrams?: SvgDiagram[];
+  batterySaver?: boolean;
+  onToggleBatterySaver?: () => void;
   initialSpin?: boolean;
   initialPlaying?: boolean;
   initialZoom?: number;
-  diagrams?: SvgDiagram[];
 }
 
 interface ProjectedEntity {
@@ -31,20 +44,76 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
   unitIndex,
   totalUnits,
   unitTitle,
+  mode = '3d',
+  onModeChange,
   step,
   onStepChange,
+  camera,
+  onCameraChange,
+  sliderValues,
+  onSliderValuesChange,
+  diagramIndex = 0,
+  onDiagramIndexChange,
+  unitDiagrams = [],
+  diagrams = [],
+  batterySaver = false,
+  onToggleBatterySaver,
   initialSpin = false,
   initialPlaying = true,
   initialZoom = 1,
-  diagrams = [],
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const capRef = useRef<HTMLDivElement | null>(null);
-  const [stageViewMode, setStageViewMode] = useState<'3d' | '2d'>('3d');
+
+  // Fallback for diagrams if unitDiagrams is empty
+  const activeDiagrams = useMemo<UnitDiagramItem[]>(() => {
+    if (unitDiagrams.length > 0) return unitDiagrams;
+    if (diagrams.length > 0) {
+      return diagrams.map((dg, i) => ({
+        title: `${subjectShortName} Diagram #${i + 1}`,
+        svg: dg.svg,
+        caption: dg.c,
+      }));
+    }
+    return [];
+  }, [unitDiagrams, diagrams, subjectShortName]);
+
   const [spin, setSpin] = useState<boolean>(initialSpin);
   const [playing, setPlaying] = useState<boolean>(initialPlaying);
   const [showHint, setShowHint] = useState<boolean>(true);
   const [slidersOpen, setSlidersOpen] = useState<boolean>(true);
+  const [redrawMode, setRedrawMode] = useState<boolean>(false);
+  const [canvasError, setCanvasError] = useState<string | null>(null);
+
+  // Controlled mode state
+  const stageMode = mode;
+  const handleModeChange = useCallback(
+    (nextMode: '3d' | '2d') => {
+      onModeChange?.(nextMode);
+    },
+    [onModeChange]
+  );
+
+  // Keyboard shortcut D / d to toggle 3D and 2D mode
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'd' || e.key === 'D') {
+        const target = e.target as HTMLElement | null;
+        if (
+          target instanceof HTMLInputElement ||
+          target instanceof HTMLTextAreaElement ||
+          target?.getAttribute('contenteditable') === 'true'
+        ) {
+          return;
+        }
+        e.preventDefault();
+        handleModeChange(stageMode === '3d' ? '2d' : '3d');
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [stageMode, handleModeChange]);
 
   // Mutable engine state stored in ref to avoid re-creating RAF loop on every frame
   const engineRef = useRef<{
@@ -71,9 +140,9 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
     scene: SceneDefinition;
     params: Record<string, number>;
   }>({
-    yaw: scene.cam?.yaw ?? -0.55,
-    pitch: scene.cam?.pitch ?? 0.3,
-    zoom: scene.cam?.zoom ?? initialZoom,
+    yaw: camera?.yaw ?? scene.cam?.yaw ?? -0.55,
+    pitch: camera?.pitch ?? scene.cam?.pitch ?? 0.3,
+    zoom: camera?.zoom ?? scene.cam?.zoom ?? initialZoom,
     idle: 0,
     time: 0,
     last: 0,
@@ -95,17 +164,16 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
     params: {},
   });
 
-  const [paramValues, setParamValues] = useState<Record<string, number>>(() => {
-    const init: Record<string, number> = {};
-    if (scene.params) {
-      for (const p of scene.params) {
-        init[p.id] = p.defaultVal;
-      }
+  // Keep camera state synced
+  useEffect(() => {
+    if (camera) {
+      engineRef.current.yaw = camera.yaw;
+      engineRef.current.pitch = camera.pitch;
+      engineRef.current.zoom = camera.zoom;
     }
-    return init;
-  });
+  }, [camera]);
 
-  // Sync React props to mutable ref
+  // Synchronize Scene definition & build static/dynamic primitives
   useEffect(() => {
     const B = new Builder(scene.steps);
     scene.build(B);
@@ -113,26 +181,29 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
     eng.scene = scene;
     eng.stat = B.items;
     eng.dyns = B.dyns;
-    eng.yaw = scene.cam?.yaw ?? -0.55;
-    eng.pitch = scene.cam?.pitch ?? 0.3;
-    eng.zoom = scene.cam?.zoom ?? 1;
+    if (!camera) {
+      eng.yaw = scene.cam?.yaw ?? -0.55;
+      eng.pitch = scene.cam?.pitch ?? 0.3;
+      eng.zoom = scene.cam?.zoom ?? 1;
+    }
     eng.idle = 0;
-    eng.step = 0;
+    eng.step = step;
     eng.stepT = performance.now();
 
     const initParams: Record<string, number> = {};
     if (scene.params) {
       for (const p of scene.params) {
-        initParams[p.id] = p.defaultVal;
+        initParams[p.id] = sliderValues?.[p.id] ?? p.defaultVal;
       }
     }
     eng.params = initParams;
-    setParamValues(initParams);
-  }, [scene]);
+  }, [scene, camera, sliderValues, step]);
 
   useEffect(() => {
-    engineRef.current.params = paramValues;
-  }, [paramValues]);
+    if (sliderValues) {
+      engineRef.current.params = sliderValues;
+    }
+  }, [sliderValues]);
 
   useEffect(() => {
     engineRef.current.step = Math.max(0, Math.min(scene.steps.length - 1, step));
@@ -154,17 +225,33 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
 
   const resetView = useCallback(() => {
     const eng = engineRef.current;
-    eng.yaw = eng.scene.cam?.yaw ?? -0.55;
-    eng.pitch = eng.scene.cam?.pitch ?? 0.3;
-    eng.zoom = eng.scene.cam?.zoom ?? 1;
+    const newYaw = eng.scene.cam?.yaw ?? -0.55;
+    const newPitch = eng.scene.cam?.pitch ?? 0.3;
+    const newZoom = eng.scene.cam?.zoom ?? 1;
+    eng.yaw = newYaw;
+    eng.pitch = newPitch;
+    eng.zoom = newZoom;
     eng.idle = 0;
-  }, []);
+    onCameraChange?.({ yaw: newYaw, pitch: newPitch, zoom: newZoom });
+  }, [onCameraChange]);
 
-  const handleZoom = useCallback((factor: number) => {
-    const eng = engineRef.current;
-    eng.zoom = Math.max(0.45, Math.min(3.2, eng.zoom * factor));
-    eng.idle = 0;
-  }, []);
+  const handleZoom = useCallback(
+    (factor: number) => {
+      const eng = engineRef.current;
+      const newZoom = Math.max(0.45, Math.min(3.2, eng.zoom * factor));
+      eng.zoom = newZoom;
+      eng.idle = 0;
+      onCameraChange?.({ yaw: eng.yaw, pitch: eng.pitch, zoom: newZoom });
+    },
+    [onCameraChange]
+  );
+
+  // Canvas Drawing & Lifecycle (Single Loop, ResizeObserver, Battery Saver)
+  const rafIdRef = useRef<number>(0);
+  const isLoopActiveRef = useRef<boolean>(false);
+  const isOffscreenRef = useRef<boolean>(false);
+  const lastFrameTimeRef = useRef<number>(0);
+  const drawErrorCountRef = useRef<number>(0);
 
   useEffect(() => {
     const cv = canvasRef.current;
@@ -172,17 +259,22 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
     const ctx = cv.getContext('2d');
     if (!ctx) return;
 
-    let rafId = 0;
-
+    // Non-compounding backing-store measurement
     const rebuildPaperBackground = () => {
       const eng = engineRef.current;
       const r = cv.getBoundingClientRect();
-      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      if (r.width === 0 || r.height === 0) return; // Ignore 0x0
+
+      const dpr = batterySaver ? 1 : Math.min(2, window.devicePixelRatio || 1);
       eng.W = Math.max(10, r.width);
       eng.H = Math.max(10, r.height);
+      eng.dpr = dpr;
+
       cv.width = Math.round(eng.W * dpr);
       cv.height = Math.round(eng.H * dpr);
-      eng.dpr = dpr;
+
+      // Apply non-compounding transform
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       const b = document.createElement('canvas');
       b.width = cv.width;
@@ -201,6 +293,12 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
       }
       eng.bg = b;
       eng.ofsY = 0;
+
+      // Update test hook info
+      if (typeof window !== 'undefined') {
+        (window as any).__3dCanvasWidth = cv.width;
+        (window as any).__3dCanvasHeight = cv.height;
+      }
     };
 
     const proj = (
@@ -298,163 +396,194 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
       const zs = Math.max(0.75, Math.min(1.4, Math.sqrt(eng.zoom)));
 
       if (it.k === 'L') {
-        stroke(pp, it, (o.w || 2.2) * zs, col, lite);
-      } else if (it.k === 'A') {
-        const [p, q] = pp;
-        const dx = q[0] - p[0];
-        const dy = q[1] - p[1];
-        const l = Math.hypot(dx, dy);
-        if (l < 2) return;
-        const ux = dx / l;
-        const uy = dy / l;
-        const hl = Math.min(13 * zs, l * 0.6);
-        const bx = q[0] - ux * hl;
-        const by = q[1] - uy * hl;
-        stroke([p, [bx, by, 0, 1]], it, (o.w || 2.4) * zs, col, lite);
-        ctx.fillStyle = col;
-        ctx.beginPath();
-        ctx.moveTo(q[0], q[1]);
-        ctx.lineTo(bx - uy * hl * 0.42, by + ux * hl * 0.42);
-        ctx.lineTo(bx + uy * hl * 0.42, by - ux * hl * 0.42);
-        ctx.closePath();
-        ctx.fill();
-      } else if (it.k === 'P') {
-        const sp = pp.map((p) => [p[0], p[1]]);
+        const w = (o.w || 1.8) * zs;
         if (o.f) {
-          const alpha = typeof o.a === 'number' ? o.a : 0.2;
-          ctx.globalAlpha *= alpha;
           ctx.fillStyle = o.f;
-          ctx.beginPath();
-          sp.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])));
-          ctx.closePath();
+          tracePath(
+            pp.map((p) => [p[0], p[1]]),
+            true
+          );
           ctx.fill();
-          ctx.globalAlpha /= alpha;
         }
         if (!o.nostroke) {
-          stroke(pp.concat([pp[0]]), it, (o.w || 1.5) * zs, o.c || COL.ink, true);
+          stroke(pp, it, w, col, lite, false);
         }
+      } else if (it.k === 'P') {
+        const w = (o.w || 1.8) * zs;
+        if (o.f) {
+          ctx.fillStyle = o.f;
+          tracePath(
+            pp.map((p) => [p[0], p[1]]),
+            true
+          );
+          ctx.fill();
+        }
+        if (!o.nostroke) {
+          stroke(pp, it, w, col, lite, true);
+        }
+      } else if (it.k === 'T') {
+        const pt = pp[0];
+        const sc = pt[3];
+        const sz = Math.max(11, Math.round((o.sz || 15) * zs * (0.8 + 0.3 * sc)));
+        ctx.font = `${o.b ? 'bold ' : ''}${sz}px Caveat, cursive`;
+        ctx.fillStyle = col;
+        ctx.textAlign = (o.a as CanvasTextAlign) || 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(it.str || '', pt[0] + (o.dx || 0) * zs, pt[1] + (o.dy || 0) * zs);
       } else if (it.k === 'D') {
-        const sc = pp[0][3];
-        const r = Math.max(3, (it.r || 0.2) * sc * eng.unit);
-        const f = o.f || COL.ink;
-        ctx.fillStyle = f;
-        ctx.globalAlpha *= 0.88;
+        const pt = pp[0];
+        const r = Math.max(2, (it.r || 3) * zs * pt[3]);
+        ctx.fillStyle = col;
         ctx.beginPath();
-        ctx.arc(pp[0][0], pp[0][1], r, 0, 2 * PI);
+        ctx.arc(pt[0], pt[1], r, 0, PI * 2);
         ctx.fill();
-        ctx.globalAlpha /= 0.88;
-        const ring: number[][] = [];
-        for (let i = 0; i <= 12; i++) {
-          const a = (i / 12) * 2 * PI;
-          ring.push([pp[0][0] + cos(a) * r, pp[0][1] + sin(a) * r, 0]);
-        }
-        stroke(ring, it, 1.4, COL.ink, true);
-        ctx.fillStyle = 'rgba(255,255,255,.55)';
+      } else if (it.k === 'A') {
+        const w = (o.w || 2.2) * zs;
+        stroke(pp, it, w, col, lite, false);
+        const p1 = pp[pp.length - 1];
+        const p0 = pp[pp.length - 2] || pp[0];
+        const ang = Math.atan2(p1[1] - p0[1], p1[0] - p0[0]);
+        const ah = Math.max(7, 9 * zs);
+        ctx.fillStyle = col;
         ctx.beginPath();
-        ctx.arc(pp[0][0] - r * 0.3, pp[0][1] - r * 0.3, r * 0.22, 0, 2 * PI);
+        ctx.moveTo(p1[0], p1[1]);
+        ctx.lineTo(p1[0] - ah * cos(ang - 0.42), p1[1] - ah * sin(ang - 0.42));
+        ctx.lineTo(p1[0] - ah * 0.4 * cos(ang), p1[1] - ah * 0.4 * sin(ang));
+        ctx.lineTo(p1[0] - ah * cos(ang + 0.42), p1[1] - ah * sin(ang + 0.42));
+        ctx.closePath();
         ctx.fill();
       }
-    };
-
-    const collect = (): PrimitiveItem[] => {
-      const eng = engineRef.current;
-      const out: PrimitiveItem[] = [];
-      const cur = eng.step;
-      const vis = (it: { only: boolean; step: number }) => (it.only ? it.step === cur : it.step <= cur);
-      for (const it of eng.stat) {
-        if (vis(it)) out.push(it);
-      }
-      for (const d of eng.dyns) {
-        if (!vis(d)) continue;
-        const b = new Builder(eng.scene.steps);
-        b.idBase = 1e4 + d.step * 500;
-        b.step = d.step;
-        b.only = d.only;
-        d.fn(eng.time, b, eng.params);
-        for (const it of b.items) {
-          it.step = d.step;
-          it.only = d.only;
-          out.push(it);
-        }
-      }
-      return out;
     };
 
     const drawFrame = () => {
-      const eng = engineRef.current;
-      if (!eng.bg) rebuildPaperBackground();
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      if (eng.bg) ctx.drawImage(eng.bg, 0, 0);
-      ctx.setTransform(eng.dpr, 0, 0, eng.dpr, 0, 0);
+      try {
+        const eng = engineRef.current;
+        eng.unit = Math.min(eng.W, eng.H) * 0.082 * eng.zoom;
 
-      eng.unit = Math.min(eng.W / 14.5, eng.H / 9.2) * eng.zoom;
-      const sway = eng.idle > 2.2 ? 0.2 * sin((eng.idle - 2.2) * 0.5) : 0;
-      const yw = eng.yaw + sway;
-      const cs = { cy: cos(yw), sy: sin(yw), cp: cos(eng.pitch), sp: sin(eng.pitch) };
+        const cy = cos(eng.yaw);
+        const sy = sin(eng.yaw);
+        const cp = cos(eng.pitch);
+        const sp = sin(eng.pitch);
+        const cs = { cy, sy, cp, sp };
 
-      const items = collect();
-      const lite = items.length > 900;
-      const fade = Math.min(1, (performance.now() - eng.stepT) / 450);
-      const list: ProjectedEntity[] = [];
-      const texts: ProjectedEntity[] = [];
+        ctx.clearRect(0, 0, eng.W, eng.H);
+        if (eng.bg) {
+          ctx.drawImage(eng.bg, 0, 0, eng.W, eng.H);
+        }
 
-      for (const it of items) {
-        const pp = it.pts.map((p) => proj(p, cs));
-        let d = 0;
-        pp.forEach((p) => (d += p[2]));
-        d /= pp.length;
-        const e: ProjectedEntity = { it, pp, d };
-        (it.k === 'T' ? texts : list).push(e);
+        const ents: ProjectedEntity[] = [];
+
+        // Static primitives
+        for (const it of eng.stat) {
+          if (it.step > eng.step) continue;
+          if (it.only && it.step !== eng.step) continue;
+          ents.push({
+            it,
+            pp: it.pts.map((p) => proj(p, cs)),
+            d: 0,
+          });
+        }
+
+        // Dynamic primitives
+        if (eng.dyns.length > 0) {
+          const dB = new Builder(eng.scene.steps);
+          dB.s(eng.step);
+          for (const d of eng.dyns) {
+            if (d.step > eng.step) continue;
+            if (d.only && d.step !== eng.step) continue;
+            d.fn(eng.time, dB, eng.params);
+          }
+          for (const it of dB.items) {
+            ents.push({
+              it,
+              pp: it.pts.map((p) => proj(p, cs)),
+              d: 0,
+            });
+          }
+        }
+
+        for (const e of ents) {
+          let s = 0;
+          for (const p of e.pp) s += p[2];
+          e.d = s / (e.pp.length || 1);
+        }
+        ents.sort((a, b) => b.d - a.d);
+
+        const lite = ents.length > 220;
+        for (const e of ents) {
+          drawItem(e, lite);
+        }
+        drawErrorCountRef.current = 0;
+      } catch (err) {
+        drawErrorCountRef.current += 1;
+        if (drawErrorCountRef.current >= 3) {
+          setCanvasError('Repeated canvas drawing error. Switched to 2D Exam Sketchbook.');
+          handleModeChange('2d');
+        }
       }
-      list.sort((a, b) => b.d - a.d);
-
-      const cur = eng.step;
-      for (const e of list) {
-        ctx.globalAlpha = e.it.step === cur && cur > 0 ? fade : 1;
-        drawItem(e, lite);
-      }
-      ctx.globalAlpha = 1;
-
-      for (const e of texts) {
-        const it = e.it;
-        const o = it.o || {};
-        ctx.globalAlpha = it.step === cur && cur > 0 ? fade : 1;
-        const [x, y] = e.pp[0];
-        const labelScale = Math.min(1.15, Math.max(0.8, eng.W / 900));
-        const baseSz = o.sz || 20;
-        const sz = Math.max(
-          14,
-          Math.round(baseSz * labelScale * Math.max(0.85, Math.min(1.25, Math.sqrt(eng.zoom))))
-        );
-        ctx.font = `${o.b ? 700 : 500} ${sz}px var(--font-caveat), Caveat, "Segoe Print", "Bradley Hand", cursive`;
-        ctx.textAlign = (o.a as CanvasTextAlign) || 'center';
-        ctx.textBaseline = 'middle';
-        const tx = x + (o.dx || 0);
-        const ty = y + (o.dy || 0);
-        ctx.lineWidth = 5;
-        ctx.strokeStyle = COL.paper;
-        ctx.lineJoin = 'round';
-        ctx.strokeText(it.str || '', tx, ty);
-        ctx.fillStyle = o.c || COL.ink;
-        ctx.fillText(it.str || '', tx, ty);
-      }
-      ctx.globalAlpha = 1;
     };
 
+    // Single rAF Loop with pausing & battery saver
     const loop = (now: number) => {
-      rafId = requestAnimationFrame(loop);
+      if (stageMode === '2d' || document.hidden || isOffscreenRef.current) {
+        isLoopActiveRef.current = false;
+        if (typeof window !== 'undefined') {
+          (window as any).__3dLoopActiveCount = 0;
+        }
+        return;
+      }
+
+      // 30 FPS Cap when Battery Saver is enabled
+      if (batterySaver) {
+        if (now - lastFrameTimeRef.current < 32) {
+          rafIdRef.current = requestAnimationFrame(loop);
+          return;
+        }
+      }
+      lastFrameTimeRef.current = now;
+
       const eng = engineRef.current;
-      const dt = Math.min(0.05, (now - (eng.last || now)) / 1000);
+      if (!eng.last) eng.last = now;
+      const dt = Math.min(0.06, (now - eng.last) / 1000);
       eng.last = now;
+
       if (eng.playing) eng.time += dt;
       if (!eng.drag) eng.idle += dt;
-      if (eng.spin && !eng.drag) eng.yaw += dt * 0.35;
+      if (eng.spin && !eng.drag) {
+        eng.yaw += dt * 0.35;
+        onCameraChange?.({ yaw: eng.yaw, pitch: eng.pitch, zoom: eng.zoom });
+      }
       drawFrame();
+
+      rafIdRef.current = requestAnimationFrame(loop);
+    };
+
+    const startLoop = () => {
+      if (isLoopActiveRef.current) return;
+      if (stageMode === '2d' || document.hidden || isOffscreenRef.current) return;
+      isLoopActiveRef.current = true;
+      engineRef.current.last = performance.now();
+      if (typeof window !== 'undefined') {
+        (window as any).__3dLoopActiveCount = 1;
+      }
+      rafIdRef.current = requestAnimationFrame(loop);
+    };
+
+    const stopLoop = () => {
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = 0;
+      }
+      isLoopActiveRef.current = false;
+      if (typeof window !== 'undefined') {
+        (window as any).__3dLoopActiveCount = 0;
+      }
     };
 
     rebuildPaperBackground();
-    rafId = requestAnimationFrame(loop);
+    startLoop();
 
+    // Event listeners
     const onPointerDown = (e: PointerEvent) => {
       engineRef.current.drag = { x: e.clientX, y: e.clientY };
       cv.setPointerCapture(e.pointerId);
@@ -468,6 +597,7 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
       eng.pitch = Math.max(-1.35, Math.min(1.35, eng.pitch + (e.clientY - eng.drag.y) * 0.006));
       eng.drag = { x: e.clientX, y: e.clientY };
       eng.idle = 0;
+      onCameraChange?.({ yaw: eng.yaw, pitch: eng.pitch, zoom: eng.zoom });
     };
 
     const onPointerUp = () => {
@@ -477,8 +607,10 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
       const eng = engineRef.current;
-      eng.zoom = Math.max(0.45, Math.min(3.2, eng.zoom * Math.exp(-e.deltaY * 0.0012)));
+      const nextZoom = Math.max(0.45, Math.min(3.2, eng.zoom * Math.exp(-e.deltaY * 0.0012)));
+      eng.zoom = nextZoom;
       eng.idle = 0;
+      onCameraChange?.({ yaw: eng.yaw, pitch: eng.pitch, zoom: nextZoom });
     };
 
     const onTouchStart = (e: TouchEvent) => {
@@ -495,9 +627,11 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
         const dy = e.touches[0].clientY - e.touches[1].clientY;
         const nextDist = Math.hypot(dx, dy);
         const ratio = nextDist / engineRef.current.pinchDist;
-        engineRef.current.zoom = Math.max(0.45, Math.min(3.2, engineRef.current.zoom * ratio));
+        const nextZoom = Math.max(0.45, Math.min(3.2, engineRef.current.zoom * ratio));
+        engineRef.current.zoom = nextZoom;
         engineRef.current.pinchDist = nextDist;
         engineRef.current.idle = 0;
+        onCameraChange?.({ yaw: engineRef.current.yaw, pitch: engineRef.current.pitch, zoom: nextZoom });
       }
     };
 
@@ -514,13 +648,38 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
     cv.addEventListener('touchmove', onTouchMove, { passive: true });
     cv.addEventListener('touchend', onTouchEnd);
 
+    // ResizeObserver
     const resizeObserver = new ResizeObserver(() => rebuildPaperBackground());
     resizeObserver.observe(cv);
     window.addEventListener('resize', rebuildPaperBackground);
 
+    // Page visibility change handler
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        stopLoop();
+      } else if (stageMode === '3d') {
+        startLoop();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
+
+    // IntersectionObserver to pause loop when scrolled off-screen
+    const intersectionObserver = new IntersectionObserver((entries) => {
+      const entry = entries[0];
+      isOffscreenRef.current = !entry.isIntersecting;
+      if (!entry.isIntersecting) {
+        stopLoop();
+      } else if (stageMode === '3d' && !document.hidden) {
+        startLoop();
+      }
+    });
+    intersectionObserver.observe(cv);
+
     return () => {
-      cancelAnimationFrame(rafId);
+      stopLoop();
       resizeObserver.disconnect();
+      intersectionObserver.disconnect();
+      document.removeEventListener('visibilitychange', onVisibilityChange);
       window.removeEventListener('resize', rebuildPaperBackground);
       cv.removeEventListener('pointerdown', onPointerDown);
       cv.removeEventListener('pointermove', onPointerMove);
@@ -531,9 +690,23 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
       cv.removeEventListener('touchmove', onTouchMove);
       cv.removeEventListener('touchend', onTouchEnd);
     };
-  }, []);
+  }, [stageMode, batterySaver, onCameraChange, handleModeChange]);
+
+  // Synchronize window test hooks for Playwright tests
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      (window as any).__3dCanvasReady = true;
+      (window as any).__3dLoopActiveCount = stageMode === '3d' && isLoopActiveRef.current ? 1 : 0;
+      (window as any).__3dCanvasWidth = canvasRef.current?.width || 0;
+      (window as any).__3dCanvasHeight = canvasRef.current?.height || 0;
+      (window as any).__3dLastStep = step;
+      (window as any).__3dMode = stageMode;
+      (window as any).__3dSliderValues = engineRef.current.params;
+    }
+  });
 
   const currentStepObj = scene.steps[step] || scene.steps[0];
+  const currentDiagramObj = activeDiagrams[Math.min(diagramIndex, Math.max(0, activeDiagrams.length - 1))];
   const labStepIndex = scene.steps.findIndex(
     (s) =>
       s.t.toLowerCase().includes('live parameter lab') ||
@@ -543,241 +716,367 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
   const isLabStep = labStepIndex !== -1 ? step === labStepIndex : true;
 
   return (
-    <section id="stage" className="h-full">
-      <div id="stage-viewport">
-        {stageViewMode === '3d' ? (
-          <>
-            <canvas
-              ref={canvasRef}
-              id="cv"
-              aria-label={`Interactive 3D diagram for ${unitTitle}`}
-            />
-            <div id="ovt">
-              <div className="k">
-                {subjectShortName} · UNIT {unitIndex + 1} OF {totalUnits}
-              </div>
-              <h1>{unitTitle}</h1>
-            </div>
-            <div
-              id="hint"
-              style={{ opacity: showHint ? 1 : 0 }}
+    <StageErrorBoundary onFallbackTo2D={() => handleModeChange('2d')}>
+      <section id="stage" ref={containerRef} className="h-full">
+        {/* Error Notice if Repeated Canvas Errors occur */}
+        {canvasError && (
+          <div className="absolute top-2 left-1/2 -translate-x-1/2 z-30 bg-amber-100 border border-amber-400 text-amber-900 text-xs px-3 py-1 rounded shadow flex items-center gap-2">
+            <span>{canvasError}</span>
+            <button
+              type="button"
+              onClick={() => setCanvasError(null)}
+              className="font-bold underline"
             >
-              drag to turn it, scroll or pinch to zoom
-            </div>
-          </>
-        ) : (
-          <div className="w-full h-full overflow-y-auto p-4 md:p-6 bg-paper">
-            <div className="max-w-3xl mx-auto pt-8 pb-4">
-              <SvgDiagramViewer diagrams={diagrams} subjectShortName={subjectShortName} />
-            </div>
+              Dismiss
+            </button>
           </div>
         )}
 
-        <div id="tools">
-          <button
-            type="button"
-            onClick={() => setStageViewMode((m) => (m === '3d' ? '2d' : '3d'))}
-            aria-label={stageViewMode === '3d' ? 'Switch to 2D Exam Sketchbook' : 'Switch to 3D Canvas'}
-            title={stageViewMode === '3d' ? 'Switch to 2D Exam Sketchbook' : 'Switch to 3D Canvas'}
-            className={`tl font-hand font-bold text-sm ${stageViewMode === '2d' ? 'on' : ''}`}
-          >
-            {stageViewMode === '3d' ? '2D' : '3D'}
-          </button>
-          {stageViewMode === '3d' && (
-            <>
-              <button
-                type="button"
-                onClick={() => setSpin((s) => !s)}
-                aria-label="Toggle auto-spin"
-                title="Spin 3D model"
-                className={`tl ${spin ? 'on' : ''}`}
-              >
-                <svg viewBox="0 0 24 24">
-                  <path d="M21 12a9 9 0 1 1-3-6.7" />
-                  <path d="M21 3v6h-6" />
-                </svg>
-              </button>
-              <button
-                type="button"
-                onClick={() => setPlaying((p) => !p)}
-                aria-label={playing ? 'Pause animation' : 'Play animation'}
-                title="Pause or play motion"
-                className={`tl ${!playing ? 'on' : ''}`}
-              >
-                {playing ? (
-                  <svg viewBox="0 0 24 24">
-                    <path d="M8 5v14M16 5v14" />
-                  </svg>
-                ) : (
-                  <svg viewBox="0 0 24 24">
-                    <path d="M7 4l13 8-13 8z" />
-                  </svg>
-                )}
-              </button>
-              <button
-                type="button"
-                onClick={() => handleZoom(1.2)}
-                aria-label="Zoom in"
-                className="tl"
-              >
-                +
-              </button>
-              <button
-                type="button"
-                onClick={() => handleZoom(1 / 1.2)}
-                aria-label="Zoom out"
-                className="tl"
-              >
-                −
-              </button>
-              <button
-                type="button"
-                onClick={resetView}
-                aria-label="Reset camera view"
-                title="Reset view"
-                className="tl"
-              >
-                <svg viewBox="0 0 24 24">
-                  <path d="M3 12a9 9 0 1 0 3-6.7" />
-                  <path d="M3 3v6h6" />
-                </svg>
-              </button>
-            </>
-          )}
-        </div>
-      </div>
+        {/* Viewport: Renders both 3D Canvas (NEVER unmounted) and 2D Viewer without layout shift */}
+        <div id="stage-viewport">
+          {/* Persistent 3D Canvas */}
+          <canvas
+            ref={canvasRef}
+            id="cv"
+            aria-label={`Interactive 3D diagram for ${unitTitle}`}
+            style={{
+              visibility: stageMode === '3d' ? 'visible' : 'hidden',
+              pointerEvents: stageMode === '3d' ? 'auto' : 'none',
+            }}
+          />
 
-      {stageViewMode === '3d' && scene.params && scene.params.length > 0 && (
-        <div id="live-dock">
-          {isLabStep ? (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between pb-1 border-b border-dashed border-ink/30">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-accentRed font-sans text-sm">⚡</span>
-                  <span className="text-xs font-mono font-bold tracking-[0.14em] uppercase text-accentRed">
-                    LIVE EXPERIMENT PARAMETERS (STEP {labStepIndex + 1})
+          {/* 3D Title Overlay */}
+          <div
+            id="ovt"
+            style={{
+              visibility: stageMode === '3d' ? 'visible' : 'hidden',
+              pointerEvents: 'none',
+            }}
+          >
+            <div className="k">
+              {subjectShortName} · UNIT {unitIndex + 1} OF {totalUnits}
+            </div>
+            <h1>{unitTitle}</h1>
+          </div>
+
+          {/* 3D Interaction Hint */}
+          <div
+            id="hint"
+            style={{
+              opacity: stageMode === '3d' && showHint ? 1 : 0,
+              visibility: stageMode === '3d' ? 'visible' : 'hidden',
+              pointerEvents: 'none',
+            }}
+          >
+            drag to turn it, scroll or pinch to zoom
+          </div>
+
+          {/* Persistent 2D SVG Diagram Viewer (overlaid when mode === '2d') */}
+          <div
+            style={{
+              visibility: stageMode === '2d' ? 'visible' : 'hidden',
+              pointerEvents: stageMode === '2d' ? 'auto' : 'none',
+            }}
+            className="absolute inset-0 w-full h-full"
+          >
+            <SvgDiagramViewer
+              diagrams={activeDiagrams}
+              subjectShortName={subjectShortName}
+              activeIdx={diagramIndex}
+              onSelectDiagram={(idx) => onDiagramIndexChange?.(idx)}
+              onSwitchTo3D={() => handleModeChange('3d')}
+              redrawMode={redrawMode}
+              onToggleRedrawMode={() => setRedrawMode((r) => !r)}
+            />
+          </div>
+
+          {/* Stage Tools Toolbar */}
+          <div id="tools">
+            {/* Segmented Control 3D | 2D with aria-pressed */}
+            <div
+              className="flex items-center rounded-full border-[1.5px] border-ink bg-paper p-0.5 shadow-sm"
+              role="group"
+              aria-label="Stage view mode"
+            >
+              <button
+                type="button"
+                onClick={() => handleModeChange('3d')}
+                aria-pressed={stageMode === '3d'}
+                title="Switch to 3D Canvas (Shortcut: D)"
+                className={`px-3 py-1 text-xs font-hand font-bold rounded-full transition-colors ${
+                  stageMode === '3d' ? 'bg-ink text-paper' : 'text-dim hover:text-ink'
+                }`}
+              >
+                3D
+              </button>
+              <button
+                type="button"
+                onClick={() => handleModeChange('2d')}
+                aria-pressed={stageMode === '2d'}
+                title="Switch to 2D Exam Sketchbook (Shortcut: D)"
+                className={`px-3 py-1 text-xs font-hand font-bold rounded-full transition-colors ${
+                  stageMode === '2d' ? 'bg-ink text-paper' : 'text-dim hover:text-ink'
+                }`}
+              >
+                2D
+              </button>
+            </div>
+
+            {/* Battery Saver / Low Power Toggle */}
+            {onToggleBatterySaver && (
+              <button
+                type="button"
+                onClick={onToggleBatterySaver}
+                aria-pressed={batterySaver}
+                aria-label={batterySaver ? 'Battery Saver Active (30fps, 1x DPR)' : 'Toggle Battery Saver (caps 30fps)'}
+                title={batterySaver ? 'Battery Saver Active (30fps, 1x DPR)' : 'Toggle Battery Saver (caps 30fps)'}
+                className={`tl ${batterySaver ? 'on text-accentRed' : ''}`}
+              >
+                {batterySaver ? <BatteryCharging className="w-4 h-4 text-accentRed" /> : <BatteryLow className="w-4 h-4 text-ink" />}
+              </button>
+            )}
+
+            {/* 3D-Exclusive Camera Tools */}
+            {stageMode === '3d' && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setSpin((s) => !s)}
+                  aria-label="Toggle auto-spin"
+                  title="Spin 3D model"
+                  className={`tl ${spin ? 'on' : ''}`}
+                >
+                  <svg viewBox="0 0 24 24">
+                    <path d="M21 12a9 9 0 1 1-3-6.7" />
+                    <path d="M21 3v6h-6" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPlaying((p) => !p)}
+                  aria-label={playing ? 'Pause animation' : 'Play animation'}
+                  title="Pause or play motion"
+                  className={`tl ${!playing ? 'on' : ''}`}
+                >
+                  {playing ? (
+                    <svg viewBox="0 0 24 24">
+                      <path d="M8 5v14M16 5v14" />
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24">
+                      <path d="M7 4l13 8-13 8z" />
+                    </svg>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleZoom(1.2)}
+                  aria-label="Zoom in"
+                  className="tl"
+                >
+                  +
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleZoom(1 / 1.2)}
+                  aria-label="Zoom out"
+                  className="tl"
+                >
+                  −
+                </button>
+                <button
+                  type="button"
+                  onClick={resetView}
+                  aria-label="Reset camera view"
+                  title="Reset view"
+                  className="tl"
+                >
+                  <svg viewBox="0 0 24 24">
+                    <path d="M3 12a9 9 0 1 0 3-6.7" />
+                    <path d="M3 3v6h6" />
+                  </svg>
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Live Parameter Dock (3D mode with scene parameters) */}
+        {stageMode === '3d' && scene.params && scene.params.length > 0 ? (
+          <div id="live-dock">
+            {isLabStep ? (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between pb-1 border-b border-dashed border-ink/30">
+                  <div className="flex items-center gap-1.5">
+                    <Zap className="w-3.5 h-3.5 text-accentRed fill-current" />
+                    <span className="text-xs font-mono font-bold tracking-[0.14em] uppercase text-accentRed">
+                      LIVE EXPERIMENT PARAMETERS (STEP {labStepIndex + 1})
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const reset: Record<string, number> = {};
+                        scene.params?.forEach((p) => {
+                          reset[p.id] = p.defaultVal;
+                        });
+                        engineRef.current.params = reset;
+                        onSliderValuesChange?.(reset);
+                      }}
+                      className="text-xs font-mono text-dim hover:text-ink underline decoration-dashed transition-colors"
+                      title="Reset sliders to defaults"
+                    >
+                      Reset
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSlidersOpen((o) => !o)}
+                      className="text-xs font-mono text-dim hover:text-ink px-1.5 py-0.5 rounded border border-ink/30"
+                      title={slidersOpen ? 'Collapse sliders' : 'Expand sliders'}
+                    >
+                      {slidersOpen ? '▲ Collapse' : '▼ Expand'}
+                    </button>
+                  </div>
+                </div>
+                {slidersOpen && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    {scene.params.map((p) => {
+                      const val = (sliderValues && sliderValues[p.id]) ?? p.defaultVal;
+                      return (
+                        <div key={p.id} className="flex flex-col gap-1">
+                          <div className="flex justify-between items-baseline text-sm">
+                            <label htmlFor={`param-${p.id}`} className="font-semibold text-ink font-sans text-sm">
+                              {p.label}
+                            </label>
+                            <span className="font-bold text-accentRed text-sm font-mono">
+                              {typeof val === 'number' && Number.isInteger(p.step) ? val : val.toFixed(2)} {p.unit}
+                            </span>
+                          </div>
+                          <input
+                            id={`param-${p.id}`}
+                            type="range"
+                            min={p.min}
+                            max={p.max}
+                            step={p.step}
+                            value={val}
+                            onChange={(e) => {
+                              const num = parseFloat(e.target.value);
+                              const nextParams = {
+                                ...(engineRef.current.params || {}),
+                                [p.id]: num,
+                              };
+                              engineRef.current.params = nextParams;
+                              onSliderValuesChange?.(nextParams);
+                            }}
+                            className="w-full accent-ink cursor-pointer h-2 bg-ink/15 rounded-full"
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            ) : labStepIndex !== -1 ? (
+              <div className="flex items-center justify-between text-sm py-0.5">
+                <div className="flex items-center gap-2">
+                  <Zap className="w-3.5 h-3.5 text-accentRed animate-pulse fill-current" />
+                  <span className="font-sans text-sm font-semibold text-ink">
+                    Interactive Live Lab on <strong>Step {labStepIndex + 1}</strong>
                   </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const reset: Record<string, number> = {};
-                      scene.params?.forEach((p) => {
-                        reset[p.id] = p.defaultVal;
-                      });
-                      engineRef.current.params = reset;
-                      setParamValues(reset);
-                    }}
-                    className="text-xs font-mono text-dim hover:text-ink underline decoration-dashed transition-colors"
-                    title="Reset sliders to defaults"
-                  >
-                    Reset
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setSlidersOpen((o) => !o)}
-                    className="text-xs font-mono text-dim hover:text-ink px-1.5 py-0.5 rounded border border-ink/30"
-                    title={slidersOpen ? 'Collapse sliders' : 'Expand sliders'}
-                  >
-                    {slidersOpen ? '▲ Collapse' : '▼ Expand'}
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => onStepChange(labStepIndex)}
+                  className="btn py-1 px-3 text-xs font-sans font-bold text-accentRed hover:text-white hover:bg-accentRed transition-all"
+                >
+                  Jump to Lab →
+                </button>
               </div>
-              {slidersOpen && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                  {scene.params.map((p) => {
-                    const val = paramValues[p.id] ?? p.defaultVal;
-                    return (
-                      <div key={p.id} className="flex flex-col gap-1">
-                        <div className="flex justify-between items-baseline text-sm">
-                          <label htmlFor={`param-${p.id}`} className="font-semibold text-ink font-sans text-sm">
-                            {p.label}
-                          </label>
-                          <span className="font-bold text-accentRed text-sm font-mono">
-                            {typeof val === 'number' && Number.isInteger(p.step) ? val : val.toFixed(2)} {p.unit}
-                          </span>
-                        </div>
-                        <input
-                          id={`param-${p.id}`}
-                          type="range"
-                          min={p.min}
-                          max={p.max}
-                          step={p.step}
-                          value={val}
-                          onChange={(e) => {
-                            const num = parseFloat(e.target.value);
-                            engineRef.current.params = {
-                              ...(engineRef.current.params || {}),
-                              [p.id]: num,
-                            };
-                            setParamValues((prev) => ({ ...prev, [p.id]: num }));
-                          }}
-                          className="w-full accent-ink cursor-pointer h-2 bg-ink/15 rounded-full"
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          ) : labStepIndex !== -1 ? (
-            <div className="flex items-center justify-between text-sm py-0.5">
-              <div className="flex items-center gap-2">
-                <span className="text-accentRed font-sans text-sm animate-pulse">⚡</span>
-                <span className="font-sans text-sm font-semibold text-ink">
-                  Interactive Live Lab on <strong>Step {labStepIndex + 1}</strong>
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => onStepChange(labStepIndex)}
-                className="btn py-1 px-3 text-xs font-sans font-bold text-accentRed hover:text-white hover:bg-accentRed transition-all"
-              >
-                Jump to Lab →
-              </button>
-            </div>
-          ) : null}
-        </div>
-      )}
-
-      <div ref={capRef} id="cap">
-        <div className="sn">
-          <button
-            type="button"
-            className="sb"
-            disabled={step === 0}
-            onClick={() => onStepChange(step - 1)}
-            aria-label="Previous step"
-          >
-            ←
-          </button>
-          <div className="dots">
-            {scene.steps.map((s, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => onStepChange(idx)}
-                className={idx === step ? 'on' : idx < step ? 'done' : ''}
-                title={s.t}
-              >
-                {idx + 1}
-              </button>
-            ))}
+            ) : null}
           </div>
-          <button
-            type="button"
-            className="sb"
-            disabled={step === scene.steps.length - 1}
-            onClick={() => onStepChange(step + 1)}
-            aria-label="Next step"
-          >
-            →
-          </button>
+        ) : null}
+
+        {/* Unified Caption & Navigation Dots Bar */}
+        <div ref={capRef} id="cap">
+          <div className="sn">
+            {stageMode === '3d' ? (
+              <>
+                <button
+                  type="button"
+                  className="sb"
+                  disabled={step === 0}
+                  onClick={() => onStepChange(step - 1)}
+                  aria-label="Previous step"
+                >
+                  ←
+                </button>
+                <div className="dots">
+                  {scene.steps.map((s, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => onStepChange(idx)}
+                      className={idx === step ? 'on' : idx < step ? 'done' : ''}
+                      title={s.t}
+                    >
+                      {idx + 1}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  className="sb"
+                  disabled={step === scene.steps.length - 1}
+                  onClick={() => onStepChange(step + 1)}
+                  aria-label="Next step"
+                >
+                  →
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="sb"
+                  disabled={diagramIndex === 0}
+                  onClick={() => onDiagramIndexChange?.(Math.max(0, diagramIndex - 1))}
+                  aria-label="Previous diagram"
+                >
+                  ←
+                </button>
+                <div className="dots">
+                  {activeDiagrams.map((d, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => onDiagramIndexChange?.(idx)}
+                      className={idx === diagramIndex ? 'on' : idx < diagramIndex ? 'done' : ''}
+                      title={d.title}
+                    >
+                      {idx + 1}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  className="sb"
+                  disabled={diagramIndex === activeDiagrams.length - 1}
+                  onClick={() =>
+                    onDiagramIndexChange?.(Math.min(activeDiagrams.length - 1, diagramIndex + 1))
+                  }
+                  aria-label="Next diagram"
+                >
+                  →
+                </button>
+              </>
+            )}
+          </div>
+
+          <h3>{stageMode === '3d' ? currentStepObj.t : currentDiagramObj?.title || '2D Exam Diagram'}</h3>
+          <p>{stageMode === '3d' ? currentStepObj.d : currentDiagramObj?.caption || ''}</p>
         </div>
-        <h3>{currentStepObj.t}</h3>
-        <p>{currentStepObj.d}</p>
-      </div>
-    </section>
+      </section>
+    </StageErrorBoundary>
   );
 };

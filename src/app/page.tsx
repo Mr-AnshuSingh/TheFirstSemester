@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { SUBJECTS } from '@/data/subjects';
 import { SC } from '@/data/scenes';
 import { WORKED } from '@/data/worked';
@@ -78,9 +78,11 @@ import { getTopicContent, getUnitStory } from '@/data/topicContent';
 import {
   DEFAULT_STUDY_STATE,
   PersistedStudyState,
+  UnitViewState,
   loadStudyState,
   saveStudyState,
 } from '@/lib/offlineStorage';
+import { UnitDiagramItem } from '@/components/study/SvgDiagramViewer';
 
 const TABS = ['Explain', 'Notes', 'Topics', 'Quiz', 'Exam', 'AI Tutor'] as const;
 
@@ -103,13 +105,78 @@ export default function SemesterOnePage() {
   useEffect(() => {
     loadStudyState().then((loaded) => {
       setSt(loaded);
-      const validSi = Math.min(SUBJECTS.length - 1, Math.max(0, loaded.at?.[0] || 0));
-      const validUi = Math.min(
+      let validSi = Math.min(SUBJECTS.length - 1, Math.max(0, loaded.at?.[0] || 0));
+      let validUi = Math.min(
         SUBJECTS[validSi].units.length - 1,
         Math.max(0, loaded.at?.[1] || 0)
       );
+
+      // Deep link parsing from URL search query
+      let deepMode: '3d' | '2d' | null = null;
+      let deepStep: number | null = null;
+      if (typeof window !== 'undefined' && window.location.search) {
+        const params = new URLSearchParams(window.location.search);
+        const pSub = params.get('subject');
+        const pUnit = params.get('unit');
+        const pView = params.get('view');
+        const pStep = params.get('step');
+
+        if (pSub) {
+          const foundSi = SUBJECTS.findIndex((s) => s.id === pSub || s.code === pSub);
+          if (foundSi !== -1) validSi = foundSi;
+        }
+        if (pUnit) {
+          const num = parseInt(pUnit, 10);
+          if (!isNaN(num)) {
+            if (num >= 1 && num <= SUBJECTS[validSi].units.length) validUi = num - 1;
+            else if (num === 0) validUi = 0;
+          }
+        }
+        if (pView === '2d' || pView === '3d') {
+          deepMode = pView;
+        }
+        if (pStep) {
+          const sNum = parseInt(pStep, 10);
+          if (!isNaN(sNum)) {
+            if (sNum >= 1) deepStep = sNum - 1;
+            else if (sNum === 0) deepStep = 0;
+          }
+        }
+      }
+
       setSi(validSi);
       setUi(validUi);
+
+      if (deepMode || deepStep !== null) {
+        const sKey = `${SUBJECTS[validSi].id}:${validUi}`;
+        setSt((prev) => {
+          const existing = prev.unitViews?.[sKey];
+          return {
+            ...prev,
+            unitViews: {
+              ...(prev.unitViews || {}),
+              [sKey]: {
+                mode: deepMode || existing?.mode || '3d',
+                step: deepStep !== null ? deepStep : (existing?.step ?? 0),
+                camera: existing?.camera || { yaw: -0.55, pitch: 0.3, zoom: 1 },
+                sliderValues: existing?.sliderValues || {},
+                diagramIndex: existing?.diagramIndex || 0,
+              },
+            },
+          };
+        });
+      }
+
+      // Auto-enable battery saver on low-power mobile devices
+      if (
+        typeof window !== 'undefined' &&
+        navigator.hardwareConcurrency &&
+        navigator.hardwareConcurrency <= 4 &&
+        window.innerWidth < 600
+      ) {
+        setSt((prev) => (prev.batterySaver ? prev : { ...prev, batterySaver: true }));
+      }
+
       isLoadedRef.current = true;
     });
   }, []);
@@ -173,10 +240,14 @@ export default function SemesterOnePage() {
   const activeSubject = SUBJECTS[si];
   const activeUnit = activeSubject.units[ui];
   const sceneKey = `${activeSubject.id}:${ui}`;
-  const activeScene = SC[sceneKey] || {
-    steps: [{ t: activeUnit.t, d: activeUnit.s }],
-    build: () => {},
-  };
+  const activeScene = useMemo(() => {
+    return (
+      SC[sceneKey] || {
+        steps: [{ t: activeUnit.t, d: activeUnit.s }],
+        build: () => {},
+      }
+    );
+  }, [sceneKey, activeUnit.t, activeUnit.s]);
   const workedExample = WORKED[sceneKey];
   const unitStory = getUnitStory(activeSubject.id, ui);
 
@@ -225,6 +296,83 @@ export default function SemesterOnePage() {
     setStep(0);
     persist((prev) => ({ ...prev, at: [nextSi, nextUi] }));
   };
+
+  // Unit-level view state (mode, step, camera, sliderValues, diagramIndex)
+  const currentUnitView = useMemo<UnitViewState>(() => {
+    const saved = st.unitViews?.[sceneKey];
+    if (saved) return saved;
+    const initParams: Record<string, number> = {};
+    if (activeScene.params) {
+      for (const p of activeScene.params) {
+        initParams[p.id] = p.defaultVal;
+      }
+    }
+    return {
+      mode: '3d',
+      step: 0,
+      camera: {
+        yaw: activeScene.cam?.yaw ?? -0.55,
+        pitch: activeScene.cam?.pitch ?? 0.3,
+        zoom: activeScene.cam?.zoom ?? 1,
+      },
+      sliderValues: initParams,
+      diagramIndex: 0,
+    };
+  }, [st.unitViews, sceneKey, activeScene]);
+
+  const updateUnitView = useCallback(
+    (patch: Partial<UnitViewState>) => {
+      persist((prev) => {
+        const existing = prev.unitViews?.[sceneKey] || currentUnitView;
+        const updated = { ...existing, ...patch };
+        return {
+          ...prev,
+          unitViews: {
+            ...(prev.unitViews || {}),
+            [sceneKey]: updated,
+          },
+        };
+      });
+    },
+    [sceneKey, currentUnitView, persist]
+  );
+
+  // Sync deep link query params to URL without reloading
+  useEffect(() => {
+    if (!isLoadedRef.current || typeof window === 'undefined') return;
+    const url = new URL(window.location.href);
+    url.searchParams.set('subject', activeSubject.id);
+    url.searchParams.set('unit', String(ui + 1));
+    url.searchParams.set('view', currentUnitView.mode);
+    url.searchParams.set('step', String(currentUnitView.step + 1));
+    window.history.replaceState(null, '', url.toString());
+  }, [activeSubject.id, ui, currentUnitView.mode, currentUnitView.step]);
+
+  // Current unit diagrams from topicContent in syllabus order
+  const currentUnitDiagrams = useMemo<UnitDiagramItem[]>(() => {
+    const list: UnitDiagramItem[] = [];
+    activeUnit.topics.forEach((tStr, tIdx) => {
+      const tc = getTopicContent(activeSubject.id, ui, tIdx);
+      if (tc?.diagram?.svg) {
+        list.push({
+          title: tStr.replace(/^★\s*/, ''),
+          svg: tc.diagram.svg,
+          caption: tc.diagram.caption || tStr,
+          redrawLabelMap: tc.diagram.redrawLabelMap,
+        });
+      }
+    });
+    if (list.length === 0 && activeSubject.dg && activeSubject.dg.length > 0) {
+      activeSubject.dg.forEach((dg, i) => {
+        list.push({
+          title: `${activeSubject.co} Exam Diagram #${i + 1}`,
+          svg: dg.svg,
+          caption: dg.c,
+        });
+      });
+    }
+    return list;
+  }, [activeSubject, ui, activeUnit]);
 
   const toggleTopic = (topicKey: string, checked: boolean) => {
     persist((prev) => {
@@ -295,9 +443,20 @@ export default function SemesterOnePage() {
         unitIndex={ui}
         totalUnits={activeSubject.units.length}
         unitTitle={activeUnit.t}
-        step={step}
-        onStepChange={setStep}
+        mode={currentUnitView.mode}
+        onModeChange={(m) => updateUnitView({ mode: m })}
+        step={currentUnitView.step}
+        onStepChange={(s) => updateUnitView({ step: s })}
+        camera={currentUnitView.camera}
+        onCameraChange={(c) => updateUnitView({ camera: c })}
+        sliderValues={currentUnitView.sliderValues}
+        onSliderValuesChange={(vals) => updateUnitView({ sliderValues: vals })}
+        diagramIndex={currentUnitView.diagramIndex}
+        onDiagramIndexChange={(idx) => updateUnitView({ diagramIndex: idx })}
+        unitDiagrams={currentUnitDiagrams}
         diagrams={activeSubject.dg}
+        batterySaver={st.batterySaver ?? false}
+        onToggleBatterySaver={() => persist((prev) => ({ ...prev, batterySaver: !prev.batterySaver }))}
       />
 
       <aside id="study" aria-label="Study this unit" className="border-l-2 border-ink flex flex-col min-h-0 bg-paper2">
@@ -696,8 +855,8 @@ export default function SemesterOnePage() {
             <AiTutorPanel
               subject={activeSubject}
               unitIndex={ui}
-              stepIndex={step}
-              activeStep={activeScene.steps[step] || activeScene.steps[0]}
+              stepIndex={currentUnitView.step}
+              activeStep={activeScene.steps[currentUnitView.step] || activeScene.steps[0]}
               onSelectUnit={(idx) => selectSubjectUnit(si, idx)}
               onOpenNotes={() => persist((prev) => ({ ...prev, tab: 1 }))}
               onOpenQuiz={() => persist((prev) => ({ ...prev, tab: 3 }))}
