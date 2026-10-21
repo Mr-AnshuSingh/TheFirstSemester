@@ -14,6 +14,7 @@ import { progressSyncSchema, MAX_BODY_SIZE_BYTES } from '../src/lib/validations/
 import { isAuthConfigured, extractAuthToken } from '../src/lib/auth';
 import { tutorRequestSchema } from '../src/lib/validations/tutor';
 import { checkRateLimit, resetRateLimitStore } from '../src/lib/rateLimit';
+import { runTutorContextChecks } from './check-tutor-context';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -547,6 +548,7 @@ const testFiles = [
   'accessibility.spec.ts',
   'ai-tutor.spec.ts',
   'worked-examples.spec.ts',
+  'view-switch.spec.ts',
 ];
 let allE2ETestsExist = true;
 for (const tf of testFiles) {
@@ -554,7 +556,7 @@ for (const tf of testFiles) {
     allE2ETestsExist = false;
   }
 }
-assertCheck('All 8 Playwright E2E test suites present in tests/e2e/', allE2ETestsExist, true, allE2ETestsExist);
+assertCheck('All 9 Playwright E2E test suites present in tests/e2e/', allE2ETestsExist, true, allE2ETestsExist);
 
 // Print summary
 console.log('--------------------------------------------------');
@@ -568,10 +570,13 @@ for (const c of checks) {
 }
 console.log('--------------------------------------------------');
 
-if (!allPassed) {
-  console.error('Data integrity check failed! Please review the errors above.');
-  process.exit(1);
-} else {
-  console.log('All data integrity assertions passed successfully!');
-  process.exit(0);
-}
+// Run Tutor Context Choke Point & API Security Checks
+runTutorContextChecks().then((tutorChecksPassed) => {
+  if (!allPassed || !tutorChecksPassed) {
+    console.error('Integrity checks failed! Please review the errors above.');
+    process.exit(1);
+  } else {
+    console.log('All data integrity & tutor context assertions passed successfully!');
+    process.exit(0);
+  }
+});

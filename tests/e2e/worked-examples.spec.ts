@@ -7,7 +7,7 @@ test.describe('Worked Examples 100% Coverage & Modal Export', () => {
     await page.goto('/');
 
     // 1. Verify Exam Model Worked Problem on default tab (Tab 0: Explain)
-    const workedCard = page.locator('.we, .worked-problem-box, h4:has-text("Exam Model Worked Problem")');
+    const workedCard = page.locator('.we, .worked-problem-box, :is(h3, h4):has-text("Exam Model Worked Problem")');
     await expect(workedCard.first()).toBeVisible();
 
     // Verify presence of step numbers and boxed final answer
