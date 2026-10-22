@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import { SceneDefinition } from '@/types/syllabus';
 import { Builder, COL, PI, sin, cos, sqrt, abs, exp, pow, lerp, v3, plane, axes } from '@/components/canvas/Builder';
 
@@ -8,7 +8,7 @@ const ringPts=(n,r,c=[0,0,0],pl='z')=>Array.from({length:n},(_,i)=>{const a=i/n*
 const bx=(B,p,sz,l,c=COL.gold,o={})=>{B.X(p,sz,{f:c,a:.28});if(l)B.T([p[0],p[1],p[2]+sz[2]/2+.05],l,Object.assign({sz:19,b:1},o))};
 const tpos=i=>{const d=Math.floor(Math.log2(i)),k=i-(1<<d),n=1<<d;return[(k+.5)/n*10-5,3-d*2,0]};
 SC['ai:0']={cam:{yaw:-.5,pitch:.5},steps:[
- {t:'The agent–environment loop',d:'An agent senses its surroundings (percepts) and acts on them (actions), over and over. This vacuum agent senses dirt on its tile, and cleans it or moves on. The same loop describes a thermostat, a chess program or a self-driving car. AI’s history and foundations (philosophy, mathematics, cognitive science) are all attempts to design a better loop.'},
+ {t:'The agentΓÇôenvironment loop',d:'An agent senses its surroundings (percepts) and acts on them (actions), over and over. This vacuum agent senses dirt on its tile, and cleans it or moves on. The same loop describes a thermostat, a chess program or a self-driving car. AIΓÇÖs history and foundations (philosophy, mathematics, cognitive science) are all attempts to design a better loop.'},
  {t:'PEAS: describe any agent in four words',d:'Performance measure (how it is judged), Environment (where it works), Actuators (what it can do), Sensors (what it can sense). For the vacuum: P = clean tiles, little energy; E = rooms with dirt; A = wheels, suction; S = dirt sensor, bump sensor. Write PEAS first in any exam answer about an agent.',only:true},
  {t:'Types of environment',d:'Each environment is placed on six scales: fully or partly observable, deterministic or stochastic, episodic or sequential, static or dynamic, discrete or continuous, single or multi-agent. The simple vacuum (teal) is easy; a self-driving taxi (red) sits at the hard end of almost every scale.',only:true},
  {t:'Five kinds of agent: a ladder',d:'Simple reflex: if condition then action, no memory. Model-based: keeps an internal picture of the world. Goal-based: chooses actions that reach a goal. Utility-based: picks the action with the best score when goals can be reached in several ways. Learning agent: improves from experience. Each step up handles harder environments.',only:true}],
@@ -17,234 +17,234 @@ SC['ai:0']={cam:{yaw:-.5,pitch:.5},steps:[
   const path=[];for(let j=0;j<3;j++)for(let i=0;i<3;i++)path.push([j%2?2-i:i,j]);const dirt=[1,4,6,8];
   B.dyn((t,b)=>{const T=18,k=Math.floor((t%T)/2),u=((t%T)/2)%1,cur=path[k],nx=path[Math.min(8,k+1)],px=cur[0]+(nx[0]-cur[0])*Math.min(1,u*1.6),pz=cur[1]+(nx[1]-cur[1])*Math.min(1,u*1.6);dirt.forEach(d=>{if(d>k){const p=path[d];b.D([-2+p[0]*2,.25,-2+p[1]*2],.18,{f:COL.red});b.D([-2+p[0]*2+.4,.2,-2+p[1]*2-.2],.1,{f:COL.red})}});
    b.X([-2+px*2,.5,-2+pz*2],[1,.8,1],{f:COL.teal,a:.4});b.A([-2+px*2,2.4,-2+pz*2],[-2+px*2,1.1,-2+pz*2],{c:COL.blue,w:2.4});b.A([-2+px*2+.5,1,-2+pz*2],[-2+px*2+.5,2.4,-2+pz*2],{c:COL.red,w:2.4})});
-  B.T([-4.8,2.8,0],'percepts ↓ (dirt?)',{c:COL.blue,b:1,a:'left'});B.T([-4.8,2.2,0],'actions ↑ (clean, move)',{c:COL.red,b:1,a:'left'});B.T([0,-1.6,3.4],'environment: 3×3 rooms, dirt (red)',{b:1,sz:22});
+  B.T([-4.8,2.8,0],'percepts Γåô (dirt?)',{c:COL.blue,b:1,a:'left'});B.T([-4.8,2.2,0],'actions Γåæ (clean, move)',{c:COL.red,b:1,a:'left'});B.T([0,-1.6,3.4],'environment: 3├ù3 rooms, dirt (red)',{b:1,sz:22});
   B.s(1);bx(B,[0,0,0],[2.2,1.6,1.6],'AGENT',COL.teal,{sz:26});[[-3.4,1.6,'P','Performance','clean tiles, little energy',COL.red],[3.4,1.6,'E','Environment','rooms with dirt',COL.gold],[-3.4,-1.8,'A','Actuators','wheels, suction',COL.blue],[3.4,-1.8,'S','Sensors','dirt and bump sensor',COL.green]].forEach(([x,y,l,n,ex,c])=>{bx(B,[x,y,0],[1.2,1.2,1.2],l,c,{sz:34});B.T([x,y-1.1,0],n,{b:1,sz:21,c});B.T([x,y-1.6,0],ex,{sz:17,c:COL.gray});B.L([[x>0?x-.6:x+.6,y,0],[x>0?1.1:-1.1,y*.25,0]],{c:c,w:2.2,d:[4,3]})});
   B.s(2);const ax=[['fully observable','partly observable',0,.6],['deterministic','stochastic',0,.5],['episodic','sequential',1,1],['static','dynamic',0,1],['discrete','continuous',0,1],['single agent','multi-agent',0,1]];
   ax.forEach((a,i)=>{const y=2.8-i*1.1;B.A([-3,y,0],[3,y,0],{c:COL.gray,w:1.6});B.A([3,y,0],[-3,y,0],{c:COL.gray,w:1.6});B.T([-3.3,y,0],a[0],{a:'right',sz:19});B.T([3.3,y,0],a[1],{a:'left',sz:19});B.D([-3+6*(i===0?.7:0),y,0],.17,{f:COL.teal});B.D([-3+6*(i===0?.9:i===2?1:1),y,0],.17,{f:COL.red})});
-  B.T([0,3.8,0],'● vacuum agent     ● self-driving taxi',{sz:21,b:1});B.D([-2.75,3.85,0],.1,{f:COL.teal});
+  B.T([0,3.8,0],'ΓùÅ vacuum agent     ΓùÅ self-driving taxi',{sz:21,b:1});B.D([-2.75,3.85,0],.1,{f:COL.teal});
   B.s(3);[['simple reflex',COL.gray],['model-based',COL.gold],['goal-based',COL.teal],['utility-based',COL.blue],['learning agent',COL.red]].forEach(([l,c],i)=>{B.X([-4+i*2,-2.2+i*.7,0],[1.7,1.4+i*1.4,1.6],{f:c,a:.3});B.T([-4+i*2,-2.2+i*.7+(1.4+i*1.4)/2+.45,0],l,{b:1,sz:19});});B.T([-3.8,-3.4,0],'no memory',{sz:17,c:COL.gray});B.T([4,-2.3,0],'improves with experience',{sz:17,c:COL.red,a:'right'})}};
 
 SC['ai:1']={cam:{yaw:-.4,pitch:.25},steps:[
- {t:'Breadth-first search: level by level',d:'BFS expands every node at depth d before any at depth d + 1, like ripples in a pond, using a queue. It is complete and finds the shallowest goal (optimal when every step costs the same), but needs O(bᵈ) memory. Problem formulation first: states, actions, goal test, path cost.'},
+ {t:'Breadth-first search: level by level',d:'BFS expands every node at depth d before any at depth d + 1, like ripples in a pond, using a queue. It is complete and finds the shallowest goal (optimal when every step costs the same), but needs O(bß╡ê) memory. Problem formulation first: states, actions, goal test, path cost.'},
  {t:'Depth-first search: dive, then back up',d:'DFS follows one branch to the bottom before trying siblings, using a stack. Memory is only O(bm), but it can wander down a very deep or infinite branch and does not guarantee the shortest path. Depth-limited search stops at a cut-off; iterative deepening repeats with growing limits, combining BFS completeness with DFS memory.',only:true},
- {t:'A*: cost so far plus an optimistic guess',d:'A* scores each node f(n) = g(n) + h(n): g is the cost already paid, h the estimated cost remaining. It always expands the lowest f. Here f(A) = 1 + 5 = 6 but f(B) = 4 + 1 = 5, so B is expanded first and the path S–B–G (cost 5) wins. It is optimal if h is admissible (never overestimates) and, for graphs, consistent: h(n) ≤ c(n,n′) + h(n′). Greedy best-first uses h alone.',only:true},
- {t:'Minimax and alpha-beta pruning',d:'In a two-player game, MAX picks the largest value and MIN assumes the opponent picks the smallest. Alpha-beta skips branches that cannot change the answer: MAX already has 3 from the left branch, and the right MIN node has just shown a 2, so it can only be ≤ 2: stop looking at its other children. Best case it examines about b^(m/2) nodes.',only:true},
+ {t:'A*: cost so far plus an optimistic guess',d:'A* scores each node f(n) = g(n) + h(n): g is the cost already paid, h the estimated cost remaining. It always expands the lowest f. Here f(A) = 1 + 5 = 6 but f(B) = 4 + 1 = 5, so B is expanded first and the path SΓÇôBΓÇôG (cost 5) wins. It is optimal if h is admissible (never overestimates) and, for graphs, consistent: h(n) Γëñ c(n,nΓÇ▓) + h(nΓÇ▓). Greedy best-first uses h alone.',only:true},
+ {t:'Minimax and alpha-beta pruning',d:'In a two-player game, MAX picks the largest value and MIN assumes the opponent picks the smallest. Alpha-beta skips branches that cannot change the answer: MAX already has 3 from the left branch, and the right MIN node has just shown a 2, so it can only be Γëñ 2: stop looking at its other children. Best case it examines about b^(m/2) nodes.',only:true},
  {t:'Local search: hill climbing and annealing',d:'Sometimes only the final state matters, so just keep improving the current one. Hill climbing always steps uphill and gets stuck on the first peak (a local maximum). Simulated annealing sometimes accepts a downhill step, with falling probability, so it can escape and reach the higher peak. Constraint satisfaction problems use backtracking over variable assignments.',only:true}],
  build(B){
   const drawTree=(b)=>{for(let i=2;i<=15;i++)b.L([tpos(Math.floor(i/2)),tpos(i)],{c:COL.gray,w:1.8})};
-  B.s(0);drawTree(B);for(let i=1;i<=15;i++)B.D(tpos(i),.2,{f:COL.paper});B.dyn((t,b)=>{const k=Math.floor(t/.55)%19;for(let i=1;i<=Math.min(15,k);i++){b.D(tpos(i),.24,{f:i===k?COL.red:COL.teal});b.T(tpos(i),''+i,{sz:17,b:1,dy:-.0});}});B.T([0,-3.8,0],'visit order 1, 2, 3, 4 …  (queue)',{b:1,sz:23});
+  B.s(0);drawTree(B);for(let i=1;i<=15;i++)B.D(tpos(i),.2,{f:COL.paper});B.dyn((t,b)=>{const k=Math.floor(t/.55)%19;for(let i=1;i<=Math.min(15,k);i++){b.D(tpos(i),.24,{f:i===k?COL.red:COL.teal});b.T(tpos(i),''+i,{sz:17,b:1,dy:-.0});}});B.T([0,-3.8,0],'visit order 1, 2, 3, 4 ΓÇª  (queue)',{b:1,sz:23});
   B.s(1);drawTree(B);const dfs=[1,2,4,8,9,5,10,11,3,6,12,13,7,14,15];dfs.forEach(i=>B.D(tpos(i),.2,{f:COL.paper}));B.dyn((t,b)=>{const k=Math.floor(t/.55)%19;for(let n=0;n<Math.min(15,k);n++){const i=dfs[n];b.D(tpos(i),.24,{f:n===k-1?COL.red:COL.teal});b.T(tpos(i),''+(n+1),{sz:17,b:1})}});B.T([0,-3.8,0],'dive left first  (stack)',{b:1,sz:23});
   B.s(2);const S=[-4.5,0,0],A=[0,2.2,0],Bn=[0,-2.2,0],G=[4.5,0,0];[[S,A,'1'],[S,Bn,'4'],[A,G,'5'],[Bn,G,'1']].forEach(([p,q,c])=>{B.L([p,q],{c:COL.ink,w:2.4});B.T([(p[0]+q[0])/2,(p[1]+q[1])/2+.4,0],c,{b:1,sz:22,c:COL.red})});
   [[S,'S','h=6'],[A,'A','h=5'],[Bn,'B','h=1'],[G,'G','h=0']].forEach(([p,l,h])=>{nd(B,p,'',COL.gold,.32);B.T([p[0],p[1],0],l,{b:1,sz:22,c:COL.ink});B.T([p[0],p[1]-.65,0],h,{sz:18,c:COL.gray})});
-  B.X([0.9,1.5,0],[.5,6*.4,.5],{f:COL.red,a:.4});B.T([1.5,2.9,0],'f(A) = 1+5 = 6',{c:COL.red,b:1,sz:20,a:'left'});B.X([.9,-.2,0],[.5,5*.4,.5],{f:COL.teal,a:.5});B.T([1.5,-1.1,0],'f(B) = 4+1 = 5  ← expand first',{c:COL.teal,b:1,sz:20,a:'left'});B.L([[S[0],S[1],0],[Bn[0],Bn[1],0],[G[0],G[1],0]],{c:COL.teal,w:4.2});B.T([0,3.8,0],'f(n) = g(n) + h(n)',{b:1,sz:26});
+  B.X([0.9,1.5,0],[.5,6*.4,.5],{f:COL.red,a:.4});B.T([1.5,2.9,0],'f(A) = 1+5 = 6',{c:COL.red,b:1,sz:20,a:'left'});B.X([.9,-.2,0],[.5,5*.4,.5],{f:COL.teal,a:.5});B.T([1.5,-1.1,0],'f(B) = 4+1 = 5  ΓåÉ expand first',{c:COL.teal,b:1,sz:20,a:'left'});B.L([[S[0],S[1],0],[Bn[0],Bn[1],0],[G[0],G[1],0]],{c:COL.teal,w:4.2});B.T([0,3.8,0],'f(n) = g(n) + h(n)',{b:1,sz:26});
   B.s(3);const tp=(x,y)=>[x,y,0];[[0,3,'MAX'],[-3,.8,'MIN'],[3,.8,'MIN']].forEach(([x,y,l])=>{bx(B,tp(x,y),[1.4,.8,.6],l,COL.gold,{sz:19});});B.L([tp(0,2.6),tp(-3,1.2)],{c:COL.ink,w:2});B.L([tp(0,2.6),tp(3,1.2)],{c:COL.ink,w:2});
-  [[-4.2,3],[-1.8,5],[1.8,2]].forEach(([x,v])=>{B.L([tp(x>0?3:-3,.4),tp(x,-1.5)],{c:COL.ink,w:2});bx(B,tp(x,-2),[.8,.8,.5],''+v,COL.teal,{sz:24})});B.L([tp(3,.4),tp(4.2,-1.5)],{c:COL.gray,w:2,d:[4,4]});bx(B,tp(4.2,-2),[.8,.8,.5],'?',COL.gray,{sz:24});B.T([4.2,-1,0],'✕ pruned',{c:COL.red,b:1,sz:22});
-  B.T([-3,-.4,0],'3',{b:1,sz:26,c:COL.red,dx:-.0});B.T([3,-.4,0],'≤ 2',{b:1,sz:26,c:COL.red});B.T([0,-3.4,0],'MAX has 3; right side ≤ 2 → stop (α ≥ β)',{b:1,sz:22});
+  [[-4.2,3],[-1.8,5],[1.8,2]].forEach(([x,v])=>{B.L([tp(x>0?3:-3,.4),tp(x,-1.5)],{c:COL.ink,w:2});bx(B,tp(x,-2),[.8,.8,.5],''+v,COL.teal,{sz:24})});B.L([tp(3,.4),tp(4.2,-1.5)],{c:COL.gray,w:2,d:[4,4]});bx(B,tp(4.2,-2),[.8,.8,.5],'?',COL.gray,{sz:24});B.T([4.2,-1,0],'Γ£ò pruned',{c:COL.red,b:1,sz:22});
+  B.T([-3,-.4,0],'3',{b:1,sz:26,c:COL.red,dx:-.0});B.T([3,-.4,0],'Γëñ 2',{b:1,sz:26,c:COL.red});B.T([0,-3.4,0],'MAX has 3; right side Γëñ 2 ΓåÆ stop (╬▒ ΓëÑ ╬▓)',{b:1,sz:22});
   B.s(4);const hf=x=>1.6*exp(-pow(x+2.4,2)/.7)+2.6*exp(-pow(x-2.2,2)/.9)+.2;ribbon(B,x=>hf(x),-4.8,4.8,.9,{f:COL.teal});
   B.dyn((t,b)=>{const u=(t%7)/7,x=u<.5?-4.5+u*2*2.1:-2.4,jump=u>.7?Math.min(1,(u-.7)/.2):0;const X=u<.5?x:u<.7?-2.4:lerp(-2.4,2.2,jump);const Y=hf(X);b.D([X,Y+.28,0],.26,{f:COL.red});if(u>.7)b.L([[-2.4,2.1,0],[2.2,3.6,0]],{c:COL.red,w:1.6,d:[5,4]})});
   B.T([-2.4,2.4,0],'local max: hill climbing stops',{c:COL.red,b:1,sz:19});B.T([2.2,3.5,0],'global max',{c:COL.green,b:1,sz:21});B.T([0,-1.2,0],'annealing sometimes steps downhill to escape',{b:1,sz:21})}};
 
 SC['ai:2']={cam:{yaw:-.4,pitch:.25},steps:[
- {t:'Forward chaining: facts push forward',d:'Start from known facts (A, B). Whenever all conditions of a rule are true, fire it and add its conclusion as a new fact: A ∧ B → C, then C → D. Stop when the goal D appears. It is data-driven, good when you want to see everything that follows from the facts. Rules like these form a production (rule-based) system.'},
- {t:'Backward chaining: the goal pulls backward',d:'Start from the goal D and ask “which rule concludes D?”, then “what do I need to prove first?”, recursing until the needs are known facts. It is goal-driven and avoids exploring irrelevant rules, which is why diagnostic systems use it.',only:true},
- {t:'Semantic network: a map of ideas',d:'Nodes are concepts and labelled links are relations. “Tweety is a canary, a canary is a bird, a bird can fly” lets the machine infer that Tweety can fly by following is-a links upward (inheritance). Frames store the same knowledge as slots and values. First-order logic adds quantifiers: ∀ usually with →, ∃ usually with ∧.',only:true},
- {t:'Resolution: prove by contradiction',d:'To prove R, add the negated goal ¬R to the knowledge base and resolve pairs of clauses (first convert to CNF) until the empty clause appears. P∨Q and ¬P∨R give Q∨R; with ¬Q∨R this gives R; with ¬R this gives □ (empty). A contradiction means the assumption ¬R was false, so R is proved.',only:true}],
+ {t:'Forward chaining: facts push forward',d:'Start from known facts (A, B). Whenever all conditions of a rule are true, fire it and add its conclusion as a new fact: A Γêº B ΓåÆ C, then C ΓåÆ D. Stop when the goal D appears. It is data-driven, good when you want to see everything that follows from the facts. Rules like these form a production (rule-based) system.'},
+ {t:'Backward chaining: the goal pulls backward',d:'Start from the goal D and ask ΓÇ£which rule concludes D?ΓÇ¥, then ΓÇ£what do I need to prove first?ΓÇ¥, recursing until the needs are known facts. It is goal-driven and avoids exploring irrelevant rules, which is why diagnostic systems use it.',only:true},
+ {t:'Semantic network: a map of ideas',d:'Nodes are concepts and labelled links are relations. ΓÇ£Tweety is a canary, a canary is a bird, a bird can flyΓÇ¥ lets the machine infer that Tweety can fly by following is-a links upward (inheritance). Frames store the same knowledge as slots and values. First-order logic adds quantifiers: ΓêÇ usually with ΓåÆ, Γêâ usually with Γêº.',only:true},
+ {t:'Resolution: prove by contradiction',d:'To prove R, add the negated goal ┬¼R to the knowledge base and resolve pairs of clauses (first convert to CNF) until the empty clause appears. PΓê¿Q and ┬¼PΓê¿R give QΓê¿R; with ┬¼QΓê¿R this gives R; with ┬¼R this gives Γûí (empty). A contradiction means the assumption ┬¼R was false, so R is proved.',only:true}],
  build(B){
   const N={A:[-5,1.5,0],B:[-5,-1.5,0],R1:[-2.4,0,0],C:[0,0,0],R2:[2.4,0,0],D:[4.8,0,0]};const E=[['A','R1'],['B','R1'],['R1','C'],['C','R2'],['R2','D']];
-  const drawG=(b,on,back)=>{E.forEach(([p,q])=>{const lit=on.has(p)&&on.has(q);b.A(back?N[q]:N[p],back?N[p]:N[q],{c:lit?COL.red:COL.gray,w:lit?3.4:1.8})});Object.keys(N).forEach(k=>{const rule=k[0]==='R';const c=on.has(k)?(rule?COL.gold:COL.red):COL.paper;if(rule)b.X(N[k],[.9,.6,.5],{f:c==COL.paper?COL.gray:c,a:on.has(k)?.7:.15});else b.D(N[k],.3,{f:c});b.T([N[k][0],N[k][1]-.65,0],k==='R1'?'A∧B→C':k==='R2'?'C→D':k,{sz:19,b:1})})};
-  B.s(0);B.dyn((t,b)=>{const st=Math.floor(t/1.1)%6,ord=[['A','B'],['R1'],['C'],['R2'],['D']];const on=new Set(['A','B']);for(let i=1;i<=Math.min(4,st);i++)ord[i].forEach(x=>on.add(x));drawG(b,on,false)});B.T([0,3,0],'known facts → fire rules → new facts → goal',{b:1,sz:23});B.T([-5,2.6,0],'facts',{c:COL.red,b:1});B.T([4.8,.8,0],'goal',{c:COL.red,b:1});
-  B.s(1);B.dyn((t,b)=>{const st=Math.floor(t/1.1)%6,ord=[['D'],['R2'],['C'],['R1'],['A','B']];const on=new Set();for(let i=0;i<=Math.min(4,st);i++)ord[i].forEach(x=>on.add(x));drawG(b,on,true)});B.T([0,3,0],'goal ← which rule? ← what must I prove first?',{b:1,sz:23});B.T([4.8,.8,0],'start here',{c:COL.red,b:1});
+  const drawG=(b,on,back)=>{E.forEach(([p,q])=>{const lit=on.has(p)&&on.has(q);b.A(back?N[q]:N[p],back?N[p]:N[q],{c:lit?COL.red:COL.gray,w:lit?3.4:1.8})});Object.keys(N).forEach(k=>{const rule=k[0]==='R';const c=on.has(k)?(rule?COL.gold:COL.red):COL.paper;if(rule)b.X(N[k],[.9,.6,.5],{f:c==COL.paper?COL.gray:c,a:on.has(k)?.7:.15});else b.D(N[k],.3,{f:c});b.T([N[k][0],N[k][1]-.65,0],k==='R1'?'AΓêºBΓåÆC':k==='R2'?'CΓåÆD':k,{sz:19,b:1})})};
+  B.s(0);B.dyn((t,b)=>{const st=Math.floor(t/1.1)%6,ord=[['A','B'],['R1'],['C'],['R2'],['D']];const on=new Set(['A','B']);for(let i=1;i<=Math.min(4,st);i++)ord[i].forEach(x=>on.add(x));drawG(b,on,false)});B.T([0,3,0],'known facts ΓåÆ fire rules ΓåÆ new facts ΓåÆ goal',{b:1,sz:23});B.T([-5,2.6,0],'facts',{c:COL.red,b:1});B.T([4.8,.8,0],'goal',{c:COL.red,b:1});
+  B.s(1);B.dyn((t,b)=>{const st=Math.floor(t/1.1)%6,ord=[['D'],['R2'],['C'],['R1'],['A','B']];const on=new Set();for(let i=0;i<=Math.min(4,st);i++)ord[i].forEach(x=>on.add(x));drawG(b,on,true)});B.T([0,3,0],'goal ΓåÉ which rule? ΓåÉ what must I prove first?',{b:1,sz:23});B.T([4.8,.8,0],'start here',{c:COL.red,b:1});
   B.s(2);const q=(x,y,l,c=COL.gold)=>{B.D([x,y,0],.4,{f:c});B.T([x,y-.75,0],l,{b:1,sz:21})};q(0,3,'Animal');q(-2.8,.6,'Bird');q(2.8,.6,'Fish',COL.teal);q(-2.8,-2,'Canary',COL.red);q(-5,-2.6,'Tweety',COL.green);
   [[[0,3],[-2.8,.6]],[[0,3],[2.8,.6]],[[-2.8,.6],[-2.8,-2]],[[-2.8,-2],[-5,-2.6]]].forEach(([a,b2])=>{B.A([a[0],a[1],0],[b2[0],b2[1],0],{c:COL.ink,w:2});B.T([(a[0]+b2[0])/2+.55,(a[1]+b2[1])/2,0],'is-a',{sz:17,c:COL.gray})});
-  bx(B,[0,.6,0],[1.8,.7,.5],'can fly',COL.teal,{sz:18});B.L([[-2.4,.6,0],[-.9,.6,0]],{c:COL.teal,w:2,d:[4,3]});bx(B,[-2.8,-4,0],[1.6,.7,.5],'yellow',COL.gold,{sz:18});B.T([3.4,-1.8,0],'Tweety inherits “can fly”',{c:COL.green,b:1,sz:21,a:'left'});
-  B.s(3);const cl=(x,y,l,c)=>{bx(B,[x,y,0],[2.2,.8,.5],l,c,{sz:21})};cl(-4.5,3,'P ∨ Q',COL.teal);cl(-1.5,3,'¬P ∨ R',COL.teal);cl(1.5,3,'¬Q ∨ R',COL.teal);cl(4.5,3,'¬R',COL.red);cl(-3,.6,'Q ∨ R',COL.gold);cl(0,-1.4,'R',COL.gold);cl(2.2,-3.3,'□ empty',COL.red);
-  [[[-4.5,2.6],[-3,1]],[[-1.5,2.6],[-3,1]],[[-3,.2],[0,-1]],[[1.5,2.6],[0,-1]],[[0,-1.8],[2.2,-2.9]],[[4.5,2.6],[2.2,-2.9]]].forEach(([a,b2])=>B.A([a[0],a[1],0],[b2[0],b2[1],0],{c:COL.ink,w:2}));B.T([-4.7,-3,0],'add ¬goal, resolve, reach □',{b:1,sz:22,a:'left'})}};
+  bx(B,[0,.6,0],[1.8,.7,.5],'can fly',COL.teal,{sz:18});B.L([[-2.4,.6,0],[-.9,.6,0]],{c:COL.teal,w:2,d:[4,3]});bx(B,[-2.8,-4,0],[1.6,.7,.5],'yellow',COL.gold,{sz:18});B.T([3.4,-1.8,0],'Tweety inherits ΓÇ£can flyΓÇ¥',{c:COL.green,b:1,sz:21,a:'left'});
+  B.s(3);const cl=(x,y,l,c)=>{bx(B,[x,y,0],[2.2,.8,.5],l,c,{sz:21})};cl(-4.5,3,'P Γê¿ Q',COL.teal);cl(-1.5,3,'┬¼P Γê¿ R',COL.teal);cl(1.5,3,'┬¼Q Γê¿ R',COL.teal);cl(4.5,3,'┬¼R',COL.red);cl(-3,.6,'Q Γê¿ R',COL.gold);cl(0,-1.4,'R',COL.gold);cl(2.2,-3.3,'Γûí empty',COL.red);
+  [[[-4.5,2.6],[-3,1]],[[-1.5,2.6],[-3,1]],[[-3,.2],[0,-1]],[[1.5,2.6],[0,-1]],[[0,-1.8],[2.2,-2.9]],[[4.5,2.6],[2.2,-2.9]]].forEach(([a,b2])=>B.A([a[0],a[1],0],[b2[0],b2[1],0],{c:COL.ink,w:2}));B.T([-4.7,-3,0],'add ┬¼goal, resolve, reach Γûí',{b:1,sz:22,a:'left'})}};
 
 SC['ai:3']={cam:{yaw:-.4,pitch:.3},steps:[
- {t:'Bayes’ theorem with real numbers',d:'A disease affects 1% of people. A test catches 90% of cases but also wrongly flags 9% of healthy people. Of 1000 people, 10 are ill and 9 of them test positive; of 990 healthy, about 89 test positive. So P(ill | positive) = 9/(9 + 89) ≈ 9%, far lower than most people guess. P(A|B) = P(B|A)·P(A)/P(B), with P(B) = ΣP(B|Aᵢ)P(Aᵢ).'},
- {t:'Bayesian network: causes as arrows',d:'Each node stores how likely it is given its parents, and the joint probability is the product P(x₁…xₙ) = Π P(xᵢ | parents(xᵢ)). In the classic example, Burglary and Earthquake both cause Alarm, and Alarm causes John and Mary to call: P(B,E,A,J,M) = P(B)P(E)P(A|B,E)P(J|A)P(M|A).',only:true},
- {t:'Fuzzy sets: degrees instead of yes or no',d:'At 28° the room is partly warm and partly hot, not simply one of them: μ_warm = 0.6 and μ_hot = 0.3. Fuzzy operations: union = max, intersection = min, complement = 1 − μ. Certainty factors give each rule a confidence between −1 and 1 for rule-based systems.',only:true}],
+ {t:'BayesΓÇÖ theorem with real numbers',d:'A disease affects 1% of people. A test catches 90% of cases but also wrongly flags 9% of healthy people. Of 1000 people, 10 are ill and 9 of them test positive; of 990 healthy, about 89 test positive. So P(ill | positive) = 9/(9 + 89) Γëê 9%, far lower than most people guess. P(A|B) = P(B|A)┬╖P(A)/P(B), with P(B) = ╬úP(B|Aß╡ó)P(Aß╡ó).'},
+ {t:'Bayesian network: causes as arrows',d:'Each node stores how likely it is given its parents, and the joint probability is the product P(xΓéüΓÇªxΓéÖ) = ╬á P(xß╡ó | parents(xß╡ó)). In the classic example, Burglary and Earthquake both cause Alarm, and Alarm causes John and Mary to call: P(B,E,A,J,M) = P(B)P(E)P(A|B,E)P(J|A)P(M|A).',only:true},
+ {t:'Fuzzy sets: degrees instead of yes or no',d:'At 28┬░ the room is partly warm and partly hot, not simply one of them: ╬╝_warm = 0.6 and ╬╝_hot = 0.3. Fuzzy operations: union = max, intersection = min, complement = 1 ΓêÆ ╬╝. Certainty factors give each rule a confidence between ΓêÆ1 and 1 for rule-based systems.',only:true}],
  build(B){
   B.s(0);B.X([-3,.9*1.2,0],[1.4,9*.2*1.2*0+1.8,1.4],{f:COL.teal,a:.45});B.T([-3,2.3,0],'9 true positives',{c:COL.teal,b:1,sz:20});B.X([-.8,4.45*.5,0],[1.4,4.45,1.4],{f:COL.red,a:.35});B.T([-.8,5.1,0],'89 false positives',{c:COL.red,b:1,sz:20});B.L([[-4.2,0,0],[1,0,0]],{c:COL.ink,w:2});B.T([-3,-.5,0],'ill, test +',{sz:19});B.T([-.8,-.5,0],'healthy, test +',{sz:19});
-  B.X([3.4,.7,0],[1.4,1.4,1.4],{f:COL.teal,a:.45});B.X([3.4,2.4,0],[1.4,2,1.4],{f:COL.red,a:.35});B.T([5.1,.7,0],'posterior = 9 / 98',{c:COL.teal,b:1,sz:21,a:'left'});B.T([5.1,.1,0],'≈ 9 %',{c:COL.teal,b:1,sz:30,a:'left'});B.T([0,-1.6,0],'P(ill | +) = P(+ | ill) P(ill) / P(+)',{b:1,sz:22});
-  B.s(1);const p={B:[-3.4,2.4,0],E:[3.4,2.4,0],A:[0,.4,0],J:[-3,-2.2,0],M:[3,-2.2,0]};[['B','A'],['E','A'],['A','J'],['A','M']].forEach(([a,b2])=>B.A(p[a],p[b2],{c:COL.ink,w:2.4}));const nm={B:'Burglary',E:'Earthquake',A:'Alarm',J:'John calls',M:'Mary calls'};Object.keys(p).forEach(k=>{B.D(p[k],.45,{f:k==='A'?COL.gold:COL.teal});B.T([p[k][0],p[k][1]-.9,0],nm[k],{b:1,sz:21})});B.T([-3.4,3.5,0],'P(B)',{c:COL.red,sz:19});B.T([3.4,3.5,0],'P(E)',{c:COL.red,sz:19});B.T([2,.4,0],'P(A | B,E)',{c:COL.red,sz:19,a:'left'});B.T([-1.7,-1.2,0],'P(J | A)',{c:COL.red,sz:19});B.T([1.7,-1.2,0],'P(M | A)',{c:COL.red,sz:19});B.T([0,-3.6,0],'joint = Π P(xᵢ | parents)',{b:1,sz:23});
-  B.s(2);B.A([-5,-1.5,0],[5.2,-1.5,0],{c:COL.ink,w:2});B.A([-5,-1.5,0],[-5,3.3,0],{c:COL.ink,w:2});B.T([5.3,-1.9,0],'°C',{b:1});B.T([-5,3.7,0],'μ',{b:1,sz:24});const tri=(a,b2,c,col,l)=>{const X=x=>-5+x*.25;B.L([[X(a),-1.5,0],[X(b2),2.8,0],[X(c),-1.5,0]],{c:col,w:3.2});B.T([X(b2),3.15,0],l,{c:col,b:1,sz:22})};tri(-10,0,18,COL.blue,'cold');tri(10,22,34,COL.gold,'warm');tri(20,40,60,COL.red,'hot');
-  const X28=-5+28*.25;B.L([[X28,-1.5,0],[X28,3,0]],{c:COL.ink,w:2,d:[5,4]});B.D([X28,-1.5+4.3*.6,0],.14,{f:COL.gold});B.D([X28,-1.5+4.3*.3,0],.14,{f:COL.red});B.T([X28+.3,1.4,0],'μ_warm = 0.6',{c:COL.gold,b:1,sz:20,a:'left'});B.T([X28+.3,-.2,0],'μ_hot = 0.3',{c:COL.red,b:1,sz:20,a:'left'});B.T([0,-2.6,0],'∪ = max   ∩ = min   ¬ = 1 − μ',{b:1,sz:23})}};
+  B.X([3.4,.7,0],[1.4,1.4,1.4],{f:COL.teal,a:.45});B.X([3.4,2.4,0],[1.4,2,1.4],{f:COL.red,a:.35});B.T([5.1,.7,0],'posterior = 9 / 98',{c:COL.teal,b:1,sz:21,a:'left'});B.T([5.1,.1,0],'Γëê 9 %',{c:COL.teal,b:1,sz:30,a:'left'});B.T([0,-1.6,0],'P(ill | +) = P(+ | ill) P(ill) / P(+)',{b:1,sz:22});
+  B.s(1);const p={B:[-3.4,2.4,0],E:[3.4,2.4,0],A:[0,.4,0],J:[-3,-2.2,0],M:[3,-2.2,0]};[['B','A'],['E','A'],['A','J'],['A','M']].forEach(([a,b2])=>B.A(p[a],p[b2],{c:COL.ink,w:2.4}));const nm={B:'Burglary',E:'Earthquake',A:'Alarm',J:'John calls',M:'Mary calls'};Object.keys(p).forEach(k=>{B.D(p[k],.45,{f:k==='A'?COL.gold:COL.teal});B.T([p[k][0],p[k][1]-.9,0],nm[k],{b:1,sz:21})});B.T([-3.4,3.5,0],'P(B)',{c:COL.red,sz:19});B.T([3.4,3.5,0],'P(E)',{c:COL.red,sz:19});B.T([2,.4,0],'P(A | B,E)',{c:COL.red,sz:19,a:'left'});B.T([-1.7,-1.2,0],'P(J | A)',{c:COL.red,sz:19});B.T([1.7,-1.2,0],'P(M | A)',{c:COL.red,sz:19});B.T([0,-3.6,0],'joint = ╬á P(xß╡ó | parents)',{b:1,sz:23});
+  B.s(2);B.A([-5,-1.5,0],[5.2,-1.5,0],{c:COL.ink,w:2});B.A([-5,-1.5,0],[-5,3.3,0],{c:COL.ink,w:2});B.T([5.3,-1.9,0],'┬░C',{b:1});B.T([-5,3.7,0],'╬╝',{b:1,sz:24});const tri=(a,b2,c,col,l)=>{const X=x=>-5+x*.25;B.L([[X(a),-1.5,0],[X(b2),2.8,0],[X(c),-1.5,0]],{c:col,w:3.2});B.T([X(b2),3.15,0],l,{c:col,b:1,sz:22})};tri(-10,0,18,COL.blue,'cold');tri(10,22,34,COL.gold,'warm');tri(20,40,60,COL.red,'hot');
+  const X28=-5+28*.25;B.L([[X28,-1.5,0],[X28,3,0]],{c:COL.ink,w:2,d:[5,4]});B.D([X28,-1.5+4.3*.6,0],.14,{f:COL.gold});B.D([X28,-1.5+4.3*.3,0],.14,{f:COL.red});B.T([X28+.3,1.4,0],'╬╝_warm = 0.6',{c:COL.gold,b:1,sz:20,a:'left'});B.T([X28+.3,-.2,0],'╬╝_hot = 0.3',{c:COL.red,b:1,sz:20,a:'left'});B.T([0,-2.6,0],'Γê¬ = max   Γê⌐ = min   ┬¼ = 1 ΓêÆ ╬╝',{b:1,sz:23})}};
 
 SC['ai:4']={cam:{yaw:-.5,pitch:.3},steps:[
  {t:'Three ways machines learn',d:'Supervised: learn from labelled examples (answer key), as in regression and classification. Unsupervised: find structure in unlabelled data, such as clusters. Reinforcement: an agent tries actions and learns from rewards and penalties. Applications seen in the course: NLP, computer vision, expert systems (knowledge base + inference engine + interface) and robotics.'},
  {t:'k-means clustering, step by step',d:'1. Pick k starting centres. 2. Assign every point to its nearest centre. 3. Move each centre to the mean of its points. 4. Repeat 2 and 3 until nothing changes. Watch the diamonds move and the colours settle. Unsupervised: nobody told it the groups.',only:true},
- {t:'Perceptron and neural networks',d:'A perceptron multiplies each input by a weight, adds a bias and fires if the sum passes a threshold: y = step(Σwᵢxᵢ + b). Learning nudges weights: w ← w + η(t − y)x. Stack layers of such neurons and you get an artificial neural network; signals flow forward from inputs to outputs.',only:true},
+ {t:'Perceptron and neural networks',d:'A perceptron multiplies each input by a weight, adds a bias and fires if the sum passes a threshold: y = step(╬úwß╡óxß╡ó + b). Learning nudges weights: w ΓåÉ w + ╬╖(t ΓêÆ y)x. Stack layers of such neurons and you get an artificial neural network; signals flow forward from inputs to outputs.',only:true},
  {t:'Regression, k-NN and decision trees',d:'Linear regression picks the line that minimises the squared residuals. k-NN classifies a point by majority vote among its k nearest neighbours. A decision tree asks a sequence of yes/no questions, splitting on the feature that best separates the classes. Bias in the training data becomes bias in the model: a central AI-ethics point.',only:true}],
  build(B){
   B.s(0);const cl=(x,pts,c,l)=>{bx(B,[x,-.3,0],[3.4,3.6,2.4],'',COL.gray,{});for(let i=0;i<8;i++)B.D([x-1.1+rnd(i+x*3)*2.2,-1.1+rnd(i*5+x)*1.8,-.8+rnd(i*7+x)*1.6],.13,{f:c(i)});B.T([x,2.1,0],l,{b:1,sz:22,c:COL.red})};
   cl(-4.2,0,i=>i%2?COL.teal:COL.red,'supervised');B.T([-4.2,1.6,0],'labelled examples',{sz:18,c:COL.gray});cl(0,0,i=>COL.gray,'unsupervised');B.T([0,1.6,0],'find the groups',{sz:18,c:COL.gray});
-  bx(B,[4.2,-.3,0],[3.4,3.6,2.4],'',COL.gray,{});B.D([3.2,-1.2,0],.3,{f:COL.teal});B.A([3.5,-1,0],[4.3,-.2,0],{c:COL.ink,w:2.2});B.A([4.3,-.2,0],[5,.6,0],{c:COL.ink,w:2.2});B.D([5.2,.9,0],.2,{f:COL.gold});B.T([4.2,2.1,0],'reinforcement',{b:1,sz:22,c:COL.red});B.T([4.2,1.6,0],'reward ★',{sz:18,c:COL.gray});
+  bx(B,[4.2,-.3,0],[3.4,3.6,2.4],'',COL.gray,{});B.D([3.2,-1.2,0],.3,{f:COL.teal});B.A([3.5,-1,0],[4.3,-.2,0],{c:COL.ink,w:2.2});B.A([4.3,-.2,0],[5,.6,0],{c:COL.ink,w:2.2});B.D([5.2,.9,0],.2,{f:COL.gold});B.T([4.2,2.1,0],'reinforcement',{b:1,sz:22,c:COL.red});B.T([4.2,1.6,0],'reward Γÿà',{sz:18,c:COL.gray});
   B.s(1);const pts=[];[[-3,0,0],[3,1,0],[0,-2.4,1]].forEach((c,k)=>{for(let i=0;i<14;i++)pts.push([c[0]+(rnd(i+k*31)-.5)*2.6,c[1]+(rnd(i*3+k*17)-.5)*2.2,c[2]+(rnd(i*7+k*5)-.5)*2])});
   B.dyn((t,b)=>{let cen=[[-3.8,2,0],[-.5,.8,0],[1.8,-1.8,0]];const steps=4,k=Math.floor(t/1.4)%(steps+2),cols=[COL.red,COL.teal,COL.gold];let cs=cen.map(c=>c.slice());for(let it=0;it<Math.min(k,steps);it++){const g=[[],[],[]];pts.forEach(p=>{let bi=0,bd=1e9;cs.forEach((c,i)=>{const d=(p[0]-c[0])**2+(p[1]-c[1])**2+(p[2]-c[2])**2;if(d<bd){bd=d;bi=i}});g[bi].push(p)});cs=cs.map((c,i)=>g[i].length?[0,1,2].map(a=>g[i].reduce((s,p)=>s+p[a],0)/g[i].length):c)}
    pts.forEach(p=>{let bi=0,bd=1e9;cs.forEach((c,i)=>{const d=(p[0]-c[0])**2+(p[1]-c[1])**2+(p[2]-c[2])**2;if(d<bd){bd=d;bi=i}});b.D(p,.14,{f:k===0?COL.gray:cols[bi]})});cs.forEach((c,i)=>{b.X(c,[.5,.5,.5],{f:cols[i],a:.8})});b.T([0,3.7,0],k===0?'start: random centres':'iteration '+Math.min(k,steps),{b:1,sz:24})});
-  B.T([0,-3.8,0],'assign to nearest → move to the mean → repeat',{sz:21,b:1});
+  B.T([0,-3.8,0],'assign to nearest ΓåÆ move to the mean ΓåÆ repeat',{sz:21,b:1});
   B.s(2);const L=[[-4.5,[2,0,-2]],[-1.5,[2.4,.8,-.8,-2.4]],[1.5,[2.4,.8,-.8,-2.4]],[4.5,[1,-1]]];const lay=[[2,0,-2].map(y=>[-4.8,y,0]),[2.4,.8,-.8,-2.4].map(y=>[-1.6,y,0]),[2.4,.8,-.8,-2.4].map(y=>[1.6,y,0]),[1,-1].map(y=>[4.8,y,0])];
   for(let l=0;l<3;l++)lay[l].forEach((a,i)=>lay[l+1].forEach((c,j)=>B.L([a,c],{c:COL.gray,w:1+((i*3+j*5+l)%4)*.5})));lay.forEach((ly,l)=>ly.forEach(p=>B.D(p,.26,{f:[COL.teal,COL.gold,COL.gold,COL.red][l]})));
-  B.dyn((t,b)=>{const l=Math.floor(t/.9)%4;lay[l].forEach(p=>b.D(p,.36,{f:COL.red}))});B.T([-4.8,3.4,0],'inputs',{b:1,sz:20});B.T([0,3.6,0],'hidden layers',{b:1,sz:20});B.T([4.8,2.4,0],'outputs',{b:1,sz:20});B.T([0,-3.6,0],'y = step(Σ wᵢxᵢ + b)    w ← w + η(t − y)x',{b:1,sz:22});
-  B.s(3);const ps=[[-4,-1.5],[-3,-.5],[-2,-1],[-1,.2],[0,.1],[1,1.2],[2,.8],[3,1.9],[4,1.5]];B.A([-5,-2.4,0],[5,-2.4,0],{c:COL.ink,w:2});B.A([-5,-2.4,0],[-5,2.8,0],{c:COL.ink,w:2});ps.forEach(p=>{B.D([p[0],p[1],0],.14,{f:COL.teal});const y=.5*p[0]*.5+.0+.15*p[0]*.0+.2+p[0]*.28;B.L([[p[0],p[1],0],[p[0],.37*p[0]+.2,0]],{c:COL.red,w:1.2,d:[3,3]})});B.L([[-4.6,.37*-4.6+.2,0],[4.6,.37*4.6+.2,0]],{c:COL.red,w:3.4});B.T([3.6,.9,0],'best-fit line',{c:COL.red,b:1,sz:20});B.T([-3.4,2.7,0],'minimise Σ residual²',{b:1,sz:21});
+  B.dyn((t,b)=>{const l=Math.floor(t/.9)%4;lay[l].forEach(p=>b.D(p,.36,{f:COL.red}))});B.T([-4.8,3.4,0],'inputs',{b:1,sz:20});B.T([0,3.6,0],'hidden layers',{b:1,sz:20});B.T([4.8,2.4,0],'outputs',{b:1,sz:20});B.T([0,-3.6,0],'y = step(╬ú wß╡óxß╡ó + b)    w ΓåÉ w + ╬╖(t ΓêÆ y)x',{b:1,sz:22});
+  B.s(3);const ps=[[-4,-1.5],[-3,-.5],[-2,-1],[-1,.2],[0,.1],[1,1.2],[2,.8],[3,1.9],[4,1.5]];B.A([-5,-2.4,0],[5,-2.4,0],{c:COL.ink,w:2});B.A([-5,-2.4,0],[-5,2.8,0],{c:COL.ink,w:2});ps.forEach(p=>{B.D([p[0],p[1],0],.14,{f:COL.teal});const y=.5*p[0]*.5+.0+.15*p[0]*.0+.2+p[0]*.28;B.L([[p[0],p[1],0],[p[0],.37*p[0]+.2,0]],{c:COL.red,w:1.2,d:[3,3]})});B.L([[-4.6,.37*-4.6+.2,0],[4.6,.37*4.6+.2,0]],{c:COL.red,w:3.4});B.T([3.6,.9,0],'best-fit line',{c:COL.red,b:1,sz:20});B.T([-3.4,2.7,0],'minimise ╬ú residual┬▓',{b:1,sz:21});
   B.T([-4.2,-3.4,0],'k-NN: majority of the k nearest',{sz:19,c:COL.teal,a:'left'});B.T([4.8,-3.4,0],'tree: split on best feature',{sz:19,c:COL.gold,a:'right'})}};
 const zig=(B,x0,x1,y,z,n,a,o)=>{const p=[[x0,y,z]];for(let i=0;i<n;i++)p.push([x0+(x1-x0)*(i+.5)/n,y+(i%2?-a:a),z]);p.push([x1,y,z]);B.L(p,o)};
 const sineW=(B,x0,x1,y,A,k,ph,o)=>B.F(x=>[x,y+A*sin(k*x+ph),0],x0,x1,Object.assign({seg:100},o));
 SC['beee:0']={cam:{yaw:-.5,pitch:.45},steps:[
- {t:'Ohm’s law in a loop',d:'A battery pushes charge round a closed loop through resistors. V = IR: with E = 12 V and R₁ = 4 Ω, R₂ = 2 Ω in series, I = 12/(4 + 2) = 2 A. The same current passes every series element; conventional current flows from the + terminal round to the −.'},
- {t:'KVL: the voltage landscape',d:'Walk once round the loop and track the potential as height. The battery lifts you by 12 V, then R₁ drops 8 V (2 A × 4 Ω) and R₂ drops 4 V (2 A × 2 Ω), and you are back at 0. So ΣV = 0 around any closed loop. Voltage divider: V₁ = V·R₁/(R₁ + R₂) = 8 V.',only:true},
- {t:'KCL: what goes in comes out',d:'At a junction no charge is stored, so the currents entering equal the currents leaving: I₁ + I₂ = I₃. Here 3 A + 2 A enter and 5 A leave. Current divider for two parallel resistors: I₁ = I·R₂/(R₁ + R₂).',only:true},
- {t:'Star–delta transformation',d:'A delta (triangle) of resistors can be swapped for an equivalent star with the same terminal behaviour. Δ → Y: R_a = R_AB·R_CA/(R_AB + R_BC + R_CA). Y → Δ: R_AB = (R_aR_b + R_bR_c + R_cR_a)/R_c. For a balanced network R_Δ = 3R_Y. Use it when the circuit is not plain series or parallel.',only:true},
- {t:'Mesh analysis: one loop current per window',d:'Give each window (mesh) its own circulating current, I₁ and I₂. Write KVL once per mesh; the shared resistor carries (I₁ − I₂). Solve the simultaneous equations. Nodal analysis is the dual: write KCL at each node and solve for node voltages. Pick whichever gives fewer equations.',only:true}],
+ {t:'OhmΓÇÖs law in a loop',d:'A battery pushes charge round a closed loop through resistors. V = IR: with E = 12 V and RΓéü = 4 ╬⌐, RΓéé = 2 ╬⌐ in series, I = 12/(4 + 2) = 2 A. The same current passes every series element; conventional current flows from the + terminal round to the ΓêÆ.'},
+ {t:'KVL: the voltage landscape',d:'Walk once round the loop and track the potential as height. The battery lifts you by 12 V, then RΓéü drops 8 V (2 A ├ù 4 ╬⌐) and RΓéé drops 4 V (2 A ├ù 2 ╬⌐), and you are back at 0. So ╬úV = 0 around any closed loop. Voltage divider: VΓéü = V┬╖RΓéü/(RΓéü + RΓéé) = 8 V.',only:true},
+ {t:'KCL: what goes in comes out',d:'At a junction no charge is stored, so the currents entering equal the currents leaving: IΓéü + IΓéé = IΓéâ. Here 3 A + 2 A enter and 5 A leave. Current divider for two parallel resistors: IΓéü = I┬╖RΓéé/(RΓéü + RΓéé).',only:true},
+ {t:'StarΓÇôdelta transformation',d:'A delta (triangle) of resistors can be swapped for an equivalent star with the same terminal behaviour. ╬ö ΓåÆ Y: R_a = R_AB┬╖R_CA/(R_AB + R_BC + R_CA). Y ΓåÆ ╬ö: R_AB = (R_aR_b + R_bR_c + R_cR_a)/R_c. For a balanced network R_╬ö = 3R_Y. Use it when the circuit is not plain series or parallel.',only:true},
+ {t:'Mesh analysis: one loop current per window',d:'Give each window (mesh) its own circulating current, IΓéü and IΓéé. Write KVL once per mesh; the shared resistor carries (IΓéü ΓêÆ IΓéé). Solve the simultaneous equations. Nodal analysis is the dual: write KCL at each node and solve for node voltages. Pick whichever gives fewer equations.',only:true}],
  build(B){
   const path=[[-3,-1.6],[3,-1.6],[3,1.6],[-3,1.6],[-3,-1.6]];
   B.s(0);B.L(path.map(p=>[p[0],p[1],0]),{c:COL.ink,w:2.6});B.X([-3,0,0],[.2,1.6,.2],{f:COL.gold});B.L([[-3.4,.5,0],[-2.6,.5,0]],{c:COL.ink,w:4});B.L([[-3.2,-.5,0],[-2.8,-.5,0]],{c:COL.ink,w:4});
   B.L([[-1.5,1.6,0],[1.5,1.6,0]],{c:COL.bg||COL.paper,w:8});zig(B,-1.5,1.5,1.6,0,6,.35,{c:COL.red,w:3.2});zig(B,-1.2,1.2,-1.6,0,0,0,{c:COL.paper});B.L([[3,-.9,0],[3,.9,0]],{c:COL.paper,w:8});
   const zv=[[3,.9,0]];for(let i=0;i<6;i++)zv.push([3+(i%2?-.3:.3),.9-1.8*(i+.5)/6,0]);zv.push([3,-.9,0]);B.L(zv,{c:COL.teal,w:3.2});
-  B.T([-3.9,.5,0],'12 V',{b:1,sz:22});B.T([0,2.2,0],'R₁ = 4 Ω',{c:COL.red,b:1});B.T([3.9,0,0],'R₂ = 2 Ω',{c:COL.teal,b:1});B.T([0,-2.3,0],'I = V/(R₁+R₂) = 2 A',{b:1,sz:24});
+  B.T([-3.9,.5,0],'12 V',{b:1,sz:22});B.T([0,2.2,0],'RΓéü = 4 ╬⌐',{c:COL.red,b:1});B.T([3.9,0,0],'RΓéé = 2 ╬⌐',{c:COL.teal,b:1});B.T([0,-2.3,0],'I = V/(RΓéü+RΓéé) = 2 A',{b:1,sz:24});
   B.dyn((t,b)=>{const per=16,u=(t*.12);for(let i=0;i<12;i++){let s=((u+i/12)%1)*per,x,y;if(s<6){x=-3+s;y=-1.6}else if(s<9.2){x=3;y=-1.6+(s-6)}else if(s<15.2){x=3-(s-9.2);y=1.6}else{x=-3;y=1.6-(s-15.2)*4}b.D([x,y,0],.1,{f:COL.gold})}});
   B.s(1);const pts=[[-3,0,2],[-3,12,-2],[0,12,-2],[3,4,-2],[3,0,2],[-3,0,2]];const hs=.3;const P3=[[-3,0,2],[-3,12,-2],[0,12,-2],[3,4,-2],[3,4,.3],[3,0,2]];
   const poly=[[-3,0,2,0],[-3,-2,12,0],[0,-2,12,0],[3,-2,4,0]];const segs=[[[-3,2,0],[-3,-2,12]],[[-3,-2,12],[0,-2,12]],[[0,-2,12],[3,-2,4]],[[3,-2,4],[3,2,0]],[[3,2,0],[-3,2,0]]];
   segs.forEach(([a,b2])=>{B.P([[a[0],0,a[1]],[b2[0],0,b2[1]],[b2[0],b2[2]*hs,b2[1]],[a[0],a[2]*hs,a[1]]],{f:COL.teal,a:.18,c:COL.teal,w:1.8})});
   B.L(segs.flatMap((s,i)=>i?[[s[1][0],s[1][2]*hs,s[1][1]]]:[[s[0][0],s[0][2]*hs,s[0][1]],[s[1][0],s[1][2]*hs,s[1][1]]]),{c:COL.red,w:3.4});
-  B.T([-3.8,2,2],'battery +12 V',{c:COL.ink,b:1});B.T([-1.5,4.3,-2],'wire at 12 V',{sz:18});B.T([1.5,3,-2],'R₁ drops 8 V',{c:COL.red,b:1});B.T([4.2,1.1,0],'R₂ drops 4 V',{c:COL.teal,b:1});B.T([0,-.6,2],'back to 0 V: ΣV = 0',{b:1,sz:22});
+  B.T([-3.8,2,2],'battery +12 V',{c:COL.ink,b:1});B.T([-1.5,4.3,-2],'wire at 12 V',{sz:18});B.T([1.5,3,-2],'RΓéü drops 8 V',{c:COL.red,b:1});B.T([4.2,1.1,0],'RΓéé drops 4 V',{c:COL.teal,b:1});B.T([0,-.6,2],'back to 0 V: ╬úV = 0',{b:1,sz:22});
   B.s(2);B.D([0,0,0],.28,{f:COL.ink});B.A([-4,1.6,0],[-.4,.1,0],{c:COL.teal,w:5});B.A([-4,-1.6,0],[-.4,-.1,0],{c:COL.red,w:3.4});B.A([.4,0,0],[4.2,0,0],{c:COL.ink,w:7});
-  B.T([-3.6,2.3,0],'I₁ = 3 A',{c:COL.teal,b:1});B.T([-3.6,-2.3,0],'I₂ = 2 A',{c:COL.red,b:1});B.T([3.2,.8,0],'I₃ = 5 A out',{b:1});B.T([0,3,0],'ΣI in = ΣI out',{sz:26,b:1});B.T([0,-3,0],'like water at a pipe joint',{c:COL.gray});
+  B.T([-3.6,2.3,0],'IΓéü = 3 A',{c:COL.teal,b:1});B.T([-3.6,-2.3,0],'IΓéé = 2 A',{c:COL.red,b:1});B.T([3.2,.8,0],'IΓéâ = 5 A out',{b:1});B.T([0,3,0],'╬úI in = ╬úI out',{sz:26,b:1});B.T([0,-3,0],'like water at a pipe joint',{c:COL.gray});
   B.s(3);const tri=[[-5,-1,0],[-2,-1,0],[-3.5,1.6,0]];B.P(tri,{f:COL.gold,a:.1});tri.forEach((p,i)=>{const q=tri[(i+1)%3];const m=[(p[0]+q[0])/2,(p[1]+q[1])/2];B.L([p,q],{c:COL.ink,w:2});B.D([m[0],m[1],0],.16,{f:COL.red})});['A','B','C'].forEach((n,i)=>B.T([tri[i][0],tri[i][1]+(i<2?-.55:.5),0],n,{b:1,sz:24}));
   B.D([4,0,0],.14,{f:COL.ink});[[4,1.8],[2.7,-.9],[5.3,-.9]].forEach((p,i)=>{B.L([[4,0,0],[p[0],p[1],0]],{c:COL.red,w:3});B.T([p[0],p[1]+(i?-.5:.5),0],['A','B','C'][i],{b:1,sz:24})});
-  B.A([-1.3,0,0],[1.4,0,0],{c:COL.red,w:3});B.A([1.4,.6,0],[-1.3,.6,0],{c:COL.red,w:3});B.T([-3.5,-2.1,0],'Δ',{c:COL.gold,b:1,sz:34});B.T([4,-2.1,0],'Y',{c:COL.red,b:1,sz:34});B.T([0,3,0],'R_a = R_AB·R_CA / (R_AB + R_BC + R_CA)',{b:1,sz:22});B.T([0,-3.1,0],'balanced: R_Δ = 3 R_Y',{c:COL.red,b:1,sz:24});
+  B.A([-1.3,0,0],[1.4,0,0],{c:COL.red,w:3});B.A([1.4,.6,0],[-1.3,.6,0],{c:COL.red,w:3});B.T([-3.5,-2.1,0],'╬ö',{c:COL.gold,b:1,sz:34});B.T([4,-2.1,0],'Y',{c:COL.red,b:1,sz:34});B.T([0,3,0],'R_a = R_AB┬╖R_CA / (R_AB + R_BC + R_CA)',{b:1,sz:22});B.T([0,-3.1,0],'balanced: R_╬ö = 3 R_Y',{c:COL.red,b:1,sz:24});
   B.s(4);B.L([[-4,-1.6,0],[0,-1.6,0],[4,-1.6,0],[4,1.6,0],[0,1.6,0],[-4,1.6,0],[-4,-1.6,0]],{c:COL.ink,w:2.6});B.L([[0,-1.6,0],[0,1.6,0]],{c:COL.ink,w:2.6});zig(B,0,0,0,0,0,0,{});const zz=[[0,1.0,0]];for(let i=0;i<6;i++)zz.push([i%2?-.3:.3,1.0-2.0*(i+.5)/6,0]);zz.push([0,-1,0]);B.L(zz,{c:COL.red,w:3.2});
-  B.F(a=>[-2+cos(a)*.7,sin(a)*.7,0],.5,5.8,{c:COL.teal,w:3});B.A([-2.7,.3,0],[-2.7,.35,0],{c:COL.teal,w:3});B.F(a=>[2+cos(a)*.7,sin(a)*.7,0],.5,5.8,{c:COL.gold,w:3});B.T([-2,0,0],'I₁',{c:COL.teal,b:1,sz:24});B.T([2,0,0],'I₂',{c:COL.gold,b:1,sz:24});B.T([.7,0,0],'shared: I₁ − I₂',{c:COL.red,b:1,sz:18,a:'left'});B.T([0,2.4,0],'one KVL equation per mesh',{b:1,sz:24});B.T([0,-2.4,0],'solve the simultaneous equations',{c:COL.gray})}};
+  B.F(a=>[-2+cos(a)*.7,sin(a)*.7,0],.5,5.8,{c:COL.teal,w:3});B.A([-2.7,.3,0],[-2.7,.35,0],{c:COL.teal,w:3});B.F(a=>[2+cos(a)*.7,sin(a)*.7,0],.5,5.8,{c:COL.gold,w:3});B.T([-2,0,0],'IΓéü',{c:COL.teal,b:1,sz:24});B.T([2,0,0],'IΓéé',{c:COL.gold,b:1,sz:24});B.T([.7,0,0],'shared: IΓéü ΓêÆ IΓéé',{c:COL.red,b:1,sz:18,a:'left'});B.T([0,2.4,0],'one KVL equation per mesh',{b:1,sz:24});B.T([0,-2.4,0],'solve the simultaneous equations',{c:COL.gray})}};
 
 SC['beee:1']={cam:{yaw:-.4,pitch:.3},
  params:[
-  {id:'resistance',label:'Resistance R',min:1,max:10,step:0.5,defaultVal:4,unit:'Ω'},
-  {id:'reactanceX',label:'Net Reactance X',min:-8,max:8,step:0.5,defaultVal:3,unit:'Ω'}
+  {id:'resistance',label:'Resistance R',min:1,max:10,step:0.5,defaultVal:4,unit:'╬⌐'},
+  {id:'reactanceX',label:'Net Reactance X',min:-8,max:8,step:0.5,defaultVal:3,unit:'╬⌐'}
  ],
  steps:[
-  {t:'A sine wave is a rotating arrow',d:'Spin an arrow of length Vm at angular speed ω and look at its height: v = Vm sin ωt. That is exactly an AC voltage. One turn is one cycle; frequency f = ω/2π. Instantaneous, peak (Vm), average and RMS values all describe this same wave.'},
-  {t:'Phase difference: lag and lead',d:'In a coil the current reaches its peak after the voltage (lags by φ); in a capacitor it peaks before (leads). On the phasor picture that is simply a smaller or larger angle between two arrows. Impedance Z = √(R² + (X_L − X_C)²), X_L = 2πfL, X_C = 1/(2πfC).',only:true},
-  {t:'RMS, average, form factor, peak factor',d:'RMS is the steady value that heats a resistor as much as the wave: V_rms = Vm/√2 = 0.707 Vm. Average over a half cycle = 2Vm/π = 0.637 Vm. Form factor = V_rms/V_avg = 1.11; peak factor = Vm/V_rms = 1.414.',only:true},
-  {t:'Power triangle and power factor',d:'Only part of the current does useful work. Real power P = VI cosφ (kW), reactive Q = VI sinφ (kVAr), apparent S = VI (kVA); S² = P² + Q². Power factor = cosφ = P/S = R/Z. The impedance triangle (R, X, Z) behind it has the same angle.',only:true},
-  {t:'Three-phase: three waves 120° apart',d:'Three coils spaced 120° apart give three voltages with the same size, shifted by a third of a cycle, phase sequence R–Y–B. Star: V_L = √3·V_ph and I_L = I_ph. Delta: V_L = V_ph and I_L = √3·I_ph. Power P = √3·V_L·I_L·cosφ. Advantages: constant power flow, smaller conductors, self-starting motors.',only:true},
-  {t:'Live parameter lab: AC impedance triangle and power factor',d:'Tweak resistance R and net reactance (X_L - X_C) to calculate impedance Z, phase angle φ, and power factor cos φ in real time.',only:true}],
+  {t:'A sine wave is a rotating arrow',d:'Spin an arrow of length Vm at angular speed ╧ë and look at its height: v = Vm sin ╧ët. That is exactly an AC voltage. One turn is one cycle; frequency f = ╧ë/2╧Ç. Instantaneous, peak (Vm), average and RMS values all describe this same wave.'},
+  {t:'Phase difference: lag and lead',d:'In a coil the current reaches its peak after the voltage (lags by ╧å); in a capacitor it peaks before (leads). On the phasor picture that is simply a smaller or larger angle between two arrows. Impedance Z = ΓêÜ(R┬▓ + (X_L ΓêÆ X_C)┬▓), X_L = 2╧ÇfL, X_C = 1/(2╧ÇfC).',only:true},
+  {t:'RMS, average, form factor, peak factor',d:'RMS is the steady value that heats a resistor as much as the wave: V_rms = Vm/ΓêÜ2 = 0.707 Vm. Average over a half cycle = 2Vm/╧Ç = 0.637 Vm. Form factor = V_rms/V_avg = 1.11; peak factor = Vm/V_rms = 1.414.',only:true},
+  {t:'Power triangle and power factor',d:'Only part of the current does useful work. Real power P = VI cos╧å (kW), reactive Q = VI sin╧å (kVAr), apparent S = VI (kVA); S┬▓ = P┬▓ + Q┬▓. Power factor = cos╧å = P/S = R/Z. The impedance triangle (R, X, Z) behind it has the same angle.',only:true},
+  {t:'Three-phase: three waves 120┬░ apart',d:'Three coils spaced 120┬░ apart give three voltages with the same size, shifted by a third of a cycle, phase sequence RΓÇôYΓÇôB. Star: V_L = ΓêÜ3┬╖V_ph and I_L = I_ph. Delta: V_L = V_ph and I_L = ΓêÜ3┬╖I_ph. Power P = ΓêÜ3┬╖V_L┬╖I_L┬╖cos╧å. Advantages: constant power flow, smaller conductors, self-starting motors.',only:true},
+  {t:'Live parameter lab: AC impedance triangle and power factor',d:'Tweak resistance R and net reactance (X_L - X_C) to calculate impedance Z, phase angle ╧å, and power factor cos ╧å in real time.',only:true}],
  build(B){
   B.s(0);B.dyn((t,b)=>{const a=t*1.6,R=1.8,cx=-4.2;b.C([cx,0,0],R,{n:'z',c:COL.gray,w:1.6});b.A([cx,0,0],[cx+cos(a)*R,sin(a)*R,0],{c:COL.red,w:3.4});b.F(x=>[x,R*sin(a-(x-cx-R)*1.2),0],cx+R,6,{c:COL.teal,w:3.2,seg:100});b.L([[cx+cos(a)*R,sin(a)*R,0],[cx+R,sin(a)*R,0]],{c:COL.gray,w:1.2,d:[4,4]});b.D([cx+cos(a)*R,sin(a)*R,0],.12,{f:COL.red})});
-  B.A([-2,0,0],[6.4,0,0],{c:COL.gray});B.T([-4.2,-2.6,0],'rotating arrow, length Vm',{c:COL.red,b:1,sz:20});B.T([2.4,2.5,0],'v = Vm sin ωt',{c:COL.teal,b:1,sz:26});B.T([2.4,-2.6,0],'one turn = one cycle,  f = ω/2π',{sz:21});
+  B.A([-2,0,0],[6.4,0,0],{c:COL.gray});B.T([-4.2,-2.6,0],'rotating arrow, length Vm',{c:COL.red,b:1,sz:20});B.T([2.4,2.5,0],'v = Vm sin ╧ët',{c:COL.teal,b:1,sz:26});B.T([2.4,-2.6,0],'one turn = one cycle,  f = ╧ë/2╧Ç',{sz:21});
   B.s(1);B.dyn((t,b)=>{const ph=t*2,f=.9;b.F(x=>[x-.5,sin(x*1.3-ph)*1.5,0],-4.5,2.5,{c:COL.red,w:3.2,seg:100});b.F(x=>[x-.5,sin(x*1.3-ph-f)*1.2,0],-4.5,2.5,{c:COL.teal,w:3.2,seg:100});b.C([4.6,0,0],1.7,{n:'z',c:COL.gray,w:1.4});b.A([4.6,0,0],[4.6+cos(ph)*1.7,sin(ph)*1.7,0],{c:COL.red,w:3.2});b.A([4.6,0,0],[4.6+cos(ph-f)*1.4,sin(ph-f)*1.4,0],{c:COL.teal,w:3.2})});
-  B.T([-4.8,1.6,0],'V',{c:COL.red,b:1,sz:26});B.T([-4.8,-1.6,0],'I',{c:COL.teal,b:1,sz:26});B.T([4.6,-2.4,0],'I lags V by φ',{b:1,sz:22});B.T([-1,2.8,0],'inductive circuit: current peaks later',{c:COL.gray,sz:20});
+  B.T([-4.8,1.6,0],'V',{c:COL.red,b:1,sz:26});B.T([-4.8,-1.6,0],'I',{c:COL.teal,b:1,sz:26});B.T([4.6,-2.4,0],'I lags V by ╧å',{b:1,sz:22});B.T([-1,2.8,0],'inductive circuit: current peaks later',{c:COL.gray,sz:20});
   B.s(2);axes(B,4.6,['t','v','']);sineW(B,-4.2,4.2,0,2,PI/4.2*1.0,0,{c:COL.teal,w:3.2});const vm=2;[[vm,'Vm',COL.ink],[vm*.707,'V_rms = 0.707 Vm',COL.red],[vm*.637,'V_avg = 0.637 Vm',COL.gold]].forEach(([y,l,c])=>{B.L([[-4.2,y,0],[4.5,y,0]],{c,w:1.8,d:[6,4]});B.T([4.6,y,0],l,{c,b:1,sz:19,a:'left'})});
   B.T([0,-2.9,0],'form factor = 1.11,  peak factor = 1.414',{b:1,sz:24});
   B.s(3);B.P([[-3,-1.5,0],[2.5,-1.5,0],[2.5,1.7,0]],{f:COL.red,a:.15,c:COL.red,w:2.8});
   B.L([[2.15,-1.5,0],[2.15,-1.15,0],[2.5,-1.15,0]],{c:COL.red,w:2});
   B.F(a=>[-3+cos(a)*1.0,-1.5+sin(a)*1.0,0],0,0.527,{c:COL.ink,w:2.2});
-  B.T([-1.75,-1.25,0],'φ',{b:1,sz:24,c:COL.ink});
-  B.T([-.25,-2.05,0],'P = VI cosφ (kW)',{c:COL.red,b:1,sz:22});
-  B.T([3.3,0.1,0],'Q = VI sinφ (kVAr)',{c:COL.gold,b:1,a:'left',sz:20});
+  B.T([-1.75,-1.25,0],'╧å',{b:1,sz:24,c:COL.ink});
+  B.T([-.25,-2.05,0],'P = VI cos╧å (kW)',{c:COL.red,b:1,sz:22});
+  B.T([3.3,0.1,0],'Q = VI sin╧å (kVAr)',{c:COL.gold,b:1,a:'left',sz:20});
   B.T([-.65,.75,0],'S = VI (kVA)',{b:1,sz:24,c:COL.ink});
   B.P([[-3,-1.5,-3],[1.5,-1.5,-3],[1.5,1.12,-3]],{f:COL.teal,a:.14,c:COL.teal,w:2.4});
   B.L([[1.2,-1.5,-3],[1.2,-1.2,-3],[1.5,-1.2,-3]],{c:COL.teal,w:1.8});
   B.F(a=>[-3+cos(a)*0.9,-1.5+sin(a)*0.9,-3],0,0.527,{c:COL.teal,w:1.8});
-  B.T([-1.8,-1.2,-3],'φ',{c:COL.teal,b:1,sz:22});
-  B.T([-.75,-2.0,-3],'R (Ω)',{c:COL.teal,b:1,sz:22});
-  B.T([2.1,-.2,-3],'X = X_L − X_C',{c:COL.teal,b:1,sz:20,a:'left'});
-  B.T([-1.1,.5,-3],'Z = √(R² + X²)',{c:COL.teal,b:1,sz:22});
-  B.T([0,3.1,0],'pf = cosφ = P/S = R/Z',{b:1,sz:26});
+  B.T([-1.8,-1.2,-3],'╧å',{c:COL.teal,b:1,sz:22});
+  B.T([-.75,-2.0,-3],'R (╬⌐)',{c:COL.teal,b:1,sz:22});
+  B.T([2.1,-.2,-3],'X = X_L ΓêÆ X_C',{c:COL.teal,b:1,sz:20,a:'left'});
+  B.T([-1.1,.5,-3],'Z = ΓêÜ(R┬▓ + X┬▓)',{c:COL.teal,b:1,sz:22});
+  B.T([0,3.1,0],'pf = cos╧å = P/S = R/Z',{b:1,sz:26});
   B.s(4);B.dyn((t,b)=>{const a=t*1.4,cs=[COL.red,COL.gold,COL.blue];b.C([-4.4,0,0],1.6,{n:'z',c:COL.gray,w:1.4});for(let k=0;k<3;k++){const g=a-k*2*PI/3;b.A([-4.4,0,0],[-4.4+cos(g)*1.6,sin(g)*1.6,0],{c:cs[k],w:3.2});b.F(x=>[x,sin(1.2*x-a*1+k*2*PI/3)*1.4,0],-2,5,{c:cs[k],w:2.8,seg:100})}});
-  B.T([-4.4,-2.3,0],'120° apart',{b:1,sz:22});B.T([1.5,2.2,0],'R   Y   B  sequence',{b:1,sz:22});B.T([1.5,-2.5,0],'star: V_L = √3 V_ph   P = √3 V_L I_L cosφ',{c:COL.red,b:1,sz:21});
-  B.s(5);B.dyn((t,b,p={})=>{const R=p.resistance??4,X=p.reactanceX??3,Z=sqrt(R*R+X*X),pf=R/Z,phiDeg=(Math.atan2(X,R)*180)/PI,sc=0.45;const v0=[-3,-1.2,0],v1=[-3+R*sc,-1.2,0],v2=[-3+R*sc,-1.2+X*sc,0];b.P([v0,v1,v2],{f:X>=0?COL.red:COL.blue,a:0.2,c:COL.ink,w:2.8});const sx=X<0?-1:1,sq=0.22;if(Math.abs(X)>0.3){b.L([[v1[0]-sq,v1[1],0],[v1[0]-sq,v1[1]+sx*sq,0],[v1[0],v1[1]+sx*sq,0]],{c:COL.ink,w:1.8});}const phi=Math.atan2(X,R);if(X>=0){b.F(a=>[v0[0]+cos(a)*0.75,v0[1]+sin(a)*0.75,0],0,phi,{c:COL.ink,w:2});}else{b.F(a=>[v0[0]+cos(a)*0.75,v0[1]+sin(a)*0.75,0],phi,0,{c:COL.ink,w:2});}b.T([v0[0]+cos(phi*0.5)*1.1,v0[1]+sin(phi*0.5)*1.1,0],'φ',{b:1,sz:20,c:COL.ink});b.T([v0[0]+(R*sc)/2,-1.7,0],`R = ${R} Ω`,{c:COL.teal,b:1,sz:21});b.T([v1[0]+0.6,-1.2+(X*sc)/2,0],`${X>=0?'+jX':'-jX'} = ${Math.abs(X)} Ω`,{c:COL.gold,b:1,a:'left',sz:20});const midX=v0[0]+(R*sc)/2,midY=-1.2+(X*sc)/2;const nx=X>=0?-X/Z:X/Z,ny=X>=0?R/Z:-R/Z;const offset=0.45;b.T([midX+nx*offset,midY+ny*offset,0],`Z = ${Z.toFixed(2)} Ω`,{c:COL.red,b:1,sz:22});b.T([0,3.0,0],`Power Factor cos φ = ${pf.toFixed(3)} (${X>0?'Lagging':X<0?'Leading':'Unity'})`,{c:COL.red,sz:24,b:1});b.T([0,-2.8,0],`Impedance Z = ${Z.toFixed(2)} Ω   |   Phase Angle φ = ${phiDeg.toFixed(1)}°`,{c:COL.ink,sz:22,b:1});});
+  B.T([-4.4,-2.3,0],'120┬░ apart',{b:1,sz:22});B.T([1.5,2.2,0],'R   Y   B  sequence',{b:1,sz:22});B.T([1.5,-2.5,0],'star: V_L = ΓêÜ3 V_ph   P = ΓêÜ3 V_L I_L cos╧å',{c:COL.red,b:1,sz:21});
+  B.s(5);B.dyn((t,b,p={})=>{const R=p.resistance??4,X=p.reactanceX??3,Z=sqrt(R*R+X*X),pf=R/Z,phiDeg=(Math.atan2(X,R)*180)/PI,sc=0.45;const v0=[-3,-1.2,0],v1=[-3+R*sc,-1.2,0],v2=[-3+R*sc,-1.2+X*sc,0];b.P([v0,v1,v2],{f:X>=0?COL.red:COL.blue,a:0.2,c:COL.ink,w:2.8});const sx=X<0?-1:1,sq=0.22;if(Math.abs(X)>0.3){b.L([[v1[0]-sq,v1[1],0],[v1[0]-sq,v1[1]+sx*sq,0],[v1[0],v1[1]+sx*sq,0]],{c:COL.ink,w:1.8});}const phi=Math.atan2(X,R);if(X>=0){b.F(a=>[v0[0]+cos(a)*0.75,v0[1]+sin(a)*0.75,0],0,phi,{c:COL.ink,w:2});}else{b.F(a=>[v0[0]+cos(a)*0.75,v0[1]+sin(a)*0.75,0],phi,0,{c:COL.ink,w:2});}b.T([v0[0]+cos(phi*0.5)*1.1,v0[1]+sin(phi*0.5)*1.1,0],'╧å',{b:1,sz:20,c:COL.ink});b.T([v0[0]+(R*sc)/2,-1.7,0],`R = ${R} ╬⌐`,{c:COL.teal,b:1,sz:21});b.T([v1[0]+0.6,-1.2+(X*sc)/2,0],`${X>=0?'+jX':'-jX'} = ${Math.abs(X)} ╬⌐`,{c:COL.gold,b:1,a:'left',sz:20});const midX=v0[0]+(R*sc)/2,midY=-1.2+(X*sc)/2;const nx=X>=0?-X/Z:X/Z,ny=X>=0?R/Z:-R/Z;const offset=0.45;b.T([midX+nx*offset,midY+ny*offset,0],`Z = ${Z.toFixed(2)} ╬⌐`,{c:COL.red,b:1,sz:22});b.T([0,3.0,0],`Power Factor cos ╧å = ${pf.toFixed(3)} (${X>0?'Lagging':X<0?'Leading':'Unity'})`,{c:COL.red,sz:24,b:1});b.T([0,-2.8,0],`Impedance Z = ${Z.toFixed(2)} ╬⌐   |   Phase Angle ╧å = ${phiDeg.toFixed(1)}┬░`,{c:COL.ink,sz:22,b:1});});
 }};
 
 SC['beee:2']={cam:{yaw:-.4,pitch:.3},
  params:[
-  {id:'turnsN1',label:'Primary Turns N₁',min:50,max:500,step:10,defaultVal:200,unit:'turns'},
-  {id:'turnsN2',label:'Secondary Turns N₂',min:50,max:500,step:10,defaultVal:100,unit:'turns'},
-  {id:'voltageV1',label:'Primary Voltage V₁',min:50,max:240,step:10,defaultVal:220,unit:'V'}
+  {id:'turnsN1',label:'Primary Turns NΓéü',min:50,max:500,step:10,defaultVal:200,unit:'turns'},
+  {id:'turnsN2',label:'Secondary Turns NΓéé',min:50,max:500,step:10,defaultVal:100,unit:'turns'},
+  {id:'voltageV1',label:'Primary Voltage VΓéü',min:50,max:240,step:10,defaultVal:220,unit:'V'}
  ],
  steps:[
-  {t:'Single-phase transformer',d:'Two coils share an iron core. An alternating current in the primary makes an alternating flux Φ in the core; that flux links the secondary and induces a voltage. E = 4.44 f N Φm (rms). So V₁/V₂ = N₁/N₂ = I₂/I₁ = K. Voltage regulation = (V_no-load − V_full-load)/V_no-load × 100%. It works only on AC.'},
-  {t:'Faraday and Lenz',d:'Move a magnet in and out of a coil and a voltage appears: e = −N dΦ/dt. The minus sign is Lenz’s law: the induced current opposes the change that caused it. Self-inductance L = NΦ/I and mutual inductance M are the same idea applied to one coil or two neighbouring coils.',only:true},
-  {t:'DC motor: force on a current-carrying loop',d:'A wire carrying current I in field B feels a force F = BIL. The two sides of the loop carry opposite currents, so one is pushed up and the other down: a turning force. The split-ring commutator reverses the current every half turn so the push always keeps the loop turning the same way. Back EMF: E_b = V − I_aR_a.',only:true},
-  {t:'Induction motor: a rotating field drags the rotor',d:'Three-phase currents in three coil pairs create a magnetic field that rotates at synchronous speed N_s = 120f/P. The rotor conductors cut that field, a current is induced (Faraday), and the rotor is dragged round, always a little slower: slip s = (N_s − N)/N_s. If it caught up there would be no relative motion and no torque.',only:true},
-  {t:'Live parameter lab: transformer turns ratio and voltage transformation',d:'Adjust primary turns N₁, secondary turns N₂, and primary input voltage V₁ to observe transformation ratio K = N₂/N₁, induced secondary voltage V₂, and step-up vs step-down behavior.',only:true}],
+  {t:'Single-phase transformer',d:'Two coils share an iron core. An alternating current in the primary makes an alternating flux ╬ª in the core; that flux links the secondary and induces a voltage. E = 4.44 f N ╬ªm (rms). So VΓéü/VΓéé = NΓéü/NΓéé = IΓéé/IΓéü = K. Voltage regulation = (V_no-load ΓêÆ V_full-load)/V_no-load ├ù 100%. It works only on AC.'},
+  {t:'Faraday and Lenz',d:'Move a magnet in and out of a coil and a voltage appears: e = ΓêÆN d╬ª/dt. The minus sign is LenzΓÇÖs law: the induced current opposes the change that caused it. Self-inductance L = N╬ª/I and mutual inductance M are the same idea applied to one coil or two neighbouring coils.',only:true},
+  {t:'DC motor: force on a current-carrying loop',d:'A wire carrying current I in field B feels a force F = BIL. The two sides of the loop carry opposite currents, so one is pushed up and the other down: a turning force. The split-ring commutator reverses the current every half turn so the push always keeps the loop turning the same way. Back EMF: E_b = V ΓêÆ I_aR_a.',only:true},
+  {t:'Induction motor: a rotating field drags the rotor',d:'Three-phase currents in three coil pairs create a magnetic field that rotates at synchronous speed N_s = 120f/P. The rotor conductors cut that field, a current is induced (Faraday), and the rotor is dragged round, always a little slower: slip s = (N_s ΓêÆ N)/N_s. If it caught up there would be no relative motion and no torque.',only:true},
+  {t:'Live parameter lab: transformer turns ratio and voltage transformation',d:'Adjust primary turns NΓéü, secondary turns NΓéé, and primary input voltage VΓéü to observe transformation ratio K = NΓéé/NΓéü, induced secondary voltage VΓéé, and step-up vs step-down behavior.',only:true}],
  build(B){
   B.s(0);B.X([-3,0,0],[.9,5,1],{f:COL.gray});B.X([3,0,0],[.9,5,1],{f:COL.gray});B.X([0,2.3,0],[6.9,.4,1],{f:COL.gray});B.X([0,-2.3,0],[6.9,.4,1],{f:COL.gray});
   B.F(u=>[-3+cos(u*30)*.85,-1.6+u*3.2,sin(u*30)*.85],0,1,{c:COL.red,w:2.2,seg:150});B.F(u=>[3+cos(u*18)*.85,-1.6+u*3.2,sin(u*18)*.85],0,1,{c:COL.teal,w:2.2,seg:120});
   B.dyn((t,b)=>{for(let i=0;i<10;i++){const s=((t*.15+i/10)%1)*4,per=[[ -3,-1.9],[3,-1.9],[3,1.9],[-3,1.9]];const seg=Math.floor(s),u=s-seg,p=per[seg%4],q=per[(seg+1)%4];b.D([p[0]+(q[0]-p[0])*u,p[1]+(q[1]-p[1])*u,.6],.1,{f:COL.gold})}});
-  B.T([-4.4,0,0],'N₁',{c:COL.red,b:1,sz:28});B.T([4.4,0,0],'N₂',{c:COL.teal,b:1,sz:28});B.T([0,0,0],'flux Φ in iron core',{c:COL.gold,b:1});B.T([0,3.2,0],'E = 4.44 f N Φm',{b:1,sz:26});B.T([0,-3.2,0],'V₁/V₂ = N₁/N₂ = I₂/I₁',{c:COL.red,b:1,sz:24});B.T([-4.4,-2.2,0],'V₁',{b:1});B.T([4.4,-2.2,0],'V₂',{b:1});
+  B.T([-4.4,0,0],'NΓéü',{c:COL.red,b:1,sz:28});B.T([4.4,0,0],'NΓéé',{c:COL.teal,b:1,sz:28});B.T([0,0,0],'flux ╬ª in iron core',{c:COL.gold,b:1});B.T([0,3.2,0],'E = 4.44 f N ╬ªm',{b:1,sz:26});B.T([0,-3.2,0],'VΓéü/VΓéé = NΓéü/NΓéé = IΓéé/IΓéü',{c:COL.red,b:1,sz:24});B.T([-4.4,-2.2,0],'VΓéü',{b:1});B.T([4.4,-2.2,0],'VΓéé',{b:1});
   B.s(1);B.dyn((t,b)=>{const m=sin(t*1.2)*2.2;for(let i=0;i<6;i++)b.C([2.6+i*.28,0,0],1.2,{n:'x',c:COL.teal,w:2});b.X([m-1.2,0,0],[2,1,1],{f:COL.red,a:.4});b.X([m+.8,0,0],[2,1,1],{f:COL.blue,a:.4});b.T([m-1.2,0,0],'N',{b:1,c:COL.red,sz:24});b.T([m+.8,0,0],'S',{b:1,c:COL.blue,sz:24});b.A([3.5,-1.6,0],[3.5+cos(t*1.2)*1.2,-1.6,0],{c:COL.gold,w:3.2})});
-  B.T([0,2.5,0],'e = −N dΦ/dt',{b:1,sz:28});B.T([3.6,-2.2,0],'induced current (needle)',{c:COL.gold,b:1,sz:19});B.T([-3.2,-2.2,0],'Lenz: opposes the change',{c:COL.red,b:1});
+  B.T([0,2.5,0],'e = ΓêÆN d╬ª/dt',{b:1,sz:28});B.T([3.6,-2.2,0],'induced current (needle)',{c:COL.gold,b:1,sz:19});B.T([-3.2,-2.2,0],'Lenz: opposes the change',{c:COL.red,b:1});
   B.s(2);B.X([-3.6,0,0],[1.3,3,2.4],{f:COL.red,a:.25});B.X([3.6,0,0],[1.3,3,2.4],{f:COL.blue,a:.25});B.T([-3.6,0,1.4],'N',{b:1,c:COL.red,sz:34});B.T([3.6,0,1.4],'S',{b:1,c:COL.blue,sz:34});B.A([-2.5,.2,1.4],[2.5,.2,1.4],{c:COL.gray,w:2});B.T([0,.8,1.4],'B',{b:1,sz:24});
   B.dyn((t,b)=>{const a=t*1.2,r=1.5;const p1=[r*cos(a),r*sin(a)],p2=[-p1[0],-p1[1]];b.L([[p1[0],p1[1],-1.1],[p1[0],p1[1],1.1],[p2[0],p2[1],1.1],[p2[0],p2[1],-1.1],[p1[0],p1[1],-1.1]],{c:COL.gold,w:3.4});b.A([p1[0],p1[1],0],[p1[0],p1[1]+.9*cos(a),0],{c:COL.red,w:3});b.A([p2[0],p2[1],0],[p2[0],p2[1]-.9*cos(a),0],{c:COL.red,w:3});b.C([0,0,1.7],.5,{n:'z',c:COL.ink,w:2.4});b.L([[0,-.5,1.7],[0,.5,1.7]],{c:COL.paper,w:5})});
   B.T([0,2.8,0],'F = B I L',{c:COL.red,b:1,sz:26});B.T([0,-2.8,0],'commutator keeps the push in one direction',{sz:20});B.T([2.1,-1.5,1.8],'brush',{sz:18,c:COL.gray});
   B.s(3);B.C([0,0,0],3.2,{n:'z',c:COL.gray,w:2});[0,1,2].forEach(k=>{const a=PI/2+k*2*PI/3,c=[COL.red,COL.gold,COL.blue][k];B.X([cos(a)*3.2,sin(a)*3.2,0],[.9,.9,.9],{f:c,a:.35});B.X([-cos(a)*3.2,-sin(a)*3.2,0],[.9,.9,.9],{f:c,a:.35});B.T([cos(a)*3.9,sin(a)*3.9,0],['R','Y','B'][k],{b:1,c,sz:24})});
   B.dyn((t,b)=>{const a=t*1.6;b.A([0,0,0],[cos(a)*2.4,sin(a)*2.4,0],{c:COL.red,w:4});b.C([0,0,0],1.2,{n:'z',c:COL.ink,w:2.4});const r=a*.85;for(let k=0;k<4;k++){const g=r+k*PI/2;b.L([[cos(g)*.3,sin(g)*.3,0],[cos(g)*1.2,sin(g)*1.2,0]],{c:COL.ink,w:3})}});
-  B.T([0,-4.2,0],'N_s = 120 f / P     slip s = (N_s − N)/N_s',{b:1,sz:23});B.T([0,0,.9],'rotor',{sz:18,c:COL.gray,dy:26});B.T([-4.8,2.8,0],'rotating field',{c:COL.red,b:1});
-  B.s(4);B.dyn((t,b,p={})=>{const n1=Math.round(p.turnsN1??200),n2=Math.round(p.turnsN2??100),v1=p.voltageV1??220;const k=n2/n1,v2=v1*k,isStepUp=n2>n1,typeStr=n2===n1?'1:1 Isolation':isStepUp?'Step-Up Transformer':'Step-Down Transformer';b.X([-3,0,0],[.9,5,1],{f:COL.gray});b.X([3,0,0],[.9,5,1],{f:COL.gray});b.X([0,2.3,0],[6.9,.4,1],{f:COL.gray});b.X([0,-2.3,0],[6.9,.4,1],{f:COL.gray});const cd1=Math.round(8+(n1/500)*24);b.F(u=>[-3+cos(u*cd1*2*PI)*.85,-1.6+u*3.2,sin(u*cd1*2*PI)*.85],0,1,{c:COL.red,w:2.2,seg:120});const cd2=Math.round(8+(n2/500)*24);b.F(u=>[3+cos(u*cd2*2*PI)*.85,-1.6+u*3.2,sin(u*cd2*2*PI)*.85],0,1,{c:COL.teal,w:2.2,seg:120});for(let i=0;i<8;i++){const s=((t*.2+i/8)%1)*4,per=[[-3,-1.9],[3,-1.9],[3,1.9],[-3,1.9]],seg=Math.floor(s),u=s-seg,p0=per[seg%4],p1=per[(seg+1)%4];b.D([p0[0]+(p1[0]-p0[0])*u,p0[1]+(p1[1]-p0[1])*u,.6],.12,{f:COL.gold});}b.T([0,3.3,0],`${typeStr} (K = ${k.toFixed(2)})`,{c:isStepUp?COL.teal:COL.red,b:1,sz:24});b.T([-4.5,1.8,0],`N₁ = ${n1}`,{c:COL.red,b:1,sz:22});b.T([-4.5,-1.8,0],`V₁ = ${v1} V`,{c:COL.ink,b:1,sz:22});b.T([4.5,1.8,0],`N₂ = ${n2}`,{c:COL.teal,b:1,sz:22});b.T([4.5,-1.8,0],`V₂ = ${v2.toFixed(1)} V`,{c:isStepUp?COL.teal:COL.red,b:1,sz:24});b.T([0,-3.3,0],`V₂/V₁ = N₂/N₁ = K  |  E = 4.44 f N Φ_m`,{c:COL.ink,b:1,sz:21});});
+  B.T([0,-4.2,0],'N_s = 120 f / P     slip s = (N_s ΓêÆ N)/N_s',{b:1,sz:23});B.T([0,0,.9],'rotor',{sz:18,c:COL.gray,dy:26});B.T([-4.8,2.8,0],'rotating field',{c:COL.red,b:1});
+  B.s(4);B.dyn((t,b,p={})=>{const n1=Math.round(p.turnsN1??200),n2=Math.round(p.turnsN2??100),v1=p.voltageV1??220;const k=n2/n1,v2=v1*k,isStepUp=n2>n1,typeStr=n2===n1?'1:1 Isolation':isStepUp?'Step-Up Transformer':'Step-Down Transformer';b.X([-3,0,0],[.9,5,1],{f:COL.gray});b.X([3,0,0],[.9,5,1],{f:COL.gray});b.X([0,2.3,0],[6.9,.4,1],{f:COL.gray});b.X([0,-2.3,0],[6.9,.4,1],{f:COL.gray});const cd1=Math.round(8+(n1/500)*24);b.F(u=>[-3+cos(u*cd1*2*PI)*.85,-1.6+u*3.2,sin(u*cd1*2*PI)*.85],0,1,{c:COL.red,w:2.2,seg:120});const cd2=Math.round(8+(n2/500)*24);b.F(u=>[3+cos(u*cd2*2*PI)*.85,-1.6+u*3.2,sin(u*cd2*2*PI)*.85],0,1,{c:COL.teal,w:2.2,seg:120});for(let i=0;i<8;i++){const s=((t*.2+i/8)%1)*4,per=[[-3,-1.9],[3,-1.9],[3,1.9],[-3,1.9]],seg=Math.floor(s),u=s-seg,p0=per[seg%4],p1=per[(seg+1)%4];b.D([p0[0]+(p1[0]-p0[0])*u,p0[1]+(p1[1]-p0[1])*u,.6],.12,{f:COL.gold});}b.T([0,3.3,0],`${typeStr} (K = ${k.toFixed(2)})`,{c:isStepUp?COL.teal:COL.red,b:1,sz:24});b.T([-4.5,1.8,0],`NΓéü = ${n1}`,{c:COL.red,b:1,sz:22});b.T([-4.5,-1.8,0],`VΓéü = ${v1} V`,{c:COL.ink,b:1,sz:22});b.T([4.5,1.8,0],`NΓéé = ${n2}`,{c:COL.teal,b:1,sz:22});b.T([4.5,-1.8,0],`VΓéé = ${v2.toFixed(1)} V`,{c:isStepUp?COL.teal:COL.red,b:1,sz:24});b.T([0,-3.3,0],`VΓéé/VΓéü = NΓéé/NΓéü = K  |  E = 4.44 f N ╬ª_m`,{c:COL.ink,b:1,sz:21});});
 }};
 
 SC['beee:3']={cam:{yaw:-.4,pitch:.3},steps:[
- {t:'Diode, forward bias: the valve is open',d:'A p-n junction has a thin depletion layer. Connect + to p and − to n and the applied voltage shrinks that layer, so carriers cross and current flows once V exceeds the cut-in voltage (about 0.7 V for silicon, 0.3 V for germanium). Intrinsic and extrinsic semiconductors, and p-n junction construction, are the base of every device in this unit.'},
+ {t:'Diode, forward bias: the valve is open',d:'A p-n junction has a thin depletion layer. Connect + to p and ΓêÆ to n and the applied voltage shrinks that layer, so carriers cross and current flows once V exceeds the cut-in voltage (about 0.7 V for silicon, 0.3 V for germanium). Intrinsic and extrinsic semiconductors, and p-n junction construction, are the base of every device in this unit.'},
  {t:'Reverse bias: the valve is shut',d:'Reverse the battery and the depletion layer widens, blocking current apart from a tiny leakage that grows with temperature. At a high enough reverse voltage the junction breaks down: avalanche (carriers knock out more carriers) or Zener (field pulls electrons across directly). A Zener diode is built to survive breakdown and holds its voltage steady there.',only:true},
- {t:'The diode V–I curve',d:'Forward: almost nothing until the knee near 0.7 V, then the current rises steeply. Reverse: tiny leakage current, then a sharp rise at breakdown. A Zener regulator uses the flat breakdown part, with a series resistor taking the excess voltage.',only:true},
- {t:'Rectifiers: turning AC into DC',d:'Half-wave: one diode passes only the positive half; V_dc = Vm/π, ripple factor 1.21, efficiency 40.6%, PIV = Vm. Full-wave (centre-tap or bridge): both halves are used; V_dc = 2Vm/π, ripple factor 0.48, efficiency 81.2%. A filter capacitor charges at the peaks and fills the gaps, smoothing the output.',only:true},
- {t:'The BJT: a small base current controls a large collector current',d:'An NPN transistor is a thin p-type base between two n regions. A little base current lets many electrons flow from emitter to collector: I_E = I_B + I_C, β = I_C/I_B, α = I_C/I_E, β = α/(1 − α). In cut-off it is an open switch, in saturation a closed switch, and in the active region an amplifier (common-emitter).',only:true}],
+ {t:'The diode VΓÇôI curve',d:'Forward: almost nothing until the knee near 0.7 V, then the current rises steeply. Reverse: tiny leakage current, then a sharp rise at breakdown. A Zener regulator uses the flat breakdown part, with a series resistor taking the excess voltage.',only:true},
+ {t:'Rectifiers: turning AC into DC',d:'Half-wave: one diode passes only the positive half; V_dc = Vm/╧Ç, ripple factor 1.21, efficiency 40.6%, PIV = Vm. Full-wave (centre-tap or bridge): both halves are used; V_dc = 2Vm/╧Ç, ripple factor 0.48, efficiency 81.2%. A filter capacitor charges at the peaks and fills the gaps, smoothing the output.',only:true},
+ {t:'The BJT: a small base current controls a large collector current',d:'An NPN transistor is a thin p-type base between two n regions. A little base current lets many electrons flow from emitter to collector: I_E = I_B + I_C, ╬▓ = I_C/I_B, ╬▒ = I_C/I_E, ╬▓ = ╬▒/(1 ΓêÆ ╬▒). In cut-off it is an open switch, in saturation a closed switch, and in the active region an amplifier (common-emitter).',only:true}],
  build(B){
   const jn=(w,tag,fwd)=>{B.X([-1.8,0,0],[3.4,1.6,2],{f:COL.red,a:.14});B.X([1.8,0,0],[3.4,1.6,2],{f:COL.blue,a:.14});B.X([0,0,0],[w,1.6,2],{f:COL.gold,a:.45});B.T([-2.4,-1.4,1.2],'p',{c:COL.red,b:1,sz:30});B.T([2.4,-1.4,1.2],'n',{c:COL.blue,b:1,sz:30});B.T([0,-1.7,0],'depletion layer',{c:COL.gold,b:1,sz:19});
    B.dyn((t,b)=>{for(let i=0;i<5;i++){const u=(t*.4+i*.2)%1;if(fwd){b.D([-3+u*6,-.4+i*.2,-.5+(i%3)*.5],.09,{f:i%2?COL.teal:COL.red})}else{b.D([-3.2+(i%3)*.4+sin(t*2+i)*.05,-.3+i*.15,-.5],.09,{f:COL.red});b.D([3.2-(i%3)*.4,-.3+i*.15,.4],.09,{f:COL.teal})}}});B.T([0,2.9,0],tag,{b:1,sz:24})};
-  B.s(0);jn(.7,'forward bias: V > 0.7 V, current flows',true);B.L([[-3.5,.2,0],[-4.6,.2,0],[-4.6,3.2,0],[4.6,3.2,0],[4.6,.2,0],[3.5,.2,0]],{c:COL.ink,w:2.4});B.L([[-.2,3.1,0],[-.2,3.5,0]],{c:COL.ink,w:4});B.L([[.2,2.9,0],[.2,3.7,0]],{c:COL.ink,w:4});B.T([0,3.9,0],'+ −',{b:1,sz:24});B.A([-4.6,1.5,0],[-4.6,2.5,0],{c:COL.gold,w:3});B.T([-5.4,1.9,0],'I',{b:1,sz:26});
-  B.s(1);jn(2.4,'reverse bias: wide layer, only leakage',false);B.L([[-3.5,.2,0],[-4.6,.2,0],[-4.6,3.2,0],[4.6,3.2,0],[4.6,.2,0],[3.5,.2,0]],{c:COL.ink,w:2.4});B.T([0,3.9,0],'+ −  (reversed)',{b:1,sz:24});B.T([0,-2.5,0],'too much reverse V → breakdown (avalanche / Zener)',{c:COL.red,sz:21,b:1});
+  B.s(0);jn(.7,'forward bias: V > 0.7 V, current flows',true);B.L([[-3.5,.2,0],[-4.6,.2,0],[-4.6,3.2,0],[4.6,3.2,0],[4.6,.2,0],[3.5,.2,0]],{c:COL.ink,w:2.4});B.L([[-.2,3.1,0],[-.2,3.5,0]],{c:COL.ink,w:4});B.L([[.2,2.9,0],[.2,3.7,0]],{c:COL.ink,w:4});B.T([0,3.9,0],'+ ΓêÆ',{b:1,sz:24});B.A([-4.6,1.5,0],[-4.6,2.5,0],{c:COL.gold,w:3});B.T([-5.4,1.9,0],'I',{b:1,sz:26});
+  B.s(1);jn(2.4,'reverse bias: wide layer, only leakage',false);B.L([[-3.5,.2,0],[-4.6,.2,0],[-4.6,3.2,0],[4.6,3.2,0],[4.6,.2,0],[3.5,.2,0]],{c:COL.ink,w:2.4});B.T([0,3.9,0],'+ ΓêÆ  (reversed)',{b:1,sz:24});B.T([0,-2.5,0],'too much reverse V ΓåÆ breakdown (avalanche / Zener)',{c:COL.red,sz:21,b:1});
   B.s(2);B.A([-4.6,0,0],[4.8,0,0],{c:COL.ink,w:2.2});B.A([0,-2.2,0],[0,3.6,0],{c:COL.ink,w:2.2});B.T([4.9,-.4,0],'V',{b:1});B.T([.3,3.7,0],'I',{b:1});B.F(x=>[x,Math.max(0,(exp((x-1.5)*1.8)-1)*.25),0],0,3.2,{c:COL.red,w:3.4,seg:60});B.L([[-4,-.05,0],[0,-.05,0]],{c:COL.red,w:3});B.L([[-4,-.05,0],[-4.2,-.4,0],[-4.2,-2,0]],{c:COL.teal,w:3.4});
   B.T([1.5,-.5,0],'knee 0.7 V',{b:1,sz:20});B.T([3.2,2.2,0],'forward: steep',{c:COL.red,b:1});B.T([-3,.6,0],'reverse leakage',{sz:19});B.T([-3.4,-2.2,0],'breakdown (Zener region)',{c:COL.teal,b:1,sz:20});
   B.s(3);B.dyn((t,b)=>{const ph=t*2;const ft=x=>sin(x*1.5-ph);b.F(x=>[x,3+1.1*ft(x),0],-4.5,4.5,{c:COL.ink,w:2.8,seg:120});b.F(x=>[x,.4+Math.max(0,1.1*ft(x)),0],-4.5,4.5,{c:COL.red,w:3,seg:120});b.F(x=>[x,-2.6+abs(1.1*ft(x)),0],-4.5,4.5,{c:COL.teal,w:3,seg:120});b.F(x=>{const v=abs(sin(x*1.5-ph)),r=.35*(1-v*0);return[x,-2.6-3.0+0*0,0]},0,0,{})});
-  B.T([-4.8,3,0],'input',{b:1,a:'right'});B.T([-4.8,.4,0],'half-wave',{c:COL.red,b:1,a:'right'});B.T([-4.8,-2.4,0],'full-wave',{c:COL.teal,b:1,a:'right'});B.T([5,.4,0],'Vdc = Vm/π',{c:COL.red,a:'left',sz:19});B.T([5,-2.4,0],'Vdc = 2Vm/π',{c:COL.teal,a:'left',sz:19});B.T([0,-3.8,0],'ripple 1.21 → 0.48 · efficiency 40.6% → 81.2%',{b:1,sz:21});
+  B.T([-4.8,3,0],'input',{b:1,a:'right'});B.T([-4.8,.4,0],'half-wave',{c:COL.red,b:1,a:'right'});B.T([-4.8,-2.4,0],'full-wave',{c:COL.teal,b:1,a:'right'});B.T([5,.4,0],'Vdc = Vm/╧Ç',{c:COL.red,a:'left',sz:19});B.T([5,-2.4,0],'Vdc = 2Vm/╧Ç',{c:COL.teal,a:'left',sz:19});B.T([0,-3.8,0],'ripple 1.21 ΓåÆ 0.48 ┬╖ efficiency 40.6% ΓåÆ 81.2%',{b:1,sz:21});
   B.s(4);B.X([-2.6,0,0],[2.4,2,2.2],{f:COL.blue,a:.2});B.X([0,0,0],[.7,2,2.2],{f:COL.red,a:.35});B.X([2.6,0,0],[2.4,2,2.2],{f:COL.blue,a:.2});B.T([-2.6,-1.5,1.2],'N  emitter',{c:COL.blue,b:1});B.T([0,-1.5,1.2],'P base',{c:COL.red,b:1});B.T([2.6,-1.5,1.2],'N  collector',{c:COL.blue,b:1});
-  B.A([-3.6,.2,1.4],[3.8,.2,1.4],{c:COL.teal,w:6});B.A([0,2.6,0],[0,1.1,0],{c:COL.red,w:2.2});B.T([0,3,0],'I_B (small)',{c:COL.red,b:1});B.T([4,.2,1.4],'I_C (large)',{c:COL.teal,b:1,a:'left'});B.T([0,-2.6,0],'I_E = I_B + I_C     β = I_C / I_B',{b:1,sz:24});B.dyn((t,b)=>{for(let i=0;i<6;i++){const u=(t*.5+i/6)%1;b.D([-3.4+u*7,.2+sin(i*3)*.4,-.5+(i%3)*.4],.09,{f:COL.teal})}})}};
+  B.A([-3.6,.2,1.4],[3.8,.2,1.4],{c:COL.teal,w:6});B.A([0,2.6,0],[0,1.1,0],{c:COL.red,w:2.2});B.T([0,3,0],'I_B (small)',{c:COL.red,b:1});B.T([4,.2,1.4],'I_C (large)',{c:COL.teal,b:1,a:'left'});B.T([0,-2.6,0],'I_E = I_B + I_C     ╬▓ = I_C / I_B',{b:1,sz:24});B.dyn((t,b)=>{for(let i=0;i<6;i++){const u=(t*.5+i/6)%1;b.D([-3.4+u*7,.2+sin(i*3)*.4,-.5+(i%3)*.4],.09,{f:COL.teal})}})}};
 
 SC['beee:4']={cam:{yaw:-.6,pitch:.35},steps:[
- {t:'Boolean logic on a cube',d:'Three inputs A, B, C give 8 combinations, the 8 corners of a cube. AND is 1 only at corner 111. OR is 1 at every corner except 000. Boolean algebra simplifies these functions, and De Morgan’s laws swap AND and OR: (A·B)′ = A′ + B′ and (A + B)′ = A′·B′. Binary, octal and hex are just ways of writing these corner labels.'},
- {t:'NAND is universal',d:'Any gate can be built from NAND alone. NOT: join both inputs. AND: NAND followed by a NOT. OR: invert both inputs first, then NAND, because (A′·B′)′ = A + B. NOR is universal in the same way. This is why chips are mass-produced from one gate type.',only:true},
- {t:'Regulator ICs: 7805 and 7912',d:'The 78xx family gives a fixed positive voltage; 79xx gives a fixed negative one. IC 7805 turns a higher, rippled input into a steady +5 V; IC 7912 gives −12 V. Three pins: input, ground, output. Add small capacitors on input and output for stability.',only:true},
+ {t:'Boolean logic on a cube',d:'Three inputs A, B, C give 8 combinations, the 8 corners of a cube. AND is 1 only at corner 111. OR is 1 at every corner except 000. Boolean algebra simplifies these functions, and De MorganΓÇÖs laws swap AND and OR: (A┬╖B)ΓÇ▓ = AΓÇ▓ + BΓÇ▓ and (A + B)ΓÇ▓ = AΓÇ▓┬╖BΓÇ▓. Binary, octal and hex are just ways of writing these corner labels.'},
+ {t:'NAND is universal',d:'Any gate can be built from NAND alone. NOT: join both inputs. AND: NAND followed by a NOT. OR: invert both inputs first, then NAND, because (AΓÇ▓┬╖BΓÇ▓)ΓÇ▓ = A + B. NOR is universal in the same way. This is why chips are mass-produced from one gate type.',only:true},
+ {t:'Regulator ICs: 7805 and 7912',d:'The 78xx family gives a fixed positive voltage; 79xx gives a fixed negative one. IC 7805 turns a higher, rippled input into a steady +5 V; IC 7912 gives ΓêÆ12 V. Three pins: input, ground, output. Add small capacitors on input and output for stability.',only:true},
  {t:'Generation, transmission, distribution',d:'Power is generated at moderate voltage, stepped up by a transformer so the same power travels at lower current and loses less in the lines, carried by overhead lines, stepped down near the city, then distributed to homes. Sensors and transducers turn physical quantities into electrical signals for measurement.',only:true},
  {t:'Protection and earthing',d:'A fuse melts once; an MCB trips thermally (slow overload) and magnetically (instant short circuit) and can be reset; an MCCB does the same for higher currents. Earthing gives a fault current a low-resistance path to ground, so the protective device trips and the metal body of an appliance stays near 0 V instead of being live.',only:true}],
  build(B){
   B.s(0);const V=[];for(let a=0;a<2;a++)for(let b=0;b<2;b++)for(let c=0;c<2;c++)V.push([a,b,c]);const pos=v=>[(v[0]-.5)*3.6,(v[1]-.5)*3.6,(v[2]-.5)*3.6];
   V.forEach(v=>V.forEach(w=>{const d=Math.abs(v[0]-w[0])+Math.abs(v[1]-w[1])+Math.abs(v[2]-w[2]);if(d===1&&(v[0]+v[1]*2+v[2]*4)<(w[0]+w[1]*2+w[2]*4))B.L([pos(v),pos(w)],{c:COL.gray,w:2})}));
   V.forEach(v=>{const p=pos(v),and=v[0]&&v[1]&&v[2],or=v[0]||v[1]||v[2];B.D(p,and?.28:.2,{f:and?COL.red:or?COL.gold:COL.paper});B.T([p[0],p[1]-.55,p[2]],''+v[0]+v[1]+v[2],{sz:19})});
-  B.T([-4.6,2.8,0],'AND = 1 here',{c:COL.red,b:1,a:'left'});B.T([-4.6,2.2,0],'OR = 1 on all gold + red',{c:COL.gold,b:1,a:'left'});B.T([0,-3.4,0],'(A·B)′ = A′ + B′   (A+B)′ = A′·B′',{b:1,sz:22});
+  B.T([-4.6,2.8,0],'AND = 1 here',{c:COL.red,b:1,a:'left'});B.T([-4.6,2.2,0],'OR = 1 on all gold + red',{c:COL.gold,b:1,a:'left'});B.T([0,-3.4,0],'(A┬╖B)ΓÇ▓ = AΓÇ▓ + BΓÇ▓   (A+B)ΓÇ▓ = AΓÇ▓┬╖BΓÇ▓',{b:1,sz:22});
   B.s(1);const gate=(x,y,z,t)=>{B.X([x,y,z],[1.4,.9,.5],{f:COL.gold,a:.3});B.T([x,y,z+.4],t,{b:1,sz:19})};const wr=(a,b)=>B.L([a,b],{c:COL.ink,w:2.2});
-  B.T([-5,2.4,0],'NOT',{c:COL.red,b:1,sz:24});wr([-4.6,2.4,0],[-3.2,2.4,0]);gate(-2.5,2.4,0,'NAND');wr([-1.8,2.4,0],[-.6,2.4,0]);B.T([.1,2.4,0],'A′',{b:1,sz:22});B.T([-4,3.1,0],'tie inputs together',{sz:18,c:COL.gray});
-  B.T([-5,.2,0],'AND',{c:COL.red,b:1,sz:24});gate(-2.5,.2,0,'NAND');wr([-1.8,.2,0],[-1.1,.2,0]);gate(-.3,.2,0,'NOT');wr([.4,.2,0],[1.2,.2,0]);B.T([1.7,.2,0],'A·B',{b:1,sz:22});
+  B.T([-5,2.4,0],'NOT',{c:COL.red,b:1,sz:24});wr([-4.6,2.4,0],[-3.2,2.4,0]);gate(-2.5,2.4,0,'NAND');wr([-1.8,2.4,0],[-.6,2.4,0]);B.T([.1,2.4,0],'AΓÇ▓',{b:1,sz:22});B.T([-4,3.1,0],'tie inputs together',{sz:18,c:COL.gray});
+  B.T([-5,.2,0],'AND',{c:COL.red,b:1,sz:24});gate(-2.5,.2,0,'NAND');wr([-1.8,.2,0],[-1.1,.2,0]);gate(-.3,.2,0,'NOT');wr([.4,.2,0],[1.2,.2,0]);B.T([1.7,.2,0],'A┬╖B',{b:1,sz:22});
   B.T([-5,-2,0],'OR',{c:COL.red,b:1,sz:24});gate(-3.2,-1.6,0,'NOT');gate(-3.2,-2.5,0,'NOT');wr([-2.5,-1.6,0],[-1.7,-2.0,0]);wr([-2.5,-2.5,0],[-1.7,-2.0,0]);gate(-1,-2,0,'NAND');wr([-.3,-2,0],[.6,-2,0]);B.T([1.3,-2,0],'A + B',{b:1,sz:22});B.T([4.3,0,0],'NOR is universal too',{c:COL.gray,sz:20});
   B.s(2);B.X([0,0,0],[3.4,1.2,2],{f:COL.ink,a:.6});[-1,0,1].forEach((k,i)=>{B.X([k*1,-1.1,0],[.3,1.0,.3],{f:COL.gray});B.T([k*1,-2,0],['IN','GND','OUT'][i],{b:1,sz:20})});B.T([0,.2,1.1],'7805',{c:COL.paper,b:1,sz:30});
-  B.F(x=>[-6+x,1+sin(x*8)*.15+Math.sin(x*1.3)*.5,0],0,3.6,{c:COL.red,w:2.6,seg:80});B.A([-3,2,0],[-1.8,.9,0],{c:COL.red,w:2});B.T([-4.2,2.3,0],'noisy higher input',{c:COL.red,b:1,sz:20});B.L([[2,.6,0],[6,.6,0]],{c:COL.teal,w:3.4});B.T([4.1,1.3,0],'steady +5 V',{c:COL.teal,b:1});B.T([0,-3.1,0],'78xx: positive    79xx: negative (7912 → −12 V)',{b:1,sz:21});
+  B.F(x=>[-6+x,1+sin(x*8)*.15+Math.sin(x*1.3)*.5,0],0,3.6,{c:COL.red,w:2.6,seg:80});B.A([-3,2,0],[-1.8,.9,0],{c:COL.red,w:2});B.T([-4.2,2.3,0],'noisy higher input',{c:COL.red,b:1,sz:20});B.L([[2,.6,0],[6,.6,0]],{c:COL.teal,w:3.4});B.T([4.1,1.3,0],'steady +5 V',{c:COL.teal,b:1});B.T([0,-3.1,0],'78xx: positive    79xx: negative (7912 ΓåÆ ΓêÆ12 V)',{b:1,sz:21});
   B.s(3);B.Y([-5.4,-1.5,0],.8,1.6,{f:COL.teal,c:COL.teal});B.T([-5.4,-2.1,0],'generation',{b:1,sz:19});B.X([-3.4,-.9,0],[.9,1.2,.9],{f:COL.gold,a:.3});B.T([-3.4,-2.1,0],'step-up',{b:1,sz:19,c:COL.gold});
   const tw=x=>{B.L([[x-.35,-1.5,0],[x,.9,0],[x+.35,-1.5,0]],{c:COL.ink,w:2.2});B.L([[x-.5,.3,0],[x+.5,.3,0]],{c:COL.ink,w:2.2});B.L([[x-.4,-.4,0],[x+.4,-.4,0]],{c:COL.ink,w:2})};[-1.6,0,1.6].forEach(tw);B.F(x=>[x,.3-Math.sin((x+2.8)/1.6*PI)*.18,0],-3,2,{c:COL.red,w:2.4,seg:50});B.T([0,1.5,0],'transmission',{b:1,sz:19});
   B.X([3.4,-.9,0],[.9,1.2,.9],{f:COL.gold,a:.3});B.T([3.4,-2.1,0],'step-down',{b:1,sz:19,c:COL.gold});[5.2,6.2].forEach(x=>{B.X([x,-1.2,0],[.7,.6,.7],{f:COL.gray});B.P([[x-.45,-.9,0],[x,-.4,0],[x+.45,-.9,0]],{f:COL.red,a:.3})});B.T([5.7,-2.1,0],'distribution',{b:1,sz:19});B.T([0,-3.2,0],'step-up lowers current, so lowers line loss',{c:COL.red,b:1,sz:21});
   B.s(4);B.X([-2,-.2,0],[2.6,2.4,2],{f:COL.gray,a:.2});B.T([-2,-.2,1.2],'appliance',{sz:19});B.X([-2,-2.2,0],[8,.4,3],{f:COL.gold,a:.2});B.Y([2.5,-3.4,0],.15,1.5,{f:COL.ink});B.T([3.8,-3.1,0],'earth rod',{sz:18});
   B.L([[-6,1.3,0],[-4.5,1.3,0],[-3.3,.6,0]],{c:COL.red,w:3});B.X([-5.2,1.3,0],[.8,.6,.6],{f:COL.teal,a:.4});B.T([-5.2,2,0],'fuse / MCB / MCCB',{b:1,sz:19,c:COL.teal});B.T([-3.8,1.3,0],'live',{c:COL.red,sz:18});
-  B.L([[-2,-1.4,0],[-2,-1.9,0],[2.5,-1.9,0],[2.5,-2.4,0]],{c:COL.green,w:3.2});B.A([-2.6,-.8,0],[-2.6,-1.7,0],{c:COL.red,w:3});B.T([0,-1.3,0],'earth wire: low-resistance path',{c:COL.green,b:1,sz:20});B.T([-3.4,-.7,0],'fault current',{c:COL.red,b:1,sz:19,a:'right'});B.T([0,2.3,0],'protective device trips · body stays ≈ 0 V',{b:1,sz:23})}};
+  B.L([[-2,-1.4,0],[-2,-1.9,0],[2.5,-1.9,0],[2.5,-2.4,0]],{c:COL.green,w:3.2});B.A([-2.6,-.8,0],[-2.6,-1.7,0],{c:COL.red,w:3});B.T([0,-1.3,0],'earth wire: low-resistance path',{c:COL.green,b:1,sz:20});B.T([-3.4,-.7,0],'fault current',{c:COL.red,b:1,sz:19,a:'right'});B.T([0,2.3,0],'protective device trips ┬╖ body stays Γëê 0 V',{b:1,sz:23})}};
 
 SC['beee:5']={cam:{yaw:-.5,pitch:.4},steps:[
- {t:'Ohm’s law and Kirchhoff’s laws on the bench',d:'Components: resistors (colour code), capacitors, inductors, diodes, LEDs, transistors: identify active versus passive. Vary the source voltage, read V and I, plot V against I: the slope is R. Check KCL at a junction and KVL round a loop with a voltmeter and ammeter. Keep meters in the correct places: ammeter in series, voltmeter in parallel.'},
+ {t:'OhmΓÇÖs law and KirchhoffΓÇÖs laws on the bench',d:'Components: resistors (colour code), capacitors, inductors, diodes, LEDs, transistors: identify active versus passive. Vary the source voltage, read V and I, plot V against I: the slope is R. Check KCL at a junction and KVL round a loop with a voltmeter and ammeter. Keep meters in the correct places: ammeter in series, voltmeter in parallel.'},
  {t:'Rectifiers and the CRO',d:'Connect a half-wave then a full-wave rectifier and watch the output on the oscilloscope: with a filter capacitor the humps fill in. The CRO also measures amplitude, period and frequency of any signal: f = 1/T. Record the waveform with and without the capacitor and compare the ripple.',only:true},
- {t:'Transformer ratio and power factor correction',d:'Measure primary and secondary voltages: V₁/V₂ should equal N₁/N₂ within error. For a coil (inductive) load, current lags voltage; a parallel capacitor draws a leading current that cancels part of it, so the total current falls and the power factor rises toward 1.',only:true},
+ {t:'Transformer ratio and power factor correction',d:'Measure primary and secondary voltages: VΓéü/VΓéé should equal NΓéü/NΓéé within error. For a coil (inductive) load, current lags voltage; a parallel capacitor draws a leading current that cancels part of it, so the total current falls and the power factor rises toward 1.',only:true},
  {t:'Safety bench: fuse, MCB, MCCB, earthing, wiring',d:'Identify cables, wires, fuses; see how a fuse, MCB and MCCB operate; wire a lamp and a fan with regulator through a protective device; measure earth resistance (megger) and practise earthing methods. Rules: earth first, switch off before touching, one hand at a time, never bypass a protective device.',only:true}],
  build(B){
   B.s(0);plot(B,[-4.6,-2.4,0],4.4,4.6,'I','V','Ohm: slope = R');B.L([[-4.6,-2.4,0],[-.4,1.6,0]],{c:COL.red,w:3.2});[[-3.8,-1.6],[-2.8,-.65],[-1.7,.35],[-.9,1.15]].forEach(p=>B.D([p[0],p[1]+sin(p[0]*9)*.08,0],.1,{f:COL.teal}));
-  B.L([[1,-1.6,0],[5,-1.6,0],[5,1.6,0],[1,1.6,0],[1,-1.6,0]],{c:COL.ink,w:2.4});zig(B,2,4,1.6,0,6,.3,{c:COL.red,w:3.2});B.C([5,0,0],.5,{n:'z',c:COL.teal,f:COL.teal,a:.2});B.T([5,0,0],'A',{b:1,sz:20,a:'center'});B.C([3,.3,0],.5,{n:'z',c:COL.gold,f:COL.gold,a:.2});B.T([3,.3,0],'V',{b:1,sz:20});B.T([3,2.4,0],'KVL: ΣV = 0',{b:1,sz:21});B.T([3,-2.4,0],'ammeter in series, voltmeter in parallel',{sz:18,c:COL.gray});
+  B.L([[1,-1.6,0],[5,-1.6,0],[5,1.6,0],[1,1.6,0],[1,-1.6,0]],{c:COL.ink,w:2.4});zig(B,2,4,1.6,0,6,.3,{c:COL.red,w:3.2});B.C([5,0,0],.5,{n:'z',c:COL.teal,f:COL.teal,a:.2});B.T([5,0,0],'A',{b:1,sz:20,a:'center'});B.C([3,.3,0],.5,{n:'z',c:COL.gold,f:COL.gold,a:.2});B.T([3,.3,0],'V',{b:1,sz:20});B.T([3,2.4,0],'KVL: ╬úV = 0',{b:1,sz:21});B.T([3,-2.4,0],'ammeter in series, voltmeter in parallel',{sz:18,c:COL.gray});
   B.s(1);B.X([0,0,0],[5.4,3.4,.7],{f:COL.ink,a:.5});B.P([[-2.3,-1.3,.4],[2.3,-1.3,.4],[2.3,1.3,.4],[-2.3,1.3,.4]],{f:COL.teal,a:.12,c:COL.teal,w:2.4});B.dyn((t,b)=>{const ph=t*3;b.F(x=>[x,Math.max(0,sin(x*2.4-ph))*1.0-.7,.5],-2.2,2.2,{c:COL.red,w:3,seg:80});b.F(x=>[x,abs(sin(x*2.4-ph))*.9-.1+0*0,.5],-2.2,2.2,{c:COL.gold,w:0,seg:2})});
   B.T([0,2.6,0],'CRO: amplitude, period T, f = 1/T',{b:1,sz:22});B.T([0,-2.4,0],'with a filter capacitor the humps fill in',{c:COL.red,b:1,sz:21});
-  B.s(2);B.A([-4.5,0,0],[-1,0,0],{c:COL.red,w:3.4});B.T([-2.8,.5,0],'V',{c:COL.red,b:1});B.A([-4.5,0,0],[-2.2,-1.9,0],{c:COL.gold,w:3.4});B.T([-3.2,-1.4,0],'I lags',{c:COL.gold,b:1,sz:20});B.A([-4.5,0,0],[-1.8,-.9,0],{c:COL.teal,w:3.4});B.T([-1.2,-.9,0],'I after capacitor',{c:COL.teal,b:1,sz:20,a:'left'});B.A([-2.2,-1.9,0],[-1.8,-.9,0],{c:COL.teal,w:2.2,d:[4,3]});B.T([-3,2.2,0],'cosφ rises',{c:COL.green,b:1,sz:22});
-  B.X([2.3,.3,0],[3.4,3,1.4],{f:COL.gray,a:.2});B.F(u=>[1+cos(u*20)*.5,-.8+u*2.6,sin(u*20)*.5],0,1,{c:COL.red,w:2,seg:100});B.F(u=>[3.6+cos(u*12)*.5,-.8+u*2.6,sin(u*12)*.5],0,1,{c:COL.teal,w:2,seg:100});B.T([2.3,2.3,0],'V₁/V₂ = N₁/N₂',{b:1,sz:21});B.T([2.3,-1.6,0],'check within error',{sz:18,c:COL.gray});
+  B.s(2);B.A([-4.5,0,0],[-1,0,0],{c:COL.red,w:3.4});B.T([-2.8,.5,0],'V',{c:COL.red,b:1});B.A([-4.5,0,0],[-2.2,-1.9,0],{c:COL.gold,w:3.4});B.T([-3.2,-1.4,0],'I lags',{c:COL.gold,b:1,sz:20});B.A([-4.5,0,0],[-1.8,-.9,0],{c:COL.teal,w:3.4});B.T([-1.2,-.9,0],'I after capacitor',{c:COL.teal,b:1,sz:20,a:'left'});B.A([-2.2,-1.9,0],[-1.8,-.9,0],{c:COL.teal,w:2.2,d:[4,3]});B.T([-3,2.2,0],'cos╧å rises',{c:COL.green,b:1,sz:22});
+  B.X([2.3,.3,0],[3.4,3,1.4],{f:COL.gray,a:.2});B.F(u=>[1+cos(u*20)*.5,-.8+u*2.6,sin(u*20)*.5],0,1,{c:COL.red,w:2,seg:100});B.F(u=>[3.6+cos(u*12)*.5,-.8+u*2.6,sin(u*12)*.5],0,1,{c:COL.teal,w:2,seg:100});B.T([2.3,2.3,0],'VΓéü/VΓéé = NΓéü/NΓéé',{b:1,sz:21});B.T([2.3,-1.6,0],'check within error',{sz:18,c:COL.gray});
   B.s(3);const dev=(x,t,col,h)=>{B.X([x,0,0],[1.6,h,1],{f:col,a:.3});B.T([x,h/2+.5,0],t,{b:1,sz:21,c:col})};dev(-4.4,'fuse',COL.red,1.4);dev(-1.8,'MCB',COL.teal,2);dev(.8,'MCCB',COL.gold,2.8);B.T([-4.4,-1.2,0],'melts once',{sz:18});B.T([-1.8,-1.4,0],'trips, resets',{sz:18});B.T([.8,-1.8,0],'higher current ratings',{sz:18});
-  B.Y([4.2,-2.4,0],.12,1.4,{f:COL.ink});B.L([[4.2,-1,0],[4.2,-.2,0],[3.4,.4,0]],{c:COL.green,w:3});B.X([3.2,.7,0],[1,.7,.6],{f:COL.gray});B.T([4.2,-2.9,0],'earth rod + megger',{b:1,sz:19});B.T([2,2.6,0],'earth first · switch off first · one hand only',{c:COL.red,b:1,sz:21})}};
+  B.Y([4.2,-2.4,0],.12,1.4,{f:COL.ink});B.L([[4.2,-1,0],[4.2,-.2,0],[3.4,.4,0]],{c:COL.green,w:3});B.X([3.2,.7,0],[1,.7,.6],{f:COL.gray});B.T([4.2,-2.9,0],'earth rod + megger',{b:1,sz:19});B.T([2,2.6,0],'earth first ┬╖ switch off first ┬╖ one hand only',{c:COL.red,b:1,sz:21})}};
 const lab=(B,p,t,o={})=>B.T(p,t,Object.assign({sz:20,b:1},o));
 SC['cfet:0']={cam:{yaw:-.4,pitch:.3},steps:[
  {t:'The Von Neumann machine',d:'One memory holds both the program and its data. The CPU (ALU for arithmetic and logic, control unit to direct traffic, registers for tiny fast storage) repeats a cycle: fetch an instruction from memory, decode it, execute it, store the result. Input and output connect the machine to people. Machine language is binary; assembly gives instructions names; high-level languages are closest to English.'},
  {t:'Memory hierarchy',d:'The closer to the CPU, the faster, smaller and costlier. Registers are fastest and hold a few values; cache holds recently used data; RAM holds running programs; disk or SSD stores everything permanently but slowly. The hierarchy works because programs reuse data they just used.',only:true},
- {t:'Why cache matters',d:'The CPU can do thousands of operations in the time one RAM access takes. A cache hit costs a few cycles; a miss goes to RAM and costs far more. Average access time = hit time + miss rate × miss penalty, so a good hit rate speeds the whole machine up. The motherboard connects CPU, RAM and devices through buses.',only:true},
+ {t:'Why cache matters',d:'The CPU can do thousands of operations in the time one RAM access takes. A cache hit costs a few cycles; a miss goes to RAM and costs far more. Average access time = hit time + miss rate ├ù miss penalty, so a good hit rate speeds the whole machine up. The motherboard connects CPU, RAM and devices through buses.',only:true},
  {t:'Compiler versus interpreter',d:'A compiler translates the whole program into machine code first, reports all errors together, then you run the fast result (C, C++). An interpreter translates and runs one line at a time, stopping at the first error (Python). Compiled programs run faster; interpreted ones are easier to test.',only:true}],
  build(B){
   B.s(0);bx(B,[0,1.8,0],[5.2,2.6,1.6],'',COL.gray,{});lab(B,[0,3.4,.8],'CPU',{sz:24});bx(B,[-1.6,1.7,.6],[1.5,1,.8],'ALU',COL.teal,{sz:18});bx(B,[0,1.7,.6],[1.5,1,.8],'Control',COL.gold,{sz:18});bx(B,[1.6,1.7,.6],[1.5,1,.8],'Registers',COL.red,{sz:16});
@@ -252,36 +252,36 @@ SC['cfet:0']={cam:{yaw:-.4,pitch:.3},steps:[
   [[[0,.5,0],[0,-1.6,0]],[[-4.2,0,0],[-2.6,.9,0]],[[2.6,.9,0],[4.2,0,0]]].forEach(([a,b2])=>B.L([a,b2],{c:COL.ink,w:3.4}));
   B.dyn((t,b)=>{const st=Math.floor(t/1.3)%4,u=(t/1.3)%1,L=[['fetch',[0,-1.6,0],[0,.5,0]],['decode',[0,.5,0],[0,1.7,0]],['execute',[0,1.7,0],[-1.6,1.7,0]],['store',[0,1.7,0],[0,-1.6,0]]][st];b.D(v3.lerp(L[1],L[2],u),.2,{f:COL.red});b.T([2.9,-.6,0],'cycle: '+L[0],{c:COL.red,b:1,sz:24,a:'left'})});
   B.s(1);[['registers',1.6,COL.red],['cache',3.2,COL.gold],['RAM',5,COL.teal],['disk / SSD',7,COL.blue]].forEach(([l,w,c],i)=>{B.X([0,2.4-i*1.6,0],[w,1.1,2.4],{f:c,a:.32});lab(B,[0,2.4-i*1.6,1.3],l,{sz:22})});B.A([6.2,-2.8,0],[6.2,3,0],{c:COL.red,w:3});lab(B,[6.4,3.2,0],'faster, costlier',{c:COL.red,a:'right',sz:19});lab(B,[-6,-3.4,0],'bigger, slower, cheaper',{c:COL.blue,a:'left',sz:19});
-  B.s(2);[['register',.3,COL.red,'1 cycle'],['cache',.9,COL.gold,'~10'],['RAM',1.9,COL.teal,'~100'],['disk',3.6,COL.blue,'~millions']].forEach(([l,h,c,t],i)=>{B.X([-4.2+i*2.8,h/2-1.8,0],[1.5,h,1.5],{f:c,a:.4});lab(B,[-4.2+i*2.8,-2.3,0],l,{sz:21});lab(B,[-4.2+i*2.8,h-1.4,0],t,{c,sz:19})});B.T([0,3.2,0],'access time (log scale)',{b:1,sz:23});B.T([0,-3.3,0],'avg time = hit time + miss rate × miss penalty',{c:COL.red,b:1,sz:21});
-  B.s(3);const pipe=(y,name,boxes,c)=>{lab(B,[-5.6,y,0],name,{c,a:'left',sz:22});boxes.forEach((t,i)=>{bx(B,[-2.6+i*2.8,y,0],[2,.9,.8],t,c,{sz:18});if(i)B.A([-2.6+i*2.8-1.5,y,0],[-2.6+i*2.8-1.05,y,0],{c:COL.ink,w:2})})};pipe(1.8,'compiler',['source','compile all','machine code','run fast'],COL.teal);pipe(-1.4,'interpreter',['source','line 1','line 2','line 3 …'],COL.gold);B.dyn((t,b)=>{const k=Math.floor(t/.8)%4;b.D([-2.6+k*2.8,-1.4+.9,0],.14,{f:COL.red})});lab(B,[0,-3,0],'all errors at once vs stops at the first error',{sz:21,c:COL.red})}};
+  B.s(2);[['register',.3,COL.red,'1 cycle'],['cache',.9,COL.gold,'~10'],['RAM',1.9,COL.teal,'~100'],['disk',3.6,COL.blue,'~millions']].forEach(([l,h,c,t],i)=>{B.X([-4.2+i*2.8,h/2-1.8,0],[1.5,h,1.5],{f:c,a:.4});lab(B,[-4.2+i*2.8,-2.3,0],l,{sz:21});lab(B,[-4.2+i*2.8,h-1.4,0],t,{c,sz:19})});B.T([0,3.2,0],'access time (log scale)',{b:1,sz:23});B.T([0,-3.3,0],'avg time = hit time + miss rate ├ù miss penalty',{c:COL.red,b:1,sz:21});
+  B.s(3);const pipe=(y,name,boxes,c)=>{lab(B,[-5.6,y,0],name,{c,a:'left',sz:22});boxes.forEach((t,i)=>{bx(B,[-2.6+i*2.8,y,0],[2,.9,.8],t,c,{sz:18});if(i)B.A([-2.6+i*2.8-1.5,y,0],[-2.6+i*2.8-1.05,y,0],{c:COL.ink,w:2})})};pipe(1.8,'compiler',['source','compile all','machine code','run fast'],COL.teal);pipe(-1.4,'interpreter',['source','line 1','line 2','line 3 ΓÇª'],COL.gold);B.dyn((t,b)=>{const k=Math.floor(t/.8)%4;b.D([-2.6+k*2.8,-1.4+.9,0],.14,{f:COL.red})});lab(B,[0,-3,0],'all errors at once vs stops at the first error',{sz:21,c:COL.red})}};
 
 SC['cfet:1']={cam:{yaw:-.4,pitch:.3},
  params:[
-  {id:'decimalVal',label:'Decimal Value (0–255)',min:0,max:255,step:1,defaultVal:72,unit:''}
+  {id:'decimalVal',label:'Decimal Value (0ΓÇô255)',min:0,max:255,step:1,defaultVal:72,unit:''}
  ],
  steps:[
   {t:'Binary: every bit has a place value',d:'In an 8-bit number the places are 128, 64, 32, 16, 8, 4, 2, 1. Switch a bit on and you add its value. 01001000 = 64 + 8 = 72. Octal groups bits in threes and hexadecimal in fours: 0100 1000 = 48 (hex). A byte is 8 bits, enough for one character.'},
-  {t:'Decimal to binary: halve and read upward',d:'Divide by 2 again and again, keeping each remainder: 45 → 22 r1, 22 → 11 r0, 11 → 5 r1, 5 → 2 r1, 2 → 1 r0, 1 → 0 r1. Read the remainders from the bottom up: 101101. Fractions work the other way: multiply by 2 and read the integer parts downward.',only:true},
-  {t:'Negative numbers: the 2’s complement wheel',d:'Put the 16 four-bit patterns round a wheel. Counting up from 0000 reaches 0111 (+7), then wraps to 1000 (−8) and climbs back to 1111 (−1). To negate: flip all bits, then add 1: 0101 (+5) → 1010 → 1011 (−5). Range of n bits: −2ⁿ⁻¹ to 2ⁿ⁻¹ − 1. 1’s complement is just the flip and has two zeros. Subtraction A − B = A + (2’s complement of B), dropping the carry.',only:true},
-  {t:'ASCII and Unicode: letters are numbers',d:'A character is a number both sides agree on. ASCII uses 7 bits (128 symbols): ‘H’ = 72 = 01001000, ‘i’ = 105 = 01101001, ‘A’ = 65, ‘a’ = 97. Unicode extends the idea to every script. Memory stores each as a byte, one after another.',only:true},
+  {t:'Decimal to binary: halve and read upward',d:'Divide by 2 again and again, keeping each remainder: 45 ΓåÆ 22 r1, 22 ΓåÆ 11 r0, 11 ΓåÆ 5 r1, 5 ΓåÆ 2 r1, 2 ΓåÆ 1 r0, 1 ΓåÆ 0 r1. Read the remainders from the bottom up: 101101. Fractions work the other way: multiply by 2 and read the integer parts downward.',only:true},
+  {t:'Negative numbers: the 2ΓÇÖs complement wheel',d:'Put the 16 four-bit patterns round a wheel. Counting up from 0000 reaches 0111 (+7), then wraps to 1000 (ΓêÆ8) and climbs back to 1111 (ΓêÆ1). To negate: flip all bits, then add 1: 0101 (+5) ΓåÆ 1010 ΓåÆ 1011 (ΓêÆ5). Range of n bits: ΓêÆ2Γü┐Γü╗┬╣ to 2Γü┐Γü╗┬╣ ΓêÆ 1. 1ΓÇÖs complement is just the flip and has two zeros. Subtraction A ΓêÆ B = A + (2ΓÇÖs complement of B), dropping the carry.',only:true},
+  {t:'ASCII and Unicode: letters are numbers',d:'A character is a number both sides agree on. ASCII uses 7 bits (128 symbols): ΓÇÿHΓÇÖ = 72 = 01001000, ΓÇÿiΓÇÖ = 105 = 01101001, ΓÇÿAΓÇÖ = 65, ΓÇÿaΓÇÖ = 97. Unicode extends the idea to every script. Memory stores each as a byte, one after another.',only:true},
   {t:'Live parameter lab: interactive 8-bit binary and hex converter',d:'Slide through decimal numbers 0 to 255 to see each bit block toggle, with live binary, hexadecimal, octal, and ASCII conversions.',only:true}],
  build(B){
-  B.s(0);const bits=[0,1,0,0,1,0,0,0],vals=[128,64,32,16,8,4,2,1];bits.forEach((b,i)=>{const x=-4.2+i*1.2,h=.5+(7-i)*.38;B.X([x,h/2-1.6,0],[.9,h,.9],{f:b?COL.red:COL.gray,a:b?.5:.12});lab(B,[x,-2.1,0],''+vals[i],{sz:20,c:b?COL.red:COL.gray});lab(B,[x,h-1.2,0],''+b,{sz:28,c:b?COL.red:COL.gray})});lab(B,[0,2.8,0],'01001000 = 64 + 8 = 72',{sz:30,c:COL.red});lab(B,[0,-3.1,0],'hex: 0100 1000 → 48     octal: 01 001 000 → 110',{sz:21});
-  B.s(1);const ds=[[45,1],[22,0],[11,1],[5,1],[2,0],[1,1]];ds.forEach(([v,r],i)=>{const y=2.6-i*1.15,w=1+Math.sqrt(v)*.4;B.X([-2.6,y,0],[w,.8,.8],{f:COL.teal,a:.3});lab(B,[-2.6,y,.5],''+v,{sz:22});lab(B,[-2.6+w/2+.6,y,0],'÷2 → r',{sz:17,c:COL.gray,a:'left'});B.X([2.4,y,0],[.7,.7,.7],{f:r?COL.red:COL.gray,a:r?.6:.15});lab(B,[2.4,y,.5],''+r,{sz:22,c:r?COL.red:COL.gray})});B.A([3.6,-3.2,0],[3.6,3.1,0],{c:COL.red,w:3.4});lab(B,[3.8,.1,0],'read upward',{c:COL.red,a:'left',sz:22});lab(B,[0,3.7,0],'45₁₀ = 101101₂',{sz:28,c:COL.red});
-  B.s(2);const R=3,pat=i=>i.toString(2).padStart(4,'0'),sv=i=>i<8?i:i-16;for(let i=0;i<16;i++){const a=PI/2-i/16*2*PI,x=cos(a)*R,y=sin(a)*R;B.D([x,y,0],i===5||i===11?.3:.2,{f:i<8?COL.teal:COL.red});lab(B,[cos(a)*(R+.95),sin(a)*(R+.55),0],pat(i)+'  '+sv(i),{sz:17,c:i<8?COL.teal:COL.red})}B.C([0,0,0],R,{n:'z',c:COL.gray,w:1.4});B.A([cos(PI/2-5/16*2*PI)*R,sin(PI/2-5/16*2*PI)*R,0],[cos(PI/2-11/16*2*PI)*R,sin(PI/2-11/16*2*PI)*R,0],{c:COL.gold,w:3});lab(B,[0,.4,0],'+5 → flip → add 1 → −5',{sz:22,c:COL.gold});lab(B,[0,-.5,0],'0101 → 1010 → 1011',{sz:20});
-  B.s(3);[['H',72,'01001000'],['i',105,'01101001']].forEach(([ch,n,bs],r)=>{const y=1.4-r*2.6;lab(B,[-5,y,0],ch,{sz:44,c:COL.red});bs.split('').forEach((b,i)=>{B.X([-3.4+i*.95,y,0],[.8,.8,.8],{f:b==='1'?COL.red:COL.gray,a:b==='1'?.55:.12});lab(B,[-3.4+i*.95,y,.5],b,{sz:22,c:b==='1'?COL.red:COL.gray})});lab(B,[5,y,0],'= '+n,{sz:30,a:'left'})});lab(B,[0,3.4,0],'ASCII: 7 bits, 128 symbols',{sz:25});lab(B,[0,-3.2,0],'‘A’ = 65   ‘a’ = 97   Unicode covers every script',{sz:21,c:COL.gray});
-  B.s(4);B.dyn((t,b,p={})=>{const dec=Math.max(0,Math.min(255,Math.round(p.decimalVal??72)));const binStr=dec.toString(2).padStart(8,'0');const hexStr='0x'+dec.toString(16).toUpperCase().padStart(2,'0');const octStr='0o'+dec.toString(8).padStart(3,'0');const asciiChar=dec>=32&&dec<=126?`'${String.fromCharCode(dec)}'`:'(non-printable)';const vals=[128,64,32,16,8,4,2,1];for(let i=0;i<8;i++){const bit=binStr[i]==='1',x=-4.2+i*1.2,h=bit?1.6:0.5;b.X([x,h/2-1.6,0],[0.95,h,0.95],{f:bit?COL.red:COL.gray,a:bit?0.6:0.15});lab(b,[x,-2.1,0],''+vals[i],{sz:19,c:bit?COL.red:COL.gray});lab(b,[x,h-1.2,0],bit?'1':'0',{sz:28,c:bit?COL.red:COL.gray});}lab(b,[0,3.2,0],`DECIMAL: ${dec}  =  BIN: ${binStr}₂`,{sz:28,c:COL.red});lab(b,[0,2.3,0],`HEX: ${hexStr}   |   OCTAL: ${octStr}   |   ASCII: ${asciiChar}`,{sz:23,c:COL.ink});lab(b,[0,-3.2,0],`Place values: 128 + 64 + 32 + 16 + 8 + 4 + 2 + 1`,{sz:20,c:COL.gray});});
+  B.s(0);const bits=[0,1,0,0,1,0,0,0],vals=[128,64,32,16,8,4,2,1];bits.forEach((b,i)=>{const x=-4.2+i*1.2,h=.5+(7-i)*.38;B.X([x,h/2-1.6,0],[.9,h,.9],{f:b?COL.red:COL.gray,a:b?.5:.12});lab(B,[x,-2.1,0],''+vals[i],{sz:20,c:b?COL.red:COL.gray});lab(B,[x,h-1.2,0],''+b,{sz:28,c:b?COL.red:COL.gray})});lab(B,[0,2.8,0],'01001000 = 64 + 8 = 72',{sz:30,c:COL.red});lab(B,[0,-3.1,0],'hex: 0100 1000 ΓåÆ 48     octal: 01 001 000 ΓåÆ 110',{sz:21});
+  B.s(1);const ds=[[45,1],[22,0],[11,1],[5,1],[2,0],[1,1]];ds.forEach(([v,r],i)=>{const y=2.6-i*1.15,w=1+Math.sqrt(v)*.4;B.X([-2.6,y,0],[w,.8,.8],{f:COL.teal,a:.3});lab(B,[-2.6,y,.5],''+v,{sz:22});lab(B,[-2.6+w/2+.6,y,0],'├╖2 ΓåÆ r',{sz:17,c:COL.gray,a:'left'});B.X([2.4,y,0],[.7,.7,.7],{f:r?COL.red:COL.gray,a:r?.6:.15});lab(B,[2.4,y,.5],''+r,{sz:22,c:r?COL.red:COL.gray})});B.A([3.6,-3.2,0],[3.6,3.1,0],{c:COL.red,w:3.4});lab(B,[3.8,.1,0],'read upward',{c:COL.red,a:'left',sz:22});lab(B,[0,3.7,0],'45ΓéüΓéÇ = 101101Γéé',{sz:28,c:COL.red});
+  B.s(2);const R=3,pat=i=>i.toString(2).padStart(4,'0'),sv=i=>i<8?i:i-16;for(let i=0;i<16;i++){const a=PI/2-i/16*2*PI,x=cos(a)*R,y=sin(a)*R;B.D([x,y,0],i===5||i===11?.3:.2,{f:i<8?COL.teal:COL.red});lab(B,[cos(a)*(R+.95),sin(a)*(R+.55),0],pat(i)+'  '+sv(i),{sz:17,c:i<8?COL.teal:COL.red})}B.C([0,0,0],R,{n:'z',c:COL.gray,w:1.4});B.A([cos(PI/2-5/16*2*PI)*R,sin(PI/2-5/16*2*PI)*R,0],[cos(PI/2-11/16*2*PI)*R,sin(PI/2-11/16*2*PI)*R,0],{c:COL.gold,w:3});lab(B,[0,.4,0],'+5 ΓåÆ flip ΓåÆ add 1 ΓåÆ ΓêÆ5',{sz:22,c:COL.gold});lab(B,[0,-.5,0],'0101 ΓåÆ 1010 ΓåÆ 1011',{sz:20});
+  B.s(3);[['H',72,'01001000'],['i',105,'01101001']].forEach(([ch,n,bs],r)=>{const y=1.4-r*2.6;lab(B,[-5,y,0],ch,{sz:44,c:COL.red});bs.split('').forEach((b,i)=>{B.X([-3.4+i*.95,y,0],[.8,.8,.8],{f:b==='1'?COL.red:COL.gray,a:b==='1'?.55:.12});lab(B,[-3.4+i*.95,y,.5],b,{sz:22,c:b==='1'?COL.red:COL.gray})});lab(B,[5,y,0],'= '+n,{sz:30,a:'left'})});lab(B,[0,3.4,0],'ASCII: 7 bits, 128 symbols',{sz:25});lab(B,[0,-3.2,0],'ΓÇÿAΓÇÖ = 65   ΓÇÿaΓÇÖ = 97   Unicode covers every script',{sz:21,c:COL.gray});
+  B.s(4);B.dyn((t,b,p={})=>{const dec=Math.max(0,Math.min(255,Math.round(p.decimalVal??72)));const binStr=dec.toString(2).padStart(8,'0');const hexStr='0x'+dec.toString(16).toUpperCase().padStart(2,'0');const octStr='0o'+dec.toString(8).padStart(3,'0');const asciiChar=dec>=32&&dec<=126?`'${String.fromCharCode(dec)}'`:'(non-printable)';const vals=[128,64,32,16,8,4,2,1];for(let i=0;i<8;i++){const bit=binStr[i]==='1',x=-4.2+i*1.2,h=bit?1.6:0.5;b.X([x,h/2-1.6,0],[0.95,h,0.95],{f:bit?COL.red:COL.gray,a:bit?0.6:0.15});lab(b,[x,-2.1,0],''+vals[i],{sz:19,c:bit?COL.red:COL.gray});lab(b,[x,h-1.2,0],bit?'1':'0',{sz:28,c:bit?COL.red:COL.gray});}lab(b,[0,3.2,0],`DECIMAL: ${dec}  =  BIN: ${binStr}Γéé`,{sz:28,c:COL.red});lab(b,[0,2.3,0],`HEX: ${hexStr}   |   OCTAL: ${octStr}   |   ASCII: ${asciiChar}`,{sz:23,c:COL.ink});lab(b,[0,-3.2,0],`Place values: 128 + 64 + 32 + 16 + 8 + 4 + 2 + 1`,{sz:20,c:COL.gray});});
 }};
 
 SC['cfet:2']={cam:{yaw:-.4,pitch:.3},steps:[
  {t:'Software layers and the OS',d:'System software (operating system, compilers, drivers) runs the machine; application software (browser, spreadsheet) does your jobs. The OS sits between users and hardware. Objectives: convenience, efficient use of the hardware, ability to evolve. Interfaces: CLI (type commands, fast and scriptable) and GUI (windows and icons).'},
  {t:'Four kinds of OS',d:'Batch: jobs run in bundles with no interaction. Time-sharing: the CPU is sliced so quickly that many users feel served at once. Distributed: many computers cooperate as one system. Real-time: a guaranteed response within a deadline (airbags, medical equipment).',only:true},
  {t:'Process management: states of a program in execution',d:'A process is a program being run. It starts New, waits Ready for the CPU, becomes Running, may go to Waiting (for input or a device) and return to Ready, and finally Terminated. The scheduler decides who runs next.',only:true},
- {t:'Memory management and file systems',d:'The OS decides which process gets which part of memory, tracks what is free, and reclaims it when a process ends; holes between blocks are fragmentation. The file system organises storage into files and folders: drive letters in Windows, one tree from “/” in Linux and macOS.',only:true}],
+ {t:'Memory management and file systems',d:'The OS decides which process gets which part of memory, tracks what is free, and reclaims it when a process ends; holes between blocks are fragmentation. The file system organises storage into files and folders: drive letters in Windows, one tree from ΓÇ£/ΓÇ¥ in Linux and macOS.',only:true}],
  build(B){
-  B.s(0);[['USER',COL.red],['APPLICATION software',COL.gold],['OPERATING SYSTEM (kernel)',COL.teal],['HARDWARE: CPU, memory, devices',COL.blue]].forEach(([l,c],i)=>{B.X([0,2.7-i*1.7,0],[7,1.1,3],{f:c,a:.3});lab(B,[0,2.7-i*1.7,1.6],l,{sz:22})});B.A([4.6,-2.4,0],[4.6,2.6,0],{c:COL.ink,w:2.4});B.A([4.1,2.6,0],[4.1,-2.4,0],{c:COL.gray,w:2.4});lab(B,[5.4,.2,0],'requests ↑↓ responses',{sz:18,a:'left'});
+  B.s(0);[['USER',COL.red],['APPLICATION software',COL.gold],['OPERATING SYSTEM (kernel)',COL.teal],['HARDWARE: CPU, memory, devices',COL.blue]].forEach(([l,c],i)=>{B.X([0,2.7-i*1.7,0],[7,1.1,3],{f:c,a:.3});lab(B,[0,2.7-i*1.7,1.6],l,{sz:22})});B.A([4.6,-2.4,0],[4.6,2.6,0],{c:COL.ink,w:2.4});B.A([4.1,2.6,0],[4.1,-2.4,0],{c:COL.gray,w:2.4});lab(B,[5.4,.2,0],'requests ΓåæΓåô responses',{sz:18,a:'left'});
   B.s(1);const cell=(x,t,c,f)=>{B.X([x,0,0],[3.2,3.2,1.2],{f:COL.gray,a:.1});lab(B,[x,2.1,0],t,{c,sz:23});f(x)};
-  cell(-5,'batch',COL.red,x=>{for(let i=0;i<3;i++)bx(B,[x-.8,1-i*.8,0],[.7,.5,.4],'',COL.gold);B.A([x-.3,0,0],[x+.8,0,0],{c:COL.ink,w:2});B.D([x+1.1,0,0],.3,{f:COL.teal});lab(B,[x,-1.5,0],'queue → CPU',{sz:17})});
+  cell(-5,'batch',COL.red,x=>{for(let i=0;i<3;i++)bx(B,[x-.8,1-i*.8,0],[.7,.5,.4],'',COL.gold);B.A([x-.3,0,0],[x+.8,0,0],{c:COL.ink,w:2});B.D([x+1.1,0,0],.3,{f:COL.teal});lab(B,[x,-1.5,0],'queue ΓåÆ CPU',{sz:17})});
   cell(-1.7,'time-sharing',COL.red,x=>{B.C([x,0,0],1.1,{n:'z',c:COL.ink});for(let i=0;i<4;i++){const a=i*PI/2;B.D([x+cos(a)*1.1,sin(a)*1.1,0],.2,{f:[COL.red,COL.gold,COL.teal,COL.blue][i]})}lab(B,[x,0,0],'CPU',{sz:18});lab(B,[x,-1.5,0],'slices for everyone',{sz:17})});
   cell(1.7,'distributed',COL.red,x=>{const p=[[x-.9,.8],[x+.9,.8],[x,-.8],[x+.1,.1]];p.forEach(a=>p.forEach(b2=>B.L([[a[0],a[1],0],[b2[0],b2[1],0]],{c:COL.gray,w:1.2})));p.forEach(a=>B.D([a[0],a[1],0],.18,{f:COL.teal}));lab(B,[x,-1.5,0],'many computers, one system',{sz:16})});
   cell(5,'real-time',COL.red,x=>{B.C([x,.1,0],1,{n:'z',c:COL.ink});B.L([[x,.1,0],[x,.9,0]],{c:COL.ink,w:2.4});B.L([[x,.1,0],[x+.6,-.2,0]],{c:COL.red,w:3});lab(B,[x,-1.5,0],'deadline guaranteed',{sz:17})});
@@ -290,31 +290,31 @@ SC['cfet:2']={cam:{yaw:-.4,pitch:.3},steps:[
   B.s(3);const seg=[['P1',2,COL.teal],['free',1,COL.gray],['P2',3,COL.gold],['free',1,COL.gray],['P3',2,COL.red],['free',2,COL.gray]];let y=3;seg.forEach(([l,h,c])=>{B.X([-2,y-h*.4,0],[2.8,h*.8,1.4],{f:c,a:c===COL.gray?.1:.4});lab(B,[-2,y-h*.4,.8],l,{sz:21});y-=h*.8+.05});lab(B,[-2,3.6,0],'RAM',{sz:22});B.X([3.6,1.8,0],[3,.7,.9],{f:COL.blue,a:.3});lab(B,[3.6,1.8,.6],'C:  D:',{sz:19});lab(B,[3.6,2.6,0],'Windows',{sz:19,c:COL.blue});B.L([[3.6,1.2,0],[2.8,0,0]],{c:COL.green,w:2});B.L([[3.6,1.2,0],[4.4,0,0]],{c:COL.green,w:2});lab(B,[3.6,-.4,0],'Linux / macOS:',{sz:19,c:COL.green});lab(B,[3.6,-1,0],'one tree from /',{sz:19,c:COL.green});lab(B,[-2,-3.8,0],'holes between blocks = fragmentation',{sz:19,c:COL.red,a:'center'})}};
 
 SC['cfet:3']={cam:{yaw:-.4,pitch:.3},steps:[
- {t:'Four network topologies',d:'Star: every device connects to a central hub or switch (easy to manage; fails if the hub fails). Bus: one shared cable (cheap; fails if the cable breaks). Ring: each device links to two neighbours. Mesh: every device links to every other, n(n−1)/2 links (very reliable, expensive). Packets move round each layout.'},
+ {t:'Four network topologies',d:'Star: every device connects to a central hub or switch (easy to manage; fails if the hub fails). Bus: one shared cable (cheap; fails if the cable breaks). Ring: each device links to two neighbours. Mesh: every device links to every other, n(nΓêÆ1)/2 links (very reliable, expensive). Packets move round each layout.'},
  {t:'Hub, switch, router',d:'A hub repeats every message to every device (broadcast). A switch learns which device sits behind which port (by MAC address) and sends only to the target. A router joins different networks and chooses the path by IP address. A modem converts between digital data and the signal on the line; a gateway joins networks that speak different protocols.',only:true},
  {t:'LAN, MAN, WAN and wireless',d:'LAN covers a room or building, MAN a city, WAN a country or the world (the Internet is the biggest WAN). Wired media: twisted pair, coaxial, optical fibre. Wireless uses radio: Wi-Fi, Bluetooth, cellular. A communication protocol is the agreed set of rules that lets devices understand one another.',only:true},
- {t:'What happens when you type a URL',d:'Your computer (client) asks DNS to turn the name into an IP address; then it asks the web server for the page using HTTP carried by TCP; the server replies. An IPv4 address is 32 bits written as four numbers 0–255. TCP is reliable and ordered (like registered post); UDP is fast with no guarantee (like a postcard). FTP transfers files; URL = protocol + domain + path.',only:true}],
+ {t:'What happens when you type a URL',d:'Your computer (client) asks DNS to turn the name into an IP address; then it asks the web server for the page using HTTP carried by TCP; the server replies. An IPv4 address is 32 bits written as four numbers 0ΓÇô255. TCP is reliable and ordered (like registered post); UDP is fast with no guarantee (like a postcard). FTP transfers files; URL = protocol + domain + path.',only:true}],
  build(B){
   B.s(0);const ring=(c,n,r)=>Array.from({length:n},(_,i)=>[c[0]+cos(i/n*2*PI)*r,c[1]+sin(i/n*2*PI)*r,0]);
   const sc=[-4.6,1.8,0];B.D(sc,.28,{f:COL.gold});ring(sc,5,1.4).forEach(p=>{B.L([sc,p],{c:COL.ink,w:2});B.D(p,.18,{f:COL.teal})});lab(B,[sc[0],-.1,0],'star',{sz:22});
   B.L([[-1.2,1.8,0],[3.2,1.8,0]],{c:COL.ink,w:3});[-.7,.5,1.7,2.9].forEach(x=>{B.L([[x,1.8,0],[x,1.1,0]],{c:COL.ink,w:2});B.D([x,.95,0],.18,{f:COL.teal})});lab(B,[1,-.1,0],'bus',{sz:22});
   const rp=ring([-4.6,-2.2,0],6,1.3);rp.forEach((p,i)=>{B.L([p,rp[(i+1)%6]],{c:COL.ink,w:2});B.D(p,.18,{f:COL.teal})});lab(B,[-4.6,-3.9,0],'ring',{sz:22});
-  const mp=ring([1,-2.2,0],5,1.4);mp.forEach(p=>mp.forEach(q=>B.L([p,q],{c:COL.gray,w:1.2})));mp.forEach(p=>B.D(p,.18,{f:COL.teal}));lab(B,[1,-3.9,0],'mesh: n(n−1)/2 links',{sz:21});
+  const mp=ring([1,-2.2,0],5,1.4);mp.forEach(p=>mp.forEach(q=>B.L([p,q],{c:COL.gray,w:1.2})));mp.forEach(p=>B.D(p,.18,{f:COL.teal}));lab(B,[1,-3.9,0],'mesh: n(nΓêÆ1)/2 links',{sz:21});
   B.dyn((t,b)=>{const u=(t*.5)%1,pts=ring(sc,5,1.4);const k=Math.floor(t*.5)%5;b.D(v3.lerp(sc,pts[k],u<.5?u*2:2-u*2),.12,{f:COL.red});b.D([-1.2+(t*1.2%4.4),1.8,0],.12,{f:COL.red});const i=Math.floor(t*1.5)%6,v=(t*1.5)%1;b.D(v3.lerp(rp[i],rp[(i+1)%6],v),.12,{f:COL.red})});
   B.s(1);const dev=(x,t)=>{bx(B,[x,1.2,0],[1.6,.8,.8],t,COL.gold,{sz:21});for(let i=0;i<4;i++){const p=[x-2+i*1.33,-1.8,0];B.L([[x,.8,0],p],{c:COL.ink,w:1.8});B.D(p,.2,{f:i===1?COL.red:COL.teal})}};dev(-3.4,'hub');dev(2.6,'switch');lab(B,[-3.4,-2.8,0],'repeats to everyone',{sz:19,c:COL.red});lab(B,[2.6,-2.8,0],'only to the target (MAC)',{sz:19,c:COL.red});B.dyn((t,b)=>{const u=(t*.6)%1;for(let i=0;i<4;i++)b.D(v3.lerp([-3.4,.8,0],[-5.4+i*1.33,-1.8,0],u),.1,{f:COL.red});b.D(v3.lerp([2.6,.8,0],[-.07+1.33*1,-1.8,0],u),.1,{f:COL.red})});lab(B,[0,3.2,0],'router joins networks by IP address',{sz:22});
-  B.s(2);[[1.1,'LAN: room or building',COL.green],[2.3,'MAN: city',COL.gold],[3.5,'WAN: country, world',COL.red]].forEach(([r,l,c],i)=>{B.C([0,-.6,0],r,{n:'y',c,w:2.6,f:c,a:.06});lab(B,[r*.75+.3,-.6,r*.75],l,{c,sz:21,a:'left',dy:-i*26+20})});B.D([0,-.5,0],.2,{f:COL.ink});lab(B,[0,2.8,0],'media: twisted pair · coaxial · fibre · radio',{sz:21});lab(B,[0,3.5,0],'protocol = agreed rules',{sz:21,c:COL.gray});
+  B.s(2);[[1.1,'LAN: room or building',COL.green],[2.3,'MAN: city',COL.gold],[3.5,'WAN: country, world',COL.red]].forEach(([r,l,c],i)=>{B.C([0,-.6,0],r,{n:'y',c,w:2.6,f:c,a:.06});lab(B,[r*.75+.3,-.6,r*.75],l,{c,sz:21,a:'left',dy:-i*26+20})});B.D([0,-.5,0],.2,{f:COL.ink});lab(B,[0,2.8,0],'media: twisted pair ┬╖ coaxial ┬╖ fibre ┬╖ radio',{sz:21});lab(B,[0,3.5,0],'protocol = agreed rules',{sz:21,c:COL.gray});
   B.s(3);[['client',-5],['DNS',-.2],['server',4.6]].forEach(([l,x])=>bx(B,[x,1.2,0],[1.8,1.2,.9],l,COL.gold,{sz:22}));B.A([-4,1.5,0],[-1.2,1.5,0],{c:COL.teal,w:2.6});lab(B,[-2.6,2,0],'1 name?',{sz:18,c:COL.teal});B.A([-1.2,.9,0],[-4,.9,0],{c:COL.red,w:2.6});lab(B,[-2.6,.4,0],'2 IP address',{sz:18,c:COL.red});B.L([[-5,.5,0],[-5,-1,0],[4.6,-1,0],[4.6,.5,0]],{c:COL.ink,w:2.6,d:[6,4]});lab(B,[-.2,-.6,0],'3 HTTP over TCP',{sz:21});
   [192,168,1,10].forEach((o,i)=>{bx(B,[-3.6+i*2.4,-2.9,0],[2,.8,.6],''+o,COL.teal,{sz:22});lab(B,[-3.6+i*2.4,-3.6,0],'8 bits',{sz:15,c:COL.gray})});lab(B,[-5.6,-2.2,0],'IPv4 = 32 bits',{sz:19,c:COL.red,a:'left'})}};
 
 SC['cfet:4']={cam:{yaw:-.4,pitch:.3},steps:[
  {t:'Internet of Things: four layers',d:'Sensors collect data (temperature, motion), a network layer carries it (Wi-Fi, Bluetooth, cellular), a processing layer (often the cloud) analyses it, and an application layer shows or acts on the result (phone app, automatic heating). Everyday objects thus become connected; smart homes, farms and factories are applications.'},
  {t:'Cyber security: the CIA triad',d:'Confidentiality: only authorised people can read the data. Integrity: data cannot be changed without detection. Availability: the data and service are reachable when needed. Threats (malware, phishing, hacking, denial of service) attack the corners; countermeasures (encryption, firewalls, antivirus, backups, strong authentication) defend them.',only:true},
- {t:'Blockchain: a chain of fingerprints',d:'Each block holds data, its own hash (fingerprint) and the previous block’s hash. Change the data in an old block and its hash changes, which no longer matches the next block’s stored “previous hash”, so the break is visible. Copies are held by many computers (decentralised), so nobody can quietly rewrite history.',only:true},
- {t:'Data science lifecycle, and AI and ML in brief',d:'Collect data → clean it → analyse and explore → build a model → communicate the result, then loop back with new data. AI covers agents and reasoning; machine learning is the part that learns patterns from data (supervised, unsupervised, reinforcement), seen in more depth in Introduction to AI.',only:true}],
+ {t:'Blockchain: a chain of fingerprints',d:'Each block holds data, its own hash (fingerprint) and the previous blockΓÇÖs hash. Change the data in an old block and its hash changes, which no longer matches the next blockΓÇÖs stored ΓÇ£previous hashΓÇ¥, so the break is visible. Copies are held by many computers (decentralised), so nobody can quietly rewrite history.',only:true},
+ {t:'Data science lifecycle, and AI and ML in brief',d:'Collect data ΓåÆ clean it ΓåÆ analyse and explore ΓåÆ build a model ΓåÆ communicate the result, then loop back with new data. AI covers agents and reasoning; machine learning is the part that learns patterns from data (supervised, unsupervised, reinforcement), seen in more depth in Introduction to AI.',only:true}],
  build(B){
   B.s(0);[['APPLICATION: phone app, alerts',COL.red],['PROCESSING: cloud analytics',COL.gold],['NETWORK: Wi-Fi, Bluetooth, cellular',COL.teal],['SENSING: things with sensors',COL.blue]].forEach(([l,c],i)=>{B.X([0,2.7-i*1.7,0],[7,1.1,3],{f:c,a:.3});lab(B,[0,2.7-i*1.7,1.6],l,{sz:21})});B.dyn((t,b)=>{const u=(t*.35)%1;b.D([-3.6,-2.4+u*5.2,0],.2,{f:COL.red});b.D([3.6,-2.4+((u+.5)%1)*5.2,0],.2,{f:COL.red})});lab(B,[0,-3.9,0],'data flows up, commands flow down',{sz:21,c:COL.gray});
-  B.s(1);const T3=[[0,2.6,0],[-3,-2,0],[3,-2,0]];B.P(T3,{f:COL.gold,a:.1,c:COL.ink,w:2.4});[['Confidentiality',T3[0],COL.red],['Integrity',T3[1],COL.teal],['Availability',T3[2],COL.blue]].forEach(([l,p,c])=>{B.D(p,.4,{f:c});lab(B,[p[0],p[1]+(p[1]>0?.8:-.8),0],l,{c,sz:24})});lab(B,[0,-.2,0],'secure data',{sz:24});[[-1.2,3.2],[4.6,-2.4],[-4.6,-2.4]].forEach(p=>{B.A([p[0]+(p[0]>0?1.2:-1.2)*0,p[1],0],[p[0]*.78,p[1]*.8,0],{c:COL.red,w:2.2})});lab(B,[-5.4,3,0],'threats ↘',{c:COL.red,sz:21,a:'left'});lab(B,[5.4,3,0],'defences: encryption, firewall, backups',{c:COL.green,sz:19,a:'right'});
-  B.s(2);B.dyn((t,b)=>{const tam=Math.floor(t/2)%2===1;for(let i=0;i<4;i++){const x=-4.5+i*3,bad=tam&&i>=1;b.X([x,0,0],[2.2,2.4,1.2],{f:bad?COL.red:COL.teal,a:.3});lab(b,[x,.7,.7],'Block '+(i+1),{sz:19});lab(b,[x,.1,.7],i?'prev = H'+i:'genesis',{sz:16,c:COL.gray});lab(b,[x,-.5,.7],'hash H'+(i+1)+(bad?'′':''),{sz:17,c:bad?COL.red:COL.teal});if(i)b.A([x-1.9,0,0],[x-1.2,0,0],{c:bad?COL.red:COL.ink,w:2.4})}lab(b,[0,2.5,0],tam?'block 2 edited → every later link breaks':'intact chain',{sz:24,c:tam?COL.red:COL.teal})});lab(B,[0,-2.6,0],'many copies on many computers = decentralised',{sz:21});
+  B.s(1);const T3=[[0,2.6,0],[-3,-2,0],[3,-2,0]];B.P(T3,{f:COL.gold,a:.1,c:COL.ink,w:2.4});[['Confidentiality',T3[0],COL.red],['Integrity',T3[1],COL.teal],['Availability',T3[2],COL.blue]].forEach(([l,p,c])=>{B.D(p,.4,{f:c});lab(B,[p[0],p[1]+(p[1]>0?.8:-.8),0],l,{c,sz:24})});lab(B,[0,-.2,0],'secure data',{sz:24});[[-1.2,3.2],[4.6,-2.4],[-4.6,-2.4]].forEach(p=>{B.A([p[0]+(p[0]>0?1.2:-1.2)*0,p[1],0],[p[0]*.78,p[1]*.8,0],{c:COL.red,w:2.2})});lab(B,[-5.4,3,0],'threats Γåÿ',{c:COL.red,sz:21,a:'left'});lab(B,[5.4,3,0],'defences: encryption, firewall, backups',{c:COL.green,sz:19,a:'right'});
+  B.s(2);B.dyn((t,b)=>{const tam=Math.floor(t/2)%2===1;for(let i=0;i<4;i++){const x=-4.5+i*3,bad=tam&&i>=1;b.X([x,0,0],[2.2,2.4,1.2],{f:bad?COL.red:COL.teal,a:.3});lab(b,[x,.7,.7],'Block '+(i+1),{sz:19});lab(b,[x,.1,.7],i?'prev = H'+i:'genesis',{sz:16,c:COL.gray});lab(b,[x,-.5,.7],'hash H'+(i+1)+(bad?'ΓÇ▓':''),{sz:17,c:bad?COL.red:COL.teal});if(i)b.A([x-1.9,0,0],[x-1.2,0,0],{c:bad?COL.red:COL.ink,w:2.4})}lab(b,[0,2.5,0],tam?'block 2 edited ΓåÆ every later link breaks':'intact chain',{sz:24,c:tam?COL.red:COL.teal})});lab(B,[0,-2.6,0],'many copies on many computers = decentralised',{sz:21});
   B.s(3);const st=['collect','clean','analyse','model','communicate'],P=ringPts(5,2.8);P.forEach((p,i)=>{B.D(p,.4,{f:[COL.blue,COL.gold,COL.teal,COL.red,COL.green][i]});lab(B,[p[0],p[1]+(p[1]>0?.8:-.8),0],st[i],{sz:23})});P.forEach((p,i)=>B.A(v3.lerp(p,P[(i+1)%5],.2),v3.lerp(p,P[(i+1)%5],.8),{c:COL.ink,w:2.2}));B.dyn((t,b)=>{const k=Math.floor(t/1)%5,u=t%1;b.D(v3.lerp(P[k],P[(k+1)%5],u),.2,{f:COL.red})});lab(B,[0,0,0],'repeat',{sz:26,c:COL.gray})}};
 
 function ribbon(B,fn,x0,x1,d=.8,o={}){const n=26;for(let i=0;i<n;i++){const xa=x0+(x1-x0)*i/n,xb=x0+(x1-x0)*(i+1)/n;B.P([[xa,fn(xa),0],[xb,fn(xb),0],[xb,fn(xb),-d],[xa,fn(xa),-d]],{f:o.f||COL.teal,a:.13,nostroke:true})}
@@ -324,26 +324,26 @@ const arc=(B,c,r,a0,a1,o)=>B.F(a=>[c[0]+cos(a)*r,c[1]+sin(a)*r,c[2]],a0,a1,o);
 
 SC['math:0']={cam:{yaw:-.6,pitch:.5},
  params:[
-  {id:'lambda1',label:'λ₁ (Major)',min:0.5,max:4.0,step:0.1,defaultVal:3.0,unit:'x'},
-  {id:'lambda2',label:'λ₂ (Minor)',min:0.5,max:3.0,step:0.1,defaultVal:1.0,unit:'x'}
+  {id:'lambda1',label:'╬╗Γéü (Major)',min:0.5,max:4.0,step:0.1,defaultVal:3.0,unit:'x'},
+  {id:'lambda2',label:'╬╗Γéé (Minor)',min:0.5,max:3.0,step:0.1,defaultVal:1.0,unit:'x'}
  ],
  steps:[
   {t:'Three equations are three sheets',d:'Each linear equation in x, y, z is a flat sheet in space. When three sheets meet at exactly one point, that point is the unique solution and r(A) = r([A|B]) = 3. Row reduction is just a tidy way of walking to that corner.'},
   {t:'Sheets sharing a line: infinitely many solutions',d:'If the third equation is just a mix of the first two, the three sheets all pass through one common line. Then r(A) = r([A|B]) = 2, which is less than 3 unknowns, so there is a free variable and infinitely many solutions.',only:true},
   {t:'Parallel sheets: no solution',d:'Two sheets that are parallel but not the same never meet, so no point can satisfy both. In rank language r(A) = 2 but r([A|B]) = 3, the ranks differ, so the system is inconsistent.',only:true},
-  {t:'Eigenvectors keep their direction',d:'A matrix usually turns and stretches a vector. An eigenvector is special: the matrix only stretches it. Here [[2,1],[1,2]] turns the circle into an ellipse, and the two axes of that ellipse are the eigenvectors with eigenvalues 3 and 1. Check: trace = 2 + 2 = 4 = 3 + 1, determinant = 3 = 3 × 1.',only:true},
-  {t:'Live parameter lab: transform the eigenvectors',d:'Drag the eigenvalue sliders λ₁ and λ₂ to stretch the eigenvectors and watch the unit circle deform into the ellipse A·v in real time.',only:true}],
+  {t:'Eigenvectors keep their direction',d:'A matrix usually turns and stretches a vector. An eigenvector is special: the matrix only stretches it. Here [[2,1],[1,2]] turns the circle into an ellipse, and the two axes of that ellipse are the eigenvectors with eigenvalues 3 and 1. Check: trace = 2 + 2 = 4 = 3 + 1, determinant = 3 = 3 ├ù 1.',only:true},
+  {t:'Live parameter lab: transform the eigenvectors',d:'Drag the eigenvalue sliders ╬╗Γéü and ╬╗Γéé to stretch the eigenvectors and watch the unit circle deform into the ellipse A┬╖v in real time.',only:true}],
  build(B){
   B.s(0);axes(B,4);plane(B,[0,0,0],[1,.3,.2],2.6,{f:COL.teal});plane(B,[0,0,0],[-.2,1,.4],2.6,{f:COL.gold});plane(B,[0,0,0],[.3,-.2,1],2.6,{f:COL.pink});
-  B.D([0,0,0],.2,{f:COL.red});B.T([0,0,0],'x = 2, y = 3, z = −1',{c:COL.red,b:1,dy:26});B.T([0,3.2,0],'r(A) = r(A|B) = 3 : unique point',{c:COL.ink,sz:22});
+  B.D([0,0,0],.2,{f:COL.red});B.T([0,0,0],'x = 2, y = 3, z = ΓêÆ1',{c:COL.red,b:1,dy:26});B.T([0,3.2,0],'r(A) = r(A|B) = 3 : unique point',{c:COL.ink,sz:22});
   B.s(1);B.A([0,0,-3.2],[0,0,3.4],{c:COL.red,w:3.4});plane(B,[0,0,0],[1,0,0],2.4,{f:COL.teal});plane(B,[0,0,0],[0,1,0],2.4,{f:COL.gold});plane(B,[0,0,0],[1,1,0],2.4,{f:COL.pink});
   B.T([0,0,3.7],'common line = solutions',{c:COL.red,b:1});B.T([0,3.2,0],'r(A) = r(A|B) = 2 < 3 : infinite solutions',{sz:22});
   B.s(2);plane(B,[0,1.1,0],[0,1,0],2.6,{f:COL.teal});plane(B,[0,-1.1,0],[0,1,0],2.6,{f:COL.gold});plane(B,[0,0,0],[1,.2,.3],2.6,{f:COL.pink});
   B.T([2.6,1.1,0],'sheet 1',{c:COL.teal});B.T([2.6,-1.1,0],'sheet 2 (parallel)',{c:COL.gold});B.T([0,3.2,0],'r(A) = 2, r(A|B) = 3 : no solution',{sz:22});
   B.s(3);B.C([0,0,0],1.4,{c:COL.teal,d:[5,4],w:2});B.F(a=>{const x=cos(a)*1.4,z=sin(a)*1.4;return[2*x+z,0,x+2*z]},0,2*PI,{c:COL.red,w:2.8,seg:60});
   const s2=1/sqrt(2);B.A([0,0,0],[1.4*s2,0,1.4*s2],{c:COL.teal,w:3});B.A([0,0,0],[3*1.4*s2,0,3*1.4*s2],{c:COL.red,w:3});B.A([0,0,0],[1.4*s2,0,-1.4*s2],{c:COL.teal,w:3});B.A([0,0,0],[1.4*s2,0,-1.4*s2],{c:COL.red,w:1});
-  B.T([3.2,0,3.2],'eigenvalue 3 (stretched ×3)',{c:COL.red,b:1});B.T([2.4,0,-1.6],'eigenvalue 1 (unchanged)',{c:COL.teal,b:1});B.T([-3,0,-2.6],'circle → ellipse',{sz:22});B.T([0,2.2,0],'A v = λ v',{c:COL.ink,sz:26,b:1});
-  B.s(4);B.dyn((t,b,p={})=>{const l1=p.lambda1??3.0,l2=p.lambda2??1.0;b.C([0,0,0],1.4,{c:COL.teal,d:[5,4],w:2});b.F(a=>{const x=cos(a)*1.4,z=sin(a)*1.4;const s2=1/sqrt(2);const u=(x+z)*s2,v=(-x+z)*s2;const su=u*l1,sv=v*l2;return[(su-sv)*s2,0,(su+sv)*s2]},0,2*PI,{c:COL.red,w:3,seg:80});const s2=1/sqrt(2);b.A([0,0,0],[l1*1.4*s2,0,l1*1.4*s2],{c:COL.red,w:3.5});b.A([0,0,0],[-l2*1.4*s2,0,l2*1.4*s2],{c:COL.gold,w:3.5});b.T([0,2.5,0],`Live: λ₁ = ${l1.toFixed(1)}, λ₂ = ${l2.toFixed(1)}`,{c:COL.ink,sz:24,b:1});b.T([0,-2.5,0],`det(A) = ${(l1*l2).toFixed(2)}, trace = ${(l1+l2).toFixed(2)}`,{c:COL.red,sz:22});});
+  B.T([3.2,0,3.2],'eigenvalue 3 (stretched ├ù3)',{c:COL.red,b:1});B.T([2.4,0,-1.6],'eigenvalue 1 (unchanged)',{c:COL.teal,b:1});B.T([-3,0,-2.6],'circle ΓåÆ ellipse',{sz:22});B.T([0,2.2,0],'A v = ╬╗ v',{c:COL.ink,sz:26,b:1});
+  B.s(4);B.dyn((t,b,p={})=>{const l1=p.lambda1??3.0,l2=p.lambda2??1.0;b.C([0,0,0],1.4,{c:COL.teal,d:[5,4],w:2});b.F(a=>{const x=cos(a)*1.4,z=sin(a)*1.4;const s2=1/sqrt(2);const u=(x+z)*s2,v=(-x+z)*s2;const su=u*l1,sv=v*l2;return[(su-sv)*s2,0,(su+sv)*s2]},0,2*PI,{c:COL.red,w:3,seg:80});const s2=1/sqrt(2);b.A([0,0,0],[l1*1.4*s2,0,l1*1.4*s2],{c:COL.red,w:3.5});b.A([0,0,0],[-l2*1.4*s2,0,l2*1.4*s2],{c:COL.gold,w:3.5});b.T([0,2.5,0],`Live: ╬╗Γéü = ${l1.toFixed(1)}, ╬╗Γéé = ${l2.toFixed(1)}`,{c:COL.ink,sz:24,b:1});b.T([0,-2.5,0],`det(A) = ${(l1*l2).toFixed(2)}, trace = ${(l1+l2).toFixed(2)}`,{c:COL.red,sz:22});});
 }};
 
 SC['math:1']={cam:{yaw:-.45,pitch:.25},
@@ -352,49 +352,49 @@ SC['math:1']={cam:{yaw:-.45,pitch:.25},
   {id:'curveScale',label:'Curvature Amp',min:0.5,max:2.5,step:0.1,defaultVal:1.2,unit:''}
  ],
  steps:[
-  {t:'Rolle: same height at both ends means a flat spot',d:'If a smooth hill starts and ends at the same height, then somewhere between the ends the tangent must be perfectly flat (f′(c) = 0). Conditions that must be checked: continuous on [a, b], differentiable on (a, b), f(a) = f(b).'},
-  {t:'Lagrange: a tangent parallel to the chord',d:'Drop the equal-height condition and Rolle becomes Lagrange: somewhere the tangent has the same slope as the chord joining the endpoints, f′(c) = [f(b) − f(a)]/(b − a). Cauchy’s theorem is the same idea for two functions at once: f′(c)/g′(c) = [f(b) − f(a)]/[g(b) − g(a)].',only:true},
-  {t:'Curvature is the circle that fits the bend',d:'At any point the curve is hugged by one circle, the circle of curvature. Its radius is ρ = 1/κ, with κ = y₂/(1 + y₁²)^(3/2). For y = x²/4 at the vertex y₁ = 0, y₂ = ½, so κ = ½ and ρ = 2: a gentle bend has a big circle.',only:true},
-  {t:'L’Hôpital: compare slopes when 0/0',d:'sin x / x looks like 0/0 at x = 0. Near 0 the curve sin x and the line x leave the origin with slopes cos 0 = 1 and 1, so their ratio tends to 1. Differentiate top and bottom separately; repeat only while the form stays 0/0 or ∞/∞.',only:true},
+  {t:'Rolle: same height at both ends means a flat spot',d:'If a smooth hill starts and ends at the same height, then somewhere between the ends the tangent must be perfectly flat (fΓÇ▓(c) = 0). Conditions that must be checked: continuous on [a, b], differentiable on (a, b), f(a) = f(b).'},
+  {t:'Lagrange: a tangent parallel to the chord',d:'Drop the equal-height condition and Rolle becomes Lagrange: somewhere the tangent has the same slope as the chord joining the endpoints, fΓÇ▓(c) = [f(b) ΓêÆ f(a)]/(b ΓêÆ a). CauchyΓÇÖs theorem is the same idea for two functions at once: fΓÇ▓(c)/gΓÇ▓(c) = [f(b) ΓêÆ f(a)]/[g(b) ΓêÆ g(a)].',only:true},
+  {t:'Curvature is the circle that fits the bend',d:'At any point the curve is hugged by one circle, the circle of curvature. Its radius is ╧ü = 1/╬║, with ╬║ = yΓéé/(1 + yΓéü┬▓)^(3/2). For y = x┬▓/4 at the vertex yΓéü = 0, yΓéé = ┬╜, so ╬║ = ┬╜ and ╧ü = 2: a gentle bend has a big circle.',only:true},
+  {t:'LΓÇÖH├┤pital: compare slopes when 0/0',d:'sin x / x looks like 0/0 at x = 0. Near 0 the curve sin x and the line x leave the origin with slopes cos 0 = 1 and 1, so their ratio tends to 1. Differentiate top and bottom separately; repeat only while the form stays 0/0 or Γê₧/Γê₧.',only:true},
   {t:'Live parameter lab: Rolle and Lagrange tangent explorer',d:'Slide c to slide the point along the curve and inspect how the tangent line changes slope relative to the secant chord.',only:true}],
  build(B){
   const f=x=>2.2*sin(PI*(x+3)/6);B.s(0);axes(B,3.8,['x','f','']);ribbon(B,f,-3,3,.9);
   B.L([[-3,0,0],[3,0,0]],{c:COL.gray,d:[6,5]});B.A([-1.6,f(0),0],[1.6,f(0),0],{c:COL.red,w:3});B.D([0,f(0),0],.13,{f:COL.red});
-  B.T([-3,-.45,0],'a',{b:1});B.T([3,-.45,0],'b',{b:1});B.T([0,f(0)+.55,0],'f′(c) = 0',{c:COL.red,b:1,sz:23});B.T([0,-.6,0],'f(a) = f(b)',{c:COL.gray});
+  B.T([-3,-.45,0],'a',{b:1});B.T([3,-.45,0],'b',{b:1});B.T([0,f(0)+.55,0],'fΓÇ▓(c) = 0',{c:COL.red,b:1,sz:23});B.T([0,-.6,0],'f(a) = f(b)',{c:COL.gray});
   const g=x=>1.2*sin(.9*x)+.35*x,gp=x=>1.08*cos(.9*x)+.35,m=(g(3)-g(-3))/6;let c0=-3,bd=9;for(let x=-2.9;x<2.9;x+=.01){const e=abs(gp(x)-m);if(e<bd){bd=e;c0=x}}
   B.s(1);axes(B,3.8,['x','f','']);ribbon(B,g,-3,3,.9,{f:COL.gold});B.L([[-3,g(-3),0],[3,g(3),0]],{c:COL.gray,d:[6,5],w:2});
-  B.L([[c0-1.6,g(c0)-1.6*m,0],[c0+1.6,g(c0)+1.6*m,0]],{c:COL.red,w:3});B.D([c0,g(c0),0],.13,{f:COL.red});B.T([c0,g(c0)+.7,0],'tangent ∥ chord',{c:COL.red,b:1,sz:22});B.T([-3,g(-3)-.5,0],'A');B.T([3,g(3)+.5,0],'B');
+  B.L([[c0-1.6,g(c0)-1.6*m,0],[c0+1.6,g(c0)+1.6*m,0]],{c:COL.red,w:3});B.D([c0,g(c0),0],.13,{f:COL.red});B.T([c0,g(c0)+.7,0],'tangent ΓêÑ chord',{c:COL.red,b:1,sz:22});B.T([-3,g(-3)-.5,0],'A');B.T([3,g(3)+.5,0],'B');
   B.s(2);const p=x=>x*x/4;axes(B,3.8,['x','y','']);ribbon(B,p,-3,3,.9,{f:COL.teal});B.C([0,2,0],2,{n:'z',c:COL.red,w:2.6});B.L([[0,2,0],[0,0,0]],{c:COL.red,d:[5,4]});B.D([0,0,0],.13,{f:COL.red});B.D([0,2,0],.1,{f:COL.red});
-  B.T([1.6,1.7,0],'ρ = 1/κ = 2',{c:COL.red,b:1,sz:24});B.T([0,3.3,0],'κ = y₂ / (1 + y₁²)^(3/2)',{sz:22});
+  B.T([1.6,1.7,0],'╧ü = 1/╬║ = 2',{c:COL.red,b:1,sz:24});B.T([0,3.3,0],'╬║ = yΓéé / (1 + yΓéü┬▓)^(3/2)',{sz:22});
   B.s(3);axes(B,3.8,['x','y','']);B.F(x=>[x,sin(x),0],-2.6,2.6,{c:COL.teal,w:3});B.F(x=>[x,x,-.8],-2.6,2.6,{c:COL.red,w:3});B.D([0,0,0],.13,{f:COL.ink});B.D([0,0,-.8],.13,{f:COL.ink});
   B.T([2.6,.9,0],'sin x',{c:COL.teal,b:1});B.T([2.2,2.7,-.8],'x',{c:COL.red,b:1});B.T([0,3.2,0],'lim sin x / x = cos 0 / 1 = 1',{sz:23,b:1});
-  B.s(4);B.dyn((t,b,p={})=>{const c=p.cPos??0.0,amp=p.curveScale??1.2;const gv=x=>amp*sin(0.9*x)+0.35*x,gpv=x=>amp*0.9*cos(0.9*x)+0.35;axes(b,3.8,['x','f','']);b.F(x=>[x,gv(x),0],-3,3,{c:COL.teal,w:3,seg:90});const mv=(gv(3)-gv(-3))/6;b.L([[-3,gv(-3),0],[3,gv(3),0]],{c:COL.gray,d:[6,4],w:1.8});const slope=gpv(c);b.L([[c-1.6,gv(c)-1.6*slope,0],[c+1.6,gv(c)+1.6*slope,0]],{c:COL.red,w:3.2});b.D([c,gv(c),0],0.18,{f:COL.red});b.T([0,3.0,0],`c = ${c.toFixed(2)}, f′(c) = ${slope.toFixed(2)}, chord = ${mv.toFixed(2)}`,{c:COL.ink,sz:22,b:1});b.T([0,-3.2,0],abs(slope-mv)<0.15?'Tangents match! (Lagrange MVT satisfied)':'Adjust c until tangent is parallel to chord',{c:abs(slope-mv)<0.15?COL.teal:COL.gray,sz:20});});
+  B.s(4);B.dyn((t,b,p={})=>{const c=p.cPos??0.0,amp=p.curveScale??1.2;const gv=x=>amp*sin(0.9*x)+0.35*x,gpv=x=>amp*0.9*cos(0.9*x)+0.35;axes(b,3.8,['x','f','']);b.F(x=>[x,gv(x),0],-3,3,{c:COL.teal,w:3,seg:90});const mv=(gv(3)-gv(-3))/6;b.L([[-3,gv(-3),0],[3,gv(3),0]],{c:COL.gray,d:[6,4],w:1.8});const slope=gpv(c);b.L([[c-1.6,gv(c)-1.6*slope,0],[c+1.6,gv(c)+1.6*slope,0]],{c:COL.red,w:3.2});b.D([c,gv(c),0],0.18,{f:COL.red});b.T([0,3.0,0],`c = ${c.toFixed(2)}, fΓÇ▓(c) = ${slope.toFixed(2)}, chord = ${mv.toFixed(2)}`,{c:COL.ink,sz:22,b:1});b.T([0,-3.2,0],abs(slope-mv)<0.15?'Tangents match! (Lagrange MVT satisfied)':'Adjust c until tangent is parallel to chord',{c:abs(slope-mv)<0.15?COL.teal:COL.gray,sz:20});});
 }};
 
 SC['math:2']={cam:{yaw:-.65,pitch:.5},steps:[
  {t:'A surface z = f(x, y)',d:'A function of two variables is a landscape: height z above each point (x, y). This hill has one peak. At the top the ground is flat in every direction, which is the condition for a stationary point.'},
- {t:'Partial derivatives are slopes along two slices',d:'Freeze y and walk along x: the slope of that slice is fₓ. Freeze x and walk along y: that slope is f_y. At a peak both slopes are 0. Euler’s theorem for a homogeneous function of degree n then says x·fₓ + y·f_y = n·f.'},
- {t:'Saddle: flat but not a peak',d:'A stationary point can also be a saddle: up in one direction and down in the other. The test uses r = fₓₓ, s = fₓᵧ, t = f_yy. If rt − s² > 0 it is a max (r < 0) or min (r > 0); if rt − s² < 0 it is a saddle; if it equals 0 the test says nothing.',only:true},
- {t:'Lagrange: lowest point while staying on a path',d:'To minimise f = x² + y² while forced to stay on the line x + y = 1, follow the red path on the bowl. The lowest point on that path is where the level circle of f just touches the constraint line, so ∇f = λ∇φ. Build F = f + λφ and set all partial derivatives to zero.',only:true}],
+ {t:'Partial derivatives are slopes along two slices',d:'Freeze y and walk along x: the slope of that slice is fΓéô. Freeze x and walk along y: that slope is f_y. At a peak both slopes are 0. EulerΓÇÖs theorem for a homogeneous function of degree n then says x┬╖fΓéô + y┬╖f_y = n┬╖f.'},
+ {t:'Saddle: flat but not a peak',d:'A stationary point can also be a saddle: up in one direction and down in the other. The test uses r = fΓéôΓéô, s = fΓéôß╡º, t = f_yy. If rt ΓêÆ s┬▓ > 0 it is a max (r < 0) or min (r > 0); if rt ΓêÆ s┬▓ < 0 it is a saddle; if it equals 0 the test says nothing.',only:true},
+ {t:'Lagrange: lowest point while staying on a path',d:'To minimise f = x┬▓ + y┬▓ while forced to stay on the line x + y = 1, follow the red path on the bowl. The lowest point on that path is where the level circle of f just touches the constraint line, so Γêçf = ╬╗Γêç╧å. Build F = f + ╬╗╧å and set all partial derivatives to zero.',only:true}],
  build(B){
-  const h=(x,z)=>1.9*exp(-(x*x+z*z)/3.2);B.s(0);B.W(h,[-3.5,3.5],[-3.5,3.5],14,{c:COL.teal});B.D([0,h(0,0),0],.17,{f:COL.red});B.T([0,h(0,0)+.55,0],'peak: fₓ = f_y = 0',{c:COL.red,b:1,sz:22});B.T([0,-.3,3.9],'(x, y) plane',{c:COL.gray});
+  const h=(x,z)=>1.9*exp(-(x*x+z*z)/3.2);B.s(0);B.W(h,[-3.5,3.5],[-3.5,3.5],14,{c:COL.teal});B.D([0,h(0,0),0],.17,{f:COL.red});B.T([0,h(0,0)+.55,0],'peak: fΓéô = f_y = 0',{c:COL.red,b:1,sz:22});B.T([0,-.3,3.9],'(x, y) plane',{c:COL.gray});
   B.s(1);B.F(x=>[x,h(x,1),1],-3.5,3.5,{c:COL.red,w:3.2});B.F(z=>[1.3,h(1.3,z),z],-3.5,3.5,{c:COL.blue,w:3.2});
   const sl=(x,z)=>-1.9*2*x/3.2*h(x,z)/1.9;B.L([[0,h(0,1),1],[2.5,h(0,1)+sl(0,1)*2.5,1]],{c:COL.red,d:[5,4]});
-  B.D([1.3,h(1.3,1),1],.14,{f:COL.ink});B.T([-3,1.6,1],'slice y = const → fₓ',{c:COL.red,b:1});B.T([2.8,1.9,-3.1],'slice x = const → f_y',{c:COL.blue,b:1});B.T([0,3.3,0],'x fₓ + y f_y = n f',{sz:22});
-  B.s(2);const sd=(x,z)=>.24*(x*x-z*z);B.W(sd,[-3.2,3.2],[-3.2,3.2],14,{c:COL.gold});B.D([0,0,0],.17,{f:COL.red});B.T([0,.8,0],'saddle: rt − s² < 0',{c:COL.red,b:1,sz:23});
+  B.D([1.3,h(1.3,1),1],.14,{f:COL.ink});B.T([-3,1.6,1],'slice y = const ΓåÆ fΓéô',{c:COL.red,b:1});B.T([2.8,1.9,-3.1],'slice x = const ΓåÆ f_y',{c:COL.blue,b:1});B.T([0,3.3,0],'x fΓéô + y f_y = n f',{sz:22});
+  B.s(2);const sd=(x,z)=>.24*(x*x-z*z);B.W(sd,[-3.2,3.2],[-3.2,3.2],14,{c:COL.gold});B.D([0,0,0],.17,{f:COL.red});B.T([0,.8,0],'saddle: rt ΓêÆ s┬▓ < 0',{c:COL.red,b:1,sz:23});
   B.F(x=>[x,sd(x,0),0],-3.2,3.2,{c:COL.teal,w:3});B.F(z=>[0,sd(0,z),z],-3.2,3.2,{c:COL.red,w:3});B.T([3.2,2.7,0],'up this way',{c:COL.teal});B.T([0,-2.9,3.1],'down this way',{c:COL.red});
   B.s(3);const bw=(x,z)=>.28*(x*x+z*z);B.W(bw,[-3.2,3.2],[-3.2,3.2],14,{c:COL.gray});[.5,1,1.6,2.2].forEach(r=>B.C([0,0,0],r,{c:COL.teal,w:1.6}));
-  B.F(x=>[x,bw(x,1-x),1-x],-1.4,2.4,{c:COL.red,w:3.2});B.L([[-1.6,0,2.6],[2.6,0,-1.6]],{c:COL.red,d:[6,5],w:2});B.D([.5,bw(.5,.5),.5],.16,{f:COL.red});B.T([0,3.1,0],'constraint x + y = 1',{c:COL.red,b:1});B.T([.9,1.1,.9],'∇f = λ∇φ',{c:COL.ink,b:1,sz:22,dx:60})}};
+  B.F(x=>[x,bw(x,1-x),1-x],-1.4,2.4,{c:COL.red,w:3.2});B.L([[-1.6,0,2.6],[2.6,0,-1.6]],{c:COL.red,d:[6,5],w:2});B.D([.5,bw(.5,.5),.5],.16,{f:COL.red});B.T([0,3.1,0],'constraint x + y = 1',{c:COL.red,b:1});B.T([.9,1.1,.9],'Γêçf = ╬╗Γêç╧å',{c:COL.ink,b:1,sz:22,dx:60})}};
 
 SC['math:3']={cam:{yaw:-.55,pitch:.55},steps:[
- {t:'Double integral = volume of thin columns',d:'Cut the floor into tiny squares dA and stand a column of height f(x, y) on each. Adding all columns gives the volume under the surface: ∬ f dA. Doing x first then y, or y first then x, adds the same columns in a different order.'},
- {t:'Change of order: slice the same region the other way',d:'For the triangle 0 ≤ y ≤ x ≤ 3, vertical strips (left) run y from 0 to x. Horizontal strips (right) run x from y to 3. Always draw the region first; read the new limits off the picture, never off the old formula.',only:true},
- {t:'Polar coordinates for round regions',d:'On a disc use r and θ. A tiny patch is almost a rectangle of sides dr and r dθ, so dA = r dr dθ. The extra factor r is the one students forget.',only:true},
- {t:'Spherical coordinates: r, θ, φ',d:'A point is described by its distance r, its angle θ down from the z-axis and its angle φ around it. The tiny box has sides dr, r dθ and r sinθ dφ, so dV = r² sinθ dr dθ dφ. Cylindrical is simpler: dV = r dr dθ dz.',only:true},
- {t:'Gamma and Beta: factorials for any number',d:'Γ(n + 1) = n·Γ(n), so Γ(n) = (n − 1)! for whole numbers: Γ(1) = 1, Γ(2) = 1, Γ(3) = 2, Γ(4) = 6. Also Γ(½) = √π. Beta links to Gamma: B(m, n) = Γ(m)Γ(n)/Γ(m + n), and B(m, n) = 2∫₀^(π/2) sin^(2m−1)θ cos^(2n−1)θ dθ.',only:true}],
+ {t:'Double integral = volume of thin columns',d:'Cut the floor into tiny squares dA and stand a column of height f(x, y) on each. Adding all columns gives the volume under the surface: Γê¼ f dA. Doing x first then y, or y first then x, adds the same columns in a different order.'},
+ {t:'Change of order: slice the same region the other way',d:'For the triangle 0 Γëñ y Γëñ x Γëñ 3, vertical strips (left) run y from 0 to x. Horizontal strips (right) run x from y to 3. Always draw the region first; read the new limits off the picture, never off the old formula.',only:true},
+ {t:'Polar coordinates for round regions',d:'On a disc use r and ╬╕. A tiny patch is almost a rectangle of sides dr and r d╬╕, so dA = r dr d╬╕. The extra factor r is the one students forget.',only:true},
+ {t:'Spherical coordinates: r, ╬╕, ╧å',d:'A point is described by its distance r, its angle ╬╕ down from the z-axis and its angle ╧å around it. The tiny box has sides dr, r d╬╕ and r sin╬╕ d╧å, so dV = r┬▓ sin╬╕ dr d╬╕ d╧å. Cylindrical is simpler: dV = r dr d╬╕ dz.',only:true},
+ {t:'Gamma and Beta: factorials for any number',d:'╬ô(n + 1) = n┬╖╬ô(n), so ╬ô(n) = (n ΓêÆ 1)! for whole numbers: ╬ô(1) = 1, ╬ô(2) = 1, ╬ô(3) = 2, ╬ô(4) = 6. Also ╬ô(┬╜) = ΓêÜ╧Ç. Beta links to Gamma: B(m, n) = ╬ô(m)╬ô(n)/╬ô(m + n), and B(m, n) = 2Γê½ΓéÇ^(╧Ç/2) sin^(2mΓêÆ1)╬╕ cos^(2nΓêÆ1)╬╕ d╬╕.',only:true}],
  build(B){
   const f=(x,z)=>.5+.22*(x*x+z*z);B.s(0);for(let i=0;i<7;i++)for(let j=0;j<7;j++){const x=-2.7+i*.9,z=-2.7+j*.9;B.X([x,f(x,z)/2,z],[.8,f(x,z),.8],{f:COL.teal})}
-  B.T([0,3.4,0],'∬ f(x, y) dA = Σ column volumes',{sz:23,b:1});
+  B.T([0,3.4,0],'Γê¼ f(x, y) dA = ╬ú column volumes',{sz:23,b:1});
   B.s(1);const tri=(zc)=>B.P([[-3,0,zc-1.6],[3,0,zc+1.6],[-3,0,zc+1.6]],{f:COL.gold,a:.1});
   B.P([[-3.5,0,-2.9],[-.2,0,-2.9],[-.2,0,-.2],[-3.5,0,-.2]].map(p=>p),{f:COL.gray,a:.0,nostroke:true});
   B.P([[-3.3,0,-3],[-.5,0,-3],[-.5,0,-.3]],{f:COL.teal,a:.12});for(let i=0;i<=7;i++){const x=-3.3+i*.4;B.L([[x,0,-3],[x,0,-3+Math.max(0,(x+3.3))*(2.7/2.8)]],{c:COL.teal,w:1.8})}
@@ -402,995 +402,179 @@ SC['math:3']={cam:{yaw:-.55,pitch:.55},steps:[
   B.T([-1.9,0,-3.5],'dy first: y from 0 to x',{c:COL.teal,b:1});B.T([1.9,0,3.6],'dx first: x from y to 3',{c:COL.red,b:1});B.T([0,2.4,0],'same region, two orders',{sz:23,b:1});
   B.s(2);[.8,1.6,2.4,3.2].forEach(r=>B.C([0,0,0],r,{c:COL.teal,w:1.6}));for(let a=0;a<12;a++)B.L([[0,0,0],[cos(a*PI/6)*3.2,0,sin(a*PI/6)*3.2]],{c:COL.teal,w:1});
   B.P([[1.6*cos(.5),0,1.6*sin(.5)],[2.4*cos(.5),0,2.4*sin(.5)],[2.4*cos(.8),0,2.4*sin(.8)],[1.6*cos(.8),0,1.6*sin(.8)]],{f:COL.red,a:.5,c:COL.red,w:2.4});
-  B.T([3.2,.3,2.6],'dA = r dr dθ',{c:COL.red,b:1,sz:23});B.T([0,2.4,0],'x = r cosθ,  y = r sinθ',{sz:22});
+  B.T([3.2,.3,2.6],'dA = r dr d╬╕',{c:COL.red,b:1,sz:23});B.T([0,2.4,0],'x = r cos╬╕,  y = r sin╬╕',{sz:22});
   B.s(3);B.C([0,0,0],2.4,{n:'y',c:COL.teal,w:1.5});B.C([0,0,0],2.4,{n:'x',c:COL.teal,w:1.5});B.C([0,0,0],2.4,{n:'z',c:COL.teal,w:1.5});axes(B,3.4,['x','z','y']);
   const P=[1.5,1.6,1.2];B.A([0,0,0],P,{c:COL.red,w:3});B.L([[0,0,0],[P[0],0,P[2]]],{c:COL.gray,d:[5,4]});B.L([[P[0],0,P[2]],P],{c:COL.gray,d:[5,4]});B.D(P,.14,{f:COL.red});
-  B.T([.4,1.1,.5],'r',{c:COL.red,b:1,sz:24});B.T([1.8,2.2,1.3],'P(r, θ, φ)',{c:COL.red,b:1});B.T([.3,1.9,0],'θ',{c:COL.blue,b:1,sz:24});B.T([1.2,0,.3],'φ',{c:COL.green,b:1,sz:24});B.T([0,-2.9,0],'dV = r² sinθ dr dθ dφ',{sz:23,b:1});
-  B.s(4);axes(B,4,['x','Γ','']);B.F(x=>[x*1.1-3.2,Math.min(4.2,gam(x))*.9,0],.25,4.1,{c:COL.teal,w:3,seg:80});[1,2,3,4].forEach(n=>{B.D([n*1.1-3.2,gam(n)*.9,0],.13,{f:COL.red});B.T([n*1.1-3.2,gam(n)*.9+.5,0],'Γ('+n+') = '+gam(n).toFixed(0),{c:COL.red,b:1,sz:18})});
-  B.D([.5*1.1-3.2,gam(.5)*.9,0],.13,{f:COL.gold});B.T([.5*1.1-3.2+.2,gam(.5)*.9+.5,0],'Γ(½) = √π ≈ 1.77',{c:COL.gold,b:1,sz:18,a:'left'})}};
+  B.T([.4,1.1,.5],'r',{c:COL.red,b:1,sz:24});B.T([1.8,2.2,1.3],'P(r, ╬╕, ╧å)',{c:COL.red,b:1});B.T([.3,1.9,0],'╬╕',{c:COL.blue,b:1,sz:24});B.T([1.2,0,.3],'╧å',{c:COL.green,b:1,sz:24});B.T([0,-2.9,0],'dV = r┬▓ sin╬╕ dr d╬╕ d╧å',{sz:23,b:1});
+  B.s(4);axes(B,4,['x','╬ô','']);B.F(x=>[x*1.1-3.2,Math.min(4.2,gam(x))*.9,0],.25,4.1,{c:COL.teal,w:3,seg:80});[1,2,3,4].forEach(n=>{B.D([n*1.1-3.2,gam(n)*.9,0],.13,{f:COL.red});B.T([n*1.1-3.2,gam(n)*.9+.5,0],'╬ô('+n+') = '+gam(n).toFixed(0),{c:COL.red,b:1,sz:18})});
+  B.D([.5*1.1-3.2,gam(.5)*.9,0],.13,{f:COL.gold});B.T([.5*1.1-3.2+.2,gam(.5)*.9+.5,0],'╬ô(┬╜) = ΓêÜ╧Ç Γëê 1.77',{c:COL.gold,b:1,sz:18,a:'left'})}};
 
 SC['math:4']={cam:{yaw:-.6,pitch:.5},steps:[
- {t:'Gradient points straight uphill',d:'On the hill z = f(x, y), the gradient ∇f points in the steepest uphill direction and is always at right angles to the contour lines. The directional derivative along a unit vector û is ∇f · û; it is biggest when û points along ∇f.'},
- {t:'Divergence: source or drain',d:'Imagine a small closed surface. If more field leaves than enters, the divergence there is positive, like a tap. Field lines spreading from a point have ∇·F > 0; ∇·F = 0 means as much comes in as goes out.',only:true},
- {t:'Curl: would a paddle wheel spin?',d:'The field F = (−y, x, 0) circulates around the z-axis. A tiny paddle wheel placed in it would spin, so the curl is non-zero and points along the axis (here ∇×F = 2k). A field with zero curl is called irrotational.',only:true},
- {t:'The three big theorems',d:'Green: a loop in a flat plane ↔ the area it encloses, ∮(P dx + Q dy) = ∬(∂Q/∂x − ∂P/∂y) dA. Stokes: a loop ↔ any surface stretched over it, ∮F·dr = ∬(∇×F)·n dS. Gauss: a closed surface ↔ the volume inside, ∯F·n dS = ∭∇·F dV. To verify, compute both sides and show they match.',only:true}],
+ {t:'Gradient points straight uphill',d:'On the hill z = f(x, y), the gradient Γêçf points in the steepest uphill direction and is always at right angles to the contour lines. The directional derivative along a unit vector ├╗ is Γêçf ┬╖ ├╗; it is biggest when ├╗ points along Γêçf.'},
+ {t:'Divergence: source or drain',d:'Imagine a small closed surface. If more field leaves than enters, the divergence there is positive, like a tap. Field lines spreading from a point have Γêç┬╖F > 0; Γêç┬╖F = 0 means as much comes in as goes out.',only:true},
+ {t:'Curl: would a paddle wheel spin?',d:'The field F = (ΓêÆy, x, 0) circulates around the z-axis. A tiny paddle wheel placed in it would spin, so the curl is non-zero and points along the axis (here Γêç├ùF = 2k). A field with zero curl is called irrotational.',only:true},
+ {t:'The three big theorems',d:'Green: a loop in a flat plane Γåö the area it encloses, Γê«(P dx + Q dy) = Γê¼(ΓêéQ/Γêéx ΓêÆ ΓêéP/Γêéy) dA. Stokes: a loop Γåö any surface stretched over it, Γê«F┬╖dr = Γê¼(Γêç├ùF)┬╖n dS. Gauss: a closed surface Γåö the volume inside, Γê»F┬╖n dS = Γê¡Γêç┬╖F dV. To verify, compute both sides and show they match.',only:true}],
  build(B){
   const h=(x,z)=>1.9*exp(-(x*x+z*z)/3.2);B.s(0);B.W(h,[-3.5,3.5],[-3.5,3.5],12,{c:COL.teal});[.8,1.5,2.2,3].forEach(r=>B.C([0,-.02,0],r,{c:COL.gray,w:1.5}));
   for(let a=0;a<8;a++){const r=2.2,x=cos(a*PI/4)*r,z=sin(a*PI/4)*r;B.A([x,0,z],[x*.62,0,z*.62],{c:COL.red,w:2.4})}
-  B.A([2,h(2,.3),.3],[1.2,h(1.2,.2)+.3,.2],{c:COL.red,w:3});B.T([0,2.6,0],'∇f ⊥ contour, points uphill',{c:COL.red,b:1,sz:22});B.T([3,0,3.2],'contour lines',{c:COL.gray});
+  B.A([2,h(2,.3),.3],[1.2,h(1.2,.2)+.3,.2],{c:COL.red,w:3});B.T([0,2.6,0],'Γêçf ΓèÑ contour, points uphill',{c:COL.red,b:1,sz:22});B.T([3,0,3.2],'contour lines',{c:COL.gray});
   B.s(1);B.C([0,0,0],1.6,{n:'x',c:COL.gold,w:1.6});B.C([0,0,0],1.6,{n:'y',c:COL.gold,w:1.6});B.C([0,0,0],1.6,{n:'z',c:COL.gold,w:1.6});B.D([0,0,0],.2,{f:COL.red});
   for(let i=-1;i<=1;i++)for(let j=-1;j<=1;j++)for(let k=-1;k<=1;k++){if(!i&&!j&&!k)continue;const p=v3.norm([i,j,k]),q=v3.mul(p,.45);B.A(v3.mul(p,2.3),v3.add(v3.mul(p,2.3),q),{c:COL.red,w:2})}
-  B.T([0,3.4,0],'∇·F > 0 : field spreads out (source)',{c:COL.red,b:1,sz:22});B.T([2.4,-1.9,0],'closed surface',{c:COL.gold});
+  B.T([0,3.4,0],'Γêç┬╖F > 0 : field spreads out (source)',{c:COL.red,b:1,sz:22});B.T([2.4,-1.9,0],'closed surface',{c:COL.gold});
   B.s(2);for(let i=-2;i<=2;i++)for(let j=-2;j<=2;j++){const x=i*1.1,z=j*1.1,r=Math.hypot(x,z);if(r<.3||r>2.8)continue;const v=[-z/r*.5,0,x/r*.5];B.A([x,0,z],[x+v[0],0,z+v[2]],{c:COL.teal,w:2.2})}
   B.dyn((t,b)=>{const a=t*2.2;b.L([[0,0,0],[0,2.2,0]],{c:COL.gray,w:2});for(let k=0;k<4;k++){const aa=a+k*PI/2;b.L([[0,2.2,0],[cos(aa)*.8,2.2,sin(aa)*.8]],{c:COL.red,w:3})}b.D([0,2.2,0],.1,{f:COL.red})});
-  B.A([0,0,0],[0,1.4,0],{c:COL.red,w:2.6});B.T([.2,3.2,0],'paddle wheel spins → curl ≠ 0',{c:COL.red,b:1,sz:22});B.T([0,-.3,3.4],'F = (−y, x, 0)',{c:COL.teal,b:1});
-  B.F(a=>[cos(a)*1.2,.9,sin(a)*1.2],0,2*PI,{c:COL.red,w:3});for(let k=0;k<8;k++){const a=k*PI/4;B.L([[cos(a)*1.2,.9,sin(a)*1.2],[cos(a)*.6,.2,sin(a)*.6],[0,.1,0]],{c:COL.red,w:1,d:[3,3]})}B.T([0,-.9,0],'Stokes: loop → surface',{c:COL.red,b:1,sz:20});
-  B.C([3.8,.4,-1],1.3,{n:'x',c:COL.gold,w:1.5});B.C([3.8,.4,-1],1.3,{n:'y',c:COL.gold,w:1.5});B.C([3.8,.4,-1],1.3,{n:'z',c:COL.gold,w:1.5});B.T([3.8,-1.3,-1],'Gauss: surface → volume',{c:COL.gold,b:1,sz:20})}};
-function cylx(B: any, x0: number, x1: number, r: number, o: any = {}) { const n = 16; for (let i = 0; i < n; i++) { const a0 = i / n * 2 * PI, a1 = (i + 1) / n * 2 * PI; B.P([[x0, cos(a0) * r, sin(a0) * r], [x1, cos(a0) * r, sin(a0) * r], [x1, cos(a1) * r, sin(a1) * r], [x0, cos(a1) * r, sin(a1) * r]], Object.assign({ a: .16, nostroke: true }, o)); } B.C([x0, 0, 0], r, Object.assign({ n: 'x' }, o, { f: null })); B.C([x1, 0, 0], r, Object.assign({ n: 'x' }, o, { f: null })); }
-function plot(B: any, o: number[], w: number, h: number, xl: string, yl: string, t0?: string) { B.A([o[0], o[1], o[2]], [o[0] + w, o[1], o[2]], { c: COL.ink, w: 2 }); B.A([o[0], o[1], o[2]], [o[0], o[1] + h, o[2]], { c: COL.ink, w: 2 }); B.T([o[0] + w, o[1] - .35, o[2]], xl, { sz: 18 }); B.T([o[0] - .2, o[1] + h + .35, o[2]], yl, { sz: 18 }); if (t0) B.T([o[0] + w / 2, o[1] + h + .5, o[2]], t0, { b: 1, sz: 22 }); }
-const rnd = (n: number) => { let a = n * 9301 + 49297; a = (a * 233280 + 7) % 233280; return a / 233280; };
+  B.A([0,0,0],[0,1.4,0],{c:COL.red,w:2.6});B.T([.2,3.2,0],'paddle wheel spins ΓåÆ curl Γëá 0',{c:COL.red,b:1,sz:22});B.T([0,-.3,3.4],'F = (ΓêÆy, x, 0)',{c:COL.teal,b:1});
+  B.s(3);B.P(Array.from({length:30},(_,i)=>[-3.8+cos(i/30*2*PI)*1.2,0,-1.5+sin(i/30*2*PI)*1.2]),{f:COL.teal,a:.18,c:COL.teal,w:2.2});B.T([-3.8,0,0],'Green: loop ΓåÆ area',{c:COL.teal,b:1,sz:20});
+  B.F(a=>[cos(a)*1.2,.9,sin(a)*1.2],0,2*PI,{c:COL.red,w:3});for(let k=0;k<8;k++){const a=k*PI/4;B.L([[cos(a)*1.2,.9,sin(a)*1.2],[cos(a)*.6,.2,sin(a)*.6],[0,.1,0]],{c:COL.red,w:1,d:[3,3]})}B.T([0,-.9,0],'Stokes: loop ΓåÆ surface',{c:COL.red,b:1,sz:20});
+  B.C([3.8,.4,-1],1.3,{n:'x',c:COL.gold,w:1.5});B.C([3.8,.4,-1],1.3,{n:'y',c:COL.gold,w:1.5});B.C([3.8,.4,-1],1.3,{n:'z',c:COL.gold,w:1.5});B.T([3.8,-1.3,-1],'Gauss: surface ΓåÆ volume',{c:COL.gold,b:1,sz:20})}};
+function cylx(B,x0,x1,r,o={}){const n=16;for(let i=0;i<n;i++){const a0=i/n*2*PI,a1=(i+1)/n*2*PI;B.P([[x0,cos(a0)*r,sin(a0)*r],[x1,cos(a0)*r,sin(a0)*r],[x1,cos(a1)*r,sin(a1)*r],[x0,cos(a1)*r,sin(a1)*r]],Object.assign({a:.16,nostroke:true},o))}B.C([x0,0,0],r,Object.assign({n:'x'},o,{f:null}));B.C([x1,0,0],r,Object.assign({n:'x'},o,{f:null}))}
+function plot(B,o,w,h,xl,yl,t0){B.A([o[0],o[1],o[2]],[o[0]+w,o[1],o[2]],{c:COL.ink,w:2});B.A([o[0],o[1],o[2]],[o[0],o[1]+h,o[2]],{c:COL.ink,w:2});B.T([o[0]+w,o[1]-.35,o[2]],xl,{sz:18});B.T([o[0]-.2,o[1]+h+.35,o[2]],yl,{sz:18});if(t0)B.T([o[0]+w/2,o[1]+h+.5,o[2]],t0,{b:1,sz:22})}
+const rnd=(n)=>{let a=n*9301+49297;a=(a*233280+7)%233280;return a/233280};
+SC['phy:0']={cam:{yaw:-.5,pitch:.3},
+ params:[
+  {id:'phaseShift',label:'Phase Diff ╬┤',min:0,max:2,step:0.05,defaultVal:0.0,unit:'╧Ç'},
+  {id:'wavelength',label:'Wave Number k',min:1.0,max:4.0,step:0.2,defaultVal:2.0,unit:''}
+ ],
+ steps:[
+  {t:'Interference: add the waves',d:'Two waves of the same wavelength meet. Where crest meets crest (phase difference 0, 2╧ÇΓÇª, path difference n╬╗) the sum doubles: bright. Where crest meets trough (path difference (n + ┬╜)╬╗) the sum cancels: dark. Watch the red sum change as the phase difference slides.'},
+  {t:'NewtonΓÇÖs rings: a curved lens on flat glass',d:'The air film between lens and plate grows steadily from the touching point, so the path difference grows too, giving alternate dark and bright circles. With reflected light the centre is dark. For the nth dark ring D┬▓ = 4n╬╗R, so ╬╗ = (D┬▓ΓéÖΓéèΓéÜ ΓêÆ D┬▓ΓéÖ)/(4pR) from two rings p apart.',only:true},
+  {t:'Single slit: a wide central bright band',d:'Light bending through a narrow slit of width a spreads onto the screen. Dark fringes occur where a sin╬╕ = m╬╗ (m = ┬▒1, ┬▒2ΓÇª). The central maximum is twice as wide as the others, and a narrower slit gives a wider pattern.',only:true},
+  {t:'Grating: sharp, bright orders',d:'A grating has thousands of slits with spacing (a + b). Bright orders appear at (a + b) sin╬╕ = n╬╗, and sin╬╕ Γëñ 1 limits the highest order to n < (a + b)/╬╗. More slits means sharper lines, which is why a grating measures wavelength well. Rayleigh: two sources are just resolved when one peak sits on the otherΓÇÖs first minimum, sin╬╕ Γëê 1.22╬╗/D.',only:true},
+  {t:'Polarisation: MalusΓÇÖ law',d:'Natural light vibrates in every direction across its path. A polariser passes only one direction. A second polariser (analyser) at angle ╬╕ passes the component cos╬╕ of the amplitude, so intensity I = IΓéÇcos┬▓╬╕. A Nicol prism makes plane-polarised light using double refraction.',only:true},
+  {t:'Live parameter lab: wave superposition',d:'Adjust the phase difference ╬┤ and wave number k to watch constructive vs destructive interference live.',only:true}],
+ build(B){
+  B.s(0);B.dyn((t,b)=>{const ph=t*1.8,d=PI*(.5+.5*sin(t*.5))*1.0;b.F(x=>[x,2.3+sin(x*2-ph)*.7,0],-4.5,4.5,{c:COL.teal,w:3,seg:90});b.F(x=>[x,.3+sin(x*2-ph-d)*.7,0],-4.5,4.5,{c:COL.gold,w:3,seg:90});b.F(x=>[x,-2+(sin(x*2-ph)+sin(x*2-ph-d))*.5*1.0,0],-4.5,4.5,{c:COL.red,w:3.6,seg:90});
+   b.T([-4.6,2.3,0],'╧êΓéü',{c:COL.teal,b:1,sz:24});b.T([-4.6,.3,0],'╧êΓéé',{c:COL.gold,b:1,sz:24});b.T([-4.6,-2,0],'sum',{c:COL.red,b:1,sz:24});b.T([0,-3.5,0],'phase difference = '+(d/PI).toFixed(2)+' ╧Ç  ΓåÆ  amplitude ├ù'+(2*abs(cos(d/2))).toFixed(2),{sz:22,b:1})});
+  B.s(1);B.P([[-4,0,-4],[4,0,-4],[4,0,4],[-4,0,4]],{f:COL.gray,a:.14});for(let n=1;n<=8;n++)B.C([0,.01,0],Math.sqrt(n)*1.0,{c:n%2?COL.ink:COL.red,w:n%2?2.4:1.4});
+  const R=13,hh=r=>R-sqrt(R*R-r*r);[1,2,3].forEach(r=>B.C([0,hh(r)+.01,0],r,{c:COL.teal,w:1.4,d:[4,3]}));B.C([0,2.2,0],3.1,{c:COL.teal,w:2.4});B.C([0,.9,0],3.1,{c:COL.teal,w:1.2,d:[4,3]});
+  [[-3.1,.9],[3.1,.9],[0,0]].forEach(()=>0);B.L([[3.1,2.2,0],[3.1,.9,0]],{c:COL.teal,w:2.2});B.L([[-3.1,2.2,0],[-3.1,.9,0]],{c:COL.teal,w:2.2});
+  [[-1.5,0],[1.5,0],[0,1.5],[0,-1.5]].forEach(p=>B.A([p[0],4.2,p[1]],[p[0],3.1,p[1]],{c:COL.gold,w:2.4}));B.T([0,4.6,0],'monochromatic light',{c:COL.gold,b:1});B.T([0,2.9,0],'plano-convex lens',{c:COL.teal,b:1});B.T([4.4,0,3.4],'DΓéÖ┬▓ = 4n╬╗R',{c:COL.red,b:1,sz:24});B.T([-4.2,0,3.6],'centre is dark',{c:COL.ink});
+  B.s(2);B.X([0,0,-.2],[.4,3.4,.4],{f:COL.gray});B.X([0,2.6,-.2],[.4,1.4,.4],{f:COL.gray});B.X([0,-2.6,-.2],[.4,1.4,.4],{f:COL.gray});B.T([-.8,0,.6],'slit a',{c:COL.ink,b:1});
+  B.P([[-3.4,-3,-7],[3.4,-3,-7],[3.4,3,-7],[-3.4,3,-7]],{f:COL.paper,a:.5,c:COL.ink,w:2});const sinc=x=>{const u=x*2.2;return abs(u)<1e-3?1:(sin(u)/u)**2};B.F(x=>[x,-3+4.6*sinc(x),-7],-3.3,3.3,{c:COL.red,w:3.4,seg:120});
+  [-2.85,-1.43,1.43,2.85].forEach(x=>{B.D([x,-3,-7],.1,{f:COL.ink});B.L([[0,0,0],[x,-3,-7]],{c:COL.gold,w:1.2,d:[4,4]})});B.L([[0,0,-.2],[0,1.6,-7]],{c:COL.gold,w:1.6});B.T([0,2.4,-7],'central maximum',{c:COL.red,b:1});B.T([3.2,-3.6,-7],'a sin╬╕ = m╬╗',{c:COL.ink,b:1,sz:22});
+  B.s(3);for(let i=-3;i<=3;i++)B.X([i*.35,0,0],[.1,3,.3],{f:COL.gray});B.P([[-4.4,-3,-7],[4.4,-3,-7],[4.4,3,-7],[-4.4,3,-7]],{f:COL.paper,a:.5,c:COL.ink,w:2});
+  [-2,-1,0,1,2].forEach(n=>{const x=n*1.7,h=[.35,.7,1,.7,.35][n+2]*3.6;B.L([[x,-3,-7],[x,-3+h,-7]],{c:COL.red,w:5});B.L([[0,0,0],[x,-1,-7]],{c:COL.gold,w:1.2,d:[4,4]});B.T([x,-3.45,-7],'n = '+n,{sz:18})});B.T([0,2.7,0],'(a + b) sin╬╕ = n╬╗',{c:COL.red,b:1,sz:24});B.T([0,3.5,0],'sharp lines: many slits',{c:COL.ink});
+  B.s(4);const pol=(z,ang,col)=>{const u=[cos(ang),sin(ang)],p=[-u[1],u[0]];B.C([0,0,z],2,{n:'z',f:col,a:.15,c:col,w:2.4});for(let k=-3;k<=3;k++){const o=k*.5,h=sqrt(4-o*o);B.L([[p[0]*o-u[0]*h,p[1]*o-u[1]*h,z],[p[0]*o+u[0]*h,p[1]*o+u[1]*h,z]],{c:col,w:1.2})}};
+  const an=.7;pol(-3,PI/2,COL.teal);pol(1.5,an,COL.gold);
+  for(let a=0;a<8;a++){const g=a*PI/8;B.A([-cos(g)*.7,-sin(g)*.7,-7],[cos(g)*.7,sin(g)*.7,-7],{c:COL.ink,w:1.6})}
+  B.A([0,-.9,-5],[0,.9,-5],{c:COL.ink,w:2});B.A([0,0,-1],[0,1.5,-1],{c:COL.teal,w:3.2});const tr=1.5*cos(PI/2-an);B.A([0,0,3.4],[cos(an)*tr,sin(an)*tr,3.4],{c:COL.gold,w:3.2});
+  B.L([[0,0,-7],[0,0,5]],{c:COL.gray,d:[5,5],w:1.4});
+  B.T([0,-1.2,-7],'natural light',{c:COL.ink});B.T([0,2.6,-3],'polariser',{c:COL.teal,b:1});B.T([0,2.6,1.5],'analyser at ╬╕',{c:COL.gold,b:1});B.T([0,-2.7,1.5],'I = IΓéÇ cos┬▓╬╕',{c:COL.red,b:1,sz:24});
+  B.s(5);B.dyn((t,b,p={})=>{const delta=(p.phaseShift??0)*PI,k=p.wavelength??2.0,ph=t*1.8;b.F(x=>[x,2.0+sin(x*k-ph)*0.7,0],-4.5,4.5,{c:COL.teal,w:2.8,seg:90});b.F(x=>[x,0.2+sin(x*k-ph-delta)*0.7,0],-4.5,4.5,{c:COL.gold,w:2.8,seg:90});b.F(x=>[x,-2.0+(sin(x*k-ph)+sin(x*k-ph-delta))*0.5,0],-4.5,4.5,{c:COL.red,w:3.6,seg:90});const ampFactor=2*abs(cos(delta/2));b.T([0,3.2,0],`Phase ╬┤ = ${(delta/PI).toFixed(2)}╧Ç | Net Amp = ${ampFactor.toFixed(2)}x`,{c:COL.ink,sz:24,b:1});b.T([0,-3.5,0],ampFactor>1.8?'CONSTRUCTIVE INTERFERENCE (BRIGHT)':ampFactor<0.3?'DESTRUCTIVE INTERFERENCE (DARK)':'PARTIAL INTERFERENCE',{c:ampFactor>1.8?COL.teal:ampFactor<0.3?COL.red:COL.gold,sz:21,b:1});});
+}};
 
-function lamCol(l: number): string {
-  let r = 0, g = 0, b = 0;
-  if (l < 440) { r = (440 - l) / 60; b = 1; } else if (l < 490) { g = (l - 440) / 50; b = 1; } else if (l < 510) { g = 1; b = (510 - l) / 20; }
-  else if (l < 580) { r = (l - 510) / 70; g = 1; } else if (l < 645) { r = 1; g = (645 - l) / 65; } else { r = 1; }
-  const f = l < 420 ? .35 + .65 * (l - 380) / 40 : l > 700 ? .35 + .65 * (780 - l) / 80 : 1;
-  const c = (v: number) => Math.round(255 * Math.pow(Math.max(0, v) * f, .8));
-  return 'rgb(' + c(r) + ',' + c(g) + ',' + c(b) + ')';
-}
+SC['phy:1']={cam:{yaw:-.5,pitch:.3},
+ params:[
+  {id:'coreIndex',label:'Core Index nΓéü',min:1.45,max:1.70,step:0.01,defaultVal:1.55,unit:''},
+  {id:'cladIndex',label:'Cladding Index nΓéé',min:1.40,max:1.50,step:0.01,defaultVal:1.45,unit:''}
+ ],
+ steps:[
+  {t:'Three ways light meets an atom',d:'Absorption: an atom in the low level EΓéü swallows a photon of energy h╬╜ = EΓéé ΓêÆ EΓéü and jumps up. Spontaneous emission: an excited atom drops by itself, at a random time and direction. Stimulated emission: a passing photon makes an excited atom emit a clone, same direction, same phase. Einstein: BΓéüΓéé = BΓééΓéü and AΓééΓéü/BΓééΓéü = 8╧Çh╬╜┬│/c┬│.'},
+  {t:'Population inversion',d:'Normally most atoms sit in the low level (left), so light is absorbed more than it is amplified. A laser needs the opposite: more atoms in the upper level than the lower one (right). That is population inversion, made by pumping, and it needs at least three energy levels.',only:true},
+  {t:'The laser cavity (ruby laser)',d:'A ruby rod sits between a fully reflecting mirror and a partly reflecting one. A flash lamp wound round it pumps Cr┬│Γü║ ions to the upper state. Photons travelling along the axis bounce back and forth, stimulating more photons each pass, and a fraction leaks out as the laser beam. The HeΓÇôNe laser uses the same idea with a gas tube excited by an electric discharge.',only:true},
+  {t:'Optical fibre: light in a glass pipe',d:'Light stays in the core by total internal reflection because the core index nΓéü is higher than the cladding index nΓéé. It must enter inside the acceptance cone: sin ╬╕ΓéÇ = NA = ΓêÜ(nΓéü┬▓ ΓêÆ nΓéé┬▓). Attenuation is ╬▒ = (10/L) logΓéüΓéÇ(Pin/Pout) dB/km. Step-index and graded-index, single-mode and multimode are the main types.',only:true},
+  {t:'Live parameter lab: numerical aperture & acceptance cone',d:'Change the core (nΓéü) and cladding (nΓéé) refractive indices to calculate NA = ΓêÜ(nΓéü┬▓ ΓêÆ nΓéé┬▓) and the critical acceptance angle in real time.',only:true}],
+ build(B){
+  const lv=(x,tag)=>{B.L([[x-1.5,-1.6,0],[x+1.5,-1.6,0]],{c:COL.ink,w:3});B.L([[x-1.5,1.6,0],[x+1.5,1.6,0]],{c:COL.ink,w:3});B.T([x+1.9,-1.6,0],'EΓéü',{sz:20});B.T([x+1.9,1.6,0],'EΓéé',{sz:20});B.T([x,-2.6,0],tag,{b:1,sz:22,c:COL.red})};
+  B.s(0);lv(-4,'absorption');lv(0,'spontaneous');lv(4,'stimulated');
+  B.D([-4,-1.4,0],.2,{f:COL.teal});B.F(y=>[-5.4+sin(y*5)*.18,y,0],1.3,-1.2,{c:COL.gold,w:3});B.A([-5.4,-1.2,0],[-4.3,-1.2,0],{c:COL.gold,w:2.6});B.T([-5.9,.2,0],'h╬╜',{c:COL.gold,b:1,sz:24});B.A([-4,-1.1,0],[-4,1.3,0],{c:COL.teal,w:2.4});
+  B.D([0,1.8,0],.2,{f:COL.red});B.A([0,1.4,0],[0,-1.2,0],{c:COL.teal,w:2.4});B.F(x=>[x,-.7+sin(x*7)*.14,0],.3,2.4,{c:COL.gold,w:3});B.A([2.1,-.7,0],[2.5,-.7,0],{c:COL.gold,w:2.6});B.D([0,-1.4,0],.2,{f:COL.teal});
+  B.D([4,1.8,0],.2,{f:COL.red});B.F(x=>[x,2.7+sin(x*7)*.14,0],1.6,3.5,{c:COL.gold,w:3});B.A([3.3,2.7,0],[3.7,2.7,0],{c:COL.gold,w:2.6});B.F(x=>[x,.2+sin(x*7)*.14,0],4.4,6.2,{c:COL.gold,w:3});B.F(x=>[x,.55+sin(x*7)*.14,0],4.4,6.2,{c:COL.gold,w:3});B.T([5.5,1.2,0],'two identical photons',{c:COL.gold,b:1,sz:19});
+  B.s(1);const pile=(x,n1,n2,tag)=>{lv(x,tag);for(let i=0;i<n1;i++)B.D([x-1.1+(i%4)*.7,-1.4+Math.floor(i/4)*.35,0],.15,{f:COL.teal});for(let i=0;i<n2;i++)B.D([x-1.1+(i%4)*.7,1.8+Math.floor(i/4)*.35,0],.15,{f:COL.red})};
+  pile(-3.5,12,2,'normal: NΓéü Γë½ NΓéé');pile(3.5,3,11,'inverted: NΓéé > NΓéü');
+  B.s(2);cylx(B,-3,3,.8,{f:COL.red,c:COL.red});B.X([-3.4,0,0],[.25,2.4,2.4],{f:COL.ink});B.X([3.4,0,0],[.25,2.2,2.2],{f:COL.gray,a:.1});B.F(a=>[-2.6+a*5.2,1.25*cos(a*18),1.25*sin(a*18)],0,1,{c:COL.gold,w:2,seg:120});
+  B.dyn((t,b)=>{for(let i=0;i<5;i++){const u=((t*.5+i*.2)%1),x=-3+6*(u<.5?u*2:2-u*2);b.D([x,((i%3)-1)*.25,((i%2)-.5)*.3],.1,{f:COL.gold})}b.A([3.5,0,0],[5.6,0,0],{c:COL.red,w:3.4})});
+  B.T([-3.4,1.9,0],'mirror (100%)',{b:1,sz:18});B.T([3.4,1.9,0],'partial mirror',{b:1,sz:18});B.T([0,-2.1,0],'ruby rod',{c:COL.red,b:1});B.T([0,2.4,0],'flash lamp pumps Cr┬│Γü║ ions',{c:COL.gold,b:1});B.T([5.2,.7,0],'laser',{c:COL.red,b:1,sz:24});
+  B.s(3);cylx(B,-5,5,.6,{f:COL.teal,c:COL.teal});cylx(B,-5,5,1.1,{f:COL.gray,c:COL.gray,a:.06});
+  const zz=[[-5,0],[-3.9,.5],[-2.3,-.5],[-.7,.5],[.9,-.5],[2.5,.5],[4.1,-.5],[5,0]];B.L(zz.map(p=>[p[0],p[1],0]),{c:COL.red,w:2.8});
+  B.L([[-5,0,0],[-7,1.6,0]],{c:COL.gold,w:1.6,d:[4,3]});B.L([[-5,0,0],[-7,-1.6,0]],{c:COL.gold,w:1.6,d:[4,3]});B.A([-6.6,0,0],[-5.2,0,0],{c:COL.gold,w:2.6});B.T([-6.4,2.1,0],'acceptance cone ╬╕ΓéÇ',{c:COL.gold,b:1,sz:19});
+  B.T([0,1.9,0],'cladding nΓéé',{c:COL.gray,b:1});B.T([0,-1.2,0],'core nΓéü > nΓéé',{c:COL.teal,b:1,sz:19});B.T([0,-2.6,0],'NA = sin╬╕ΓéÇ = ΓêÜ(nΓéü┬▓ ΓêÆ nΓéé┬▓)',{c:COL.red,b:1,sz:24});
+  B.s(4);B.dyn((t,b,p={})=>{const n1=p.coreIndex??1.55,n2=Math.min(n1-0.01,p.cladIndex??1.45);const na=sqrt(Math.max(0,n1*n1-n2*n2));const thetaDeg=(Math.asin(Math.min(1,na))*180)/PI;cylx(b,-5,5,0.6,{f:COL.teal,c:COL.teal});cylx(b,-5,5,1.1,{f:COL.gray,c:COL.gray,a:0.06});const coneR=Math.tan((thetaDeg*PI)/180)*1.8;b.L([[-5,0,0],[-6.8,coneR,0]],{c:COL.gold,w:2});b.L([[-5,0,0],[-6.8,-coneR,0]],{c:COL.gold,w:2});b.A([-6.8,0,0],[-5,0,0],{c:COL.gold,w:2.5});b.T([0,2.6,0],`nΓéü = ${n1.toFixed(2)}, nΓéé = ${n2.toFixed(2)}  ΓåÆ  NA = ${na.toFixed(3)}`,{c:COL.red,sz:24,b:1});b.T([0,-2.6,0],`Acceptance angle ╬╕ΓéÇ = ${thetaDeg.toFixed(1)}┬░`,{c:COL.ink,sz:22});});
+}};
 
-const wavePts = (x0: number, x1: number, f: (x: number) => [number, number, number], n = 90): [number, number, number][] => {
-  const a: [number, number, number][] = [];
-  for (let i = 0; i <= n; i++) {
-    const x = x0 + (x1 - x0) * i / n;
-    a.push(f(x));
-  }
-  return a;
-};
+SC['phy:2']={cam:{yaw:-.5,pitch:.3},steps:[
+ {t:'Dielectric in a capacitor',d:'Between two charged plates the field EΓéÇ points from + to ΓêÆ. Slide in an insulator: its atoms stretch into tiny dipoles that line up against the field, their own field opposes EΓéÇ, and the net field falls to E = EΓéÇ/K. For the same charge the voltage drops, so capacitance rises: C = K┬╖CΓéÇ. GaussΓÇÖ law in dielectrics uses D: Γê«D┬╖dA = q_free, with D = ╬╡ΓéÇE + P.'},
+ {t:'Dia, para and ferromagnetic materials',d:'Diamagnetic atoms have no permanent dipole; the field induces a weak opposing one (╧ç slightly negative). Paramagnetic atoms have dipoles that only partly line up with the field (╧ç small positive). Ferromagnetic materials have domains that line up strongly and stay aligned (large ╧ç, hysteresis, lost above the Curie temperature).',only:true},
+ {t:'MaxwellΓÇÖs four equations in pictures',d:'1. Gauss (electric): Γê«E┬╖dA = q/╬╡ΓéÇ, field lines start on charges. 2. Gauss (magnetic): Γê«B┬╖dA = 0, magnetic lines close on themselves. 3. Faraday: Γê«E┬╖dl = ΓêÆd╬ª_B/dt, a changing B makes a circulating E. 4. Amp├¿reΓÇôMaxwell: Γê«B┬╖dl = ╬╝ΓéÇ(I + ╬╡ΓéÇd╬ª_E/dt), current and a changing E make a circulating B.',only:true},
+ {t:'Electromagnetic wave and Poynting vector',d:'E and B oscillate at right angles to each other and to the travel direction, always in step, with c = 1/ΓêÜ(╬╝ΓéÇ╬╡ΓéÇ) and E = cB. Energy flows along S = E ├ù H (the Poynting vector); its average in free space is ┬╜╬╡ΓéÇcEΓéÇ┬▓.',only:true}],
+ build(B){
+  B.s(0);B.X([-3.2,0,0],[.25,4.2,3.6],{f:COL.red});B.X([3.2,0,0],[.25,4.2,3.6],{f:COL.blue});B.T([-3.2,2.5,0],'+',{c:COL.red,b:1,sz:34});B.T([3.2,2.5,0],'ΓêÆ',{c:COL.blue,b:1,sz:34});
+  B.X([0,0,0],[2.2,3.4,3],{f:COL.gold,a:.2});for(let i=-1;i<=1;i++)for(let j=-1;j<=1;j+=2){B.A([-.4,i*1.1,j*.9],[.4,i*1.1,j*.9],{c:COL.teal,w:2});B.D([-.45,i*1.1,j*.9],.07,{f:COL.blue});B.D([.45,i*1.1,j*.9],.07,{f:COL.red})}
+  for(let i=-1;i<=1;i++){B.A([-2.9,i*1.2,1.9],[-1.3,i*1.2,1.9],{c:COL.ink,w:3});B.A([1.3,i*1.2,1.9],[2.9,i*1.2,1.9],{c:COL.ink,w:1.6})}
+  B.T([-2.1,2.6,1.9],'EΓéÇ',{b:1,sz:24});B.T([2.1,2.6,1.9],'E = EΓéÇ/K (weaker)',{b:1,sz:20});B.T([0,-2.7,0],'C = K┬╖CΓéÇ',{c:COL.red,b:1,sz:26});B.T([0,2.8,0],'dipoles oppose EΓéÇ',{c:COL.gold,b:1,sz:20});
+  B.s(1);const grp=(x,tag,f)=>{B.X([x,0,0],[2.6,3.4,2],{f:COL.gray,a:.12});for(let i=0;i<9;i++){const ix=x-.8+(i%3)*.8,iz=-.5+Math.floor(i/3)*.5,u=f(rnd(i+x*7+3));B.A([ix,-.1-u*.6,iz],[ix,-.1+u*.6,iz],{c:u<0?COL.red:COL.teal,w:2.2})}B.T([x,-2.3,0],tag,{b:1,sz:21,c:COL.red})};
+  grp(-4,'diamagnetic',r=>-.35);grp(0,'paramagnetic',r=>r>.4?.5:-.5);grp(4,'ferromagnetic',r=>.95);B.A([-6.2,-1.8,2],[-6.2,1.8,2],{c:COL.ink,w:3});B.T([-6.2,2.2,2],'B',{b:1,sz:26});
+  B.s(2);const gs=(x,y,tag)=>B.T([x,y-1.95,0],tag,{b:1,sz:17,c:COL.red});
+  B.D([-4,1.8,0],.18,{f:COL.red});B.C([-4,1.8,0],1.2,{n:'x',c:COL.gold});B.C([-4,1.8,0],1.2,{n:'y',c:COL.gold});B.C([-4,1.8,0],1.2,{n:'z',c:COL.gold});for(let k=0;k<6;k++){const a=k*PI/3;B.A([-4+cos(a)*.3,1.8+sin(a)*.3,0],[-4+cos(a)*1.9,1.8+sin(a)*1.9,0],{c:COL.ink,w:2})}gs(-4,1.8,'Γê«E┬╖dA = q/╬╡ΓéÇ');
+  B.X([4,1.8,0],[1.8,.7,.7],{f:COL.red});for(let k=1;k<=3;k++)B.F(a=>[4+cos(a)*(.9+k*.4),1.8+sin(a)*(.35+k*.35),0],0,2*PI,{c:COL.teal,w:1.4});gs(4,1.8,'Γê«B┬╖dA = 0');
+  B.C([-4,-2.1,0],1,{n:'z',c:COL.ink,w:2.2});B.A([-4,-3,.6],[-4,-1.3,.6],{c:COL.teal,w:3});B.F(a=>[-4+cos(a)*1.35,-2.1+sin(a)*1.35,0],.3,5.6,{c:COL.red,w:2});gs(-4,-2.1,'Γê«E┬╖dl = ΓêÆd╬ª/dt');
+  B.A([4,-3.8,0],[4,-.6,0],{c:COL.ink,w:3});[.7,1.2].forEach(r=>B.C([4,-2.1,0],r,{n:'y',c:COL.teal,w:2}));gs(4,-2.1,'Γê«B┬╖dl = ╬╝ΓéÇ(I + ╬╡ΓéÇd╬ª/dt)');
+  B.s(3);B.dyn((t,b)=>{const ph=t*2.4;b.A([0,0,-5.5],[0,0,5.8],{c:COL.ink,w:2});b.F(z=>[0,sin(z*1.7-ph)*1.7,z],-5.2,5.2,{c:COL.red,w:3.4,seg:100});b.F(z=>[sin(z*1.7-ph)*1.7,0,z],-5.2,5.2,{c:COL.teal,w:3.4,seg:100});for(let k=0;k<9;k++){const z=-4.8+k*1.2,y=sin(z*1.7-ph)*1.7;b.L([[0,0,z],[0,y,z]],{c:COL.red,w:1,d:[3,3]});b.L([[0,0,z],[y,0,z]],{c:COL.teal,w:1,d:[3,3]})}});
+  B.T([0,2.4,-3],'E',{c:COL.red,b:1,sz:28});B.T([2.5,0,-3],'B',{c:COL.teal,b:1,sz:28});B.T([0,-1.3,5.4],'S = E ├ù H, travel',{b:1});B.T([0,3,0],'c = 1/ΓêÜ(╬╝ΓéÇ╬╡ΓéÇ),  E = cB',{sz:22,b:1})}};
 
-const sinc2 = (a: number) => Math.abs(a) < 1e-6 ? 1 : Math.pow(sin(a) / a, 2);
-const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
+SC['phy:3']={cam:{yaw:-.4,pitch:.3},
+ params:[
+  {id:'quantumN',label:'Quantum Level n',min:1,max:5,step:1,defaultVal:1,unit:''},
+  {id:'boxWidth',label:'Box Width L',min:3.0,max:7.0,step:0.5,defaultVal:6.0,unit:'├à'}
+ ],
+ steps:[
+  {t:'De Broglie: matter has a wavelength',d:'Every moving particle behaves like a wave with ╬╗ = h/p = h/ΓêÜ(2mE). An electron accelerated through V volts has ╬╗ Γëê 12.27/ΓêÜV ├à, short enough that electron microscopes see finer detail than light. A stable orbit holds a whole number of waves: n╬╗ = 2╧Çr (here n = 5).'},
+  {t:'Uncertainty: sharp in space, blurred in momentum',d:'A tightly localised wave packet (top) is built from many wavelengths, so its momentum is spread out. A long, almost pure wave (bottom) has a sharp momentum but no definite position. That trade-off is ╬öx┬╖╬öp ΓëÑ ─º/2; it comes from the nature of waves, not from clumsy instruments.',only:true},
+  {t:'Particle in a box: energy comes in steps',d:'A particle trapped between walls can only hold waves that fit, with ╧ê = 0 at both walls: L = n╬╗/2. That gives EΓéÖ = n┬▓h┬▓/(8mL┬▓) and ╧êΓéÖ = ΓêÜ(2/L) sin(n╧Çx/L). The levels sit at 1 : 4 : 9, and the lowest (n = 1) is never zero: zero-point energy. Normalisation: Γê½|╧ê|┬▓dx = 1.',only:true},
+  {t:'Tunnelling: leaking through a wall',d:'When a wave meets a barrier taller than its energy it does not stop dead: inside the barrier it dies away exponentially and a smaller wave emerges on the far side. T Γëê e^(ΓêÆ2╬║a) with ╬║ = ΓêÜ(2m(VΓéÇ ΓêÆ E))/─º, so thinner or lower barriers leak more.',only:true},
+  {t:'Live parameter lab: particle in a 1D box wavefunctions',d:'Adjust quantum level n and box width L to observe the energy level EΓéÖ and wave function nodes ╧êΓéÖ(x) = ΓêÜ(2/L) sin(n╧Çx/L).',only:true}],
+ build(B){
+  B.s(0);B.C([0,0,0],2.2,{c:COL.gray,d:[4,4],w:1.6});B.F(a=>{const r=2.2+.35*sin(5*a);return[cos(a)*r,0,sin(a)*r]},0,2*PI,{c:COL.red,w:3.4,seg:120});B.D([0,0,0],.2,{f:COL.ink});B.T([0,0,0],'nucleus',{dy:22,sz:18});B.T([0,2.6,0],'╬╗ = h/p',{c:COL.red,b:1,sz:30});B.T([0,-2.4,3.6],'n ╬╗ = 2╧Ç r',{b:1,sz:24});
+  B.F(x=>[-5.5+x,sin(x*7)*.5,-4.4],0,3.2,{c:COL.teal,w:3});B.T([-3.9,1.1,-4.4],'electron wave',{c:COL.teal,b:1,sz:18});
+  B.s(1);const gp=(x,s)=>exp(-x*x/s);B.F(x=>[x,2.6+gp(x,.5)*1.2*cos(10*x),0],-4,4,{c:COL.red,w:3,seg:200});B.F(x=>[x,.9+exp(-(x*x)/(2*1.6))*1.2,0],-4,4,{c:COL.teal,w:3,seg:80});
+  B.F(x=>[x,-1+gp(x,6)*1.2*cos(10*x),0],-4,4,{c:COL.red,w:3,seg:200});B.F(x=>[x,-2.8+exp(-((x*x)/(2*.05)))*1.2,0],-1.6,1.6,{c:COL.teal,w:3,seg:100});
+  B.T([-4.2,2.6,0],'small ╬öx',{c:COL.red,b:1,a:'right'});B.T([-4.2,.9,0],'large ╬öp',{c:COL.teal,b:1,a:'right'});B.T([-4.2,-1,0],'large ╬öx',{c:COL.red,b:1,a:'right'});B.T([-4.2,-2.8,0],'small ╬öp',{c:COL.teal,b:1,a:'right'});B.T([0,3.8,0],'╬öx ┬╖ ╬öp ΓëÑ ─º/2',{b:1,sz:26});
+  B.s(2);B.X([-3.4,0,0],[.5,6.4,2],{f:COL.gray});B.X([3.4,0,0],[.5,6.4,2],{f:COL.gray});B.L([[-3.15,-3.2,0],[3.15,-3.2,0]],{c:COL.ink,w:3});
+  [1,2,3].forEach(n=>{const E=-3.2+n*n*.42;B.L([[-3.15,E,0],[3.15,E,0]],{c:COL.gray,w:1.4,d:[4,4]});B.F(x=>[x,E+.55*sin(n*PI*(x+3.15)/6.3),0],-3.15,3.15,{c:[COL.teal,COL.gold,COL.red][n-1],w:3,seg:90});B.T([4.1,E,0],'n = '+n,{sz:20,a:'left'})});B.T([0,3.7,0],'EΓéÖ = n┬▓h┬▓/(8mL┬▓)   1 : 4 : 9',{c:COL.red,b:1,sz:24});B.T([0,-3.8,0],'width L',{c:COL.gray});
+  B.s(3);B.X([0,0,0],[1.6,2.8,1.6],{f:COL.red,a:.3});B.dyn((t,b)=>{const k=7,w=t*4;b.F(x=>{const a=x<-.8?1:x<.8?exp(-(x+.8)*1.4):.28;return[x,a*cos(k*x-w)*.9,0]},-5,5,{c:COL.teal,w:3.2,seg:220})});B.L([[-5,0,0],[5,0,0]],{c:COL.gray,w:1,d:[4,4]});
+  B.T([0,2.2,0],'barrier VΓéÇ',{c:COL.red,b:1});B.T([-3,1.6,0],'incident',{c:COL.teal,b:1});B.T([3,1.2,0],'transmitted (smaller)',{c:COL.teal,b:1});B.T([0,-1.9,0],'decays inside: T Γëê e^(ΓêÆ2╬║a)',{b:1,sz:22});
+  B.s(4);B.dyn((t,b,p={})=>{const n=Math.round(p.quantumN??1),L=p.boxWidth??6.0,halfL=L/2;b.X([-halfL-0.25,0,0],[0.5,6,1.5],{f:COL.gray});b.X([halfL+0.25,0,0],[0.5,6,1.5],{f:COL.gray});b.L([[-halfL,-2.5,0],[halfL,-2.5,0]],{c:COL.ink,w:3});const En=(n*n)/(L*L),yBase=-2.0+Math.min(4.5,n*0.9);b.L([[-halfL,yBase,0],[halfL,yBase,0]],{c:COL.gray,w:1.5,d:[4,4]});b.F(x=>[x,yBase+1.2*sin(n*PI*(x+halfL)/L),0],-halfL,halfL,{c:COL.teal,w:3.2,seg:100});b.T([0,3.2,0],`Level n = ${n} | E_${n} Γê¥ ${En.toFixed(3)} eV`,{c:COL.red,sz:25,b:1});b.T([0,-3.2,0],`Nodes = ${n-1} | Zero-point energy (n=1) is never 0`,{c:COL.ink,sz:21});});
+}};
 
-function alongPath(pts: [number, number, number][], u: number): [number, number, number] {
-  const segs: number[] = []; let tot = 0;
-  for (let i = 1; i < pts.length; i++) {
-    const l = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1], pts[i][2] - pts[i - 1][2]);
-    segs.push(l); tot += l;
-  }
-  let d = clamp(u, 0, .9999) * tot;
-  for (let i = 0; i < segs.length; i++) {
-    if (d <= segs[i]) {
-      const k = d / (segs[i] || 1);
-      return [lerp(pts[i][0], pts[i + 1][0], k), lerp(pts[i][1], pts[i + 1][1], k), lerp(pts[i][2], pts[i + 1][2], k)];
-    }
-    d -= segs[i];
-  }
-  return pts[pts.length - 1];
-}
-
-function photon(b: SceneBuilderAPI, o: [number, number, number], dir: [number, number, number], len: number, t: number, c?: string, amp?: number) {
-  const pts: [number, number, number][] = []; const n = 26;
-  for (let i = 0; i <= n; i++) {
-    const s = i / n * len;
-    pts.push([o[0] + dir[0] * s, o[1] + dir[1] * s + (amp || .22) * Math.sin(s * 7 - t * 9), o[2] + dir[2] * s]);
-  }
-  b.L(pts, { c: c || COL.red, w: 2.6 });
-}
-
-SC['phy:0'] = {
-  cam: { yaw: -.5, pitch: .38 },
-  params: [
-    { id: 'phaseShift', label: 'Phase Diff δ', min: 0, max: 2, step: 0.05, defaultVal: 0.0, unit: 'π' },
-    { id: 'wavelength', label: 'Wave Number k', min: 1.0, max: 4.0, step: 0.2, defaultVal: 2.0, unit: '' }
-  ],
-  steps: [
-    { t: 'Two waves meet', d: 'Wave A (blue) and wave B (red) have the same wavelength. Slide the phase difference. At 0° the crests line up and the sum (green) doubles in height: bright. At 180° crest meets trough and the sum is flat: dark. In between you get something in the middle.', param: { label: 'Phase difference', min: 0, max: 360, val: 0, step: 5, unit: '°' } },
-    { t: 'Thin film: two reflected rays', d: 'Ray 1 reflects from the top of the film and ray 2 from the bottom, so ray 2 travels an extra 2μt cos r inside the film. Ray 1 also gets an extra half wavelength on reflection. Change the thickness and watch the reflected patch switch between bright and dark. This is why oil films and soap bubbles show colours.', param: { label: 'Film thickness t', min: 0, max: 800, val: 100, step: 5, unit: ' nm' }, only: true },
-    { t: 'Newton’s rings', d: 'The air film between the lens and the plate gets thicker as you move out from the touching point, with thickness t = r²/2R. The reflected light makes dark rings where 2t = nλ. The centre is dark because of the extra half wavelength. Slide the wavelength: red light makes bigger rings than blue. Dₙ² = 4nλR.', param: { label: 'Wavelength', min: 400, max: 700, val: 589, step: 5, unit: ' nm' }, cam: { pitch: .62 }, only: true },
-    { t: 'Michelson’s interferometer', d: 'The beam splitter sends half the light to fixed mirror M₂ and half to movable mirror M₁. The beams return and meet again on the screen. Every time M₁ moves by λ/2, one circular fringe appears or disappears at the centre. Counting fringes gives λ, or the tiny difference between two close wavelengths.', cam: { pitch: .8, yaw: -.35 }, only: true },
-    { t: 'Single slit diffraction', d: 'Light spreads out after passing through a narrow slit. The screen shows a wide bright central band with fainter bands on both sides. The first dark band is at a sin θ = λ. Make the slit narrower and the pattern gets wider.', param: { label: 'Slit width a', min: 1, max: 6, val: 2, step: .1, unit: ' μm' }, cam: { pitch: .5, yaw: -.7 }, only: true },
-    { t: 'Diffraction grating', d: 'Many equally spaced slits give sharp bright lines at angles with (a + b) sin θ = nλ. Each order spreads the colours: longer wavelengths bend more. Slide the wavelength and see the lines move. The orders n = 0, ±1, ±2 are drawn.', param: { label: 'Wavelength', min: 400, max: 700, val: 550, step: 5, unit: ' nm' }, cam: { pitch: 1.0, yaw: -.25 }, only: true },
-    { t: 'Rayleigh criterion', d: 'Two point sources are just resolved when the peak of one pattern falls on the first dark band of the other (separation = 1). At that point the dip between the two peaks is about 19% for a slit. Closer than that, they merge into one blob.', param: { label: 'Separation (1 = Rayleigh limit)', min: .3, max: 1.8, val: 1, step: .05, unit: '' }, cam: { pitch: .25, yaw: -.25 }, only: true },
-    { t: 'Live parameter lab: wave superposition', d: 'Adjust the phase difference δ and wave number k to watch constructive vs destructive interference live.', only: true }
-  ],
-  build(B) {
-    /* step 0 */
-    B.s(0);
-    B.L([[-5, 0, 2.2], [5, 0, 2.2]], { c: COL.gray, w: 1, d: [4, 4] });
-    B.L([[-5, 0, 0], [5, 0, 0]], { c: COL.gray, w: 1, d: [4, 4] });
-    B.L([[-5, 0, -2.4], [5, 0, -2.4]], { c: COL.gray, w: 1, d: [4, 4] });
-    B.T([-5.3, 0, 2.2], 'wave A', { c: COL.blue, a: 'right', b: 1 });
-    B.T([-5.3, 0, 0], 'wave B', { c: COL.red, a: 'right', b: 1 });
-    B.T([-5.3, 0, -2.4], 'A + B', { c: COL.teal, a: 'right', b: 1 });
-    B.dyn((t, b, ph) => {
-      const phVal = typeof ph === 'number' ? ph : (ph?.val ?? 0);
-      const phi = phVal * PI / 180, k = 1.6, w = 2.4, amp = Math.abs(2 * cos(phi / 2));
-      b.L(wavePts(-5, 5, x => [x, 1.0 * sin(k * x - w * t), 2.2]), { c: COL.blue, w: 2.4 });
-      b.L(wavePts(-5, 5, x => [x, 1.0 * sin(k * x - w * t + phi), 0]), { c: COL.red, w: 2.4 });
-      b.L(wavePts(-5, 5, x => [x, 1.0 * sin(k * x - w * t) + 1.0 * sin(k * x - w * t + phi), -2.4]), { c: COL.teal, w: 3.4 });
-      const msg = amp > 1.7 ? 'constructive: bright' : amp < .3 ? 'destructive: dark' : 'in between';
-      b.T([0, -2.6, -2.4], 'sum amplitude ' + amp.toFixed(2) + ' (max 2) → ' + msg, { b: 1, sz: 22 });
-    });
-
-    /* step 1 */
-    B.s(1);
-    B.X([0, 0, 0], [8, .7, 3.2], { f: COL.teal, a: .2 });
-    B.T([-3.9, .0, 1.8], 'film (μ = 1.33)', { a: 'left', c: COL.teal, b: 1 });
-    B.T([-3.9, 1.1, 1.8], 'air', { a: 'left', c: COL.gray });
-    B.T([-3.9, -1.1, 1.8], 'air', { a: 'left', c: COL.gray });
-    B.A([-3.6, 3, 0], [-1.5, .35, 0], { c: COL.gold, w: 2.4 });
-    B.A([-1.5, .35, 0], [.9, 3, 0], { c: COL.blue, w: 2.4 });
-    B.L([[-1.5, .35, 0], [-1.15, -.35, 0], [-.8, .35, 0]], { c: COL.red, w: 2.4 });
-    B.A([-.8, .35, 0], [1.7, 3.1, 0], { c: COL.red, w: 2.4 });
-    B.T([-3.4, 3.3, 0], 'incident light', { c: COL.gold, b: 1 });
-    B.T([1.0, 3.35, 0], 'ray 1', { c: COL.blue, b: 1 });
-    B.T([2.0, 3.35, 0], 'ray 2', { c: COL.red, b: 1 });
-    B.A([3.4, .35, 0], [3.4, -.35, 0], { c: COL.ink, w: 1.6 });
-    B.A([3.4, -.35, 0], [3.4, .35, 0], { c: COL.ink, w: 1.6 });
-    B.T([3.7, 0, 0], 't', { a: 'left', b: 1, sz: 24 });
-    B.T([0, -1.8, 0], 'extra path of ray 2 = 2μt cos r', { b: 1, sz: 22 });
-    B.T([0, -2.5, 0], 'ray 1 also gains λ/2 on reflection', { c: COL.blue, b: 1 });
-    B.dyn((t, b, th) => {
-      const thVal = typeof th === 'number' ? th : (th?.val ?? 100);
-      const I = Math.pow(sin(2 * PI * 1.33 * thVal / 550), 2);
-      b.D([4.4, 2.0, 0], .55, { f: COL.teal, a: .12 + .88 * I });
-      b.T([4.4, 1.1, 0], I > .75 ? 'bright' : I < .25 ? 'dark' : 'in between', { b: 1, sz: 22 });
-      b.T([4.4, 2.9, 0], '2μt = ' + (2 * 1.33 * thVal / 550).toFixed(2) + ' λ', { sz: 19, c: COL.dim, b: 1 });
-    });
-
-    /* step 2 */
-    B.s(2);
-    B.X([0, -.15, 0], [9, .3, 9], { f: COL.blue, a: .12 });
-    const Rc = 4.98;
-    for (let r = 1; r <= 3.6; r += .8) B.C([0, .05 + r * r / (2 * Rc), 0], r, { n: 'y', c: COL.dim, w: 1.2 });
-    B.C([0, 1.35, 0], 3.6, { n: 'y', c: COL.ink });
-    B.C([0, 1.9, 0], 3.6, { n: 'y', c: COL.ink });
-    [[3.6, 0], [-3.6, 0], [0, 3.6], [0, -3.6]].forEach(q => B.L([[q[0], 1.35, q[1]], [q[0], 1.9, q[1]]], { c: COL.ink }));
-    B.T([0, 2.5, 0], 'plano-convex lens', { b: 1 });
-    B.T([-4.8, -.4, 3.4], 'glass plate', { c: COL.blue, b: 1, a: 'left' });
-    B.T([0, 1.0, 0], 'air film', { c: COL.teal, b: 1, dy: 6, sz: 17 });
-    [[-1.4, 0], [0, 0], [1.4, 0]].forEach(q => B.A([q[0], 4.6, q[1]], [q[0], 3.0, q[1]], { c: COL.gold, w: 2 }));
-    B.T([0, 4.9, 0], 'monochromatic light', { c: COL.gold, b: 1 });
-    B.dyn((t, b, lam) => {
-      const lamVal = typeof lam === 'number' ? lam : (lam?.val ?? 589);
-      const s = .85 * Math.sqrt(lamVal / 550), col = lamCol(lamVal);
-      for (let n = 1; n <= 9; n++) {
-        b.C([0, .02, 0], s * Math.sqrt(n), { n: 'y', c: COL.ink, w: 2.2 });
-        b.C([0, .02, 0], s * Math.sqrt(n - .5), { n: 'y', c: col, w: 1.6 });
-      }
-      b.D([0, .06, 0], .16, { f: COL.ink });
-      const r4 = s * 2;
-      b.A([-r4, .05, 3.3], [r4, .05, 3.3], { c: COL.red, w: 2 });
-      b.A([r4, .05, 3.3], [-r4, .05, 3.3], { c: COL.red, w: 2 });
-      b.T([0, .05, 3.9], 'D₄ = ' + (s * s * 4).toFixed(2) + ' (relative units)', { c: COL.red, b: 1, sz: 19 });
-      b.T([0, .05, 4.5], 'dark rings (ink), bright rings (colour)', { c: COL.dim, sz: 17 });
-    });
-
-    /* step 3 */
-    B.s(3);
-    B.X([-5.2, 0, 0], [.9, .9, .9], { f: COL.gold, a: .5 });
-    B.T([-5.2, 1.2, 0], 'source', { b: 1 });
-    B.P([[-.9, -1, -.9], [.9, -1, .9], [.9, 1, .9], [-.9, 1, -.9]], { f: COL.gold, a: .35 });
-    B.T([0, 1.6, 0], 'beam splitter', { b: 1 });
-    B.P([[1.1, -.8, -.7], [2.5, -.8, .7], [2.5, .8, .7], [1.1, .8, -.7]], { f: COL.blue, a: .15 });
-    B.T([1.9, 1.3, 0], 'compensator', { sz: 17, c: COL.blue });
-    B.X([0, 0, -4.1], [2, 1.8, .25], { f: COL.blue, a: .35 });
-    B.T([0, 1.5, -4.1], 'M₂ (fixed)', { b: 1 });
-    B.X([0, 0, 4.2], [3, 2.2, .2], { f: COL.gray, a: .2 });
-    B.T([0, 1.8, 4.2], 'screen', { b: 1 });
-    B.A([-4.6, 0, 0], [-.3, 0, 0], { c: COL.red, w: 2.4 });
-    B.L([[0, 0, 0], [0, 0, -3.9]], { c: COL.red, w: 1.8, d: [6, 4] });
-    B.L([[0, 0, 0], [0, 0, 4.0]], { c: COL.gold, w: 2.6 });
-    B.dyn((t, b) => {
-      const d = .3 * sin(t * .7), x1 = 4 + d;
-      b.X([x1, 0, 0], [.25, 1.8, 2], { f: COL.blue, a: .35 });
-      b.T([x1, 1.5, 0], 'M₁ (movable)', { b: 1 });
-      b.A([x1 + 1.1, -1.4, 0], [x1 + 1.1 + (d >= 0 ? .7 : -.7), -1.4, 0], { c: COL.green, w: 2.4 });
-      b.L([[0, 0, 0], [x1, 0, 0]], { c: COL.red, w: 1.8, d: [6, 4] });
-      const frac = ((d * 5) % 1 + 1) % 1;
-      for (let k = 0; k < 6; k++) b.C([0, 0, 3.95], .22 * Math.sqrt(k + 1 - frac), { n: 'z', c: k % 2 ? COL.gold : COL.ink, w: 2 });
-      const pa = [[-5, 0, 0], [0, 0, 0], [x1, 0, 0], [0, 0, 0], [0, 0, 4]] as [number, number, number][];
-      const pb = [[-5, 0, 0], [0, 0, 0], [0, 0, -4.1], [0, 0, 0], [0, 0, 4]] as [number, number, number][];
-      const u = (t * .22) % 1;
-      b.D(alongPath(pa, u), .15, { f: COL.red });
-      b.D(alongPath(pb, u), .15, { f: COL.teal });
-      b.T([0, -1.4, 5.0], 'one fringe appears each time M₁ moves λ/2', { c: COL.dim, b: 1, sz: 19 });
-    });
-
-    /* step 4 */
-    B.s(4);
-    B.X([4.6, 0, 0], [.2, 7, 3], { f: COL.gray, a: .12 });
-    B.T([4.6, 3.8, 0], 'screen', { b: 1 });
-    for (let k = 0; k < 5; k++) B.A([-4.8, -1 + k * .5, 0], [-.7, -1 + k * .5, 0], { c: COL.gold, w: 1.6 });
-    B.T([-3, 1.9, 0], 'plane wave', { c: COL.gold, b: 1 });
-    B.dyn((t, b, a) => {
-      const aVal = typeof a === 'number' ? a : (a?.val ?? 2);
-      const g = aVal * .18, y1 = 2.4 / aVal;
-      b.X([0, g / 2 + 2.0, 0], [.3, 4, 3.4], { f: COL.blue, a: .3 });
-      b.X([0, -g / 2 - 2.0, 0], [.3, 4, 3.4], { f: COL.blue, a: .3 });
-      b.T([0, 4.4, 0], 'slit width a = ' + aVal.toFixed(1) + ' μm', { b: 1 });
-      b.L([[0, 0, 0], [4.5, y1, 0]], { c: COL.red, w: 1.6, d: [6, 4] });
-      b.L([[0, 0, 0], [4.5, -y1, 0]], { c: COL.red, w: 1.6, d: [6, 4] });
-      b.A([5.2, 0, 0], [5.2, y1, 0], { c: COL.red, w: 1.8 });
-      b.A([5.2, 0, 0], [5.2, -y1, 0], { c: COL.red, w: 1.8 });
-      b.T([5.5, 0, 0], 'to first dark', { a: 'left', c: COL.red, sz: 16 });
-      b.L(wavePts(-3.4, 3.4, y => [4.7 + 2.3 * sinc2(PI * y / y1), y, 1.6], 160), { c: COL.teal, w: 2.8 });
-      b.T([6.2, 2.4, 1.6], 'intensity', { c: COL.teal, b: 1 });
-    });
-
-    /* step 5 */
-    B.s(5);
-    for (let i = 0; i < 10; i++) B.X([-1.5, 0, -3.6 + i * .8], [.15, 3.2, .45], { f: COL.blue, a: .35 });
-    B.T([-1.5, 2.2, 0], 'grating', { b: 1 });
-    B.X([1.5, -1.6, 0], [.1, .1, 13], { f: COL.gray, a: .5 });
-    B.T([1.5, -2.2, 0], 'screen', { c: COL.dim, b: 1 });
-    [-2, 0, 2].forEach(z => B.A([-5.2, 0, z], [-2.0, 0, z], { c: COL.gold, w: 2 }));
-    B.dyn((t, b, lam) => {
-      const lamVal = typeof lam === 'number' ? lam : (lam?.val ?? 550);
-      const col = lamCol(lamVal), d = 1600;
-      for (let m = -2; m <= 2; m++) {
-        const sT = m * lamVal / d, th = Math.asin(sT), z = 3 * Math.tan(th);
-        b.L([[-1.5, 0, 0], [1.5, 0, z]], { c: col, w: m === 0 ? 3 : 2.4 });
-        b.D([1.5, -1.6, z], .2, { f: col });
-        b.T([1.5, -2.4, z], 'n = ' + (m > 0 ? '+' : '') + m, { sz: 17, b: 1 });
-      }
-      b.T([-1.5, 3.2, 0], '(a+b) sinθ = nλ', { b: 1, sz: 22 });
-    });
-
-    /* step 6 */
-    B.s(6);
-    B.L([[-5, 0, 0], [5, 0, 0]], { c: COL.gray, w: 1.2 });
-    B.dyn((t, b, s) => {
-      const sVal = typeof s === 'number' ? s : (s?.val ?? 1);
-      const X = 2.4, sc = 3.2, f1 = (u: number) => sinc2(PI * (u + sVal / 2)), f2 = (u: number) => sinc2(PI * (u - sVal / 2));
-      b.L(wavePts(-2, 2, u => [u * X, sc * f1(u) * .95, 0], 160), { c: COL.blue, w: 1.8 });
-      b.L(wavePts(-2, 2, u => [u * X, sc * f2(u) * .95, 0], 160), { c: COL.red, w: 1.8 });
-      b.L(wavePts(-2, 2, u => [u * X, sc * (f1(u) + f2(u)) * .95, 0], 200), { c: COL.ink, w: 3.2 });
-      const mid = 2 * sinc2(PI * sVal / 2), pk = Math.max(1 + sinc2(PI * sVal), mid), dip = 1 - mid / pk;
-      b.L([[-sVal / 2 * X, 0, 0], [-sVal / 2 * X, 3.6, 0]], { c: COL.blue, w: 1, d: [4, 4] });
-      b.L([[sVal / 2 * X, 0, 0], [sVal / 2 * X, 3.6, 0]], { c: COL.red, w: 1, d: [4, 4] });
-      const status = sVal > 1.03 ? 'resolved' : sVal > .97 ? 'just resolved (Rayleigh limit)' : 'not resolved: looks like one source';
-      b.T([0, -1.0, 0], 'dip between peaks: ' + Math.max(0, dip * 100).toFixed(0) + '%', { b: 1, sz: 22 });
-      b.T([0, -1.9, 0], status, { b: 1, c: sVal >= .97 ? COL.teal : COL.red, sz: 24 });
-    });
-
-    /* step 7 */
-    B.s(7);
-    B.L([[-5, 0, 0], [5, 0, 0]], { c: COL.gray, w: 1.4 });
-    B.dyn((t, b, p: any = {}) => {
-      const dVal = p?.phaseShift != null ? p.phaseShift : 0;
-      const kVal = p?.wavelength != null ? p.wavelength : 2.0;
-      const delta = dVal * PI;
-      b.L(wavePts(-5, 5, x => [x, sin(kVal * x - 2 * t), -1.5], 100), { c: COL.blue, w: 2 });
-      b.L(wavePts(-5, 5, x => [x, sin(kVal * x - 2 * t + delta), 1.5], 100), { c: COL.red, w: 2 });
-      b.L(wavePts(-5, 5, x => [x, sin(kVal * x - 2 * t) + sin(kVal * x - 2 * t + delta), 0], 120), { c: COL.teal, w: 3 });
-      b.T([0, 2.5, 0], `Superposition: δ = ${dVal.toFixed(2)}π, k = ${kVal.toFixed(1)}`, { c: COL.ink, sz: 22, b: 1 });
-    });
-  }
-};
-
-SC['phy:1'] = {
-  cam: { yaw: -.45, pitch: .3 },
-  params: [
-    { id: 'coreIndex', label: 'Core Index n₁', min: 1.45, max: 1.70, step: 0.01, defaultVal: 1.55, unit: '' },
-    { id: 'cladIndex', label: 'Cladding Index n₂', min: 1.40, max: 1.50, step: 0.01, defaultVal: 1.45, unit: '' }
-  ],
-  steps: [
-    { t: 'Absorption, spontaneous and stimulated emission', d: 'Left: a photon of energy hν lifts the atom up (absorption). Middle: an excited atom falls by itself and sends a photon in a random direction. Right: a passing photon makes the atom fall and a second, identical photon leaves with it. That copy is the "amplification" in LASER.', cam: { pitch: .25, yaw: -.3 } },
-    { t: 'Population inversion', d: 'At normal temperature most atoms are in the lower level (left). Light is then absorbed more than it is amplified. A laser needs the opposite: pumping energy must put more atoms in the upper metastable level than in the lower one (right), so N₂ > N₁.', only: true },
-    { t: 'The resonator and the He-Ne laser', d: 'A discharge excites helium and helium passes the energy to neon, giving inversion in neon. Photons bounce between the two mirrors and make more photons each trip. The right mirror lets a little light out, which is the beam: red, 632.8 nm. Only waves that fit the cavity length (2L = mλ) survive.', cam: { pitch: .3, yaw: -.35 }, only: true },
-    { t: 'Semiconductor diode laser', d: 'Forward bias pushes electrons from the n side and holes from the p side into the thin junction layer. They recombine and release photons of energy about equal to the band gap. The polished ends of the crystal act as mirrors and the light leaves from the front edge.', cam: { yaw: -.9, pitch: .4 }, only: true },
-    { t: 'Light guided by total internal reflection', d: 'Light enters the fibre end and zigzags inside the core, reflecting at the core-cladding boundary. Move the slider to change the entry angle. Inside the acceptance cone (θ₀ = sin⁻¹√(n₁²−n₂²), here 22.6°) the ray is guided. Outside it the ray leaks into the cladding.', param: { label: 'Entry angle', min: 0, max: 40, val: 12, step: 1, unit: '°' }, cam: { pitch: .15, yaw: -.25 }, only: true },
-    { t: 'Modes and the V-number', d: 'Each spot on the fibre end is one mode. The number of modes is about V²/2 in a step-index fibre, where V = (2πa/λ)·NA. Below V = 2.405 only one mode survives: that is a single-mode fibre. Slide V up to see the number of modes grow.', param: { label: 'V-number', min: 1, max: 12, val: 6, step: .1, unit: '' }, cam: { yaw: -.5, pitch: .2 }, only: true },
-    { t: 'Point-to-point optical link', d: 'The input signal drives a laser or LED at the transmitter. Light pulses travel along the fibre and get weaker. A repeater boosts them again. A photodiode at the receiver turns the light back into an electrical signal for the output.', cam: { yaw: -.25, pitch: .3 }, only: true },
-    { t: 'Live parameter lab: numerical aperture & acceptance cone', d: 'Change the core (n₁) and cladding (n₂) refractive indices to calculate NA = √(n₁² − n₂²) and the critical acceptance angle in real time.', only: true }
-  ],
-  build(B) {
-    /* step 0 */
-    B.s(0);
-    [-4.6, 0, 4.6].forEach((x0, i) => {
-      B.X([x0, 1.3, 0], [3, .12, 1.4], { f: COL.blue, a: .3 });
-      B.X([x0, -1.3, 0], [3, .12, 1.4], { f: COL.blue, a: .3 });
-      B.T([x0 - 1.7, 1.3, 0], 'E₂', { a: 'right', b: 1 });
-      B.T([x0 - 1.7, -1.3, 0], 'E₁', { a: 'right', b: 1 });
-      B.T([x0, -2.6, 0], ['absorption', 'spontaneous emission', 'stimulated emission'][i], { b: 1, sz: 22 });
-    });
-    B.T([4.6, -3.3, 0], '1 photon in → 2 identical photons out', { c: COL.red, b: 1 });
-    B.dyn((t, b) => {
-      const T = 6, u = (t % T) / T, ph = [1, 0, 0] as [number, number, number];
-      /* absorption */
-      {
-        const x0 = -4.6; let y = -1.1;
-        if (u < .4) photon(b, [x0 - 3.2 + u / .4 * 2.6, 0, 0], ph, .7, t);
-        else y = lerp(-1.1, 1.1, clamp((u - .4) / .15, 0, 1));
-        b.D([x0, y, 0], .26, { f: COL.gold });
-      }
-      /* spontaneous */
-      {
-        const x0 = 0; let y = 1.1; const dir = [.55, .15, .82] as [number, number, number];
-        if (u >= .4) {
-          y = lerp(1.1, -1.1, clamp((u - .4) / .15, 0, 1));
-          const s = (u - .5) * 6.5;
-          if (s > 0) photon(b, [x0 + dir[0] * s, dir[1] * s, dir[2] * s], dir, .7, t);
-        }
-        b.D([x0, y, 0], .26, { f: COL.gold });
-      }
-      /* stimulated */
-      {
-        const x0 = 4.6; let y = 1.1;
-        if (u < .4) photon(b, [x0 - 3.2 + u / .4 * 2.6, 0, 0], ph, .7, t);
-        else {
-          y = lerp(1.1, -1.1, clamp((u - .4) / .15, 0, 1));
-          const s = (u - .45) * 6.5;
-          if (s > 0) {
-            photon(b, [x0 + s, 0, .25], ph, .7, t);
-            photon(b, [x0 + s, 0, -.25], ph, .7, t);
-          }
-        }
-        b.D([x0, y, 0], .26, { f: COL.gold });
-      }
-    });
-
-    /* step 1 */
-    B.s(1);
-    [[-3.8, 'thermal equilibrium', 12, 3, 'N₁ > N₂: no laser'], [3.8, 'population inversion', 3, 12, 'N₂ > N₁: laser action']].forEach(p => {
-      const x0 = p[0] as number;
-      B.X([x0, 2, 0], [4.2, .12, 1.6], { f: COL.blue, a: .3 });
-      B.X([x0, -2, 0], [4.2, .12, 1.6], { f: COL.blue, a: .3 });
-      B.T([x0, -3.6, 0], p[1] as string, { b: 1, sz: 22 });
-      B.T([x0, -4.4, 0], p[4] as string, { b: 1, c: x0 < 0 ? COL.red : COL.teal });
-      B.T([x0 - 2.4, 2, 0], 'E₂', { a: 'right', b: 1 });
-      B.T([x0 - 2.4, -2, 0], 'E₁', { a: 'right', b: 1 });
-      for (let i = 0; i < (p[3] as number); i++) B.D([x0 - 1.7 + (i % 6) * .62, 2.3, (Math.floor(i / 6) - .5) * .5], .17, { f: COL.gold });
-      for (let i = 0; i < (p[2] as number); i++) B.D([x0 - 1.7 + (i % 6) * .62, -1.7, (Math.floor(i / 6) - .5) * .5], .17, { f: COL.gold });
-    });
-    B.A([1.5, -2.6, 0], [1.5, 1.4, 0], { c: COL.red, w: 3 });
-    B.T([1.5, -3.1, 0], 'pumping', { c: COL.red, b: 1 });
-
-    /* step 2 */
-    B.s(2);
-    B.Y([-4, 0, 0], 1, 8, { ax: 'x', f: COL.teal, a: .12 });
-    B.X([-4.2, 0, 0], [.25, 2.8, 2.8], { f: COL.blue, a: .4 });
-    B.T([-4.2, 2.1, 0], 'mirror 100%', { b: 1 });
-    B.X([4.2, 0, 0], [.25, 2.8, 2.8], { f: COL.blue, a: .2 });
-    B.T([4.2, 2.1, 0], 'mirror 98%', { b: 1 });
-    B.A([4.5, 0, 0], [7, 0, 0], { c: COL.red, w: 3.2 });
-    B.T([6.2, .6, 0], 'laser beam 632.8 nm', { c: COL.red, b: 1, a: 'center' });
-    B.X([-3.2, 1.35, 0], [.4, .25, .4], { f: COL.gold, a: .5 });
-    B.X([3.2, -1.35, 0], [.4, .25, .4], { f: COL.gold, a: .5 });
-    B.T([0, 2.2, 0], 'He : Ne = 10 : 1, discharge tube', { c: COL.teal, b: 1 });
-    B.dyn((t, b) => {
-      const T = 9, u = (t % T) / T, n = 1 + Math.floor(u * 7);
-      for (let i = 0; i < n; i++) {
-        const x = -4 + (((t * 2.6 + i * 1.15) % 8.1) + 8.1) % 8.1;
-        b.D([x, .1 * sin(i * 2.3), .15 * cos(i * 3.1)], .13, { f: COL.red });
-      }
-      for (let i = 0; i < Math.max(0, n - 2); i++) {
-        const x = 4 - (((t * 2.2 + i * 1.3) % 8.1) + 8.1) % 8.1;
-        b.D([x, -.2 * cos(i * 1.7), .2 * sin(i * 2.9)], .13, { f: COL.red, a: .6 });
-      }
-      b.T([0, -2.3, 0], 'photons: ' + n + ' (they multiply on every trip)', { c: COL.dim, b: 1 });
-    });
-
-    /* step 3 */
-    B.s(3);
-    B.X([-1.5, 0, 0], [3, 2.4, 3], { f: COL.blue, a: .12 });
-    B.X([1.5, 0, 0], [3, 2.4, 3], { f: COL.red, a: .12 });
-    B.X([0, 0, 0], [.35, 2.4, 3], { f: COL.gold, a: .45 });
-    B.T([-1.5, 1.8, 0], 'n-type', { c: COL.blue, b: 1, sz: 24 });
-    B.T([1.5, 1.8, 0], 'p-type', { c: COL.red, b: 1, sz: 24 });
-    B.T([0, -1.8, 1.6], 'junction (active layer)', { c: COL.gold, b: 1 });
-    B.T([-3.4, 0, 0], '−', { sz: 40, b: 1, c: COL.blue });
-    B.T([3.4, 0, 0], '+', { sz: 40, b: 1, c: COL.red });
-    B.T([0, -3.0, 0], 'forward bias', { b: 1 });
-    B.P([[-1.5, -1.2, 1.5], [1.5, -1.2, 1.5], [1.5, 1.2, 1.5], [-1.5, 1.2, 1.5]], { f: COL.violet, a: .08 });
-    B.T([2.4, -1.0, 1.7], 'polished end = mirror', { sz: 16, c: COL.dim, a: 'left' });
-    B.dyn((t, b) => {
-      for (let k = 0; k < 6; k++) {
-        const u = ((t * .5 + k / 6) % 1);
-        const z = -1.1 + ((k * 7) % 5) * .5, y = -.8 + ((k * 3) % 4) * .5;
-        b.D([-2.8 + u * 2.7, y, z], .12, { f: COL.blue });
-        b.D([2.8 - u * 2.7, y + .2, z], .12, { f: COL.red, a: .45 });
-        if (u > .92) photon(b, [0, y, z], [0, 0, 1], .5, t, COL.red);
-      }
-      const s = (t * 1.2) % 2.4;
-      photon(b, [0, 0, 1.5 + s], [0, 0, 1], .8, t, COL.red, .12);
-      photon(b, [0, .6, 1.5 + ((s + 1.2) % 2.4)], [0, 0, 1], .8, t, COL.red, .12);
-      b.T([0, -2.3, 3.8], 'laser light →', { c: COL.red, b: 1 });
-    });
-
-    /* step 4 */
-    B.s(4);
-    B.X([0, .95, 0], [9, .5, 1.6], { f: COL.gold, a: .22 });
-    B.X([0, 0, 0], [9, 1.4, 1.6], { f: COL.teal, a: .18 });
-    B.X([0, -.95, 0], [9, .5, 1.6], { f: COL.gold, a: .22 });
-    B.T([3.2, 1.3, 1.2], 'cladding n₂ = 1.45', { c: COL.gold, b: 1, a: 'left' });
-    B.T([3.2, 0, 1.2], 'core n₁ = 1.50', { c: COL.teal, b: 1, a: 'left' });
-    const th0 = Math.asin(Math.sqrt(1.5 * 1.5 - 1.45 * 1.45)), rr = 2.2;
-    [1, -1].forEach(s => B.L([[-4.5, 0, 0], [-4.5 - rr * cos(th0), s * rr * sin(th0), 0]], { c: COL.red, w: 1.6, d: [5, 4] }));
-    B.C([-4.5 - rr * cos(th0), 0, 0], rr * sin(th0), { n: 'x', c: COL.red, w: 1.4 });
-    [[0, 1], [0, -1], [1, 0], [-1, 0]].forEach(q => B.L([[-4.5, 0, 0], [-4.5 - rr * cos(th0), q[0] * rr * sin(th0), q[1] * rr * sin(th0)]], { c: COL.red, w: 1, d: [4, 5] }));
-    B.T([-6.2, 1.9, 0], 'acceptance cone 2θ₀', { c: COL.red, b: 1 });
-    B.dyn((t, b, ang) => {
-      const angVal = typeof ang === 'number' ? ang : (ang?.val ?? 12);
-      const a = angVal * PI / 180, thr = Math.asin(Math.sin(a) / 1.5), slope = Math.tan(thr), ok = angVal <= th0 * 180 / PI + .01;
-      b.A([-4.5 - 2.4 * cos(a), -2.4 * sin(a), 0], [-4.5, 0, 0], { c: ok ? COL.teal : COL.red, w: 2.8 });
-      let x = -4.5, y = 0, dir = 1;
-      const pts: [number, number, number][] = [[x, y, 0]];
-      while (x < 4.5) {
-        const yb = dir > 0 ? .7 : -.7, dx = (yb - y) / (dir * slope || 1e-9);
-        if (!ok) {
-          pts.push([x + dx, yb, 0]);
-          b.L(pts, { c: COL.red, w: 2.6 });
-          b.A([x + dx, yb, 0], [Math.min(4.5, x + dx + 1.6), yb + dir * 1.5 * 1.6 * (slope + .15) / 1, 0], { c: COL.red, w: 2.2, d: [5, 4] });
-          b.T([x + dx + 1.2, dir * 2.4, 0], 'leaks out', { c: COL.red, b: 1 });
-          pts.length = 0;
-          break;
-        }
-        const nx = x + dx;
-        if (nx >= 4.5) {
-          pts.push([4.5, y + dir * slope * (4.5 - x), 0]);
-          break;
-        }
-        x = nx; y = yb; dir = -dir; pts.push([x, y, 0]);
-      }
-      if (pts.length > 1) b.L(pts, { c: COL.teal, w: 2.8 });
-      b.T([0, -2.2, 0], 'entry angle ' + angVal.toFixed(0) + '° → ' + (ok ? 'guided (TIR)' : 'outside cone: leaks'), { b: 1, sz: 22, c: ok ? COL.teal : COL.red });
-      b.T([0, -3.0, 0], 'NA = √(n₁² − n₂²) = 0.38,  θ₀ = 22.6°', { c: COL.dim, b: 1 });
-    });
-
-    /* step 5 */
-    B.s(5);
-    B.Y([0, 0, -5], 2.4, 5, { ax: 'z', f: COL.gold, a: .1 });
-    B.dyn((t, b, V) => {
-      const vVal = typeof V === 'number' ? V : (V?.val ?? 6);
-      const N = vVal < 2.405 ? 1 : Math.max(2, Math.round(vVal * vVal / 2)), R = 2.4;
-      b.C([0, 0, 0], R, { n: 'z', c: COL.ink, w: 2.4 });
-      b.C([0, 0, 0], R, { n: 'z', f: COL.teal, a: .1 });
-      for (let i = 0; i < N; i++) {
-        const r = N === 1 ? 0 : (R - .3) * Math.sqrt((i + .5) / N), a = i * 2.39996 + (N === 1 ? 0 : t * .15);
-        b.D([r * cos(a), r * sin(a), .05], N === 1 ? .55 : Math.max(.1, .5 / Math.sqrt(N)), { f: COL.red });
-      }
-      b.T([0, -3.4, 0], 'V = ' + vVal.toFixed(1) + '  →  ' + (N === 1 ? 'single mode (V < 2.405)' : 'about ' + N + ' modes (V²/2)'), { b: 1, sz: 24, c: N === 1 ? COL.teal : COL.ink });
-      b.T([0, 3.3, 0], 'fibre end face: each spot is one mode', { c: COL.dim, b: 1 });
-    });
-
-    /* step 6 */
-    B.s(6);
-    const y0 = 0;
-    B.X([-6.6, y0, 0], [1.4, 1.2, 1.2], { f: COL.gold, a: .35 }); B.T([-6.6, 1.2, 0], 'input', { b: 1 });
-    B.X([-4.4, y0, 0], [1.6, 1.4, 1.4], { f: COL.red, a: .35 }); B.T([-4.4, 1.3, 0], 'laser / LED', { b: 1 });
-    B.Y([-3.6, y0, 0], .22, 7.2, { ax: 'x', f: COL.teal, a: .5 }); B.T([-1.6, -.9, 0], 'optical fibre', { c: COL.teal, b: 1 });
-    B.X([0, y0, 0], [.9, 1.2, 1.2], { f: COL.violet, a: .4 }); B.T([0, 1.1, 0], 'repeater', { b: 1 });
-    B.X([4.4, y0, 0], [1.6, 1.4, 1.4], { f: COL.blue, a: .35 }); B.T([4.4, 1.3, 0], 'photodiode', { b: 1 });
-    B.X([6.6, y0, 0], [1.4, 1.2, 1.2], { f: COL.gold, a: .35 }); B.T([6.6, 1.2, 0], 'output', { b: 1 });
-    B.T([0, -2.6, 0], 'electrical signal → light → electrical signal', { c: COL.dim, b: 1 });
-    B.dyn((t, b) => {
-      for (let k = 0; k < 5; k++) {
-        const u = ((t * .16 + k * .2) % 1), x = -3.6 + u * 8, seg = x < 0 ? (x + 3.6) / 3.6 : x / 4, r = .22 * (1 - .5 * clamp(seg, 0, 1)) + .06;
-        b.D([x, y0, 0], r, { f: COL.red });
-      }
-    });
-
-    /* step 7 */
-    B.s(7);
-    cylx(B, -5, 5, 0.6, { f: COL.teal, c: COL.teal });
-    cylx(B, -5, 5, 1.1, { f: COL.gray, c: COL.gray, a: 0.06 });
-    B.T([0, 1.9, 0], 'cladding n₂', { c: COL.gray, b: 1 });
-    B.T([0, -1.2, 0], 'core n₁ > n₂', { c: COL.teal, b: 1, sz: 19 });
-    B.T([0, -2.6, 0], 'NA = sinθ₀ = √(n₁² − n₂²)', { c: COL.red, b: 1, sz: 24 });
-    B.dyn((t, b, p: any = {}) => {
-      const n1 = p?.coreIndex ?? 1.55;
-      const n2 = Math.min(n1 - 0.01, p?.cladIndex ?? 1.45);
-      const na = sqrt(Math.max(0, n1 * n1 - n2 * n2));
-      const thetaDeg = (Math.asin(Math.min(1, na)) * 180) / PI;
-      const coneR = Math.tan((thetaDeg * PI) / 180) * 1.8;
-      b.L([[-5, 0, 0], [-6.8, coneR, 0]], { c: COL.gold, w: 2 });
-      b.L([[-5, 0, 0], [-6.8, -coneR, 0]], { c: COL.gold, w: 2 });
-      b.A([-6.8, 0, 0], [-5, 0, 0], { c: COL.gold, w: 2.5 });
-      b.T([0, 2.6, 0], `n₁ = ${n1.toFixed(2)}, n₂ = ${n2.toFixed(2)}  →  NA = ${na.toFixed(3)}`, { c: COL.red, sz: 24, b: 1 });
-      b.T([0, -3.4, 0], `Acceptance angle θ₀ = ${thetaDeg.toFixed(1)}°`, { c: COL.ink, sz: 22 });
-    });
-  }
-};
-
-SC['phy:2'] = {
-  cam: { yaw: -.4, pitch: .28 },
-  steps: [
-    { t: 'Conductor, semiconductor, insulator', d: 'The valence band is full and the conduction band is where electrons can move freely. In a conductor the bands overlap, so electrons move easily. A semiconductor has a small gap (about 1 eV), so a few electrons jump up with heat. An insulator has a large gap (more than 3 eV), so none do.', cam: { pitch: .2, yaw: -.15 } },
-    { t: 'Fermi function and temperature', d: 'The surface shows the chance f that a state is filled, for different energies (left to right) and temperatures (front to back). At T = 0 it is a sharp step at E_F. As T rises the step softens, but f = ½ exactly at E_F for every temperature. Slide to cut the surface at a temperature of your choice.', param: { label: 'Temperature', min: 0, max: 3, val: 1.5, step: .1, unit: '' }, cam: { yaw: -.9, pitch: .45 }, only: true },
-    { t: 'Electrical conduction in a metal', d: 'Electrons move randomly and fast (Fermi speed) and bump into the lattice. A field adds a slow drift in one direction. The current density is J = n e² τ E / m*, so σ = n e² τ / m*. Move the slider to change the field and see the drift grow.', param: { label: 'Electric field E', min: 0, max: 3, val: 1.5, step: .1, unit: '' }, cam: { pitch: .3, yaw: -.3 }, only: true },
-    { t: 'A dielectric in a capacitor', d: 'In the field between the plates the dipoles in the dielectric line up. Opposite charges appear on its two faces (bound charge) and cancel part of the field, so E = E₀/εr. Slide the field from 0 up and watch the dipoles turn. Polarization P is the dipole moment per unit volume.', param: { label: 'Applied field', min: 0, max: 1, val: .7, step: .05, unit: '' }, cam: { yaw: -.45, pitch: .3 }, only: true },
-    { t: 'Types of polarization and dielectric loss', d: 'The permittivity ε′ falls in steps as the frequency rises: space charge stops first, then orientation, then ionic, then electronic. The loss ε″ (red) peaks near each step, and that is where the dielectric heats up. Drag the slider to a frequency and see which mechanisms still follow the field.', param: { label: 'log₁₀ of frequency (Hz)', min: 1, max: 16, val: 5, step: .2, unit: '' }, cam: { pitch: .15, yaw: -.1 }, only: true },
-    { t: 'Dia, para and ferromagnetic materials', d: 'Diamagnetic atoms have no permanent dipole; the field induces a weak opposing one (χ slightly negative). Paramagnetic atoms have dipoles that only partly line up with the field (χ small positive). Ferromagnetic materials have domains that line up strongly and stay aligned (large χ, hysteresis, lost above the Curie temperature).', only: true },
-    { t: 'Maxwell’s four equations in pictures', d: '1. Gauss (electric): ∮E·dA = q/ε₀, field lines start on charges. 2. Gauss (magnetic): ∮B·dA = 0, magnetic lines close on themselves. 3. Faraday: ∮E·dl = −dΦ_B/dt, a changing B makes a circulating E. 4. Ampère–Maxwell: ∮B·dl = μ₀(I + ε₀dΦ_E/dt), current and a changing E make a circulating B.', only: true },
-    { t: 'Electromagnetic wave and Poynting vector', d: 'E and B oscillate at right angles to each other and to the travel direction, always in step, with c = 1/√(μ₀ε₀) and E = cB. Energy flows along S = E × H (the Poynting vector); its average in free space is ½ε₀cE₀².', only: true }
-  ],
-  build(B) {
-    /* step 0 */
-    B.s(0);
-    const cfg = [[-4.6, 'conductor', 'Eg ≈ 0 (bands overlap)', -.4, 2, .5, 2], [0, 'semiconductor', 'Eg ≈ 1 eV', -1.6, 2.1, 1.6, 2.1], [4.6, 'insulator', 'Eg > 3 eV', -2.6, 2.1, 2.6, 2.1]] as const;
-    cfg.forEach(c => {
-      B.X([c[0], c[3], 0], [2.6, c[4], 1.3], { f: COL.blue, a: .3 }); B.X([c[0], c[5], 0], [2.6, c[6], 1.3], { f: COL.gold, a: .18 });
-      B.T([c[0], -4.7, 0], c[1], { b: 1, sz: 24 }); B.T([c[0], -5.4, 0], c[2], { c: COL.dim, b: 1 });
-      for (let i = 0; i < 8; i++) B.D([c[0] - 1 + (i % 4) * .65, c[3] - .5 + Math.floor(i / 4) * .8, 0], .1, { f: COL.blue });
-    });
-    B.T([-6.4, -1.4, 0], 'valence band', { c: COL.blue, b: 1, a: 'right' }); B.T([-6.4, 1.5, 0], 'conduction band', { c: COL.gold, b: 1, a: 'right' });
-    B.dyn((t, b) => {
-      [[-4.6, .5, 8], [0, 1.6, 2]].forEach(c => { for (let i = 0; i < c[2]; i++) b.D([c[0] + 1.1 * sin(t * (.6 + rnd(i) * .8) + i * 3), c[1] + .8 * cos(t * (.5 + rnd(i + 9) * .7) + i), .3 * sin(t + i)], .11, { f: COL.red }); });
-    });
-
-    /* step 1 */
-    B.s(1);
-    B.W((x, z) => 3 / (1 + Math.exp(x / (.04 + .42 * z))), [-3, 3], [0, 3], 18, { c: COL.blue });
-    B.L([[0, 1.5, 0], [0, 1.5, 3]], { c: COL.gold, w: 3.2 }); B.T([0, 1.9, 3.3], 'f = ½ at E_F', { c: COL.gold, b: 1 });
-    B.A([-3.4, 0, 0], [3.8, 0, 0], { c: COL.gray, w: 1.4 }); B.T([4.3, 0, 0], 'E − E_F', { c: COL.gray, b: 1 });
-    B.A([-3.4, 0, 0], [-3.4, 3.6, 0], { c: COL.gray, w: 1.4 }); B.T([-3.4, 4.0, 0], 'f(E)', { c: COL.gray, b: 1 });
-    B.A([-3.4, 0, 0], [-3.4, 0, 3.6], { c: COL.gray, w: 1.4 }); B.T([-3.4, 0, 4.0], 'T', { c: COL.gray, b: 1 });
-    B.dyn((t, b, T) => {
-      const TVal = typeof T === 'number' ? T : (T?.val ?? 1.5);
-      b.L(wavePts(-3, 3, x => [x, 3 / (1 + Math.exp(x / (.04 + .42 * TVal))), TVal], 120), { c: COL.red, w: 3.4 });
-      b.T([0, -.8, TVal], TVal < .05 ? 'T = 0: sharp step' : 'kT grows with T', { c: COL.red, b: 1 });
-    });
-
-    /* step 2 */
-    B.s(2);
-    B.Y([-4.2, 0, 0], 1.1, 8.4, { ax: 'x', f: COL.teal, a: .1 });
-    B.T([0, 1.9, 0], 'metal wire', { c: COL.teal, b: 1 });
-    B.dyn((t, b, E) => {
-      const EVal = typeof E === 'number' ? E : (E?.val ?? 1.5);
-      for (let i = 0; i < 16; i++) {
-        const base = -4.2 + rnd(i) * 8.4, yy = (rnd(i + 20) - .5) * 1.5, zz = (rnd(i + 40) - .5) * 1.5, drift = -EVal * .35 * t;
-        const x = ((((base + drift + .45 * sin(t * (2 + rnd(i + 3) * 3) + i)) + 4.2) % 8.4) + 8.4) % 8.4 - 4.2;
-        b.D([x, yy + .12 * sin(t * 4 + i), zz + .12 * cos(t * 3 + i)], .13, { f: COL.blue });
-      }
-      b.A([-1.5, 2.8, 0], [1.5, 2.8, 0], { c: COL.red, w: 2 + EVal }); b.T([0, 3.3, 0], 'electric field E', { c: COL.red, b: 1 });
-      b.A([1.5, -2.2, 0], [1.5 - .7 * EVal - .01, -2.2, 0], { c: COL.blue, w: 2.4 }); b.T([0, -2.9, 0], 'electrons: random motion + drift against the field', { c: COL.blue, b: 1 });
-      b.T([0, -3.7, 0], 'σ = n e² τ / m*', { b: 1, sz: 24 });
-    });
-
-    /* step 3 */
-    B.s(3);
-    B.X([0, 2.6, 0], [6.4, .2, 3.6], { f: COL.red, a: .3 }); B.X([0, -2.6, 0], [6.4, .2, 3.6], { f: COL.blue, a: .3 });
-    B.T([-3.9, 2.6, 0], '+Q', { c: COL.red, b: 1, sz: 26, a: 'right' }); B.T([-3.9, -2.6, 0], '−Q', { c: COL.blue, b: 1, sz: 26, a: 'right' });
-    B.X([0, 0, 0], [6, 4.4, 3.2], { f: COL.gold, a: .08 }); B.T([3.6, 0, 1.8], 'dielectric', { c: COL.gold, b: 1, a: 'left' });
-    B.dyn((t, b, F) => {
-      const FVal = typeof F === 'number' ? F : (F?.val ?? 0.7);
-      for (let i = 0; i < 5; i++) for (let j = 0; j < 3; j++) {
-        const x = -2.3 + i * 1.15, y = -1.2 + j * 1.2, z = -.3 + ((i + j) % 2) * .6;
-        const ang = (1 - FVal) * (rnd(i * 7 + j) * 2 * PI - PI) * 1 + .12 * sin(t * 2 + i + j) * (1 - FVal), dx = .38 * sin(ang), dy = .38 * cos(ang);
-        b.L([[x - dx, y - dy, z], [x + dx, y + dy, z]], { c: COL.ink, w: 2 }); b.D([x + dx, y + dy, z], .14, { f: COL.red }); b.D([x - dx, y - dy, z], .14, { f: COL.blue });
-      }
-      for (let i = 0; i < 6; i++) { b.D([-2.5 + i, 2.2, 1.55], .12, { f: COL.blue, a: .15 + .85 * FVal }); b.D([-2.5 + i, -2.2, 1.55], .12, { f: COL.red, a: .15 + .85 * FVal }); }
-      b.A([4.8, 1.7, 0], [4.8, -1.7, 0], { c: COL.red, w: 3 }); b.T([5.6, 0, 0], 'E₀', { c: COL.red, b: 1, sz: 24 });
-      b.A([-4.8, 1.7 - 1.1 * FVal * .9, 0], [-4.8, -1.7 + 1.1 * FVal * .9, 0], { c: COL.teal, w: 3 }); b.T([-5.6, 0, 0], 'E', { c: COL.teal, b: 1, sz: 24 });
-      b.T([0, -3.6, 0], FVal < .05 ? 'no field: dipoles point anywhere, P = 0' : 'field on: dipoles line up, bound charge appears, E < E₀', { b: 1 });
-    });
-
-    /* step 4 */
-    B.s(4);
-    B.A([-5, -2.4, 0], [5.6, -2.4, 0], { c: COL.gray, w: 1.4 }); B.A([-5, -2.4, 0], [-5, 3.4, 0], { c: COL.gray, w: 1.4 });
-    B.T([5.6, -2.9, 0], 'log f', { c: COL.gray, b: 1 }); B.T([-5, 3.8, 0], 'ε′  (black),  ε″ loss (red)', { c: COL.gray, b: 1, a: 'left' });
-    const X = (lf: number) => -5 + (lf - 1) / 15 * 10.4, mech = [[3.5, 'space charge', COL.violet, .7], [9, 'orientation', COL.red, .9], [13, 'ionic', COL.gold, .6], [15.4, 'electronic', COL.teal, .5]] as const;
-    const sg = (lf: number, c: number) => 1 / (1 + Math.exp((lf - c) / .5));
-    const eps = (lf: number) => .3 + mech.reduce((s, m) => s + m[3] * sg(lf, m[0]), 0), loss = (lf: number) => mech.reduce((s, m) => s + m[3] * .5 * Math.exp(-Math.pow((lf - m[0]) / .6, 2)), 0);
-    B.L(wavePts(1, 16, lf => [X(lf), -2.4 + 1.9 * eps(lf), 0], 200), { c: COL.ink, w: 3 }); B.L(wavePts(1, 16, lf => [X(lf), -2.4 + 1.9 * loss(lf), 0], 200), { c: COL.red, w: 2 });
-    mech.forEach((m, i) => { B.T([X(m[0]), -3.3 - (i % 2) * .6, 0], m[1], { c: m[2], b: 1, sz: 18 }); B.L([[X(m[0]), -2.4, 0], [X(m[0]), -2.7 - (i % 2) * .3, 0]], { c: m[2], w: 1.4 }); });
-    B.dyn((t, b, lf) => {
-      const lfVal = typeof lf === 'number' ? lf : (lf?.val ?? 5);
-      b.L([[X(lfVal), -2.4, 0], [X(lfVal), 3.2, 0]], { c: COL.green, w: 2.6, d: [6, 4] });
-      const on = mech.filter(m => lfVal < m[0] - .7).map(m => m[1]);
-      b.T([0, 4.6, 0], on.length ? 'still following the field: ' + on.join(', ') : 'only electronic or nothing follows at this frequency', { b: 1, c: COL.green, sz: 21 });
-    });
-
-    /* step 5 */
-    B.s(5);
-    const grp = (x: number, tag: string, f: (r: number) => number) => {
-      B.X([x, 0, 0], [2.6, 3.4, 2], { f: COL.gray, a: .12 });
-      for (let i = 0; i < 9; i++) {
-        const ix = x - .8 + (i % 3) * .8, iz = -.5 + Math.floor(i / 3) * .5, u = f(rnd(i + x * 7 + 3));
-        B.A([ix, -.1 - u * .6, iz], [ix, -.1 + u * .6, iz], { c: u < 0 ? COL.red : COL.teal, w: 2.2 });
-      }
-      B.T([x, -2.3, 0], tag, { b: 1, sz: 21, c: COL.red });
-    };
-    grp(-4, 'diamagnetic', () => -.35); grp(0, 'paramagnetic', r => r > .4 ? .5 : -.5); grp(4, 'ferromagnetic', () => .95);
-    B.A([-6.2, -1.8, 2], [-6.2, 1.8, 2], { c: COL.ink, w: 3 }); B.T([-6.2, 2.2, 2], 'B', { b: 1, sz: 26 });
-
-    /* step 6 */
-    B.s(6);
-    const gs = (x: number, y: number, tag: string) => B.T([x, y - 1.95, 0], tag, { b: 1, sz: 17, c: COL.red });
-    B.D([-4, 1.8, 0], .18, { f: COL.red });
-    B.C([-4, 1.8, 0], 1.2, { n: 'x', c: COL.gold }); B.C([-4, 1.8, 0], 1.2, { n: 'y', c: COL.gold }); B.C([-4, 1.8, 0], 1.2, { n: 'z', c: COL.gold });
-    for (let k = 0; k < 6; k++) {
-      const a = k * PI / 3;
-      B.A([-4 + cos(a) * .3, 1.8 + sin(a) * .3, 0], [-4 + cos(a) * 1.9, 1.8 + sin(a) * 1.9, 0], { c: COL.ink, w: 2 });
-    }
-    gs(-4, 1.8, '∮E·dA = q/ε₀');
-    B.X([4, 1.8, 0], [1.8, .7, .7], { f: COL.red });
-    for (let k = 1; k <= 3; k++) B.F(a => [4 + cos(a) * (.9 + k * .4), 1.8 + sin(a) * (.35 + k * .35), 0], 0, 2 * PI, { c: COL.teal, w: 1.4 });
-    gs(4, 1.8, '∮B·dA = 0');
-    B.C([-4, -2.1, 0], 1, { n: 'z', c: COL.ink, w: 2.2 }); B.A([-4, -3, .6], [-4, -1.3, .6], { c: COL.teal, w: 3 });
-    B.F(a => [-4 + cos(a) * 1.35, -2.1 + sin(a) * 1.35, 0], .3, 5.6, { c: COL.red, w: 2 });
-    gs(-4, -2.1, '∮E·dl = −dΦ/dt');
-    B.A([4, -3.8, 0], [4, -.6, 0], { c: COL.ink, w: 3 });
-    [.7, 1.2].forEach(r => B.C([4, -2.1, 0], r, { n: 'y', c: COL.teal, w: 2 }));
-    gs(4, -2.1, '∮B·dl = μ₀(I + ε₀dΦ/dt)');
-
-    /* step 7 */
-    B.s(7);
-    B.dyn((t, b) => {
-      const ph = t * 2.4;
-      b.A([0, 0, -5.5], [0, 0, 5.8], { c: COL.ink, w: 2 });
-      b.F(z => [0, sin(z * 1.7 - ph) * 1.7, z], -5.2, 5.2, { c: COL.red, w: 3.4, seg: 100 });
-      b.F(z => [sin(z * 1.7 - ph) * 1.7, 0, z], -5.2, 5.2, { c: COL.teal, w: 3.4, seg: 100 });
-      for (let k = 0; k < 9; k++) {
-        const z = -4.8 + k * 1.2, y = sin(z * 1.7 - ph) * 1.7;
-        b.L([[0, 0, z], [0, y, z]], { c: COL.red, w: 1, d: [3, 3] });
-        b.L([[0, 0, z], [y, 0, z]], { c: COL.teal, w: 1, d: [3, 3] });
-      }
-    });
-    B.T([0, 2.4, -3], 'E', { c: COL.red, b: 1, sz: 28 });
-    B.T([2.5, 0, -3], 'B', { c: COL.teal, b: 1, sz: 28 });
-    B.T([0, -1.3, 5.4], 'S = E × H, travel', { b: 1 });
-    B.T([0, 3, 0], 'c = 1/√(μ₀ε₀),  E = cB', { sz: 22, b: 1 });
-  }
-};
-
-SC['phy:3'] = {
-  cam: { yaw: -.4, pitch: .3 },
-  params: [
-    { id: 'quantumN', label: 'Quantum Level n', min: 1, max: 5, step: 1, defaultVal: 1, unit: '' },
-    { id: 'boxWidth', label: 'Box Width L', min: 3.0, max: 7.0, step: 0.5, defaultVal: 6.0, unit: 'Å' }
-  ],
-  steps: [
-    { t: 'Wave packet: phase and group velocity', d: 'A moving particle is a packet of waves. The crests inside move at the phase velocity (short arrow here), while the envelope that carries the particle moves at the group velocity (long arrow). The envelope speed is the particle speed. For a free particle vp × vg = c².', cam: { pitch: .22, yaw: -.2 } },
-    { t: 'de Broglie waves around an orbit', d: 'An electron orbit is allowed only when a whole number of wavelengths fits around it: 2πr = nλ. The wave goes up and down along the orbit. Try a fractional n and you will see the wave fail to close on itself, which means the orbit is not allowed.', param: { label: 'n (wavelengths around the orbit)', min: 1, max: 8, val: 4, step: .5, unit: '' }, cam: { pitch: .6, yaw: -.4 }, only: true },
-    { t: 'Uncertainty principle', d: 'A narrow wave packet (well-known position) needs many different wavelengths, so its momentum is spread out. A wide packet has a sharp wavelength but an uncertain position. Their product stays at ħ/2 or more: Δx · Δp ≥ ħ/2.', param: { label: 'Position spread Δx', min: .4, max: 2, val: 1, step: .05, unit: '' }, cam: { pitch: .15, yaw: -.15 }, only: true },
-    { t: 'Particle in a box: ψ and |ψ|²', d: 'The wave must be zero at the walls, so only whole numbers of half-wavelengths fit: ψₙ = √(2/L) sin(nπx/L). The energies are Eₙ = n²h²/8mL², so E₂ = 4E₁ and E₃ = 9E₁. The lowest energy is not zero. Blue is the wave ψ, red is the probability |ψ|².', param: { label: 'Highlight level n', min: 1, max: 3, val: 1, step: 1, unit: '' }, cam: { pitch: .3, yaw: -.5 }, only: true },
-    { t: 'Tunnelling: leaking through a wall', d: 'When a wave meets a barrier taller than its energy it does not stop dead: inside the barrier it dies away exponentially and a smaller wave emerges on the far side. T ≈ e^(−2κa) with κ = √(2m(V₀ − E))/ħ, so thinner or lower barriers leak more.', only: true },
-    { t: 'Live parameter lab: particle in a 1D box wavefunctions', d: 'Adjust quantum level n and box width L to observe the energy level Eₙ and wave function nodes ψₙ(x) = √(2/L) sin(nπx/L).', only: true }
-  ],
-  build(B) {
-    /* step 0 */
-    B.s(0);
-    B.L([[-5, 0, 0], [5, 0, 0]], { c: COL.gray, w: 1.2 });
-    B.T([5.2, 0, 0], 'x', { c: COL.gray });
-    B.dyn((t, b) => {
-      const vg = 1, vp = .5, k = 4, xc = -4 + ((t * vg) % 8), env = (x: number) => 1.9 * Math.exp(-Math.pow((x - xc) / 1.3, 2));
-      b.L(wavePts(-5, 5, x => [x, env(x), 0], 120), { c: COL.gray, w: 1.4, d: [5, 4] });
-      b.L(wavePts(-5, 5, x => [x, -env(x), 0], 120), { c: COL.gray, w: 1.4, d: [5, 4] });
-      b.L(wavePts(-5, 5, x => [x, env(x) * cos(k * (x - vp * t)), 0], 260), { c: COL.blue, w: 2.6 });
-      let crest = vp * t; crest = crest - Math.round((crest - xc) / (2 * PI / k)) * (2 * PI / k);
-      b.D([crest, env(crest), 0], .15, { f: COL.red });
-      b.A([crest, 2.5, 0], [crest + .9, 2.5, 0], { c: COL.red, w: 2.4 });
-      b.T([crest + .4, 2.9, 0], 'vₚ (crest)', { c: COL.red, b: 1 });
-      b.A([xc, -2.6, 0], [xc + 1.8, -2.6, 0], { c: COL.teal, w: 3 });
-      b.T([xc + .9, -3.1, 0], 'v_g = particle speed', { c: COL.teal, b: 1 });
-    });
-
-    /* step 1 */
-    B.s(1);
-    B.D([0, 0, 0], .3, { f: COL.red });
-    B.T([0, -.6, 0], 'nucleus', { b: 1, sz: 17 });
-    B.C([0, 0, 0], 2.6, { n: 'y', c: COL.dim, w: 1.2, d: [4, 4] });
-    B.dyn((t, b, n) => {
-      const nVal = typeof n === 'number' ? n : (n?.val ?? 4);
-      const pts: Vec3[] = [];
-      for (let i = 0; i <= 240; i++) {
-        const a = i / 240 * 2 * PI;
-        pts.push([2.6 * cos(a), .9 * sin(nVal * a) * cos(t * 1.2), 2.6 * sin(a)]);
-      }
-      const closes = Math.abs(nVal - Math.round(nVal)) < .01;
-      b.L(pts, { c: closes ? COL.teal : COL.red, w: 3 });
-      const a0 = t * .6;
-      b.D([2.6 * cos(a0), .9 * sin(nVal * a0) * cos(t * 1.2), 2.6 * sin(a0)], .17, { f: COL.blue });
-      b.T([0, -2.2, 0], closes ? 'n = ' + nVal.toFixed(0) + ': the wave closes on itself, orbit allowed' : 'n = ' + nVal.toFixed(1) + ': the wave does not close, orbit not allowed', { b: 1, sz: 23, c: closes ? COL.teal : COL.red });
-      b.T([0, -3.0, 0], '2πr = nλ   and   mvr = nħ', { c: COL.dim, b: 1 });
-    });
-
-    /* step 2 */
-    B.s(2);
-    B.L([[-5, 1.8, 0], [5, 1.8, 0]], { c: COL.gray, w: 1 });
-    B.L([[-5, -2.6, 0], [5, -2.6, 0]], { c: COL.gray, w: 1 });
-    B.T([-5.3, 1.8, 0], 'position', { a: 'right', b: 1, c: COL.blue });
-    B.T([-5.3, -1.6, 0], 'momentum', { a: 'right', b: 1, c: COL.red });
-    B.dyn((t, b, sx) => {
-      const sxVal = typeof sx === 'number' ? sx : (sx?.val ?? 1);
-      const sp = 1 / (2 * sxVal);
-      b.L(wavePts(-5, 5, x => [x, 1.8 + 1.5 * Math.exp(-x * x / (2 * sxVal * sxVal)) * cos(5 * x), 0], 260), { c: COL.blue, w: 2.4 });
-      b.L(wavePts(-5, 5, x => [x, 1.8 + 1.5 * Math.exp(-x * x / (2 * sxVal * sxVal)), 0], 120), { c: COL.gray, w: 1, d: [4, 4] });
-      b.L(wavePts(-5, 5, p => [p, -2.6 + 3.2 * Math.exp(-p * p / (2 * sp * sp * 4)) * .8 / 1, 0], 160), { c: COL.red, w: 3 });
-      b.A([-sxVal, 3.7, 0], [sxVal, 3.7, 0], { c: COL.blue, w: 1.6 });
-      b.A([sxVal, 3.7, 0], [-sxVal, 3.7, 0], { c: COL.blue, w: 1.6 });
-      b.T([0, 4.1, 0], 'Δx', { c: COL.blue, b: 1, sz: 24 });
-      b.A([-sp * 2, -2.0, 0], [sp * 2, -2.0, 0], { c: COL.red, w: 1.6 });
-      b.A([sp * 2, -2.0, 0], [-sp * 2, -2.0, 0], { c: COL.red, w: 1.6 });
-      b.T([0, -3.3, 0], 'Δp', { c: COL.red, b: 1, sz: 24 });
-      b.T([4.6, 0, 0], 'Δx·Δp = ħ/2', { b: 1, sz: 22 });
-    });
-
-    /* step 3 */
-    B.s(3);
-    B.X([-3.1, 2.2, 0], [.2, 4.6, 2.6], { f: COL.blue, a: .35 });
-    B.X([3.1, 2.2, 0], [.2, 4.6, 2.6], { f: COL.blue, a: .35 });
-    B.T([0, -.5, 0], 'V = ∞ outside, V = 0 inside (length L)', { b: 1, c: COL.dim });
-    B.L([[-3, 0, 0], [3, 0, 0]], { c: COL.ink, w: 2 });
-    [1, 2, 3].forEach(n => {
-      const E = n * n * .38;
-      B.L([[-3, E, 0], [3, E, 0]], { c: COL.gray, w: 1, d: [3, 4] });
-      B.T([3.6, E, 0], ['E₁', 'E₂ = 4E₁', 'E₃ = 9E₁'][n - 1], { a: 'left', b: 1, sz: 19 });
-    });
-    B.dyn((t, b, hn) => {
-      const hnVal = typeof hn === 'number' ? hn : (hn?.val ?? 1);
-      [1, 2, 3].forEach(n => {
-        const E = n * n * .38, on = n === Math.round(hnVal), w = on ? 3.4 : 1.4;
-        b.L(wavePts(-3, 3, x => [x, E + .8 * sin(n * PI * (x + 3) / 6) * cos(t * (1 + n)), 0], 120), { c: COL.blue, w: w });
-        b.L(wavePts(-3, 3, x => [x, E + .9 * Math.pow(sin(n * PI * (x + 3) / 6), 2), -2.4], 120), { c: COL.red, w: w });
-        if (on) b.T([0, E + 1.4, 0], 'ψₙ = √(2/L) sin(nπx/L), n = ' + n, { b: 1, sz: 21 });
-      });
-      b.T([-5.2, 4.2, 0], 'blue: wave ψ,  red: probability |ψ|² (behind)', { a: 'left', c: COL.dim, b: 1 });
-    });
-
-    /* step 4 */
-    B.s(4);
-    B.X([0, 0, 0], [1.6, 2.8, 1.6], { f: COL.red, a: .3 });
-    B.dyn((t, b) => {
-      const k = 7, w = t * 4;
-      b.F(x => {
-        const a = x < -.8 ? 1 : x < .8 ? exp(-(x + .8) * 1.4) : .28;
-        return [x, a * cos(k * x - w) * .9, 0];
-      }, -5, 5, { c: COL.teal, w: 3.2, seg: 220 });
-    });
-    B.L([[-5, 0, 0], [5, 0, 0]], { c: COL.gray, w: 1, d: [4, 4] });
-    B.T([0, 2.2, 0], 'barrier V₀', { c: COL.red, b: 1 });
-    B.T([-3, 1.6, 0], 'incident', { c: COL.teal, b: 1 });
-    B.T([3, 1.2, 0], 'transmitted (smaller)', { c: COL.teal, b: 1 });
-    B.T([0, -1.9, 0], 'decays inside: T ≈ e^(−2κa)', { b: 1, sz: 22 });
-
-    /* step 5 */
-    B.s(5);
-    B.dyn((t, b, p: any = {}) => {
-      const n = Math.round(p?.quantumN ?? 1), L = p?.boxWidth ?? 6.0, halfL = L / 2;
-      b.X([-halfL - 0.25, 0, 0], [0.5, 6, 1.5], { f: COL.gray });
-      b.X([halfL + 0.25, 0, 0], [0.5, 6, 1.5], { f: COL.gray });
-      b.L([[-halfL, -2.5, 0], [halfL, -2.5, 0]], { c: COL.ink, w: 3 });
-      const En = (n * n) / (L * L), yBase = -2.0 + Math.min(4.5, n * 0.9);
-      b.L([[-halfL, yBase, 0], [halfL, yBase, 0]], { c: COL.gray, w: 1.5, d: [4, 4] });
-      b.F(x => [x, yBase + 1.2 * sin(n * PI * (x + halfL) / L), 0], -halfL, halfL, { c: COL.teal, w: 3.2, seg: 100 });
-      b.T([0, 3.2, 0], `Level n = ${n} | E_${n} ∝ ${En.toFixed(3)} eV`, { c: COL.red, sz: 25, b: 1 });
-      b.T([0, -3.2, 0], `Nodes = ${n - 1} | Zero-point energy (n=1) is never 0`, { c: COL.ink, sz: 21 });
-    });
-  }
-};
-
-SC['phy:4'] = {
-  cam: { yaw: -.4, pitch: .28 },
-  steps: [
-    { t: 'Direct and indirect bandgap semiconductors', d: 'In a direct gap material (GaAs) the lowest point of the conduction band sits right above the highest point of the valence band. The electron just falls and gives a photon. In an indirect gap material (Si) the minimum is at a different k, so a lattice vibration (phonon) must help, and the energy mostly turns into heat.', cam: { pitch: .15, yaw: -.1 } },
-    { t: 'n-type and p-type material', d: 'Left: a phosphorus atom has one electron more than the silicon bonds need. That electron is almost free and carries current (n-type). Right: a boron atom has one electron too few, which leaves a hole that behaves like a moving positive charge (p-type). Together with thermal electron-hole pairs this gives σ = e(nμₑ + pμₕ).', cam: { pitch: .4, yaw: -.55 }, only: true },
-    { t: 'The Hall effect', d: 'Current flows along x and the magnetic field points along y. The magnetic force pushes the carriers sideways (along z) until a Hall voltage builds up that balances the force. Switch the carrier type: the sign of V_H flips, which is how you tell n-type from p-type. V_H = BI/(nqt).', param: { label: 'Carrier type (0 = electrons, 1 = holes)', min: 0, max: 1, val: 0, step: 1, unit: '' }, cam: { yaw: -.75, pitch: .35 }, only: true },
-    { t: 'Meissner effect', d: 'Below the critical temperature the superconductor pushes the magnetic field out (B = 0 inside), so the magnet floats. Above Tc the field passes through and the magnet just sits on the disk. Slide the temperature across Tc (the value 1).', param: { label: 'Temperature T / Tc', min: .3, max: 1.7, val: .6, step: .05, unit: '' }, cam: { pitch: .15, yaw: -.35 }, only: true },
-    { t: 'Cooper pairs (BCS theory)', d: 'An electron passing through the lattice pulls the positive ions slightly towards itself. That leaves a patch of extra positive charge which attracts a second electron. The two electrons form a Cooper pair with opposite momentum and opposite spin. The pairs move without scattering, so the resistance is zero. This is a cartoon, not to scale.', cam: { pitch: .55, yaw: -.4 }, only: true },
-    { t: 'Application of superconductors: MAGLEV vehicle', d: 'Superconducting magnets under the train repel the magnetic field of the track coils and lift the train by about 10 cm: no wheels, no rolling friction. The track coils then switch polarity so that the coil ahead pulls the train and the coil behind pushes it.', cam: { pitch: .22, yaw: -.5 }, only: true },
-    { t: 'The p-n junction: depletion and built-in field', d: 'Electrons diffuse from n into p, holes from p into n. They leave behind fixed charged atoms, which form a depletion region with a built-in field pointing from n to p. Drift balances diffusion at equilibrium.', only: true },
-    { t: 'Solar cell', d: 'A photon with enough energy creates an electron–hole pair near the junction. The built-in field sweeps the electron to the n side and the hole to the p side, so current flows through the external load. FF = Pmax/(I_sc V_oc).', only: true },
-    { t: 'Nanomaterials: quantum confinement', d: 'When a material shrinks to a few nanometres a large share of its atoms sit on the surface and electrons are squeezed, widening the band gap: 0D quantum dot, 1D nanowire.', only: true }
-  ],
-  build(B) {
-    /* step 0 */
-    B.s(0);
-    [[-4.2, 0, 'direct (GaAs)'], [4.2, 1.5, 'indirect (Si)']].forEach(p => {
-      const x0 = p[0] as number, kc = p[1] as number;
-      B.A([x0 - 3, -3, 0], [x0 + 3, -3, 0], { c: COL.gray, w: 1.2 });
-      B.T([x0 + 3.3, -3, 0], 'k', { c: COL.gray, b: 1 });
-      B.A([x0, -3, 0], [x0, 3.4, 0], { c: COL.gray, w: 1.2 });
-      B.T([x0 - .4, 3.6, 0], 'E', { c: COL.gray, b: 1 });
-      B.L(wavePts(-2.2, 2.2, k => [x0 + k, 1.4 + .35 * (k - kc) * (k - kc), 0], 60), { c: COL.gold, w: 2.8 });
-      B.L(wavePts(-2.2, 2.2, k => [x0 + k, -1.4 - .35 * k * k, 0], 60), { c: COL.blue, w: 2.8 });
-      B.T([x0, -4.3, 0], p[2] as string, { b: 1, sz: 24 });
-      B.T([x0 + 2.4, 2.9, 0], 'conduction band', { c: COL.gold, sz: 17, a: 'center' });
-      B.T([x0 + 2.4, -2.6, 0], 'valence band', { c: COL.blue, sz: 17 });
-      B.A([x0 - 2.6, -1.4, 0], [x0 - 2.6, 1.4, 0], { c: COL.gray, w: 1.2 });
-      B.T([x0 - 2.9, 0, 0], 'Eg', { c: COL.gray, b: 1, a: 'right' });
-    });
-    B.dyn((t, b) => {
-      const T = 5, u = (t % T) / T, e = clamp((u - .15) / .5, 0, 1);
-      /* direct */
-      {
-        const x0 = -4.2, y = lerp(1.4, -1.4, e);
-        b.D([x0, u < .15 ? 1.4 : y, 0], .18, { f: COL.red });
-        if (e >= 1) photon(b, [x0 + .2, -1.4, 0], [1, .3, 0], .9 + (u - .65) * 2, t, COL.red, .12);
-        b.T([x0, -3.6, 0], 'photon comes out: efficient light', { c: COL.red, b: 1, sz: 17 });
-      }
-      /* indirect */
-      {
-        const x0 = 4.2, kx = 1.5;
-        const y = lerp(1.4, -1.4, e), x = x0 + kx * (1 - e) * 1;
-        b.D([u < .15 ? x0 + kx : x, u < .15 ? 1.4 : y, 0], .18, { f: COL.red });
-        if (e > .2 && e < 1) b.T([x0 + .8, 0, 0], 'phonon', { c: COL.violet, b: 1 });
-        b.T([x0, -3.6, 0], 'needs a phonon: mostly heat', { c: COL.violet, b: 1, sz: 17 });
-      }
-    });
-
-    /* step 1 */
-    B.s(1);
-    const lat = (ox: number, donor: boolean) => {
-      for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) for (let k = 0; k < 2; k++) {
-        const p: Vec3 = [ox + i * 1.3, j * 1.3 - 1.3, k * 1.3 - .65], mid = i === 1 && j === 1 && k === 0;
-        if (i < 2) B.L([p, [p[0] + 1.3, p[1], p[2]]], { c: COL.gray, w: 1.2 });
-        if (j < 2) B.L([p, [p[0], p[1] + 1.3, p[2]]], { c: COL.gray, w: 1.2 });
-        if (k < 1) B.L([p, [p[0], p[1], p[2] + 1.3]], { c: COL.gray, w: 1.2 });
-        B.D(p, mid ? .34 : .22, { f: mid ? (donor ? COL.gold : COL.teal) : COL.gray });
-      }
-    };
-    lat(-6.2, true); lat(1.8, false);
-    B.T([-4.8, -2.9, 0], 'n-type: P donor', { c: COL.gold, b: 1, sz: 22 });
-    B.T([3.2, -2.9, 0], 'p-type: B acceptor', { c: COL.teal, b: 1, sz: 22 });
-    B.T([-4.8, -3.6, 0], 'extra electron is almost free', { c: COL.blue, sz: 17 });
-    B.T([3.2, -3.6, 0], 'missing electron = hole', { c: COL.red, sz: 17 });
-    B.dyn((t, b) => {
-      b.D([-4.8 + 1.6 * sin(t * .8), 0 + 1.2 * sin(t * 1.1 + 1), -.65 + .9 * cos(t * .7) + .65], .13, { f: COL.blue });
-      b.D([3.2 + 1.6 * cos(t * .6), 0 + 1.2 * sin(t * .9), -.2 + .8 * sin(t * .5)], .17, { f: COL.paper, a: 1 });
-      b.C([3.2 + 1.6 * cos(t * .6), 0 + 1.2 * sin(t * .9), -.2 + .8 * sin(t * .5)], .2, { n: 'z', c: COL.red, w: 2 });
-    });
-
-    /* step 2 */
-    B.s(2);
-    B.X([0, 0, 0], [7, 1.2, 3.2], { f: COL.teal, a: .14 });
-    B.A([-5.6, 0, 0], [-4, 0, 0], { c: COL.red, w: 3 }); B.T([-5.6, .7, 0], 'I', { c: COL.red, b: 1, sz: 26 });
-    B.A([0, -2.6, 0], [0, -.9, 0], { c: COL.gold, w: 3 }); B.T([0, -3.2, 0], 'B (into the slab)', { c: COL.gold, b: 1 });
-    B.T([0, 1.5, 0], 'thickness t', { c: COL.dim, sz: 17 });
-    B.dyn((t, b, ty) => {
-      const tyVal = typeof ty === 'number' ? ty : (ty?.val ?? 0);
-      const hole = tyVal > .5;
-      for (let i = 0; i < 7; i++) {
-        const u = ((t * .22 + i / 7) % 1), x = hole ? -3.4 + u * 6.8 : 3.4 - u * 6.8, prog = hole ? u : 1 - u, z = lerp(-1.2 + (i % 3) * .5, 1.35, 1 - Math.exp(-prog * 2.2));
-        b.D([x, .1 * (i % 2), z], .12, { f: hole ? COL.red : COL.blue });
-      }
-      for (let i = 0; i < 7; i++) b.D([-3 + i, 0, 1.68], .1, { f: hole ? COL.red : COL.blue, a: .85 });
-      b.A([0, 0, -.5], [0, 0, 1.0 * (hole ? 1 : -1) * .01 + .9], { c: COL.green, w: 2 });
-      b.T([.6, .5, .9], 'magnetic force', { c: COL.green, sz: 16, a: 'left' });
-      b.A([2.2, 0, -1.9], [2.2, 0, 1.9], { c: COL.violet, w: 2.4 });
-      b.A([2.2, 0, 1.9], [2.2, 0, -1.9], { c: COL.violet, w: 2.4 });
-      b.T([2.2, .6, 2.5], hole ? '+ side' : '− side', { c: hole ? COL.red : COL.blue, b: 1, sz: 24 });
-      b.T([2.2, .6, -2.5], hole ? '− side' : '+ side', { c: hole ? COL.blue : COL.red, b: 1, sz: 24 });
-      b.T([0, -4.0, 0], (hole ? 'p-type (holes): ' : 'n-type (electrons): ') + 'Hall coefficient R_H ' + (hole ? 'positive' : 'negative') + ',  R_H = 1/(nq)', { b: 1, sz: 21 });
-    });
-
-    /* step 3 */
-    B.s(3);
-    B.Y([0, -2.3, 0], 2.7, .5, { ax: 'y', f: COL.teal, a: .25 });
-    B.T([0, -3.1, 0], 'superconductor', { c: COL.teal, b: 1 });
-    B.dyn((t, b, r) => {
-      const rVal = typeof r === 'number' ? r : (r?.val ?? .6);
-      const sc = rVal < 1, top = -1.8, my = sc ? 1.5 + .12 * sin(t * 2) : top + .55;
-      if (!sc) b.Y([0, -2.3, 0], 2.7, .5, { ax: 'y', f: COL.gray, a: .35 });
-      b.X([0, my + .35, 0], [1.2, .7, .9], { f: COL.red, a: .5 });
-      b.X([0, my - .35, 0], [1.2, .7, .9], { f: COL.blue, a: .5 });
-      b.T([0, my + .35, .5], 'N', { b: 1, sz: 22, c: COL.red });
-      b.T([0, my - .35, .5], 'S', { b: 1, sz: 22, c: COL.blue });
-      [1.4, 2.2, 3.0].forEach(s => {
-        [0, 1].forEach(pl => {
-          const pts: Vec3[] = [];
-          for (let i = 0; i <= 60; i++) {
-            const a = i / 60 * 2 * PI, x = s * 1.25 * cos(a), y0 = my + s * .95 * sin(a);
-            const y = sc ? Math.max(y0, top + .1) : y0;
-            pts.push(pl ? [x, y, 0] : [0, y, x]);
-          }
-          b.L(pts, { c: COL.gold, w: 1.6, d: sc ? [6, 3] : [] });
-        });
-      });
-      b.T([0, 4.6, 0], sc ? 'T < Tc: field pushed out (B = 0 inside), magnet floats' : 'T > Tc: field goes through, magnet rests on the disk', { b: 1, sz: 22, c: sc ? COL.teal : COL.red });
-    });
-
-    /* step 4 */
-    B.s(4);
-    for (let i = 0; i < 9; i++) for (let j = 0; j < 4; j++) B.D([-4 + i, 0, -1.5 + j], .0, { f: COL.gold });
-    B.dyn((t, b) => {
-      const L = 11, x1 = -5.5 + ((t * 1.0) % L), x2 = x1 - 2.2, z1 = 0;
-      for (let i = 0; i < 9; i++) for (let j = 0; j < 4; j++) {
-        const px = -4 + i, pz = -1.5 + j;
-        const d = Math.hypot(px - x1, pz - z1);
-        const pull = d < 1.8 ? .55 * (1 - d / 1.8) : 0;
-        const dx = x1 - px, dz = z1 - pz, l = Math.hypot(dx, dz) || 1;
-        b.D([px + dx / l * pull, 0, pz + dz / l * pull], .2, { f: COL.gold });
-      }
-      b.D([x1, .5, 0], .22, { f: COL.blue });
-      b.D([x2, .5, 0], .22, { f: COL.blue });
-      b.L([[x1, .5, 0], [x2, .5, 0]], { c: COL.blue, w: 1.6, d: [4, 4] });
-      b.A([x1, 1.2, 0], [x1 + 1, 1.2, 0], { c: COL.red, w: 2.2 });
-      b.A([x2, 1.2, 0], [x2 - 1, 1.2, 0], { c: COL.red, w: 2.2 });
-      b.T([x1, 1.9, 0], 'e⁻  (k, ↑)', { c: COL.blue, b: 1, sz: 18 });
-      b.T([x2, 1.9, 0], 'e⁻  (−k, ↓)', { c: COL.blue, b: 1, sz: 18 });
-      b.T([0, -2.7, 0], 'Cooper pair: total momentum 0, total spin 0', { b: 1, sz: 22 });
-      b.T([0, -3.4, 0], 'gold = positive ions, pulled in by the passing electron', { c: COL.gold, b: 1 });
-    });
-
-    /* step 5 */
-    B.s(5);
-    B.X([0, -2.3, 0], [14, .3, 3.4], { f: COL.gray, a: .25 });
-    B.T([-6, -3.2, 0], 'guideway', { c: COL.gray, b: 1 });
-    B.dyn((t, b) => {
-      const tx = ((t * 1.6) % 14) - 7;
-      for (let i = 0; i < 14; i++) {
-        const cx = -6.5 + i, d = cx - tx, c = d > 0 && d < 3 ? COL.red : d < 0 && d > -3 ? COL.blue : COL.gray;
-        b.X([cx, -1.9, 1.3], [.5, .5, .5], { f: c, a: .55 });
-        b.X([cx, -1.9, -1.3], [.5, .5, .5], { f: c, a: .55 });
-      }
-      b.X([tx, .2, 0], [4.2, 1.6, 2.2], { f: COL.teal, a: .22 });
-      b.T([tx, 1.5, 0], 'train', { b: 1 });
-      [-1.3, 1.3].forEach(z => b.X([tx, -.8, z], [3.6, .4, .5], { f: COL.violet, a: .5 }));
-      [-1.4, -.4, .6, 1.4].forEach(dx => { b.A([tx + dx * 1.1, -1.25, 1.3], [tx + dx * 1.1, -.85, 1.3], { c: COL.green, w: 2 }); });
-      b.T([tx, -1.4, 2.2], 'gap ≈ 10 cm', { c: COL.green, b: 1, sz: 17 });
-      b.A([tx + 2.4, .2, 0], [tx + 3.4, .2, 0], { c: COL.red, w: 3 });
-      b.T([tx + 3.0, .8, 0], 'travel', { c: COL.red, b: 1, sz: 17 });
-      b.T([0, 3.6, 0], 'coil ahead (red) pulls, coil behind (blue) pushes', { b: 1, sz: 21 });
-    });
-
-    /* step 6 */
-    B.s(6);
-    B.X([-1.7, 0, 0], [3.4, 1.8, 2.4], { f: COL.red, a: .14 });
-    B.X([1.7, 0, 0], [3.4, 1.8, 2.4], { f: COL.blue, a: .14 });
-    B.X([0, 0, 0], [.9, 1.8, 2.4], { f: COL.gold, a: .4 });
-    B.dyn((t, b) => {
-      for (let i = 0; i < 7; i++) {
-        const w = sin(t * 2 + i) * .12;
-        b.D([-2.9 + (i % 4) * .7 + w, -.5 + Math.floor(i / 4) * .8, -.6 + (i % 3) * .6], .1, { f: COL.red });
-        b.D([.9 + (i % 4) * .7 - w, -.5 + Math.floor(i / 4) * .8, -.6 + (i % 3) * .6], .1, { f: COL.teal });
-      }
-    });
-    B.A([.8, 1.5, 1.4], [-.8, 1.5, 1.4], { c: COL.red, w: 3 });
-    B.T([0, 2.2, 1.4], 'built-in field', { c: COL.red, b: 1 });
-    B.T([-1.7, -1.4, 1.3], 'p (holes)', { b: 1, c: COL.red });
-    B.T([1.7, -1.4, 1.3], 'n (electrons)', { b: 1, c: COL.teal });
-    B.T([0, -2.4, 0], 'depletion region', { c: COL.gold, b: 1 });
-    B.T([0, 3.1, 0], 'diffusion balanced by drift', { sz: 22, b: 1 });
-
-    /* step 7 */
-    B.s(7);
-    B.X([0, 1.2, 0], [4.6, .3, 2.4], { f: COL.teal, a: .3 });
-    B.X([0, -.3, 0], [4.6, 2.7, 2.4], { f: COL.red, a: .2 });
-    B.T([-3.2, 1.2, 0], 'n', { c: COL.teal, b: 1, sz: 22 });
-    B.T([-3.2, -.3, 0], 'p', { c: COL.red, b: 1, sz: 22 });
-    [-1.4, 0, 1.4].forEach(x => {
-      B.F(y => [x + sin(y * 5) * .12, y, .6], 4.4, 1.5, { c: COL.gold, w: 2.6 });
-      B.A([x, 1.7, .6], [x, 1.45, .6], { c: COL.gold, w: 2.4 });
-    });
-    B.T([0, 4.7, 0], 'photons hν ≥ E_g', { c: COL.gold, b: 1 });
-    B.D([-.4, .9, 0], .14, { f: COL.teal });
-    B.D([.4, .5, 0], .14, { f: COL.red });
-    B.L([[-2.4, 1.2, 0], [-4.2, 1.2, 0], [-4.2, -2.4, 0], [4.2, -2.4, 0], [4.2, -1.3, 0]], { c: COL.ink, w: 2.4 });
-    B.C([-4.2, -.6, 0], .45, { n: 'z', c: COL.gold, f: COL.gold, a: .5 });
-    B.T([-4.9, -.6, 0], 'load', { b: 1 });
-    B.T([0, -3.2, 0], 'FF = Pmax /(I_sc V_oc)', { c: COL.red, b: 1, sz: 23 });
-
-    /* step 8 */
-    B.s(8);
-    B.X([-4, 0, 0], [2.4, 2.4, 2.4], { f: COL.gray, a: .2 });
-    B.T([-4, -2.1, 0], 'bulk', { b: 1 });
-    B.D([0, 0, 0], .5, { f: COL.teal });
-    B.T([0, -1.3, 0], '0D quantum dot', { b: 1, c: COL.teal });
-    B.X([4, 0, 0], [.35, 4.4, .35], { f: COL.red, a: .4 });
-    B.T([4, -2.9, 0], '1D nanowire', { b: 1, c: COL.red });
-    B.T([0, 3.1, 0], 'smaller → surface/volume up, band gap wider', { b: 1, sz: 21 });
-  }
-};
+SC['phy:4']={cam:{yaw:-.45,pitch:.3},steps:[
+ {t:'Metal, semiconductor, insulator',d:'Electrons fill the valence band (VB). To conduct they need empty states in the conduction band (CB). In a metal the bands overlap, so electrons move freely. A semiconductor has a small gap (about 1 eV for silicon) that heat or doping can bridge. An insulator has a wide gap (several eV) that nothing at room temperature crosses.'},
+ {t:'Doping and the Fermi level',d:'Donor atoms (n-type) add a level just below the CB and pull the Fermi level up towards it. Acceptor atoms (p-type) add a level just above the VB and pull the Fermi level down. In the pure (intrinsic) crystal it sits near mid-gap. Drift current is J = nq╬╝E; diffusion follows the concentration gradient; D/╬╝ = kT/q.',only:true},
+ {t:'The p-n junction',d:'Electrons diffuse from n into p, holes from p into n. They leave behind fixed charged atoms, which form a depletion region with a built-in field pointing from n to p. Drift (pushed by that field) balances diffusion at equilibrium. This one-way valve is the diode; with a third layer it becomes a transistor, and LEDs and photodiodes are junctions too.',only:true},
+ {t:'Hall effect',d:'Pass a current I along a slab and put a magnetic field B through it. The moving charges are pushed sideways and pile up on one face, creating a sideways voltage V_H = BI/(nqt). Its sign tells whether the carriers are electrons or holes, and R_H = 1/(nq) gives the carrier density.',only:true},
+ {t:'Solar cell',d:'A photon with enough energy creates an electronΓÇôhole pair near the junction. The built-in field sweeps the electron to the n side and the hole to the p side, so current flows through the external load. Quality is measured by fill factor FF = Pmax/(I_sc V_oc) and efficiency = Pmax/Pin.',only:true},
+ {t:'Nanomaterials: size changes properties',d:'When a material shrinks to a few nanometres a large share of its atoms sit on the surface (surface-to-volume ratio rises) and the electrons are squeezed, which widens the band gap and shifts colour and conductivity. Your syllabus classifies nanostructures by how many dimensions are confined: 0D quantum dot, 1D nanowire.',only:true}],
+ build(B){
+  const bd=(x,gap,tag,ne)=>{B.X([x,-1.9,0],[2.4,.6,1.8],{f:COL.blue,a:.3});B.X([x,-1.3+gap,0],[2.4,.6,1.8],{f:COL.gold,a:.3});B.T([x,-3,0],tag,{b:1,sz:21,c:COL.red});for(let i=0;i<ne;i++)B.D([x-.9+(i%4)*.55,-.9+gap,.3-(i%2)*.5],.1,{f:COL.teal})};
+  B.s(0);bd(-4.2,-.3,'metal: bands overlap',8);bd(0,.9,'semiconductor: small gap',3);bd(4.2,2.4,'insulator: wide gap',0);B.T([6.3,1.2,0],'CB',{c:COL.gold,b:1});B.T([6.3,-1.9,0],'VB',{c:COL.blue,b:1});
+  B.s(1);const cbv=x=>{B.L([[x-2,1.8,0],[x+2,1.8,0]],{c:COL.gold,w:3});B.L([[x-2,-1.8,0],[x+2,-1.8,0]],{c:COL.blue,w:3});B.T([x+2.4,1.8,0],'CB',{sz:19});B.T([x+2.4,-1.8,0],'VB',{sz:19})};
+  cbv(-3.6);cbv(3.6);B.L([[-5.6,1.35,0],[-1.6,1.35,0]],{c:COL.red,w:2.4,d:[6,4]});B.T([-3.6,.8,0],'E_F near CB (n-type)',{c:COL.red,b:1,sz:19});B.T([-3.6,2.5,0],'donor level just below CB',{sz:18});
+  B.L([[1.6,-1.35,0],[5.6,-1.35,0]],{c:COL.red,w:2.4,d:[6,4]});B.T([3.6,-.8,0],'E_F near VB (p-type)',{c:COL.red,b:1,sz:19});B.T([0,3.3,0],'intrinsic: E_F near mid-gap',{b:1,sz:21});
+  B.s(2);B.X([-1.7,0,0],[3.4,1.8,2.4],{f:COL.red,a:.14});B.X([1.7,0,0],[3.4,1.8,2.4],{f:COL.blue,a:.14});B.X([0,0,0],[.9,1.8,2.4],{f:COL.gold,a:.4});
+  B.dyn((t,b)=>{for(let i=0;i<7;i++){const w=sin(t*2+i)*.12;b.D([-2.9+(i%4)*.7+w,-.5+Math.floor(i/4)*.8,-.6+(i%3)*.6],.1,{f:COL.red});b.D([.9+(i%4)*.7-w,-.5+Math.floor(i/4)*.8,-.6+(i%3)*.6],.1,{f:COL.teal})}});
+  B.A([.8,1.5,1.4],[-.8,1.5,1.4],{c:COL.red,w:3});B.T([0,2.2,1.4],'built-in field',{c:COL.red,b:1});B.T([-1.7,-1.4,1.3],'p (holes)',{b:1,c:COL.red});B.T([1.7,-1.4,1.3],'n (electrons)',{b:1,c:COL.teal});B.T([0,-2.4,0],'depletion region',{c:COL.gold,b:1});B.T([0,3.1,0],'diffusion balanced by drift',{sz:22,b:1});
+  B.s(3);B.X([0,0,0],[6,2.4,.5],{f:COL.gold,a:.2});B.A([-4.5,0,0],[-3.2,0,0],{c:COL.ink,w:3.2});B.T([-4,.5,0],'I',{b:1,sz:26});B.A([0,0,2],[0,0,.4],{c:COL.teal,w:3.2});B.T([0,0,2.4],'B',{c:COL.teal,b:1,sz:26});
+  B.dyn((t,b)=>{for(let i=0;i<6;i++){const u=((t*.35+i/6)%1),x=-2.8+u*5.6,y=.9-1.5*Math.min(1,u*1.3);b.D([x,y,.35],.1,{f:COL.teal})}for(let k=0;k<5;k++)b.D([-2.4+k*1.2,-1.35,.3],.1,{f:COL.teal})});
+  B.A([3.8,-1.25,.3],[3.8,1.25,.3],{c:COL.red,w:3});B.T([4.5,0,.3],'V_H',{c:COL.red,b:1,sz:26});B.T([0,-2.4,0],'V_H = BI/(nqt),  R_H = 1/(nq)',{b:1,sz:23});
+  B.s(4);B.X([0,1.2,0],[4.6,.3,2.4],{f:COL.teal,a:.3});B.X([0,-.3,0],[4.6,2.7,2.4],{f:COL.red,a:.2});B.T([-3.2,1.2,0],'n',{c:COL.teal,b:1,sz:22});B.T([-3.2,-.3,0],'p',{c:COL.red,b:1,sz:22});
+  [-1.4,0,1.4].forEach(x=>{B.F(y=>[x+sin(y*5)*.12,y,.6],4.4,1.5,{c:COL.gold,w:2.6});B.A([x,1.7,.6],[x,1.45,.6],{c:COL.gold,w:2.4})});B.T([0,4.7,0],'photons h╬╜ ΓëÑ E_g',{c:COL.gold,b:1});
+  B.D([-.4,.9,0],.14,{f:COL.teal});B.D([.4,.5,0],.14,{f:COL.red});B.L([[-2.4,1.2,0],[-4.2,1.2,0],[-4.2,-2.4,0],[4.2,-2.4,0],[4.2,-1.3,0]],{c:COL.ink,w:2.4});B.C([-4.2,-.6,0],.45,{n:'z',c:COL.gold,f:COL.gold,a:.5});B.T([-4.9,-.6,0],'load',{b:1});B.T([0,-3.2,0],'FF = Pmax /(I_sc V_oc)',{c:COL.red,b:1,sz:23});
+  B.s(5);B.X([-4,0,0],[2.4,2.4,2.4],{f:COL.gray,a:.2});B.T([-4,-2.1,0],'bulk',{b:1});B.D([0,0,0],.5,{f:COL.teal});B.T([0,-1.3,0],'0D quantum dot',{b:1,c:COL.teal});B.X([4,0,0],[.35,4.4,.35],{f:COL.red,a:.4});B.T([4,-2.9,0],'1D nanowire',{b:1,c:COL.red});B.T([0,3.1,0],'smaller ΓåÆ surface/volume up, band gap wider',{b:1,sz:21})}};
 
 SC['phy:5']={cam:{yaw:-.5,pitch:.4},steps:[
- {t:'Optics bench: Newton’s rings and grating',d:'Newton’s rings: a travelling microscope measures ring diameters; plot D² against ring number n, and the slope is 4λR. Grating on a spectrometer: turn the telescope to each order, read the angle θ, and λ = (a + b) sinθ/n. Polarimeter: S = θ/(l·c) for a sugar solution. Always write precautions and the percentage error.'},
- {t:'Planck’s constant with a photocell',d:'Shine different frequencies on a photocell and find the stopping potential V₀ that brings the current to zero. eV₀ = hν − φ, so the graph of V₀ against ν is a straight line with slope h/e. Read the slope from two points far apart on the best-fit line.',only:true},
- {t:'p-n junction and Hall effect',d:'Diode: vary the voltage, record the current, plot I–V; the forward knee is near 0.7 V for silicon, with tiny leakage in reverse. Hall: with a fixed current, plot V_H against B; the slope gives R_H and so the carrier density and sign. Keep currents small.',only:true},
- {t:'Band gap from a four-probe measurement',d:'Resistivity of a semiconductor falls as it warms: ρ ∝ e^(E_g/2kT). Plot ln ρ against 1/T; the slope equals E_g/2k, so E_g = 2k × slope. For the nanoparticle experiment, note how the absorption colour shifts as particle size changes.',only:true}],
+ {t:'Optics bench: NewtonΓÇÖs rings and grating',d:'NewtonΓÇÖs rings: a travelling microscope measures ring diameters; plot D┬▓ against ring number n, and the slope is 4╬╗R. Grating on a spectrometer: turn the telescope to each order, read the angle ╬╕, and ╬╗ = (a + b) sin╬╕/n. Polarimeter: S = ╬╕/(l┬╖c) for a sugar solution. Always write precautions and the percentage error.'},
+ {t:'PlanckΓÇÖs constant with a photocell',d:'Shine different frequencies on a photocell and find the stopping potential VΓéÇ that brings the current to zero. eVΓéÇ = h╬╜ ΓêÆ ╧å, so the graph of VΓéÇ against ╬╜ is a straight line with slope h/e. Read the slope from two points far apart on the best-fit line.',only:true},
+ {t:'p-n junction and Hall effect',d:'Diode: vary the voltage, record the current, plot IΓÇôV; the forward knee is near 0.7 V for silicon, with tiny leakage in reverse. Hall: with a fixed current, plot V_H against B; the slope gives R_H and so the carrier density and sign. Keep currents small.',only:true},
+ {t:'Band gap from a four-probe measurement',d:'Resistivity of a semiconductor falls as it warms: ╧ü Γê¥ e^(E_g/2kT). Plot ln ╧ü against 1/T; the slope equals E_g/2k, so E_g = 2k ├ù slope. For the nanoparticle experiment, note how the absorption colour shifts as particle size changes.',only:true}],
  build(B){
-  B.s(0);B.X([0,-1.6,0],[10,.3,5],{f:COL.gold,a:.2});B.Y([-3.5,-1.4,0],.12,2,{f:COL.ink});B.X([-3.5,.9,0],[.8,.3,.8],{f:COL.gray});B.C([-3.5,-1.4,0],1,{n:'y',c:COL.teal,w:2});B.C([-3.5,-1.4,0],.45,{n:'y',c:COL.red,w:1.6});B.T([-3.5,1.8,0],'travelling microscope',{b:1,sz:19});B.T([-3.5,-2.3,0],'Newton’s rings',{c:COL.teal,b:1});
-  B.C([2.5,-1.3,0],1.4,{n:'y',c:COL.ink,w:2.2});B.X([2.5,-1.1,0],[.8,.5,.5],{f:COL.red});B.L([[2.5,-1.2,0],[5,-1.2,1.2]],{c:COL.ink,w:3});B.X([5,-1.2,1.2],[.9,.5,.5],{f:COL.gray});B.T([2.5,.1,0],'spectrometer + grating',{b:1,sz:19});B.T([2.5,-2.3,0],'λ = (a+b) sinθ / n',{c:COL.red,b:1});
-  B.s(1);plot(B,[-3.8,-2.4,0],7,5,'ν','V₀','V₀ against frequency: slope = h/e');B.L([[-3.2,-1.8,0],[3.1,1.8,0]],{c:COL.red,w:3.2});[[-2.6,-1.55],[-1.2,-.7],[.4,.25],[1.9,1.05],[2.7,1.5]].forEach(p=>B.D([p[0],p[1]+sin(p[0]*7)*.12,0],.1,{f:COL.teal}));B.T([2.4,-.5,0],'slope = h/e',{c:COL.red,b:1,sz:24});B.T([-3.2,-2.8,0],'threshold ν₀',{sz:18});
-  B.s(2);plot(B,[-5.2,-2.4,0],4.4,4.6,'V','I','diode I–V');B.F(x=>[-5.2+x,-2.4+Math.max(.02,(exp(x*1.1)-1)*.04),0],0,4.1,{c:COL.red,w:3,seg:60});plot(B,[.6,-2.4,0],4.4,4.6,'B','V_H','Hall: V_H ∝ B');B.L([[.6,-2.4,0],[4.8,1.6,0]],{c:COL.teal,w:3.2});B.T([-3.4,-.8,0],'knee ≈ 0.7 V',{sz:19});B.T([3.3,.3,0],'slope → R_H',{c:COL.teal,b:1,sz:20});
-  B.s(3);plot(B,[-3.8,-2.4,0],7,5,'1/T','ln ρ','slope = E_g / 2k');B.L([[-3.2,1.9,0],[3.1,-1.7,0]],{c:COL.red,w:3.2});[[-2.8,1.55],[-1.4,.75],[0,-.05],[1.5,-.9],[2.7,-1.5]].forEach(p=>B.D([p[0],p[1]+sin(p[0]*5)*.1,0],.1,{f:COL.teal}));B.T([2.2,.7,0],'E_g = 2k × slope',{c:COL.red,b:1,sz:24})}};
+  B.s(0);B.X([0,-1.6,0],[10,.3,5],{f:COL.gold,a:.2});B.Y([-3.5,-1.4,0],.12,2,{f:COL.ink});B.X([-3.5,.9,0],[.8,.3,.8],{f:COL.gray});B.C([-3.5,-1.4,0],1,{n:'y',c:COL.teal,w:2});B.C([-3.5,-1.4,0],.45,{n:'y',c:COL.red,w:1.6});B.T([-3.5,1.8,0],'travelling microscope',{b:1,sz:19});B.T([-3.5,-2.3,0],'NewtonΓÇÖs rings',{c:COL.teal,b:1});
+  B.C([2.5,-1.3,0],1.4,{n:'y',c:COL.ink,w:2.2});B.X([2.5,-1.1,0],[.8,.5,.5],{f:COL.red});B.L([[2.5,-1.2,0],[5,-1.2,1.2]],{c:COL.ink,w:3});B.X([5,-1.2,1.2],[.9,.5,.5],{f:COL.gray});B.T([2.5,.1,0],'spectrometer + grating',{b:1,sz:19});B.T([2.5,-2.3,0],'╬╗ = (a+b) sin╬╕ / n',{c:COL.red,b:1});
+  B.s(1);plot(B,[-3.8,-2.4,0],7,5,'╬╜','VΓéÇ','VΓéÇ against frequency: slope = h/e');B.L([[-3.2,-1.8,0],[3.1,1.8,0]],{c:COL.red,w:3.2});[[-2.6,-1.55],[-1.2,-.7],[.4,.25],[1.9,1.05],[2.7,1.5]].forEach(p=>B.D([p[0],p[1]+sin(p[0]*7)*.12,0],.1,{f:COL.teal}));B.T([2.4,-.5,0],'slope = h/e',{c:COL.red,b:1,sz:24});B.T([-3.2,-2.8,0],'threshold ╬╜ΓéÇ',{sz:18});
+  B.s(2);plot(B,[-5.2,-2.4,0],4.4,4.6,'V','I','diode IΓÇôV');B.F(x=>[-5.2+x,-2.4+Math.max(.02,(exp(x*1.1)-1)*.04),0],0,4.1,{c:COL.red,w:3,seg:60});plot(B,[.6,-2.4,0],4.4,4.6,'B','V_H','Hall: V_H Γê¥ B');B.L([[.6,-2.4,0],[4.8,1.6,0]],{c:COL.teal,w:3.2});B.T([-3.4,-.8,0],'knee Γëê 0.7 V',{sz:19});B.T([3.3,.3,0],'slope ΓåÆ R_H',{c:COL.teal,b:1,sz:20});
+  B.s(3);plot(B,[-3.8,-2.4,0],7,5,'1/T','ln ╧ü','slope = E_g / 2k');B.L([[-3.2,1.9,0],[3.1,-1.7,0]],{c:COL.red,w:3.2});[[-2.8,1.55],[-1.4,.75],[0,-.05],[1.5,-.9],[2.7,-1.5]].forEach(p=>B.D([p[0],p[1]+sin(p[0]*5)*.1,0],.1,{f:COL.teal}));B.T([2.2,.7,0],'E_g = 2k ├ù slope',{c:COL.red,b:1,sz:24})}};
 const pil=(B,x,h,l,c)=>{B.X([x,h/2-2,0],[.9,h,.9],{f:c,a:.35});};
 SC['eic:0']={cam:{yaw:-.4,pitch:.25},steps:[
- {t:'The Preamble as a temple',d:'The Preamble is the Constitution’s introduction, and it rests on pillars: India is a Sovereign, Socialist, Secular, Democratic Republic. It secures to all citizens Justice, Liberty, Equality and Fraternity (the base). “Socialist”, “Secular” and “integrity” were added by the 42nd Amendment (1976). It opens with “We, the people of India”: the authority comes from the people.'},
- {t:'How it came to be',d:'The Constituent Assembly first met on 9 December 1946; its Drafting Committee was chaired by Dr. B. R. Ambedkar and the Assembly’s president was Dr. Rajendra Prasad. The Constitution was adopted on 26 November 1949 and came into force on 26 January 1950. Earlier steps: Acts of 1773, 1858, 1909, 1919 and 1935, the Cabinet Mission 1946 and the Objectives Resolution.',only:true},
+ {t:'The Preamble as a temple',d:'The Preamble is the ConstitutionΓÇÖs introduction, and it rests on pillars: India is a Sovereign, Socialist, Secular, Democratic Republic. It secures to all citizens Justice, Liberty, Equality and Fraternity (the base). ΓÇ£SocialistΓÇ¥, ΓÇ£SecularΓÇ¥ and ΓÇ£integrityΓÇ¥ were added by the 42nd Amendment (1976). It opens with ΓÇ£We, the people of IndiaΓÇ¥: the authority comes from the people.'},
+ {t:'How it came to be',d:'The Constituent Assembly first met on 9 December 1946; its Drafting Committee was chaired by Dr. B. R. Ambedkar and the AssemblyΓÇÖs president was Dr. Rajendra Prasad. The Constitution was adopted on 26 November 1949 and came into force on 26 January 1950. Earlier steps: Acts of 1773, 1858, 1909, 1919 and 1935, the Cabinet Mission 1946 and the Objectives Resolution.',only:true},
  {t:'Salient features',d:'The longest written constitution; a parliamentary system; a federal structure with a unitary bias; Fundamental Rights; Directive Principles; an independent judiciary; secularism; single citizenship and adult franchise; a mix of rigid and flexible amendment.',only:true}],
  build(B){
   B.s(0);[['Justice',COL.red],['Liberty',COL.gold],['Equality',COL.teal],['Fraternity',COL.blue]].forEach(([l,c],i)=>{B.X([0,-2.6+i*.28,0],[9.6-i*.5,.28,3.6-i*.2],{f:c,a:.3});lab(B,[-4.4+i*2.9,-2.9,1.8],l,{c,sz:20})});
@@ -1398,31 +582,31 @@ SC['eic:0']={cam:{yaw:-.4,pitch:.25},steps:[
   B.s(1);B.A([-5.6,-1.6,0],[5.8,-1.6,0],{c:COL.ink,w:2.4});[[-5,'9 Dec 1946','Constituent Assembly meets',1.4],[-.8,'26 Nov 1949','Constitution adopted',2.6],[2.4,'26 Jan 1950','comes into force',3.6],[5,'1976','42nd Amendment',2.2]].forEach(([x,d,t,h])=>{B.X([x,-1.6+h/2,0],[.6,h,.6],{f:COL.gold,a:.4});lab(B,[x,-1.6+h+.5,0],d,{sz:21,c:COL.red});lab(B,[x,-2.2,0],t,{sz:17})});lab(B,[0,3.6,0],'Drafting Committee: Dr. B. R. Ambedkar',{sz:21});lab(B,[0,-3.2,0],'Assembly president: Dr. Rajendra Prasad',{sz:19,c:COL.gray});
   B.s(2);const ft=['longest written','parliamentary system','federal, unitary bias','Fundamental Rights','Directive Principles','independent judiciary','secular state','adult franchise'];ringPts(8,3.1).forEach((p,i)=>{B.X(p,[1.5,.8,.8],{f:[COL.red,COL.gold,COL.teal,COL.blue][i%4],a:.3});lab(B,[p[0],p[1],.5],ft[i],{sz:16})});lab(B,[0,0,0],'INDIAN\nCONSTITUTION'.split('\n')[0],{sz:26,c:COL.red});lab(B,[0,-.7,0],'Constitution',{sz:26,c:COL.red})}};
 SC['eic:1']={cam:{yaw:-.4,pitch:.5},steps:[
- {t:'Fundamental Rights: Part III, Articles 12–35',d:'Six groups: Equality (14–18), Freedom (19–22), Against Exploitation (23–24), Freedom of Religion (25–28), Cultural and Educational (29–30), and Constitutional Remedies (32), the right to go straight to the Supreme Court (Dr. Ambedkar called it the heart of the Constitution). The right to property is no longer a Fundamental Right (44th Amendment, now Art. 300A).'},
- {t:'Fundamental Duties: Article 51A, Part IV-A',d:'Added by the 42nd Amendment (1976) on the Swaran Singh Committee’s recommendation, the duties include respecting the Constitution and national flag, protecting the environment and public property, developing scientific temper, and (11th, added by the 86th Amendment, 2002) providing education to children aged 6–14 if you are a parent or guardian. Duties are not enforceable in court.',only:true}],
+ {t:'Fundamental Rights: Part III, Articles 12ΓÇô35',d:'Six groups: Equality (14ΓÇô18), Freedom (19ΓÇô22), Against Exploitation (23ΓÇô24), Freedom of Religion (25ΓÇô28), Cultural and Educational (29ΓÇô30), and Constitutional Remedies (32), the right to go straight to the Supreme Court (Dr. Ambedkar called it the heart of the Constitution). The right to property is no longer a Fundamental Right (44th Amendment, now Art. 300A).'},
+ {t:'Fundamental Duties: Article 51A, Part IV-A',d:'Added by the 42nd Amendment (1976) on the Swaran Singh CommitteeΓÇÖs recommendation, the duties include respecting the Constitution and national flag, protecting the environment and public property, developing scientific temper, and (11th, added by the 86th Amendment, 2002) providing education to children aged 6ΓÇô14 if you are a parent or guardian. Duties are not enforceable in court.',only:true}],
  build(B){
-  B.s(0);const rg=[['Equality','14–18'],['Freedom','19–22'],['Against exploitation','23–24'],['Religion','25–28'],['Cultural, educational','29–30'],['Remedies','32']];rg.forEach(([l,a],i)=>{const an=PI/2-i/6*2*PI,x=cos(an)*3.4,z=sin(an)*3.4;B.X([x,0,z],[2.2,.7,1.2],{f:[COL.red,COL.gold,COL.teal,COL.blue,COL.green,COL.pink][i],a:.35});lab(B,[x,.6,z],l,{sz:19});lab(B,[x,-.1,z],'Arts. '+a,{sz:16,c:COL.gray});B.L([[x*.45,0,z*.45],[x*.75,0,z*.75]],{c:COL.ink,w:1.6,d:[3,3]})});B.Y([0,-.3,0],.9,.8,{f:COL.red,c:COL.red});lab(B,[0,.9,0],'Art. 32',{sz:22,c:COL.red});lab(B,[0,3.6,0],'Part III · justiciable',{sz:23});
-  B.s(1);const du=11;for(let i=0;i<du;i++){const a=PI/2-i/du*2*PI,x=cos(a)*3.2,z=sin(a)*3.2;B.Y([x,-.3,z],.3,1,{f:i===10?COL.red:COL.gold,c:i===10?COL.red:COL.ink});lab(B,[x,1.1,z],''+(i+1),{sz:19,c:i===10?COL.red:COL.ink})}B.C([0,-.3,0],3.2,{n:'y',c:COL.gray,w:1.4});lab(B,[0,.8,0],'Art. 51A',{sz:28,c:COL.gold});lab(B,[0,0,0],'11 duties · not justiciable',{sz:20});lab(B,[0,3.7,0],'10 by 42nd Amendment, 11th by 86th',{sz:21,c:COL.red})}};
+  B.s(0);const rg=[['Equality','14ΓÇô18'],['Freedom','19ΓÇô22'],['Against exploitation','23ΓÇô24'],['Religion','25ΓÇô28'],['Cultural, educational','29ΓÇô30'],['Remedies','32']];rg.forEach(([l,a],i)=>{const an=PI/2-i/6*2*PI,x=cos(an)*3.4,z=sin(an)*3.4;B.X([x,0,z],[2.2,.7,1.2],{f:[COL.red,COL.gold,COL.teal,COL.blue,COL.green,COL.pink][i],a:.35});lab(B,[x,.6,z],l,{sz:19});lab(B,[x,-.1,z],'Arts. '+a,{sz:16,c:COL.gray});B.L([[x*.45,0,z*.45],[x*.75,0,z*.75]],{c:COL.ink,w:1.6,d:[3,3]})});B.Y([0,-.3,0],.9,.8,{f:COL.red,c:COL.red});lab(B,[0,.9,0],'Art. 32',{sz:22,c:COL.red});lab(B,[0,3.6,0],'Part III ┬╖ justiciable',{sz:23});
+  B.s(1);const du=11;for(let i=0;i<du;i++){const a=PI/2-i/du*2*PI,x=cos(a)*3.2,z=sin(a)*3.2;B.Y([x,-.3,z],.3,1,{f:i===10?COL.red:COL.gold,c:i===10?COL.red:COL.ink});lab(B,[x,1.1,z],''+(i+1),{sz:19,c:i===10?COL.red:COL.ink})}B.C([0,-.3,0],3.2,{n:'y',c:COL.gray,w:1.4});lab(B,[0,.8,0],'Art. 51A',{sz:28,c:COL.gold});lab(B,[0,0,0],'11 duties ┬╖ not justiciable',{sz:20});lab(B,[0,3.7,0],'10 by 42nd Amendment, 11th by 86th',{sz:21,c:COL.red})}};
 SC['eic:2']={cam:{yaw:-.4,pitch:.3},steps:[
- {t:'Rights and Directive Principles must balance',d:'Fundamental Rights (Part III) can be enforced in court; Directive Principles (Part IV, Arts. 36–51) cannot (Art. 37) but are “fundamental in the governance of the country”. When they clash, courts try to harmonise. Art. 31C lets laws to implement Art. 39(b),(c) prevail over Arts. 14 and 19; in Minerva Mills (1980) the Supreme Court held that harmony between the two parts is part of the basic structure.'},
+ {t:'Rights and Directive Principles must balance',d:'Fundamental Rights (Part III) can be enforced in court; Directive Principles (Part IV, Arts. 36ΓÇô51) cannot (Art. 37) but are ΓÇ£fundamental in the governance of the countryΓÇ¥. When they clash, courts try to harmonise. Art. 31C lets laws to implement Art. 39(b),(c) prevail over Arts. 14 and 19; in Minerva Mills (1980) the Supreme Court held that harmony between the two parts is part of the basic structure.'},
  {t:'Three families of Directive Principles',d:'Socialistic: fair livelihood, equal pay for equal work, reducing inequality (Arts. 38, 39, 41, 42). Gandhian: village panchayats, cottage industries (Arts. 40, 43). Liberal-intellectual: uniform civil code (44), separation of judiciary from executive (50), protecting the environment (48A) and international peace (51).',only:true}],
  build(B){
-  B.s(0);B.L([[0,-2.6,0],[0,1.6,0]],{c:COL.ink,w:4});B.X([0,-2.7,0],[2,.3,1],{f:COL.gray,a:.3});B.L([[-4.2,1.7,0],[4.2,1.7,0]],{c:COL.ink,w:4});B.L([[-4.2,1.7,0],[-4.2,.9,0]],{c:COL.ink,w:2});B.L([[4.2,1.7,0],[4.2,.9,0]],{c:COL.ink,w:2});B.X([-4.2,.6,0],[3.2,.5,1.4],{f:COL.red,a:.35});B.X([4.2,.6,0],[3.2,.5,1.4],{f:COL.teal,a:.35});lab(B,[-4.2,-.2,0],'Fundamental Rights',{c:COL.red,sz:22});lab(B,[-4.2,-.8,0],'Part III · justiciable',{sz:18});lab(B,[4.2,-.2,0],'Directive Principles',{c:COL.teal,sz:22});lab(B,[4.2,-.8,0],'Part IV · non-justiciable',{sz:18});lab(B,[0,2.8,0],'harmony = basic structure (Minerva Mills, 1980)',{sz:22});lab(B,[0,-3.4,0],'Art. 31C: Art. 39(b),(c) laws prevail over Arts. 14, 19',{sz:19,c:COL.gray});
-  B.s(1);[['Socialistic',COL.red,['Art. 38 · 39 · 41 · 42','fair livelihood','equal pay for equal work'],-4.6],['Gandhian',COL.gold,['Art. 40 · 43','village panchayats','cottage industries'],0],['Liberal-intellectual',COL.teal,['Art. 44 · 48A · 50 · 51','uniform civil code','environment · peace'],4.6]].forEach(([l,c,ex,x])=>{B.X([x,0,0],[3.4,4.6,1.4],{f:c,a:.25});lab(B,[x,1.9,.8],l,{c,sz:23});ex.forEach((e,i)=>lab(B,[x,.9-i*.9,.8],e,{sz:i?18:20,c:i?COL.ink:COL.red}))});lab(B,[0,3.4,0],'Part IV · Arts. 36–51',{sz:24})}};
+  B.s(0);B.L([[0,-2.6,0],[0,1.6,0]],{c:COL.ink,w:4});B.X([0,-2.7,0],[2,.3,1],{f:COL.gray,a:.3});B.L([[-4.2,1.7,0],[4.2,1.7,0]],{c:COL.ink,w:4});B.L([[-4.2,1.7,0],[-4.2,.9,0]],{c:COL.ink,w:2});B.L([[4.2,1.7,0],[4.2,.9,0]],{c:COL.ink,w:2});B.X([-4.2,.6,0],[3.2,.5,1.4],{f:COL.red,a:.35});B.X([4.2,.6,0],[3.2,.5,1.4],{f:COL.teal,a:.35});lab(B,[-4.2,-.2,0],'Fundamental Rights',{c:COL.red,sz:22});lab(B,[-4.2,-.8,0],'Part III ┬╖ justiciable',{sz:18});lab(B,[4.2,-.2,0],'Directive Principles',{c:COL.teal,sz:22});lab(B,[4.2,-.8,0],'Part IV ┬╖ non-justiciable',{sz:18});lab(B,[0,2.8,0],'harmony = basic structure (Minerva Mills, 1980)',{sz:22});lab(B,[0,-3.4,0],'Art. 31C: Art. 39(b),(c) laws prevail over Arts. 14, 19',{sz:19,c:COL.gray});
+  B.s(1);[['Socialistic',COL.red,['Art. 38 ┬╖ 39 ┬╖ 41 ┬╖ 42','fair livelihood','equal pay for equal work'],-4.6],['Gandhian',COL.gold,['Art. 40 ┬╖ 43','village panchayats','cottage industries'],0],['Liberal-intellectual',COL.teal,['Art. 44 ┬╖ 48A ┬╖ 50 ┬╖ 51','uniform civil code','environment ┬╖ peace'],4.6]].forEach(([l,c,ex,x])=>{B.X([x,0,0],[3.4,4.6,1.4],{f:c,a:.25});lab(B,[x,1.9,.8],l,{c,sz:23});ex.forEach((e,i)=>lab(B,[x,.9-i*.9,.8],e,{sz:i?18:20,c:i?COL.ink:COL.red}))});lab(B,[0,3.4,0],'Part IV ┬╖ Arts. 36ΓÇô51',{sz:24})}};
 SC['eic:3']={cam:{yaw:-.4,pitch:.3},steps:[
  {t:'Who runs a state (Part VI)',d:'The Governor (Art. 153), appointed by the President, is the constitutional head of the state. Real executive power sits with the Council of Ministers headed by the Chief Minister (Art. 163), who answer to the Legislative Assembly. The State Legislature (Art. 168) makes the laws.'},
  {t:'Two houses: Assembly and Council',d:'The Legislative Assembly (Vidhan Sabha) is directly elected, 60 to 500 members (Art. 170), five-year term. Some states, including Bihar, also have a Legislative Council (Vidhan Parishad): at most one-third of the Assembly and not fewer than 40 members (Art. 171), a permanent house with one-third retiring every two years and a six-year term. Parliament can create or abolish a Council if the state asks (Art. 169).',only:true},
  {t:'How a bill moves',d:'Ordinary bills may start in either house, but when the houses disagree the Assembly has the stronger say. Money bills start only in the Assembly; the Council can only make recommendations. The Governor gives assent, may return a bill once for reconsideration, or reserve it for the President.',only:true}],
  build(B){
-  B.s(0);bx(B,[0,3,0],[2.8,.9,.8],'Governor',COL.gold,{sz:23});bx(B,[-3,.6,0],[3.4,.9,.8],'Council of Ministers · CM',COL.red,{sz:19});bx(B,[3,.6,0],[3.4,.9,.8],'State Legislature',COL.teal,{sz:20});bx(B,[-3,-1.8,0],[3.4,.8,.8],'executive power',COL.gray,{sz:18});bx(B,[3,-1.8,0],[3.4,.8,.8],'makes the laws',COL.gray,{sz:18});B.L([[0,2.5,0],[-3,1.1,0]],{c:COL.ink,w:2});B.L([[0,2.5,0],[3,1.1,0]],{c:COL.ink,w:2});B.A([-1.3,.6,0],[1.3,.6,0],{c:COL.red,w:2});lab(B,[0,1,0],'answers to',{sz:17,c:COL.red});
-  B.s(1);B.X([-2.6,0,0],[4,3.4,1.8],{f:COL.teal,a:.25});lab(B,[-2.6,1.4,1],'Legislative Assembly',{sz:21,c:COL.teal});lab(B,[-2.6,.6,1],'60–500 members',{sz:18});lab(B,[-2.6,0,1],'directly elected · 5 years',{sz:17});B.X([3,-.5,0],[2.6,2.4,1.8],{f:COL.gold,a:.25});lab(B,[3,.4,1],'Legislative Council',{sz:20,c:COL.gold});lab(B,[3,-.2,1],'≤ ⅓ of Assembly, ≥ 40',{sz:16});lab(B,[3,-.8,1],'permanent house',{sz:17});B.dyn((t,b)=>{const k=Math.floor(t/1.4)%3;for(let i=0;i<3;i++)b.D([2.2+i*.8,-1.6,.9],.2,{f:i===k?COL.red:COL.gold});lab(b,[3,-2.3,0],'⅓ retire every 2 years (6-year term)',{sz:17,c:COL.red})});lab(B,[0,3.2,0],'Bihar has both houses',{sz:22,c:COL.red});
+  B.s(0);bx(B,[0,3,0],[2.8,.9,.8],'Governor',COL.gold,{sz:23});bx(B,[-3,.6,0],[3.4,.9,.8],'Council of Ministers ┬╖ CM',COL.red,{sz:19});bx(B,[3,.6,0],[3.4,.9,.8],'State Legislature',COL.teal,{sz:20});bx(B,[-3,-1.8,0],[3.4,.8,.8],'executive power',COL.gray,{sz:18});bx(B,[3,-1.8,0],[3.4,.8,.8],'makes the laws',COL.gray,{sz:18});B.L([[0,2.5,0],[-3,1.1,0]],{c:COL.ink,w:2});B.L([[0,2.5,0],[3,1.1,0]],{c:COL.ink,w:2});B.A([-1.3,.6,0],[1.3,.6,0],{c:COL.red,w:2});lab(B,[0,1,0],'answers to',{sz:17,c:COL.red});
+  B.s(1);B.X([-2.6,0,0],[4,3.4,1.8],{f:COL.teal,a:.25});lab(B,[-2.6,1.4,1],'Legislative Assembly',{sz:21,c:COL.teal});lab(B,[-2.6,.6,1],'60ΓÇô500 members',{sz:18});lab(B,[-2.6,0,1],'directly elected ┬╖ 5 years',{sz:17});B.X([3,-.5,0],[2.6,2.4,1.8],{f:COL.gold,a:.25});lab(B,[3,.4,1],'Legislative Council',{sz:20,c:COL.gold});lab(B,[3,-.2,1],'Γëñ Γàô of Assembly, ΓëÑ 40',{sz:16});lab(B,[3,-.8,1],'permanent house',{sz:17});B.dyn((t,b)=>{const k=Math.floor(t/1.4)%3;for(let i=0;i<3;i++)b.D([2.2+i*.8,-1.6,.9],.2,{f:i===k?COL.red:COL.gold});lab(b,[3,-2.3,0],'Γàô retire every 2 years (6-year term)',{sz:17,c:COL.red})});lab(B,[0,3.2,0],'Bihar has both houses',{sz:22,c:COL.red});
   B.s(2);bx(B,[-4.4,1.4,0],[2,.8,.7],'Assembly',COL.teal,{sz:20});bx(B,[0,1.4,0],[2,.8,.7],'Council',COL.gold,{sz:20});bx(B,[4.4,1.4,0],[2,.8,.7],'Governor',COL.red,{sz:20});B.A([-3.3,1.4,0],[-1.1,1.4,0],{c:COL.ink,w:2.4});B.A([1.1,1.4,0],[3.3,1.4,0],{c:COL.ink,w:2.4});lab(B,[0,2.4,0],'ordinary bill',{sz:21});B.A([-4.4,.6,0],[-4.4,-1.4,0],{c:COL.red,w:2.6});lab(B,[-4.4,-1.8,0],'money bill starts here only',{sz:19,c:COL.red});B.A([-3.4,-2.6,0],[-1,-2.6,0],{c:COL.gray,w:2,d:[4,3]});lab(B,[0,-2.6,0],'Council recommends only',{sz:19,c:COL.gold});lab(B,[4.4,.4,0],'assent / return / reserve',{sz:18})}};
 SC['eic:4']={cam:{yaw:-.5,pitch:.3},steps:[
  {t:'Three routes to amend (Art. 368)',d:'Simple majority of Parliament for some provisions (like creating new states). Special majority, two-thirds of members present and voting plus a majority of the total membership, for most of the Constitution. The special majority plus ratification by at least half of the state legislatures for federal matters. The harder the lane, the more important the provision.'},
- {t:'Six amendments, six headlines',d:'42nd (1976): the “mini-constitution”, added Socialist, Secular, integrity and Fundamental Duties. 44th (1978): reversed several 42nd changes, removed property from Fundamental Rights. 74th (1992): urban local bodies (municipalities). 76th (1994): placed Tamil Nadu’s reservation law in the Ninth Schedule. 86th (2002): Art. 21A, free education for ages 6–14. 91st (2003): ministers capped at 15% of house strength, tighter anti-defection law.',only:true}],
+ {t:'Six amendments, six headlines',d:'42nd (1976): the ΓÇ£mini-constitutionΓÇ¥, added Socialist, Secular, integrity and Fundamental Duties. 44th (1978): reversed several 42nd changes, removed property from Fundamental Rights. 74th (1992): urban local bodies (municipalities). 76th (1994): placed Tamil NaduΓÇÖs reservation law in the Ninth Schedule. 86th (2002): Art. 21A, free education for ages 6ΓÇô14. 91st (2003): ministers capped at 15% of house strength, tighter anti-defection law.',only:true}],
  build(B){
-  B.s(0);[['simple majority',1,COL.green,'e.g. new states'],['special majority (⅔ present & voting + majority of total)',2,COL.gold,'most of the Constitution'],['special majority + half of the states ratify',3,COL.red,'federal provisions']].forEach(([l,h,c,ex],i)=>{B.X([0,-2.4+i*2.1,i*-.9],[8,.45+h*.2,1.6],{f:c,a:.3});lab(B,[0,-2.4+i*2.1+.45+h*.2,i*-.9+.9],l,{sz:20,c});lab(B,[5.4,-2.4+i*2.1,i*-.9],ex,{sz:17,a:'left',c:COL.gray})});B.A([-5,-2.6,1],[-5,3.4,-1.8],{c:COL.ink,w:2.4});lab(B,[-5.2,3.6,-1.8],'harder',{sz:20,c:COL.red,a:'right'});
-  B.s(1);const am=[['42nd','1976','mini-constitution',3],['44th','1978','undoes 42nd; property out',2.4],['74th','1992','municipalities',2],['76th','1994','TN reservation, 9th Sch.',1.6],['86th','2002','Art. 21A education 6–14',2.6],['91st','2003','ministers ≤ 15%; anti-defection',1.8]];B.A([-5.8,-2.4,0],[6,-2.4,0],{c:COL.ink,w:2.2});am.forEach(([n,y,t,h],i)=>{const x=-4.8+i*2;B.X([x,-2.4+h/2,0],[.8,h,.8],{f:[COL.red,COL.gold,COL.teal,COL.blue,COL.green,COL.pink][i],a:.4});lab(B,[x,-2.4+h+.45,0],n,{sz:24,c:COL.red});lab(B,[x,-2.9,0],y,{sz:19});lab(B,[x,-3.4,0],t,{sz:14,c:COL.gray})})}};
+  B.s(0);[['simple majority',1,COL.green,'e.g. new states'],['special majority (Γàö present & voting + majority of total)',2,COL.gold,'most of the Constitution'],['special majority + half of the states ratify',3,COL.red,'federal provisions']].forEach(([l,h,c,ex],i)=>{B.X([0,-2.4+i*2.1,i*-.9],[8,.45+h*.2,1.6],{f:c,a:.3});lab(B,[0,-2.4+i*2.1+.45+h*.2,i*-.9+.9],l,{sz:20,c});lab(B,[5.4,-2.4+i*2.1,i*-.9],ex,{sz:17,a:'left',c:COL.gray})});B.A([-5,-2.6,1],[-5,3.4,-1.8],{c:COL.ink,w:2.4});lab(B,[-5.2,3.6,-1.8],'harder',{sz:20,c:COL.red,a:'right'});
+  B.s(1);const am=[['42nd','1976','mini-constitution',3],['44th','1978','undoes 42nd; property out',2.4],['74th','1992','municipalities',2],['76th','1994','TN reservation, 9th Sch.',1.6],['86th','2002','Art. 21A education 6ΓÇô14',2.6],['91st','2003','ministers Γëñ 15%; anti-defection',1.8]];B.A([-5.8,-2.4,0],[6,-2.4,0],{c:COL.ink,w:2.2});am.forEach(([n,y,t,h],i)=>{const x=-4.8+i*2;B.X([x,-2.4+h/2,0],[.8,h,.8],{f:[COL.red,COL.gold,COL.teal,COL.blue,COL.green,COL.pink][i],a:.4});lab(B,[x,-2.4+h+.45,0],n,{sz:24,c:COL.red});lab(B,[x,-2.9,0],y,{sz:19});lab(B,[x,-3.4,0],t,{sz:14,c:COL.gray})})}};
 
 SC['uhv:0']={cam:{yaw:-.4,pitch:.3},steps:[
  {t:'Self-exploration: two checks',d:'Value education starts by exploring for yourself, not by accepting what you are told. First check against your natural acceptance (what feels right from within). Then test it by experiential validation (does it actually work out in living?). Anything that passes both is a value you can trust. This is the process of self-exploration.'},
@@ -1431,19 +615,19 @@ SC['uhv:0']={cam:{yaw:-.4,pitch:.3},steps:[
   B.s(0);B.D([0,0,0],.7,{f:COL.teal});lab(B,[0,-1.2,0],'natural acceptance',{c:COL.teal,sz:22});B.C([0,0,0],2.6,{n:'z',c:COL.gray,d:[5,4],w:1.6});B.D([2.6,0,0],.4,{f:COL.red});lab(B,[3.1,-.7,0],'experiential validation',{c:COL.red,sz:20,a:'left'});B.dyn((t,b)=>{const a=t*1.1;b.D([cos(a)*2.6,sin(a)*2.6,0],.28,{f:COL.gold});b.A([cos(a)*2.6,sin(a)*2.6,0],[0,0,0].map((v,i)=>i<2?[cos(a)*1.0,sin(a)*1.0][i]:0),{c:COL.gold,w:2.2})});lab(B,[0,3.4,0],'check inside, then test in life',{sz:25});
   B.s(1);B.X([-2.6,0,0],[1.6,4,1.6],{f:COL.teal,a:.35});lab(B,[-2.6,2.4,0],'Happiness',{c:COL.teal,sz:25});lab(B,[-2.6,-2.5,0],'state of the self',{sz:18});B.X([2.6,0,0],[1.6,4,1.6],{f:COL.gold,a:.35});lab(B,[2.6,2.4,0],'Prosperity',{c:COL.gold,sz:25});lab(B,[2.6,-2.5,0],'enough physical facility',{sz:18});B.X([0,2.1,0],[6,.4,1.2],{f:COL.red,a:.4});lab(B,[0,3.1,0],'continuous happiness & prosperity',{sz:22,c:COL.red});lab(B,[0,-3.3,0],'right understanding first',{sz:21})}};
 SC['uhv:1']={cam:{yaw:-.4,pitch:.3},steps:[
- {t:'Human being = Self + Body',d:'A person is two things: the Self (the “I” that thinks, feels and wants) and the Body (the physical part). The Self needs happiness through right understanding and relationship; the Body needs physical facility (food, clothing, shelter). The Self controls and cares for the Body: Sanyam is self-restraint with right feeling, Swasthya is a healthy Body acting as an instrument of the Self.'},
- {t:'The common mistake',d:'Trying to fill the Self’s need (happiness) with things meant for the Body (more facility) never ends in lasting happiness. Prosperity = right understanding + enough physical facility. Seeing the difference between the two needs is the first step in the course.',only:true}],
+ {t:'Human being = Self + Body',d:'A person is two things: the Self (the ΓÇ£IΓÇ¥ that thinks, feels and wants) and the Body (the physical part). The Self needs happiness through right understanding and relationship; the Body needs physical facility (food, clothing, shelter). The Self controls and cares for the Body: Sanyam is self-restraint with right feeling, Swasthya is a healthy Body acting as an instrument of the Self.'},
+ {t:'The common mistake',d:'Trying to fill the SelfΓÇÖs need (happiness) with things meant for the Body (more facility) never ends in lasting happiness. Prosperity = right understanding + enough physical facility. Seeing the difference between the two needs is the first step in the course.',only:true}],
  build(B){
-  B.s(0);B.X([-3,0,0],[3.4,3.4,1.8],{f:COL.teal,a:.25});lab(B,[-3,1.2,1],'SELF (I)',{c:COL.teal,sz:26});['needs: happiness','right understanding','relationship'].forEach((t,i)=>lab(B,[-3,.3-i*.7,1],t,{sz:19}));B.X([3,0,0],[3.4,3.4,1.8],{f:COL.gold,a:.25});lab(B,[3,1.2,1],'BODY',{c:COL.gold,sz:26});['needs: physical facility','food · clothing','shelter · health'].forEach((t,i)=>lab(B,[3,.3-i*.7,1],t,{sz:19}));B.A([-1.2,.5,0],[1.2,.5,0],{c:COL.red,w:2.6});lab(B,[0,1.2,0],'Sanyam',{c:COL.red,sz:20});B.A([1.2,-.5,0],[-1.2,-.5,0],{c:COL.green,w:2.6});lab(B,[0,-1.2,0],'Swasthya',{c:COL.green,sz:20});
+  B.s(0);B.X([-3,0,0],[3.4,3.4,1.8],{f:COL.teal,a:.25});lab(B,[-3,1.2,1],'SELF (I)',{c:COL.teal,sz:26});['needs: happiness','right understanding','relationship'].forEach((t,i)=>lab(B,[-3,.3-i*.7,1],t,{sz:19}));B.X([3,0,0],[3.4,3.4,1.8],{f:COL.gold,a:.25});lab(B,[3,1.2,1],'BODY',{c:COL.gold,sz:26});['needs: physical facility','food ┬╖ clothing','shelter ┬╖ health'].forEach((t,i)=>lab(B,[3,.3-i*.7,1],t,{sz:19}));B.A([-1.2,.5,0],[1.2,.5,0],{c:COL.red,w:2.6});lab(B,[0,1.2,0],'Sanyam',{c:COL.red,sz:20});B.A([1.2,-.5,0],[-1.2,-.5,0],{c:COL.green,w:2.6});lab(B,[0,-1.2,0],'Swasthya',{c:COL.green,sz:20});
   B.s(1);B.X([-3,0,0],[3,2.6,1.6],{f:COL.teal,a:.25});lab(B,[-3,0,1],'Self needs happiness',{sz:21,c:COL.teal});B.X([3,0,0],[3,2.6,1.6],{f:COL.gold,a:.25});lab(B,[3,0,1],'Body: facility',{sz:21,c:COL.gold});B.A([2,-1.6,0],[-2.4,-1.6,0],{c:COL.red,w:3});lab(B,[0,-2.2,0],'filling the Self with Body things never works',{c:COL.red,sz:21});lab(B,[0,2.9,0],'prosperity = understanding + enough facility',{sz:23})}};
 SC['uhv:2']={cam:{yaw:-.4,pitch:.3},steps:[
  {t:'Nine values in a relationship',d:'Trust is the foundation: the assurance that the other person wishes my well-being. On it stand respect (right evaluation), affection, care, guidance, reverence, glory, gratitude and love. Where these are lived, relationships are harmonious; where trust is missing, everything else strains.'},
- {t:'From family to world family',d:'Harmony starts in the family and grows outward: family → community → nation → world family, an undivided society with a universal order. Mutual happiness, trust and fulfilment at each level carry to the next.',only:true},
- {t:'Five dimensions of human endeavour',d:'A harmonious society works through education–sanskar, health–self-regulation, justice–preservation, production–work and exchange–storage. Together they keep society undivided and secure.',only:true}],
+ {t:'From family to world family',d:'Harmony starts in the family and grows outward: family ΓåÆ community ΓåÆ nation ΓåÆ world family, an undivided society with a universal order. Mutual happiness, trust and fulfilment at each level carry to the next.',only:true},
+ {t:'Five dimensions of human endeavour',d:'A harmonious society works through educationΓÇôsanskar, healthΓÇôself-regulation, justiceΓÇôpreservation, productionΓÇôwork and exchangeΓÇôstorage. Together they keep society undivided and secure.',only:true}],
  build(B){
   B.s(0);const v=['respect','affection','care','guidance','reverence','glory','gratitude','love'];B.D([0,0,0],.6,{f:COL.red});lab(B,[0,-.9,0],'TRUST',{c:COL.red,sz:26});ringPts(8,3.1).forEach((p,i)=>{B.D(p,.3,{f:COL.teal});B.L([[0,0,0],p],{c:COL.gray,w:1.4,d:[3,3]});lab(B,[p[0],p[1]+(p[1]>0?.7:-.7),0],v[i],{sz:21})});
   B.s(1);[[3.6,'world family',COL.red],[2.8,'nation',COL.gold],[2,'community',COL.teal],[1.2,'family',COL.blue]].forEach(([r,l,c])=>{B.C([0,0,0],r,{n:'z',c,w:2.6,f:c,a:.07});lab(B,[0,r-.3,0],l,{c,sz:21})});B.D([0,0,0],.28,{f:COL.ink});lab(B,[0,-.6,0],'me',{sz:19});
-  B.s(2);const d=['education–sanskar','health–self-regulation','justice–preservation','production–work','exchange–storage'];ringPts(5,2.9).forEach((p,i)=>{B.X([p[0],p[1],0],[2,.7,.7],{f:[COL.red,COL.gold,COL.teal,COL.blue,COL.green][i],a:.35});lab(B,[p[0],p[1],.5],d[i],{sz:15})});lab(B,[0,0,0],'undivided society',{sz:23,c:COL.red})}};
+  B.s(2);const d=['educationΓÇôsanskar','healthΓÇôself-regulation','justiceΓÇôpreservation','productionΓÇôwork','exchangeΓÇôstorage'];ringPts(5,2.9).forEach((p,i)=>{B.X([p[0],p[1],0],[2,.7,.7],{f:[COL.red,COL.gold,COL.teal,COL.blue,COL.green][i],a:.35});lab(B,[p[0],p[1],.5],d[i],{sz:15})});lab(B,[0,0,0],'undivided society',{sz:23,c:COL.red})}};
 SC['uhv:3']={cam:{yaw:-.4,pitch:.3},steps:[
  {t:'Four orders of nature',d:'Nature has four orders: the material order (soil, water, air), the plant or bio order, the animal order and the human order. Each has its own role, and humans, with understanding, are the ones who can maintain the balance. Nature shows recyclability and self-regulation.'},
  {t:'Mutual fulfilment',d:'Each order supports the others: materials feed plants, plants feed animals, animals and plants support humans, and humans can enrich the rest. Fulfilment is mutual, not one-way exploitation.',only:true},
@@ -1460,52 +644,52 @@ SC['uhv:4']={cam:{yaw:-.5,pitch:.3},steps:[
   B.s(1);B.X([-3.4,0,0],[4,4.2,1.6],{f:COL.teal,a:.25});lab(B,[-3.4,1.6,1],'individual',{c:COL.teal,sz:25});['self-exploration','right understanding','live it consistently'].forEach((t,i)=>lab(B,[-3.4,.6-i*.9,1],(i+1)+'  '+t,{sz:19}));B.X([3.4,0,0],[4,4.2,1.6],{f:COL.gold,a:.25});lab(B,[3.4,1.6,1],'society',{c:COL.gold,sz:25});['value education','systems and law','institutions'].forEach((t,i)=>lab(B,[3.4,.6-i*.9,1],(i+1)+'  '+t,{sz:19}));B.A([-1,-.8,0],[1,-.8,0],{c:COL.red,w:3});lab(B,[0,-.3,0],'grows outward',{sz:18,c:COL.red})}};
 
 SC['pps:0']={cam:{yaw:-.4,pitch:.3},steps:[
- {t:'A flowchart you can follow',d:'Start/stop is an oval, input/output a parallelogram, a step a rectangle, a decision a diamond. This one computes a factorial: read n, set f = 1 and i = 2, repeat while i ≤ n (f = f × i, i = i + 1), then print f. LE-1 asks for area of shapes with type casting and a flowchart.'},
- {t:'Loops: primes and Fibonacci (LE-3)',d:'A loop repeats a step. Fibonacci: next = a + b, then shift (a ← b, b ← next): 1, 1, 2, 3, 5, 8, 13. Prime test: try divisors i from 2 up to √n; if none divides n, it is prime. Decisions (LE-2): an if-else ladder picks one grade band, a switch-case picks one option, and each case needs break.',only:true},
+ {t:'A flowchart you can follow',d:'Start/stop is an oval, input/output a parallelogram, a step a rectangle, a decision a diamond. This one computes a factorial: read n, set f = 1 and i = 2, repeat while i Γëñ n (f = f ├ù i, i = i + 1), then print f. LE-1 asks for area of shapes with type casting and a flowchart.'},
+ {t:'Loops: primes and Fibonacci (LE-3)',d:'A loop repeats a step. Fibonacci: next = a + b, then shift (a ΓåÉ b, b ΓåÉ next): 1, 1, 2, 3, 5, 8, 13. Prime test: try divisors i from 2 up to ΓêÜn; if none divides n, it is prime. Decisions (LE-2): an if-else ladder picks one grade band, a switch-case picks one option, and each case needs break.',only:true},
  {t:'Type casting: why 7/2 can be 3',d:'Two ints divide as integers: 7/2 gives 3. Cast first, (float)7/2, and the answer is 3.5. In scanf always pass the address: scanf("%d", &n). Without & the program crashes or reads garbage.',only:true}],
  build(B){
-  B.s(0);const fy=[3.2,2,.6,-.9,-2.3];bx(B,[-3,fy[0],0],[1.8,.7,.5],'START',COL.green,{sz:19});bx(B,[-3,fy[1],0],[2,.7,.5],'read n',COL.blue,{sz:19});bx(B,[-3,fy[2],0],[2.4,.7,.5],'f=1, i=2',COL.gold,{sz:19});B.X([-3,fy[3],0],[2,1.1,.5],{f:COL.red,a:.3});lab(B,[-3,fy[3],.4],'i ≤ n ?',{sz:19});bx(B,[-3,fy[4],0],[1.8,.7,.5],'print f',COL.blue,{sz:19});[[0,1],[1,2],[2,3]].forEach(([a,b2])=>B.A([-3,fy[a]-.4,0],[-3,fy[b2]+.55,0],{c:COL.ink,w:2}));B.A([-3,fy[3]-.6,0],[-3,fy[4]+.4,0],{c:COL.ink,w:2});lab(B,[-2.6,-1.6,0],'no',{sz:17,c:COL.red,a:'left'});B.A([-1.9,fy[3],0],[.4,fy[3],0],{c:COL.ink,w:2});lab(B,[-1.2,fy[3]+.35,0],'yes',{sz:17,c:COL.green});bx(B,[1.8,fy[3],0],[3,.8,.5],'f = f × i ; i = i + 1',COL.gold,{sz:18});B.L([[1.8,fy[3]+.4,0],[1.8,fy[2]+.2,0],[-1.8,fy[2]+.2,0]],{c:COL.ink,w:2,d:[4,3]});
-  B.dyn((t,b)=>{const k=Math.floor(t/.9)%7,P=[[-3,fy[0]],[-3,fy[1]],[-3,fy[2]],[-3,fy[3]],[1.8,fy[3]],[-3,fy[3]],[-3,fy[4]]];b.D([P[k][0]+.0,P[k][1],.4],.2,{f:COL.red})});lab(B,[3.4,2.6,0],'oval · parallelogram',{sz:19,a:'left'});lab(B,[3.4,2,0],'box · diamond',{sz:19,a:'left'});
-  B.s(1);const fib=[1,1,2,3,5,8,13];fib.forEach((v,i)=>{B.X([-4.8+i*1.5,-2+v*.2,0],[1.1,v*.4,1.1],{f:COL.teal,a:.35});lab(B,[-4.8+i*1.5,-2+v*.4+.4,0],''+v,{sz:23,c:COL.teal})});lab(B,[-.3,-2.6,0],'next = a + b ; a = b ; b = next',{sz:22});lab(B,[-.3,3.4,0],'prime test: try i = 2 … √n',{sz:23,c:COL.red});lab(B,[-.3,2.7,0],'if-else ladder · switch needs break',{sz:19,c:COL.gray});
-  B.s(2);B.X([-3,0,0],[3.4,2.4,1.2],{f:COL.red,a:.25});lab(B,[-3,.7,.7],'7 / 2',{sz:30});lab(B,[-3,-.1,.7],'int ÷ int = 3',{sz:23,c:COL.red});lab(B,[-3,-.8,.7],'(drops the .5)',{sz:17,c:COL.gray});B.X([3,0,0],[3.4,2.4,1.2],{f:COL.teal,a:.25});lab(B,[3,.7,.7],'(float)7 / 2',{sz:26});lab(B,[3,-.1,.7],'= 3.5',{sz:28,c:COL.teal});lab(B,[0,2.6,0],'scanf("%d", &n)  ← the & matters',{sz:24,c:COL.red})}};
+  B.s(0);const fy=[3.2,2,.6,-.9,-2.3];bx(B,[-3,fy[0],0],[1.8,.7,.5],'START',COL.green,{sz:19});bx(B,[-3,fy[1],0],[2,.7,.5],'read n',COL.blue,{sz:19});bx(B,[-3,fy[2],0],[2.4,.7,.5],'f=1, i=2',COL.gold,{sz:19});B.X([-3,fy[3],0],[2,1.1,.5],{f:COL.red,a:.3});lab(B,[-3,fy[3],.4],'i Γëñ n ?',{sz:19});bx(B,[-3,fy[4],0],[1.8,.7,.5],'print f',COL.blue,{sz:19});[[0,1],[1,2],[2,3]].forEach(([a,b2])=>B.A([-3,fy[a]-.4,0],[-3,fy[b2]+.55,0],{c:COL.ink,w:2}));B.A([-3,fy[3]-.6,0],[-3,fy[4]+.4,0],{c:COL.ink,w:2});lab(B,[-2.6,-1.6,0],'no',{sz:17,c:COL.red,a:'left'});B.A([-1.9,fy[3],0],[.4,fy[3],0],{c:COL.ink,w:2});lab(B,[-1.2,fy[3]+.35,0],'yes',{sz:17,c:COL.green});bx(B,[1.8,fy[3],0],[3,.8,.5],'f = f ├ù i ; i = i + 1',COL.gold,{sz:18});B.L([[1.8,fy[3]+.4,0],[1.8,fy[2]+.2,0],[-1.8,fy[2]+.2,0]],{c:COL.ink,w:2,d:[4,3]});
+  B.dyn((t,b)=>{const k=Math.floor(t/.9)%7,P=[[-3,fy[0]],[-3,fy[1]],[-3,fy[2]],[-3,fy[3]],[1.8,fy[3]],[-3,fy[3]],[-3,fy[4]]];b.D([P[k][0]+.0,P[k][1],.4],.2,{f:COL.red})});lab(B,[3.4,2.6,0],'oval ┬╖ parallelogram',{sz:19,a:'left'});lab(B,[3.4,2,0],'box ┬╖ diamond',{sz:19,a:'left'});
+  B.s(1);const fib=[1,1,2,3,5,8,13];fib.forEach((v,i)=>{B.X([-4.8+i*1.5,-2+v*.2,0],[1.1,v*.4,1.1],{f:COL.teal,a:.35});lab(B,[-4.8+i*1.5,-2+v*.4+.4,0],''+v,{sz:23,c:COL.teal})});lab(B,[-.3,-2.6,0],'next = a + b ; a = b ; b = next',{sz:22});lab(B,[-.3,3.4,0],'prime test: try i = 2 ΓÇª ΓêÜn',{sz:23,c:COL.red});lab(B,[-.3,2.7,0],'if-else ladder ┬╖ switch needs break',{sz:19,c:COL.gray});
+  B.s(2);B.X([-3,0,0],[3.4,2.4,1.2],{f:COL.red,a:.25});lab(B,[-3,.7,.7],'7 / 2',{sz:30});lab(B,[-3,-.1,.7],'int ├╖ int = 3',{sz:23,c:COL.red});lab(B,[-3,-.8,.7],'(drops the .5)',{sz:17,c:COL.gray});B.X([3,0,0],[3.4,2.4,1.2],{f:COL.teal,a:.25});lab(B,[3,.7,.7],'(float)7 / 2',{sz:26});lab(B,[3,-.1,.7],'= 3.5',{sz:28,c:COL.teal});lab(B,[0,2.6,0],'scanf("%d", &n)  ΓåÉ the & matters',{sz:24,c:COL.red})}};
 SC['pps:1']={cam:{yaw:-.4,pitch:.4},steps:[
- {t:'1-D arrays: numbered boxes from 0',d:'An array is a row of boxes with indices 0 to n−1; the name is the address of box 0. Linear search walks the row comparing each value; keeping a running max (or min) while walking gives LE-4. Average = sum / n.'},
- {t:'Matrix multiplication: row × column',d:'C[i][j] is the sum of A[i][k] × B[k][j] over k: take row i of A and column j of B, multiply pairs and add. Three nested loops (i, j, k). Transpose swaps rows and columns: B[j][i] = A[i][j]. LE-5.',only:true},
- {t:'Strings and pointers: characters ending in zero',d:'A C string is an array of characters ending with the null character ’\\0’. A pointer holds an address, so p + 1 means the next character. To reverse, swap from both ends moving inwards; to count vowels, loop until ’\\0’ and test each character. Note: your syllabus wording for LE-6 mixes “without pointer arithmetic” and “using pointers”; confirm with your teacher.',only:true}],
+ {t:'1-D arrays: numbered boxes from 0',d:'An array is a row of boxes with indices 0 to nΓêÆ1; the name is the address of box 0. Linear search walks the row comparing each value; keeping a running max (or min) while walking gives LE-4. Average = sum / n.'},
+ {t:'Matrix multiplication: row ├ù column',d:'C[i][j] is the sum of A[i][k] ├ù B[k][j] over k: take row i of A and column j of B, multiply pairs and add. Three nested loops (i, j, k). Transpose swaps rows and columns: B[j][i] = A[i][j]. LE-5.',only:true},
+ {t:'Strings and pointers: characters ending in zero',d:'A C string is an array of characters ending with the null character ΓÇÖ\\0ΓÇÖ. A pointer holds an address, so p + 1 means the next character. To reverse, swap from both ends moving inwards; to count vowels, loop until ΓÇÖ\\0ΓÇÖ and test each character. Note: your syllabus wording for LE-6 mixes ΓÇ£without pointer arithmeticΓÇ¥ and ΓÇ£using pointersΓÇ¥; confirm with your teacher.',only:true}],
  build(B){
-  B.s(0);const v=[7,3,9,4,12,5];v.forEach((x,i)=>{B.X([-4.2+i*1.7,0,0],[1.4,1.4,1.4],{f:COL.gold,a:.3});lab(B,[-4.2+i*1.7,.1,.8],''+x,{sz:30});lab(B,[-4.2+i*1.7,-1.2,0],'['+i+']',{sz:20,c:COL.gray})});B.dyn((t,b)=>{const k=Math.floor(t/.8)%8,i=Math.min(5,k);let mx=-1;for(let j=0;j<=i;j++)mx=Math.max(mx,v[j]);b.A([-4.2+i*1.7,1.9,0],[-4.2+i*1.7,1,0],{c:COL.red,w:3.2});lab(b,[-4.2+i*1.7,2.3,0],'i = '+i,{sz:22,c:COL.red});lab(b,[0,3.4,0],'max so far = '+mx,{sz:28,c:COL.teal})});lab(B,[0,-2.4,0],'index runs 0 … n−1',{sz:22});
-  B.s(1);const cell=(ox,oz,n,c)=>{for(let i=0;i<n;i++)for(let j=0;j<n;j++)B.X([ox+j*.8,0,oz-i*.8],[.7,.3,.7],{f:c,a:.3})};cell(-4.4,.8,3,COL.teal);cell(-.6,-2.8,3,COL.gold);cell(-.6,.8,3,COL.red);lab(B,[-3.2,.5,2.2],'A',{sz:30,c:COL.teal});lab(B,[.6,.5,-3.3],'B',{sz:30,c:COL.gold});lab(B,[.6,.5,2.2],'C = A × B',{sz:26,c:COL.red});
-  B.dyn((t,b)=>{const k=Math.floor(t/1.2)%9,i=Math.floor(k/3),j=k%3;for(let q=0;q<3;q++){b.X([-4.4+q*.8,.25,.8-i*.8],[.72,.4,.72],{f:COL.red,a:.6});b.X([-.6+j*.8,.25,-2.8-q*.8+2.4*0+0.0],[.72,.4,.72],{f:COL.red,a:0})}b.X([-.6+j*.8,.3,.8-i*.8],[.72,.45,.72],{f:COL.red,a:.8});lab(b,[0,3.3,0],'C['+i+']['+j+'] = Σ A['+i+'][k] × B[k]['+j+']',{sz:23})});
-  B.s(2);'HELLO'.split('').concat(['\\0']).forEach((c,i)=>{B.X([-4.2+i*1.6,0,0],[1.3,1.3,1.3],{f:i===5?COL.gray:COL.gold,a:.3});lab(B,[-4.2+i*1.6,.1,.8],c,{sz:30,c:i===5?COL.red:COL.ink});lab(B,[-4.2+i*1.6,-1.2,0],'['+i+']',{sz:19,c:COL.gray})});B.A([-4.2,1.9,0],[-4.2,1,0],{c:COL.red,w:3});lab(B,[-4.2,2.3,0],'p',{sz:24,c:COL.red});B.A([2,1.9,0],[2,1,0],{c:COL.teal,w:3});lab(B,[2,2.3,0],'q',{sz:24,c:COL.teal});B.L([[-4.2,2.7,0],[2,2.7,0]],{c:COL.ink,w:1.6,d:[4,3]});lab(B,[-1,3.2,0],'swap, then p++ and q−− until they meet',{sz:21});lab(B,[0,-2.4,0],'string ends with ’\\0’',{sz:22,c:COL.red})}};
+  B.s(0);const v=[7,3,9,4,12,5];v.forEach((x,i)=>{B.X([-4.2+i*1.7,0,0],[1.4,1.4,1.4],{f:COL.gold,a:.3});lab(B,[-4.2+i*1.7,.1,.8],''+x,{sz:30});lab(B,[-4.2+i*1.7,-1.2,0],'['+i+']',{sz:20,c:COL.gray})});B.dyn((t,b)=>{const k=Math.floor(t/.8)%8,i=Math.min(5,k);let mx=-1;for(let j=0;j<=i;j++)mx=Math.max(mx,v[j]);b.A([-4.2+i*1.7,1.9,0],[-4.2+i*1.7,1,0],{c:COL.red,w:3.2});lab(b,[-4.2+i*1.7,2.3,0],'i = '+i,{sz:22,c:COL.red});lab(b,[0,3.4,0],'max so far = '+mx,{sz:28,c:COL.teal})});lab(B,[0,-2.4,0],'index runs 0 ΓÇª nΓêÆ1',{sz:22});
+  B.s(1);const cell=(ox,oz,n,c)=>{for(let i=0;i<n;i++)for(let j=0;j<n;j++)B.X([ox+j*.8,0,oz-i*.8],[.7,.3,.7],{f:c,a:.3})};cell(-4.4,.8,3,COL.teal);cell(-.6,-2.8,3,COL.gold);cell(-.6,.8,3,COL.red);lab(B,[-3.2,.5,2.2],'A',{sz:30,c:COL.teal});lab(B,[.6,.5,-3.3],'B',{sz:30,c:COL.gold});lab(B,[.6,.5,2.2],'C = A ├ù B',{sz:26,c:COL.red});
+  B.dyn((t,b)=>{const k=Math.floor(t/1.2)%9,i=Math.floor(k/3),j=k%3;for(let q=0;q<3;q++){b.X([-4.4+q*.8,.25,.8-i*.8],[.72,.4,.72],{f:COL.red,a:.6});b.X([-.6+j*.8,.25,-2.8-q*.8+2.4*0+0.0],[.72,.4,.72],{f:COL.red,a:0})}b.X([-.6+j*.8,.3,.8-i*.8],[.72,.45,.72],{f:COL.red,a:.8});lab(b,[0,3.3,0],'C['+i+']['+j+'] = ╬ú A['+i+'][k] ├ù B[k]['+j+']',{sz:23})});
+  B.s(2);'HELLO'.split('').concat(['\\0']).forEach((c,i)=>{B.X([-4.2+i*1.6,0,0],[1.3,1.3,1.3],{f:i===5?COL.gray:COL.gold,a:.3});lab(B,[-4.2+i*1.6,.1,.8],c,{sz:30,c:i===5?COL.red:COL.ink});lab(B,[-4.2+i*1.6,-1.2,0],'['+i+']',{sz:19,c:COL.gray})});B.A([-4.2,1.9,0],[-4.2,1,0],{c:COL.red,w:3});lab(B,[-4.2,2.3,0],'p',{sz:24,c:COL.red});B.A([2,1.9,0],[2,1,0],{c:COL.teal,w:3});lab(B,[2,2.3,0],'q',{sz:24,c:COL.teal});B.L([[-4.2,2.7,0],[2,2.7,0]],{c:COL.ink,w:1.6,d:[4,3]});lab(B,[-1,3.2,0],'swap, then p++ and qΓêÆΓêÆ until they meet',{sz:21});lab(B,[0,-2.4,0],'string ends with ΓÇÖ\\0ΓÇÖ',{sz:22,c:COL.red})}};
 SC['pps:2']={cam:{yaw:-.5,pitch:.3},steps:[
- {t:'Recursion builds a stack of calls',d:'factorial(4) calls factorial(3), which calls factorial(2), and so on until the base case factorial(0) = 1 stops it. Then each call returns and multiplies on the way back: 1, 1, 2, 6, 24. Every call needs its own stack frame, so recursion uses more memory than a loop. Euclid’s GCD: gcd(a, b) = gcd(b, a % b) until b = 0. LE-7.'},
+ {t:'Recursion builds a stack of calls',d:'factorial(4) calls factorial(3), which calls factorial(2), and so on until the base case factorial(0) = 1 stops it. Then each call returns and multiplies on the way back: 1, 1, 2, 6, 24. Every call needs its own stack frame, so recursion uses more memory than a loop. EuclidΓÇÖs GCD: gcd(a, b) = gcd(b, a % b) until b = 0. LE-7.'},
  {t:'Call by value versus call by reference',d:'By value, the function gets a photocopy of the variable, so changing it inside does not change the original. By reference (passing the address with a pointer) the function edits the original, which is how swap(&a, &b) works: temp = *a; *a = *b; *b = temp. Arrays are passed by address. LE-8.',only:true}],
  build(B){
-  B.s(0);B.dyn((t,b)=>{const T=14,k=(t%T)/T*14,fr=['factorial(4)','factorial(3)','factorial(2)','factorial(1)','factorial(0) = 1'];const up=Math.min(5,Math.floor(k/1.1)),down=Math.max(0,Math.floor((k-6.6)/1.1));const n=k<6.6?up:5-down;for(let i=0;i<n;i++){b.X([0,-2.4+i*1.2,0],[4.6,.9,2],{f:i===4?COL.red:COL.teal,a:.3});lab(b,[0,-2.4+i*1.2,1.1],fr[i],{sz:22})}const ret=[1,1,2,6,24];if(k>=6.6&&5-down<5&&down<5)lab(b,[3.8,-2.4+(4-down)*1.2,0],'returns '+ret[down],{sz:24,c:COL.red,a:'left'});lab(b,[0,3.8,0],k<6.6?'calls pile up ↑':'returns multiply on the way back ↓',{sz:25,c:COL.red})});lab(B,[-5,-2.4,0],'stack',{sz:22,c:COL.gray});
+  B.s(0);B.dyn((t,b)=>{const T=14,k=(t%T)/T*14,fr=['factorial(4)','factorial(3)','factorial(2)','factorial(1)','factorial(0) = 1'];const up=Math.min(5,Math.floor(k/1.1)),down=Math.max(0,Math.floor((k-6.6)/1.1));const n=k<6.6?up:5-down;for(let i=0;i<n;i++){b.X([0,-2.4+i*1.2,0],[4.6,.9,2],{f:i===4?COL.red:COL.teal,a:.3});lab(b,[0,-2.4+i*1.2,1.1],fr[i],{sz:22})}const ret=[1,1,2,6,24];if(k>=6.6&&5-down<5&&down<5)lab(b,[3.8,-2.4+(4-down)*1.2,0],'returns '+ret[down],{sz:24,c:COL.red,a:'left'});lab(b,[0,3.8,0],k<6.6?'calls pile up Γåæ':'returns multiply on the way back Γåô',{sz:25,c:COL.red})});lab(B,[-5,-2.4,0],'stack',{sz:22,c:COL.gray});
   B.s(1);B.X([-3,.6,0],[2,.9,1],{f:COL.gold,a:.3});lab(B,[-3,.6,.6],'a = 5',{sz:24});B.X([-3,-1,0],[2,.9,1],{f:COL.red,a:.3});lab(B,[-3,-1,.6],'x = 5  (copy)',{sz:20});B.A([-3,.1,0],[-3,-.55,0],{c:COL.red,w:2.2});lab(B,[-3,-2.2,0],'x = 9 changes only the copy',{sz:19,c:COL.red});lab(B,[-3,2.2,0],'call by value',{sz:25});
   B.X([3,.6,0],[2,.9,1],{f:COL.gold,a:.3});lab(B,[3,.6,.6],'a = 9',{sz:24});B.X([3,-1,0],[2,.9,1],{f:COL.teal,a:.3});lab(B,[3,-1,.6],'p = &a',{sz:22});B.A([3.6,-.6,0],[3.6,.2,0],{c:COL.teal,w:2.6});lab(B,[3,-2.2,0],'*p = 9 changes the original',{sz:19,c:COL.teal});lab(B,[3,2.2,0],'call by reference',{sz:25})}};
 SC['pps:3']={cam:{yaw:-.4,pitch:.35},steps:[
  {t:'Structure versus union memory (LE-9)',d:'A structure keeps all members side by side, so its size is at least the sum of the members (the compiler may add padding). A union keeps all members on top of each other in the same space, so only one is valid at a time and its size is that of the largest member. Check both with sizeof(). The employee payroll program groups name, id and salary in one struct.'},
  {t:'File handling (LE-10)',d:'A file lets data outlive the program. fopen(name, mode) opens it: "w" write (erases old content), "r" read, "a" append. Always test the result against NULL, use fprintf or fscanf to write and read records, and fclose() when done. Searching for a keyword: read each line with fgets and test with strstr.',only:true}],
  build(B){
-  B.s(0);lab(B,[-5.6,2.4,0],'struct { int i; float f; char c; }',{sz:21,a:'left',c:COL.teal});[['int',4,COL.teal],['float',4,COL.gold],['char + pad',4,COL.red]].forEach(([l,w,c],i)=>{const x0=-5+[0,4,8][i]*.7;B.X([x0+w*.35,1.2,0],[w*.7-.1,1,1],{f:c,a:.35});lab(B,[x0+w*.35,1.2,.6],l,{sz:19})});lab(B,[2,1.2,0],'≥ 9 bytes (usually 12)',{sz:21,c:COL.red,a:'left'});
+  B.s(0);lab(B,[-5.6,2.4,0],'struct { int i; float f; char c; }',{sz:21,a:'left',c:COL.teal});[['int',4,COL.teal],['float',4,COL.gold],['char + pad',4,COL.red]].forEach(([l,w,c],i)=>{const x0=-5+[0,4,8][i]*.7;B.X([x0+w*.35,1.2,0],[w*.7-.1,1,1],{f:c,a:.35});lab(B,[x0+w*.35,1.2,.6],l,{sz:19})});lab(B,[2,1.2,0],'ΓëÑ 9 bytes (usually 12)',{sz:21,c:COL.red,a:'left'});
   lab(B,[-5.6,-.8,0],'union { int i; float f; char c; }',{sz:21,a:'left',c:COL.gold});B.X([-3.9,-2.2,0],[2.7,1,1],{f:COL.teal,a:.3});B.X([-3.9,-2.2,.3],[2.7,.8,1],{f:COL.gold,a:.3});B.X([-4.6,-2.2,.6],[.7,.6,1],{f:COL.red,a:.5});lab(B,[-3.9,-2.2,1.2],'share one space',{sz:19});lab(B,[-1.8,-2.2,0],'= size of the largest (4 bytes)',{sz:21,c:COL.red,a:'left'});
-  B.s(1);bx(B,[-4.2,0,0],[2.2,1.4,1],'program',COL.blue,{sz:22});B.Y([3,-1.2,0],1.4,.6,{f:COL.gold,c:COL.ink});B.Y([3,-.6,0],1.4,.6,{f:COL.gold,c:COL.ink});lab(B,[3,1.3,0],'file on disk',{sz:22});B.A([-2.8,.4,0],[1.4,.4,0],{c:COL.red,w:3});lab(B,[-.7,.9,0],'fprintf → "w" / "a"',{sz:19,c:COL.red});B.A([1.4,-.4,0],[-2.8,-.4,0],{c:COL.teal,w:3});lab(B,[-.7,-.9,0],'fscanf / fgets → "r"',{sz:19,c:COL.teal});lab(B,[0,-2.6,0],'fopen → check NULL → read/write → fclose',{sz:22})}};
+  B.s(1);bx(B,[-4.2,0,0],[2.2,1.4,1],'program',COL.blue,{sz:22});B.Y([3,-1.2,0],1.4,.6,{f:COL.gold,c:COL.ink});B.Y([3,-.6,0],1.4,.6,{f:COL.gold,c:COL.ink});lab(B,[3,1.3,0],'file on disk',{sz:22});B.A([-2.8,.4,0],[1.4,.4,0],{c:COL.red,w:3});lab(B,[-.7,.9,0],'fprintf ΓåÆ "w" / "a"',{sz:19,c:COL.red});B.A([1.4,-.4,0],[-2.8,-.4,0],{c:COL.teal,w:3});lab(B,[-.7,-.9,0],'fscanf / fgets ΓåÆ "r"',{sz:19,c:COL.teal});lab(B,[0,-2.6,0],'fopen ΓåÆ check NULL ΓåÆ read/write ΓåÆ fclose',{sz:22})}};
 SC['pps:4']={cam:{yaw:-.4,pitch:.3},steps:[
  {t:'Class and objects (LE-11)',d:'A class is the blueprint; objects are the things built from it. Encapsulation: the data is private and reachable only through public functions, like an ATM that never lets you touch the vault. In the Bank Account class, balance is private and deposit(), withdraw() and show() are public. Class members are private by default; struct members are public.'},
  {t:'Constructor and destructor (LE-12)',d:'A constructor runs automatically when an object is created: same name as the class, no return type. Overloaded forms: default, parameterised and copy constructor (takes const ClassName&; essential when the class owns dynamic memory, as a String class does). The destructor ~ClassName() runs when the object dies and cleans up.',only:true},
- {t:'Static members and friends (LE-13)',d:'A static member belongs to the class, not to any object: all objects share one copy (a counter of how many accounts exist). A friend function is not a member but is allowed to read the class’s private members; use it sparingly.',only:true}],
+ {t:'Static members and friends (LE-13)',d:'A static member belongs to the class, not to any object: all objects share one copy (a counter of how many accounts exist). A friend function is not a member but is allowed to read the classΓÇÖs private members; use it sparingly.',only:true}],
  build(B){
   B.s(0);B.X([-4,0,0],[2.6,3,.4],{f:COL.gold,a:.2});lab(B,[-4,1,.3],'class Account',{sz:22,c:COL.gold});lab(B,[-4,.2,.3],'blueprint',{sz:18,c:COL.gray});[0,3.4].forEach((x,i)=>{B.X([x,0,0],[2.4,2.4,2.4],{f:COL.teal,a:.12,c:COL.teal});B.X([x,0,0],[1.2,1.2,1.2],{f:COL.red,a:.5});lab(B,[x,-.05,.8],'balance',{sz:15});lab(B,[x,1.6,0],'object '+(i+1),{sz:21});B.L([[x+1.2,.4,0],[x+1.9,.4,0]],{c:COL.ink,w:2.4});lab(B,[x+1.4,-.4,0],'deposit()',{sz:16,c:COL.green,a:'left'})});lab(B,[1.7,-2.4,0],'private data inside, public functions outside',{sz:21});
-  B.s(1);B.dyn((t,b)=>{const T=6,u=t%T;const alive=u>1&&u<5,s=u<1.8?(u-1)/.8:u>4.2?(5-u)/.8:1;lab(b,[0,3.3,0],u<1?'':u<1.8?'constructor runs: Account()':u<4.2?'object alive':u<5?'destructor runs: ~Account()':'',{sz:25,c:COL.red});if(alive){const k=Math.max(.05,Math.min(1,s));b.X([0,0,0],[2.6*k,2.6*k,2.6*k],{f:COL.teal,a:.35});lab(b,[0,0,1.6*k],'object',{sz:22*k+4})}});lab(B,[-4.8,-2.4,0],'default · parameterised · copy',{sz:21,a:'left'});lab(B,[1.6,-2.4,0],'copy: const Class&',{sz:21,c:COL.red,a:'left'});
+  B.s(1);B.dyn((t,b)=>{const T=6,u=t%T;const alive=u>1&&u<5,s=u<1.8?(u-1)/.8:u>4.2?(5-u)/.8:1;lab(b,[0,3.3,0],u<1?'':u<1.8?'constructor runs: Account()':u<4.2?'object alive':u<5?'destructor runs: ~Account()':'',{sz:25,c:COL.red});if(alive){const k=Math.max(.05,Math.min(1,s));b.X([0,0,0],[2.6*k,2.6*k,2.6*k],{f:COL.teal,a:.35});lab(b,[0,0,1.6*k],'object',{sz:22*k+4})}});lab(B,[-4.8,-2.4,0],'default ┬╖ parameterised ┬╖ copy',{sz:21,a:'left'});lab(B,[1.6,-2.4,0],'copy: const Class&',{sz:21,c:COL.red,a:'left'});
   B.s(2);[-4,0,4].forEach((x,i)=>{B.X([x,1.4,0],[2,1.4,1.2],{f:COL.teal,a:.3});lab(B,[x,1.4,.7],'object '+(i+1),{sz:20});B.L([[x,.7,0],[0,-1.2,0]],{c:COL.red,w:2,d:[4,3]})});bx(B,[0,-1.8,0],[3.4,1,1.2],'static count (one copy)',COL.red,{sz:20});lab(B,[0,3.2,0],'all objects share one static member',{sz:24});lab(B,[4.6,-1.8,0],'friend: sees private, not a member',{sz:17,a:'right',c:COL.gray})}};
 SC['pps:5']={cam:{yaw:-.4,pitch:.3},steps:[
- {t:'Five types of inheritance (LE-14)',d:'Single: one parent, one child. Multiple: one child, two parents. Multilevel: a chain A → B → C. Hierarchical: one parent, many children. Hybrid: a mix, which can create the diamond problem (a shared grandparent copied twice); virtual inheritance fixes it by sharing one copy.'},
- {t:'Polymorphism and abstract classes (LE-15)',d:'One name, many behaviours: a Shape pointer calling area() runs the circle’s, square’s or triangle’s version at run time (virtual function). A class with a pure virtual function (virtual double area() = 0;) is abstract and cannot be instantiated. Function overloading: same name, different parameters. Operator overloading: Complex operator+(Complex c) makes c1 + c2 work.',only:true},
- {t:'Exceptions and templates (LE-16, 17)',d:'try { … throw x; } catch (type e) { … }: when something goes wrong (division by zero) throw jumps to the matching catch instead of crashing. A template writes code once for any type: template <typename T> T maxOf(T a, T b) { return a > b ? a : b; } works for int, float and char; a class template like pair<T1,T2> does the same for data.',only:true}],
+ {t:'Five types of inheritance (LE-14)',d:'Single: one parent, one child. Multiple: one child, two parents. Multilevel: a chain A ΓåÆ B ΓåÆ C. Hierarchical: one parent, many children. Hybrid: a mix, which can create the diamond problem (a shared grandparent copied twice); virtual inheritance fixes it by sharing one copy.'},
+ {t:'Polymorphism and abstract classes (LE-15)',d:'One name, many behaviours: a Shape pointer calling area() runs the circleΓÇÖs, squareΓÇÖs or triangleΓÇÖs version at run time (virtual function). A class with a pure virtual function (virtual double area() = 0;) is abstract and cannot be instantiated. Function overloading: same name, different parameters. Operator overloading: Complex operator+(Complex c) makes c1 + c2 work.',only:true},
+ {t:'Exceptions and templates (LE-16, 17)',d:'try { ΓÇª throw x; } catch (type e) { ΓÇª }: when something goes wrong (division by zero) throw jumps to the matching catch instead of crashing. A template writes code once for any type: template <typename T> T maxOf(T a, T b) { return a > b ? a : b; } works for int, float and char; a class template like pair<T1,T2> does the same for data.',only:true}],
  build(B){
   B.s(0);const tr=(x,labs,edges,name)=>{const P=labs.map((l,i)=>[x+[0,0,0,0][i]+labs[i][1],labs[i][2],0]);labs.forEach((l,i)=>{bx(B,P[i],[.9,.6,.5],l[0],COL.gold,{sz:19})});edges.forEach(([a,b2])=>B.A([P[a][0],P[a][1]-.35,0],[P[b2][0],P[b2][1]+.4,0],{c:COL.ink,w:2}));lab(B,[x,-2.6,0],name,{sz:20,c:COL.red})};
-  tr(-5.2,[['A',0,1.8],['B',0,.2]],[[0,1]],'single');tr(-2.6,[['A',-.8,1.8],['B',.8,1.8],['C',0,.2]],[[0,2],[1,2]],'multiple');tr(0,[['A',0,2.4],['B',0,1.2],['C',0,0]],[[0,1],[1,2]],'multilevel');tr(2.8,[['A',0,1.8],['B',-.9,.2],['C',.9,.2]],[[0,1],[0,2]],'hierarchical');tr(5.6,[['A',0,2.4],['B',-.8,1.2],['C',.8,1.2],['D',0,0]],[[0,1],[0,2],[1,3],[2,3]],'hybrid');lab(B,[0,3.5,0],'hybrid diamond → virtual base class',{sz:22,c:COL.red});
-  B.s(1);bx(B,[-4.4,2,0],[2.4,.8,.6],'Shape* p',COL.gold,{sz:22});lab(B,[-4.4,1.2,0],'p->area()',{sz:19,c:COL.red});[['circle',COL.teal,-.6],['square',COL.red,2.2],['triangle',COL.blue,5]].forEach(([l,c,x])=>{B.L([[-3.2,2,0],[x,.9,0]],{c:COL.gray,w:1.6,d:[4,3]});if(l==='circle')B.C([x,0,0],.8,{n:'z',c,f:c,a:.3,w:2.4});else if(l==='square')B.X([x,0,0],[1.5,1.5,.5],{f:c,a:.3});else B.P([[x-.9,-.7,0],[x+.9,-.7,0],[x,.9,0]],{f:c,a:.3,c,w:2.4});lab(B,[x,-1.3,0],l+'::area()',{sz:19,c})});lab(B,[0,-2.7,0],'virtual double area() = 0;  → abstract',{sz:22});lab(B,[0,3.5,0],'operator+ : c1 + c2 for Complex',{sz:21,c:COL.gray});
-  B.s(2);bx(B,[-4.4,1.5,0],[1.8,.8,.6],'try',COL.teal,{sz:22});bx(B,[-4.4,-.3,0],[1.8,.8,.6],'throw',COL.red,{sz:22});bx(B,[-1.4,-.3,0],[1.8,.8,.6],'catch',COL.gold,{sz:22});B.A([-4.4,1,0],[-4.4,.2,0],{c:COL.ink,w:2.4});B.A([-3.4,-.3,0],[-2.4,-.3,0],{c:COL.red,w:3});lab(B,[-2.9,.2,0],'jump',{sz:17,c:COL.red});lab(B,[-3,2.5,0],'divide by zero → handled, not crashed',{sz:19});
+  tr(-5.2,[['A',0,1.8],['B',0,.2]],[[0,1]],'single');tr(-2.6,[['A',-.8,1.8],['B',.8,1.8],['C',0,.2]],[[0,2],[1,2]],'multiple');tr(0,[['A',0,2.4],['B',0,1.2],['C',0,0]],[[0,1],[1,2]],'multilevel');tr(2.8,[['A',0,1.8],['B',-.9,.2],['C',.9,.2]],[[0,1],[0,2]],'hierarchical');tr(5.6,[['A',0,2.4],['B',-.8,1.2],['C',.8,1.2],['D',0,0]],[[0,1],[0,2],[1,3],[2,3]],'hybrid');lab(B,[0,3.5,0],'hybrid diamond ΓåÆ virtual base class',{sz:22,c:COL.red});
+  B.s(1);bx(B,[-4.4,2,0],[2.4,.8,.6],'Shape* p',COL.gold,{sz:22});lab(B,[-4.4,1.2,0],'p->area()',{sz:19,c:COL.red});[['circle',COL.teal,-.6],['square',COL.red,2.2],['triangle',COL.blue,5]].forEach(([l,c,x])=>{B.L([[-3.2,2,0],[x,.9,0]],{c:COL.gray,w:1.6,d:[4,3]});if(l==='circle')B.C([x,0,0],.8,{n:'z',c,f:c,a:.3,w:2.4});else if(l==='square')B.X([x,0,0],[1.5,1.5,.5],{f:c,a:.3});else B.P([[x-.9,-.7,0],[x+.9,-.7,0],[x,.9,0]],{f:c,a:.3,c,w:2.4});lab(B,[x,-1.3,0],l+'::area()',{sz:19,c})});lab(B,[0,-2.7,0],'virtual double area() = 0;  ΓåÆ abstract',{sz:22});lab(B,[0,3.5,0],'operator+ : c1 + c2 for Complex',{sz:21,c:COL.gray});
+  B.s(2);bx(B,[-4.4,1.5,0],[1.8,.8,.6],'try',COL.teal,{sz:22});bx(B,[-4.4,-.3,0],[1.8,.8,.6],'throw',COL.red,{sz:22});bx(B,[-1.4,-.3,0],[1.8,.8,.6],'catch',COL.gold,{sz:22});B.A([-4.4,1,0],[-4.4,.2,0],{c:COL.ink,w:2.4});B.A([-3.4,-.3,0],[-2.4,-.3,0],{c:COL.red,w:3});lab(B,[-2.9,.2,0],'jump',{sz:17,c:COL.red});lab(B,[-3,2.5,0],'divide by zero ΓåÆ handled, not crashed',{sz:19});
   ['int','float','char'].forEach((t,i)=>{B.X([2.2+i*1.8,1.4,0],[1.5,1.3,.8],{f:[COL.teal,COL.gold,COL.red][i],a:.3});lab(B,[2.2+i*1.8,1.4,.5],t,{sz:21})});B.X([4,-.9,0],[5.2,.9,.8],{f:COL.gray,a:.15});lab(B,[4,-.9,.5],'T maxOf(T a, T b)',{sz:21});B.L([[2.2,.7,0],[3,-.5,0]],{c:COL.ink,w:1.4,d:[3,3]});B.L([[4,.7,0],[4,-.5,0]],{c:COL.ink,w:1.4,d:[3,3]});B.L([[5.8,.7,0],[5,-.5,0]],{c:COL.ink,w:1.4,d:[3,3]});lab(B,[4,2.6,0],'one template, any type',{sz:21,c:COL.red})}};
