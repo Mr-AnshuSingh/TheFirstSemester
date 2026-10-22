@@ -92,10 +92,10 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = (process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GOOGLE_AI_API_KEY || '').trim();
 
   // 4. Fallback if API key is not configured (offline syllabus grounded)
-  if (!apiKey || apiKey.trim() === '') {
+  if (!apiKey) {
     const fallbackAnswer = buildOfflineTutorAnswer(ctx, sanitizedQuestion);
     const fallbackResponse: TutorResponsePayload = {
       answer: fallbackAnswer,
