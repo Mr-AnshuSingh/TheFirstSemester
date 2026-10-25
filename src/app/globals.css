@@ -7,15 +7,25 @@
   --paper2: #efe7d2;
   --paper3: #e6dcc3;
   --ink: #2b2a28;
-  --dim: #555046; /* WCAG AA contrast >= 5.5:1 against paper */
+  --dim: #38352e; /* WCAG AAA contrast >= 7.5:1 against paper */
   --hair: rgba(43, 42, 40, 0.22);
   --red: #9e3512;
   --teal: #1e6e67;
   --gold: #b8810b;
   --hand: var(--font-caveat), Caveat, "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
   --body: var(--font-inter), Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --math-font: var(--font-inter), "KaTeX_Math", "Noto Sans Math", "Cambria Math", "Segoe UI Symbol", serif;
   --rail: 264px;
   --study: clamp(380px, 28vw, 500px);
+
+  /* Typography Scale Tokens */
+  --font-size-display: clamp(28px, 4vw, 36px);
+  --font-size-title: clamp(20px, 2.5vw, 24px);
+  --font-size-subtitle: 18px;
+  --font-size-body: 16px;
+  --font-size-body-sm: 14.5px;
+  --font-size-caption: 14px;
+  --font-size-code: 14px;
 }
 
 * {
@@ -94,7 +104,7 @@ button {
 #brand small {
   display: block;
   font-family: var(--body);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--dim);
   margin-top: 2px;
@@ -123,9 +133,10 @@ button {
   border: 1.5px solid var(--ink);
   border-radius: 255px 14px 225px 14px / 14px 225px 14px 255px;
   background: transparent;
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 600;
-  transition: background 0.15s;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
 }
 
 .chip:hover {
@@ -135,6 +146,12 @@ button {
 .chip.on {
   background: var(--ink);
   color: var(--paper);
+}
+
+.chip.on span,
+.chip.on em {
+  color: var(--paper);
+  opacity: 1;
 }
 
 .chip i {
@@ -152,9 +169,9 @@ button {
 .chip em {
   font-style: normal;
   font-family: var(--body);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
-  opacity: 0.75;
+  opacity: 0.85;
 }
 
 #prog {
@@ -193,7 +210,8 @@ button {
   border: 1.5px solid var(--ink);
   border-radius: 255px 14px 225px 14px / 14px 225px 14px 255px;
   font-weight: 600;
-  font-size: 13.5px;
+  font-size: 14px;
+  white-space: nowrap;
   background: var(--paper);
 }
 
@@ -287,7 +305,7 @@ button {
   justify-content: space-between;
   margin: 4px 0 0 34px;
   font-family: var(--body);
-  font-size: 12px;
+  font-size: 14px;
   color: var(--dim);
 }
 
@@ -308,7 +326,7 @@ button {
 
 .un .s3 {
   margin: 5px 0 0 34px;
-  font-size: 11px;
+  font-size: 14px;
   color: var(--teal);
   font-weight: 600;
 }
@@ -355,7 +373,7 @@ button {
 }
 
 #ovt .k {
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -366,12 +384,12 @@ button {
 #ovt h1 {
   font-family: var(--hand);
   font-size: clamp(20px, 2.2vw, 28px);
-  line-height: 1.05;
+  line-height: 1.15;
   font-weight: 700;
   margin-top: 2px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow: visible;
+  white-space: normal;
+  max-width: 100%;
 }
 
 #tools {
@@ -545,12 +563,18 @@ button {
 
 #tabs button {
   flex: 1;
-  padding: 11px 6px;
+  padding: 8px 6px;
   font-family: var(--hand);
-  font-size: 22px;
+  font-size: 20px;
+  line-height: 1.2;
   font-weight: 700;
   border-right: 1.5px solid var(--hair);
   color: var(--dim);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 #tabs button:last-child {
@@ -722,7 +746,8 @@ button {
 }
 
 .tx .st {
-  color: var(--gold);
+  color: var(--red);
+  font-weight: bold;
   margin-right: 4px;
   font-size: 15px;
 }
@@ -850,7 +875,7 @@ button {
 }
 
 .ttab th {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--dim);
   padding: 4px;
@@ -859,7 +884,7 @@ button {
 .ttab td {
   height: 50px;
   padding: 6px 8px;
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 600;
   line-height: 1.25;
   vertical-align: top;
@@ -883,7 +908,7 @@ button {
   border: 0;
   text-align: center;
   vertical-align: middle;
-  font-size: 11px;
+  font-size: 14px;
   color: var(--dim);
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -894,7 +919,7 @@ button {
   font-weight: 500;
   color: var(--dim);
   margin-top: 2px;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .sx {
@@ -911,7 +936,7 @@ button {
   border: 1.5px solid var(--ink);
   margin-left: -1.5px;
   font-weight: 700;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .seg button.on {
@@ -942,7 +967,7 @@ button {
 
 .wk small {
   display: block;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--dim);
   letter-spacing: 0.06em;
@@ -1100,7 +1125,7 @@ button {
 }
 
 .nm {
-  font-size: 13.5px;
+  font-size: 14px;
   color: var(--dim);
   margin: 6px 0 8px;
 }
@@ -1366,4 +1391,59 @@ button {
   content-visibility: auto;
   contain-intrinsic-size: auto 200px;
 }
+
+/* =========================================================================
+   PHASE 2: UNIFIED TYPOGRAPHY SCALE, MATH FONTS & WCAG FLOOR
+   ========================================================================= */
+
+/* Math & KaTeX typography enhancements */
+.katex,
+.katex-display,
+.katex-html {
+  font-family: var(--math-font) !important;
+}
+
+.katex-formula-wrapper {
+  display: inline-block;
+  vertical-align: middle;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 1px 0;
+}
+
+/* Enforce floor: Minimum readable text and label size >= 14px */
+small,
+kbd,
+.text-xs,
+.text-\[11px\],
+.text-\[12px\],
+.text-\[13px\],
+.text-\[13\.5px\] {
+  font-size: 14px !important;
+}
+
+svg text,
+svg .t,
+svg .ta {
+  font-size: 14px !important;
+}
+
+/* Prevent unwanted button, tab, and chip wrapping */
+button,
+[role="tab"],
+.btn,
+.chip,
+.topic-card button {
+  white-space: nowrap;
+}
+
+/* Accessible focus outline */
+button:focus-visible,
+[role="tab"]:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 2px;
+}
+
 

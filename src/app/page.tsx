@@ -684,7 +684,7 @@ export default function SemesterOnePage() {
                         {/* 6. Common slip */}
                         <div className="p-2.5 bg-accentRed/10 border-l-2 border-accentRed rounded-r text-sm md:text-base text-accentRed font-normal">
                           <span className="font-bold font-mono uppercase text-xs block">COMMON EXAM SLIP:</span>
-                          {topicData.slip}
+                          <KatexText htmlOrText={topicData.slip} />
                         </div>
                       </div>
                     ) : (

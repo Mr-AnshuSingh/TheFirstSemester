@@ -5,14 +5,14 @@ import { Inter, Caveat } from 'next/font/google';
 import { ServiceWorkerRegistration } from '@/components/pwa/ServiceWorkerRegistration';
 
 const inter = Inter({
-  subsets: ['latin'],
+  subsets: ['latin', 'latin-ext', 'greek'],
   weight: ['400', '500', '600', '700'],
   variable: '--font-inter',
   display: 'swap',
 });
 
 const caveat = Caveat({
-  subsets: ['latin'],
+  subsets: ['latin', 'latin-ext'],
   weight: ['500', '700'],
   variable: '--font-caveat',
   display: 'swap',

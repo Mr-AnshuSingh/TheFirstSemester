@@ -135,7 +135,7 @@ export const BackupModal: React.FC<BackupModalProps> = ({
         <div className="box bg-paper2 p-3 rounded-lg border-[1.5px] border-ink space-y-1.5 text-xs font-mono">
           <div className="flex justify-between items-center text-ink/90 font-bold border-b border-ink/10 pb-1">
             <span>STORAGE HEALTH &amp; ENGINE</span>
-            <span className="text-xs px-2 py-0.5 rounded bg-accentGreen/20 text-accentGreen border border-accentGreen/40 font-semibold">
+            <span className="text-xs px-2 py-0.5 rounded bg-[#145a1e]/10 text-[#145a1e] border border-[#145a1e]/30 font-semibold">
               {isServerSyncEnabled() ? 'Server Sync Enabled' : '100% Local-First Offline Mode'}
             </span>
           </div>

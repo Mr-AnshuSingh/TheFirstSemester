@@ -109,7 +109,7 @@ export const SvgDiagramViewer: React.FC<SvgDiagramViewerProps> = ({
           <span className="text-[11px] font-mono font-bold uppercase text-accentRed tracking-wider block">
             2D Exam Sketchbook · {subjectShortName} ({activeIdx + 1}/{diagrams.length})
           </span>
-          <h4 className="font-hand text-base sm:text-lg font-bold text-ink truncate m-0">
+          <h4 className="font-hand text-base sm:text-lg font-bold text-ink m-0 leading-tight">
             {current.title}
           </h4>
         </div>

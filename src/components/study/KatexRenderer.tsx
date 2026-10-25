@@ -62,12 +62,32 @@ export function renderRichMathHtml(rawText: string | null | undefined): string {
     macros: { '\\oiint': '\\oint\\!\\oint' },
   };
 
+  // 0. If text contains raw LaTeX math commands without $ delimiters (e.g. syllabus formulas),
+  // parse the entire expression directly if it is a pure formula, or extract LaTeX chunks.
+  if (
+    !processed.includes('$') &&
+    /(?:\\(?:frac|begin|boxed|quad|sqrt|int|sum|prod|partial|mathbf|vec|bmatrix|pmatrix|cases|left|right|text|lim|infty|approx|times|cdot|iff|implies|to|nabla|oint|iint|iiint))\b/.test(
+      processed
+    )
+  ) {
+    try {
+      const rendered = katex.renderToString(processed.trim(), {
+        displayMode: false,
+        throwOnError: true,
+        macros: { '\\oiint': '\\oint\\!\\oint' },
+      });
+      return `<span class="katex-formula-wrapper inline-block overflow-x-auto max-w-full align-middle">${rendered}</span>`;
+    } catch {
+      // If full string cannot be rendered as a single KaTeX expression, continue to token replacement
+    }
+  }
+
   // 1. Display math $$...$$
   processed = processed.replace(/\$\$([\s\S]+?)\$\$/g, (_, tex) => {
     try {
       return `<div class="katex-display my-2 overflow-x-auto text-center">${katex.renderToString(tex.trim(), KATEX_OPTIONS_DISPLAY)}</div>`;
     } catch {
-      return `<div class="katex-error my-2 font-mono text-xs text-accentRed">${escapeHtml(tex)}</div>`;
+      return `<div class="font-mono text-sm my-2 text-ink/90 overflow-x-auto">${escapeHtml(tex)}</div>`;
     }
   });
 
@@ -84,6 +104,31 @@ export function renderRichMathHtml(rawText: string | null | undefined): string {
       return `$${tex}$`;
     }
   });
+
+  // 4. Any remaining unescaped LaTeX math fragments like \frac{...}{...} or \begin{matrix}
+  if (
+    /(?:\\(?:frac|begin|boxed|quad|sqrt|int|sum|prod|partial|mathbf|vec|bmatrix|pmatrix|left|right|text|lim|infty|approx|times|cdot|iff|implies|to|nabla|oint|iint|iiint))\b/.test(
+      processed
+    )
+  ) {
+    processed = processed.replace(/\\begin\{([a-zA-Z*]+)\}[\s\S]*?\\end\{\1\}/g, (match) => {
+      try {
+        return katex.renderToString(match.trim(), KATEX_OPTIONS_DISPLAY);
+      } catch {
+        return match;
+      }
+    });
+    processed = processed.replace(
+      /\\frac\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}/g,
+      (match) => {
+        try {
+          return katex.renderToString(match.trim(), KATEX_OPTIONS_INLINE);
+        } catch {
+          return match;
+        }
+      }
+    );
+  }
 
   return processed;
 }
@@ -153,6 +198,37 @@ export function renderSafeMarkdownAndMathHtml(rawText: string | null | undefined
         return match;
       }
     });
+  }
+
+  // 3b. Extract unescaped LaTeX environments and equations
+  if (
+    /(?:\\(?:frac|begin|boxed|quad|sqrt|int|sum|prod|partial|mathbf|vec|bmatrix|pmatrix|cases|left|right|text|lim|infty|approx|times|cdot|iff|implies|to|nabla|oint|iint|iiint))\b/.test(
+      text
+    )
+  ) {
+    text = text.replace(/\\begin\{([a-zA-Z*]+)\}[\s\S]*?\\end\{\1\}/g, (tex) => {
+      try {
+        const rendered = katex.renderToString(tex.trim(), KATEX_OPTIONS_DISPLAY);
+        const id = `${placeholderPrefix}${mathPlaceholders.length}___`;
+        mathPlaceholders.push(`<div class="katex-display my-2 overflow-x-auto text-center">${rendered}</div>`);
+        return id;
+      } catch {
+        return tex;
+      }
+    });
+    text = text.replace(
+      /\\frac\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}/g,
+      (tex) => {
+        try {
+          const rendered = katex.renderToString(tex.trim(), KATEX_OPTIONS_INLINE);
+          const id = `${placeholderPrefix}${mathPlaceholders.length}___`;
+          mathPlaceholders.push(rendered);
+          return id;
+        } catch {
+          return tex;
+        }
+      }
+    );
   }
 
   // 4. Safe HTML escape on surrounding text

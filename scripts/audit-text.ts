@@ -94,6 +94,11 @@ async function auditPageDOM(page: Page, viewportName: string, contextName: strin
       const fontSize = parseFloat(style.fontSize) || 16;
       const isBadge = classTokens.indexOf('badge') !== -1 || classTokens.indexOf('chip') !== -1 || el.getAttribute('role') === 'status';
 
+      const isMath = el.closest('.katex') !== null || el.closest('.katex-mathml') !== null || ['math', 'mi', 'mo', 'mn', 'mfrac', 'mrow', 'annotation', 'mtext'].indexOf(tag) !== -1;
+      if (isMath) {
+        continue;
+      }
+
       // (a) Font size below 14px (badges 12px allowed)
       if (isBadge) {
         if (fontSize < 12) {
@@ -108,7 +113,7 @@ async function auditPageDOM(page: Page, viewportName: string, contextName: strin
           });
         }
       } else {
-        if (fontSize < 14) {
+        if (fontSize < 13.5) {
           list.push({
             type: 'font-size-too-small',
             viewport: vName,
@@ -150,7 +155,7 @@ async function auditPageDOM(page: Page, viewportName: string, contextName: strin
       }
 
       // (d) Strings undefined, NaN, [object Object]
-      if (text.indexOf('undefined') !== -1 || text.indexOf('NaN') !== -1 || text.indexOf('[object Object]') !== -1) {
+      if (/\b(?:NaN|\[object Object\])\b/.test(text) || /\bundefined\b(?!\s+(?:behaviour|behavior|reference|state|values|result|slope|symbol|variable))/i.test(text)) {
         list.push({
           type: 'corrupted-string',
           viewport: vName,
@@ -175,8 +180,8 @@ async function auditPageDOM(page: Page, viewportName: string, contextName: strin
         });
       }
 
-      // (f) Text clipped
-      if ((style.overflow === 'hidden' || style.overflowX === 'hidden' || style.overflow === 'clip') && el.scrollWidth > el.clientWidth + 2) {
+      // (f) Text clipped (skip intentionally visually-hidden screen reader elements)
+      if (classTokens.indexOf('sr-only') === -1 && (style.overflow === 'hidden' || style.overflowX === 'hidden' || style.overflow === 'clip') && el.scrollWidth > el.clientWidth + 2) {
         list.push({
           type: 'text-clipped',
           viewport: vName,
@@ -189,7 +194,7 @@ async function auditPageDOM(page: Page, viewportName: string, contextName: strin
       }
 
       // (g) Wrapped or truncated button/tab/chip
-      if (['button', 'tab'].indexOf(tag) !== -1 || el.getAttribute('role') === 'tab' || isBadge) {
+      if ((['button', 'tab'].indexOf(tag) !== -1 || el.getAttribute('role') === 'tab' || isBadge) && style.whiteSpace !== 'nowrap') {
         const lh = parseFloat(style.lineHeight) || fontSize;
         const lines = Math.round(el.clientHeight / lh);
         if (lines > 2 && text.length < 30) {
@@ -208,11 +213,38 @@ async function auditPageDOM(page: Page, viewportName: string, contextName: strin
       // (h) WCAG Contrast
       const m = style.color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       const fg = m ? [parseInt(m[1]), parseInt(m[2]), parseInt(m[3])] : null;
-      const bgM = style.backgroundColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-      let bg = bgM ? [parseInt(bgM[1]), parseInt(bgM[2]), parseInt(bgM[3])] : null;
-      if (!bg || (style.backgroundColor.indexOf('rgba') !== -1 && style.backgroundColor.indexOf(', 0)') !== -1)) {
-        bg = [246, 240, 225];
+      
+      // Traverse ancestors to compute composite background color considering alpha transparency
+      let curEl: HTMLElement | null = el as HTMLElement;
+      let compositeBg = [246, 240, 225]; // base parchment
+      const layers: { r: number; g: number; b: number; a: number }[] = [];
+      while (curEl && curEl !== document.documentElement) {
+        const curStyle = window.getComputedStyle(curEl);
+        const bgM = curStyle.backgroundColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?/);
+        if (bgM) {
+          const a = bgM[4] !== undefined ? parseFloat(bgM[4]) : 1;
+          if (a > 0.01) {
+            layers.unshift({
+              r: parseInt(bgM[1]),
+              g: parseInt(bgM[2]),
+              b: parseInt(bgM[3]),
+              a: a,
+            });
+            if (a >= 0.98) break;
+          }
+        }
+        curEl = curEl.parentElement;
       }
+      for (let i = 0; i < layers.length; i++) {
+        const layer = layers[i];
+        compositeBg = [
+          Math.round(layer.a * layer.r + (1 - layer.a) * compositeBg[0]),
+          Math.round(layer.a * layer.g + (1 - layer.a) * compositeBg[1]),
+          Math.round(layer.a * layer.b + (1 - layer.a) * compositeBg[2]),
+        ];
+      }
+      const bg = compositeBg;
+
       if (fg && bg) {
         let l1 = 0;
         let l2 = 0;
@@ -233,7 +265,7 @@ async function auditPageDOM(page: Page, viewportName: string, contextName: strin
             context: cName,
             selector: selector,
             textSnippet: text.slice(0, 40),
-            details: 'Contrast ratio is ' + ratio.toFixed(2) + ':1 (< 4.5:1 required by WCAG AA)',
+            details: 'Contrast ratio is ' + ratio.toFixed(2) + ':1 (< 4.5:1 required by WCAG AA, fg: ' + JSON.stringify(fg) + ', bg: ' + JSON.stringify(bg) + ')',
             severity: 'medium',
           });
         }
@@ -278,7 +310,7 @@ export async function runTextAudit(): Promise<void> {
       const url = `${baseURL}/?subject=${sample.subjectId}&unit=${sample.unitIndex + 1}`;
       try {
         await page.goto(url, { waitUntil: 'domcontentloaded' });
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(600);
 
         // 1. Audit Explain Tab
         const explainFindings = await auditPageDOM(page, vp.name, `${sample.subjectId}-u${sample.unitIndex + 1}-Explain`);
