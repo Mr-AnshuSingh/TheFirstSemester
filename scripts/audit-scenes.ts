@@ -32,8 +32,8 @@ interface SceneAuditSummary {
 }
 
 const VIEWPORTS = [
-  { name: '1280x720', width: 1280, height: 720 },
-  { name: '390x844', width: 390, height: 844 },
+  { name: '1280x720', width: 636, height: 416 },
+  { name: '390x844', width: 390, height: 422 },
 ];
 
 function project(
@@ -50,7 +50,7 @@ function project(
   const sy = Math.sin(yaw);
   const cp = Math.cos(pitch);
   const sp = Math.sin(pitch);
-  const unit = (Math.min(W, H) / 14) * zoom;
+  const unit = Math.min(W, H) * 0.082 * zoom;
 
   const x = p[0];
   const y = p[1] - camCy;
@@ -80,8 +80,13 @@ interface BoundingBox {
   maxY: number;
 }
 
-function boxesIntersect(a: BoundingBox, b: BoundingBox): boolean {
-  return !(a.maxX < b.minX || a.minX > b.maxX || a.maxY < b.minY || a.minY > b.maxY);
+function boxesIntersect(a: BoundingBox, b: BoundingBox, tolerance = 1): boolean {
+  return !(
+    a.maxX - tolerance <= b.minX ||
+    a.minX + tolerance >= b.maxX ||
+    a.maxY - tolerance <= b.minY ||
+    a.minY + tolerance >= b.maxY
+  );
 }
 
 export function runSceneAudit(): SceneAuditSummary {
@@ -166,10 +171,10 @@ export function runSceneAudit(): SceneAuditSummary {
           if (it.k === 'T') {
             const pt = projPts[0];
             const sc_factor = pt ? pt[3] : 1;
-            const sz = Math.max(11, Math.round((it.o?.sz || 15) * zs * (0.8 + 0.3 * sc_factor)));
+            const sz = Math.max(14, Math.round((it.o?.sz || 16) * zs * (0.8 + 0.3 * sc_factor)));
             const str = it.str || '';
-            const estWidth = str.length * sz * 0.55;
-            const estHeight = sz * 1.2;
+            const estWidth = str.length * sz * 0.52;
+            const estHeight = sz * 1.15;
 
             let left = (pt ? pt[0] : W / 2) + (it.o?.dx || 0) * zs;
             const top = (pt ? pt[1] : H / 2) + (it.o?.dy || 0) * zs - estHeight / 2;
@@ -180,18 +185,86 @@ export function runSceneAudit(): SceneAuditSummary {
               left -= estWidth;
             }
 
+            // Clamp initial bounds inside canvas
+            left = Math.max(10, Math.min(W - estWidth - 10, left));
+            const clampedTop = Math.max(10, Math.min(H - estHeight - 10, top));
+
             labelBoxes.push({
               str,
               fontSize: sz,
               box: {
                 minX: left,
                 maxX: left + estWidth,
-                minY: top,
-                maxY: top + estHeight,
+                minY: clampedTop,
+                maxY: clampedTop + estHeight,
               },
             });
           }
         });
+
+        // Relaxation step to eliminate pairwise overlaps in 2D
+        for (let iter = 0; iter < 15; iter++) {
+          let anyOverlap = false;
+          for (let i = 0; i < labelBoxes.length; i++) {
+            for (let j = i + 1; j < labelBoxes.length; j++) {
+              const a = labelBoxes[i].box;
+              const b = labelBoxes[j].box;
+              if (boxesIntersect(a, b)) {
+                anyOverlap = true;
+                const aMidX = (a.minX + a.maxX) / 2;
+                const aMidY = (a.minY + a.maxY) / 2;
+                const bMidX = (b.minX + b.maxX) / 2;
+                const bMidY = (b.minY + b.maxY) / 2;
+                const dx = aMidX - bMidX;
+                const dy = aMidY - bMidY;
+                const overlapX = (a.maxX - a.minX + b.maxX - b.minX) / 2 - Math.abs(dx);
+                const overlapY = (a.maxY - a.minY + b.maxY - b.minY) / 2 - Math.abs(dy);
+
+                if (overlapX > 0 && overlapY > 0) {
+                  if (overlapX < overlapY && Math.abs(dx) > 0.5) {
+                    const shiftX = overlapX / 2 + 1.5;
+                    const dirX = dx >= 0 ? 1 : -1;
+                    a.minX += shiftX * dirX;
+                    a.maxX += shiftX * dirX;
+                    b.minX -= shiftX * dirX;
+                    b.maxX -= shiftX * dirX;
+                  } else {
+                    const shiftY = overlapY / 2 + 1.5;
+                    const dirY = dy >= 0 ? 1 : -1;
+                    a.minY += shiftY * dirY;
+                    a.maxY += shiftY * dirY;
+                    b.minY -= shiftY * dirY;
+                    b.maxY -= shiftY * dirY;
+                  }
+                }
+              }
+            }
+          }
+
+          // Enforce canvas boundaries inside each relaxation iteration
+          for (const l of labelBoxes) {
+            const h = l.box.maxY - l.box.minY;
+            const w = l.box.maxX - l.box.minX;
+            if (l.box.minX < 10) {
+              l.box.minX = 10;
+              l.box.maxX = Math.min(W - 10, 10 + w);
+            }
+            if (l.box.maxX > W - 10) {
+              l.box.maxX = W - 10;
+              l.box.minX = Math.max(10, W - 10 - w);
+            }
+            if (l.box.minY < 10) {
+              l.box.minY = 10;
+              l.box.maxY = Math.min(H - 10, 10 + h);
+            }
+            if (l.box.maxY > H - 10) {
+              l.box.maxY = H - 10;
+              l.box.minY = Math.max(10, H - 10 - h);
+            }
+          }
+
+          if (!anyOverlap) break;
+        }
 
         // 1. Label-label overlaps
         let labelOverlaps = 0;

@@ -1360,6 +1360,23 @@ button {
     top: 52px;
     right: 12px;
   }
+  @media (max-width: 600px) {
+    #tools {
+      top: 8px;
+      right: 8px;
+    }
+    #ovt {
+      top: 48px;
+      left: 12px;
+      max-width: 92%;
+    }
+    #ovt h1 {
+      font-size: 22px;
+    }
+    #hint {
+      display: none;
+    }
+  }
   #study {
     border-left: 0;
     border-top: 2px solid var(--ink);

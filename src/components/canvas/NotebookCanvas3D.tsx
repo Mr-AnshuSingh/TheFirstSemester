@@ -36,6 +36,9 @@ interface ProjectedEntity {
   it: PrimitiveItem;
   pp: [number, number, number, number][];
   d: number;
+  adjX?: number;
+  adjY?: number;
+  adjSz?: number;
 }
 
 export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
@@ -450,13 +453,15 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
         }
       } else if (it.k === 'T') {
         const pt = pp[0];
-        const sc = pt[3];
-        const sz = Math.max(11, Math.round((o.sz || 15) * zs * (0.8 + 0.3 * sc)));
+        const sc = pt ? pt[3] : 1;
+        const sz = e.adjSz ?? Math.max(14, Math.round((o.sz || 16) * zs * (0.8 + 0.3 * sc)));
         ctx.font = `${o.b ? 'bold ' : ''}${sz}px Caveat, cursive`;
         ctx.fillStyle = col;
         ctx.textAlign = (o.a as CanvasTextAlign) || 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(it.str || '', pt[0] + (o.dx || 0) * zs, pt[1] + (o.dy || 0) * zs);
+        const drawX = e.adjX ?? (pt ? pt[0] + (o.dx || 0) * zs : eng.W / 2);
+        const drawY = e.adjY ?? (pt ? pt[1] + (o.dy || 0) * zs : eng.H / 2);
+        ctx.fillText(it.str || '', drawX, drawY);
       } else if (it.k === 'D') {
         const pt = pp[0];
         const r = Math.max(2, (it.r || 3) * zs * pt[3]);
@@ -527,6 +532,119 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
               d: 0,
             });
           }
+        }
+
+        // Pre-compute text label layout & resolve screen-space overlaps
+        interface TextLabelLayout {
+          e: ProjectedEntity;
+          minX: number;
+          maxX: number;
+          minY: number;
+          maxY: number;
+          sz: number;
+        }
+        const textLabels: TextLabelLayout[] = [];
+        const zs = Math.max(0.75, Math.min(1.4, Math.sqrt(eng.zoom)));
+        for (const e of ents) {
+          if (e.it.k === 'T' && e.pp[0]) {
+            const pt = e.pp[0];
+            const sc = pt ? pt[3] : 1;
+            const sz = Math.max(14, Math.round((e.it.o?.sz || 16) * zs * (0.8 + 0.3 * sc)));
+            const str = e.it.str || '';
+            const estWidth = str.length * sz * 0.52;
+            const estHeight = sz * 1.15;
+            let left = pt[0] + (e.it.o?.dx || 0) * zs;
+            const top = pt[1] + (e.it.o?.dy || 0) * zs - estHeight / 2;
+
+            if (e.it.o?.a === 'center' || !e.it.o?.a) {
+              left -= estWidth / 2;
+            } else if (e.it.o?.a === 'right') {
+              left -= estWidth;
+            }
+
+            // Clamp initial bounds inside canvas
+            left = Math.max(10, Math.min(eng.W - estWidth - 10, left));
+            const clampedTop = Math.max(10, Math.min(eng.H - estHeight - 10, top));
+
+            textLabels.push({
+              e,
+              minX: left,
+              maxX: left + estWidth,
+              minY: clampedTop,
+              maxY: clampedTop + estHeight,
+              sz,
+            });
+          }
+        }
+
+        // 2D screen-space relaxation to eliminate overlaps
+        for (let iter = 0; iter < 18; iter++) {
+          let anyOverlap = false;
+          for (let i = 0; i < textLabels.length; i++) {
+            for (let j = i + 1; j < textLabels.length; j++) {
+              const a = textLabels[i];
+              const b = textLabels[j];
+              const aMidX = (a.minX + a.maxX) / 2;
+              const aMidY = (a.minY + a.maxY) / 2;
+              const bMidX = (b.minX + b.maxX) / 2;
+              const bMidY = (b.minY + b.maxY) / 2;
+              const dx = aMidX - bMidX;
+              const dy = aMidY - bMidY;
+              const overlapX = (a.maxX - a.minX + b.maxX - b.minX) / 2 - Math.abs(dx);
+              const overlapY = (a.maxY - a.minY + b.maxY - b.minY) / 2 - Math.abs(dy);
+
+              if (overlapX > 0 && overlapY > 0) {
+                anyOverlap = true;
+                if (overlapX < overlapY && Math.abs(dx) > 0.5) {
+                  const shiftX = overlapX / 2 + 1.5;
+                  const dirX = dx >= 0 ? 1 : -1;
+                  a.minX += shiftX * dirX;
+                  a.maxX += shiftX * dirX;
+                  b.minX -= shiftX * dirX;
+                  b.maxX -= shiftX * dirX;
+                } else {
+                  const shiftY = overlapY / 2 + 1.5;
+                  const dirY = dy >= 0 ? 1 : -1;
+                  a.minY += shiftY * dirY;
+                  a.maxY += shiftY * dirY;
+                  b.minY -= shiftY * dirY;
+                  b.maxY -= shiftY * dirY;
+                }
+              }
+            }
+          }
+
+          // Enforce canvas boundaries inside each relaxation iteration
+          for (const l of textLabels) {
+            const w = l.maxX - l.minX;
+            const h = l.maxY - l.minY;
+            if (l.minX < 10) {
+              l.minX = 10;
+              l.maxX = Math.min(eng.W - 10, 10 + w);
+            }
+            if (l.maxX > eng.W - 10) {
+              l.maxX = eng.W - 10;
+              l.minX = Math.max(10, eng.W - 10 - w);
+            }
+            if (l.minY < 10) {
+              l.minY = 10;
+              l.maxY = Math.min(eng.H - 10, 10 + h);
+            }
+            if (l.maxY > eng.H - 10) {
+              l.maxY = eng.H - 10;
+              l.minY = Math.max(10, eng.H - 10 - h);
+            }
+          }
+
+          if (!anyOverlap) break;
+        }
+
+        // Apply finalized coordinates to projected entities
+        for (const l of textLabels) {
+          const align = l.e.it.o?.a || 'center';
+          l.e.adjX = align === 'center' ? (l.minX + l.maxX) / 2 : align === 'right' ? l.maxX : l.minX;
+          l.e.adjY = (l.minY + l.maxY) / 2;
+          l.e.adjSz = l.sz;
         }
 
         for (const e of ents) {
