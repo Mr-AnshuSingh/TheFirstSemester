@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
+    "@supabase/supabase-js": "^2.118.0",
     "idb": "^8.0.0",
     "katex": "^0.16.11",
     "lucide-react": "^0.454.0",

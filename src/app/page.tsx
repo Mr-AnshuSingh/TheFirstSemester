@@ -73,6 +73,9 @@ const FormulaSheetModal = dynamic(
 const BackupModal = dynamic(
   () => import('@/components/study/BackupModal').then((m) => m.BackupModal)
 );
+const AuthModal = dynamic(
+  () => import('@/components/auth/AuthModal').then((m) => m.AuthModal)
+);
 import { ConfidenceLevel, FlashcardProgress } from '@/types/syllabus';
 import { getTopicContent, getUnitStory } from '@/data/topicContent';
 import {
@@ -99,6 +102,7 @@ export default function SemesterOnePage() {
   const [commandPaletteOpen, setCommandPaletteOpen] = useState<boolean>(false);
   const [formulaSheetModalOpen, setFormulaSheetModalOpen] = useState<boolean>(false);
   const [backupModalOpen, setBackupModalOpen] = useState<boolean>(false);
+  const [authModalOpen, setAuthModalOpen] = useState<boolean>(false);
   const [diagramModal, setDiagramModal] = useState<{ svg: string; title: string; caption: string } | null>(null);
   const isLoadedRef = useRef<boolean>(false);
 
@@ -429,6 +433,7 @@ export default function SemesterOnePage() {
         onOpenMockTest={() => setMockTestModalOpen(true)}
         onOpenFormulaSheet={() => setFormulaSheetModalOpen(true)}
         onOpenBackupModal={() => setBackupModalOpen(true)}
+        onOpenAuthModal={() => setAuthModalOpen(true)}
       />
 
       <UnitSidebar
@@ -955,6 +960,14 @@ export default function SemesterOnePage() {
         currentState={st}
         onImportState={handleImportState}
         onResetState={handleResetState}
+      />
+
+      <AuthModal
+        open={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onSyncSuccess={() => {
+          loadStudyState().then(setSt);
+        }}
       />
 
       <ClassesScheduledModal

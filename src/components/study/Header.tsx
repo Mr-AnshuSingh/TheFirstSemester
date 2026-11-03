@@ -11,6 +11,7 @@ import {
   Database,
   Calendar,
   Layers,
+  Cloud,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
@@ -32,6 +33,7 @@ interface HeaderProps {
   onOpenFormulaSheet: () => void;
   onOpenBackupModal: () => void;
   onOpenClassesModal: () => void;
+  onOpenAuthModal?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -49,6 +51,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenMockTest,
   onOpenFormulaSheet,
   onOpenBackupModal,
+  onOpenAuthModal,
 }) => {
   const [toolsOpen, setToolsOpen] = useState<boolean>(false);
   const toolsMenuRef = useRef<HTMLDivElement | null>(null);
@@ -240,6 +243,24 @@ export const Header: React.FC<HeaderProps> = ({
                     <span className="text-[11px] text-dim">Export, restore or reset study data</span>
                   </div>
                 </button>
+
+                {onOpenAuthModal && (
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setToolsOpen(false);
+                      onOpenAuthModal();
+                    }}
+                    className="flex items-center gap-2.5 p-2 rounded hover:bg-gold/15 text-left transition-colors font-medium"
+                  >
+                    <Cloud className="w-4 h-4 text-accentGreen shrink-0" />
+                    <div>
+                      <strong className="block text-ink">Supabase Cloud Sync</strong>
+                      <span className="text-[11px] text-dim">Sync notes &amp; progress across devices</span>
+                    </div>
+                  </button>
+                )}
               </div>
             )}
           </div>

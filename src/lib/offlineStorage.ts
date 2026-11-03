@@ -55,7 +55,7 @@ export function isServerSyncEnabled(): boolean {
   if (typeof window === 'undefined') return false;
   const hasAuth = Boolean(
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY)
   );
   const syncExplicit = process.env.NEXT_PUBLIC_ENABLE_SERVER_SYNC === 'true';
   return hasAuth || syncExplicit;
@@ -219,9 +219,21 @@ export async function saveStudyState(next: PersistedStudyState): Promise<void> {
   // 3. Conditional server sync (ONLY if auth/server sync is explicitly configured)
   if (isServerSyncEnabled()) {
     try {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (typeof window !== 'undefined') {
+        try {
+          const { getSessionToken } = await import('@/lib/supabaseClient');
+          const token = await getSessionToken();
+          if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+          }
+        } catch {
+          // Token extraction fallback
+        }
+      }
       await fetch('/api/progress', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify(payload),
       });
     } catch {

@@ -20,7 +20,7 @@ test.describe('Backup Export and Import Roundtrip', () => {
 
     // Verify diagnostics
     await expect(page.locator('text=IndexedDB Primary')).toBeVisible();
-    await expect(page.locator('text=100% Local-First Offline Mode')).toBeVisible();
+    await expect(page.locator('text=/100% Local-First Offline Mode|Server Sync Enabled/')).toBeVisible();
 
     // Verify export buttons
     await expect(page.locator('button:has-text("Download Backup (.json)")')).toBeVisible();
