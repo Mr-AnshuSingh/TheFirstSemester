@@ -5,7 +5,6 @@ import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
 let supabaseInstance: SupabaseClient | null = null;
 
 export function isSupabaseConfigured(): boolean {
-  if (typeof window === 'undefined') return false;
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key =
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
@@ -15,8 +14,6 @@ export function isSupabaseConfigured(): boolean {
 }
 
 export function getSupabase(): SupabaseClient | null {
-  if (typeof window === 'undefined') return null;
-
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key =
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
@@ -27,9 +24,9 @@ export function getSupabase(): SupabaseClient | null {
   if (!supabaseInstance) {
     supabaseInstance = createClient(url, key, {
       auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
+        persistSession: typeof window !== 'undefined',
+        autoRefreshToken: typeof window !== 'undefined',
+        detectSessionInUrl: typeof window !== 'undefined',
       },
     });
   }
