@@ -25,6 +25,8 @@
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
+    "@supabase/server": "^1.9.2",
+    "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.118.0",
     "idb": "^8.0.0",
     "katex": "^0.16.11",
