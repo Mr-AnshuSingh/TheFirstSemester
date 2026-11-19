@@ -1,7 +1,14 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { TT, HUE, UNIVERSITY_HOLIDAYS_2026 } from '@/data/schedule';
+import {
+  TT,
+  HUE,
+  UNIVERSITY_HOLIDAYS_2026,
+  BRANCH_TIMETABLES,
+  DEFAULT_BRANCH_ID,
+  getCellForSlot,
+} from '@/data/schedule';
 import { UniversityHoliday } from '@/types/syllabus';
 import { useModalA11y } from './useModalA11y';
 
@@ -16,13 +23,16 @@ interface ActiveClassInfo {
   status: 'running' | 'break' | 'before' | 'after' | 'sunday' | 'holiday';
   subjectCode?: string;
   subjectLabel?: string;
+  faculty?: string;
+  room?: string;
   timeSlot?: string;
   minutesRemaining?: number;
   nextClass?: string;
   nextClassTime?: string;
   holidayName?: string;
   dayIndex: number; // 0=Mon, ..., 5=Sat, -1=Sun
-  slotIndex: number; // 0..4, or -1
+  slotIndex: number; // 0..5, or -1
+  cellIndex: number;
 }
 
 export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
@@ -33,12 +43,16 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
 }) => {
   const modalRef = useModalA11y(open, onClose);
   const [activeTab, setActiveTab] = useState<'timetable' | 'holidays'>('timetable');
+  const [selectedBranchId, setSelectedBranchId] = useState<string>(DEFAULT_BRANCH_ID);
+  const [showFacultyList, setShowFacultyList] = useState<boolean>(true);
   const [monthFilter, setMonthFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [simulationMode, setSimulationMode] = useState<boolean>(false);
   const [simDay, setSimDay] = useState<number>(0); // 0=Mon, 1=Tue, ..., 5=Sat
   const [simTimeMinutes, setSimTimeMinutes] = useState<number>(630); // 10:30 AM = 630 mins
   const [currentTime, setCurrentTime] = useState<Date>(() => new Date());
+
+  const currentBranch = BRANCH_TIMETABLES[selectedBranchId] || BRANCH_TIMETABLES[DEFAULT_BRANCH_ID];
 
   // Update real-time clock every 30 seconds
   useEffect(() => {
@@ -75,6 +89,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
           status: 'sunday',
           dayIndex: -1,
           slotIndex: -1,
+          cellIndex: -1,
         };
       }
       dayIdx = jsDay - 1; // 0=Mon, 5=Sat
@@ -86,27 +101,32 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
           holidayName: `${matchedHoliday.name} (${matchedHoliday.englishName})`,
           dayIndex: dayIdx,
           slotIndex: -1,
+          cellIndex: -1,
         };
       }
     }
 
-    // Class timetable time intervals (in minutes from midnight)
-    // Slot 0: 10:00 - 12:00 (600 - 720 mins, 2 hours)
-    // Slot 1: 12:00 - 13:00 (720 - 780 mins, 1 hour)
+    // Revised LNJPIT timetable intervals (in minutes from midnight)
+    // Slot 0: 10:00 - 11:00 (600 - 660 mins, 1 hour)
+    // Slot 1: 11:00 - 12:00 (660 - 720 mins, 1 hour)
+    // Slot 2: 12:00 - 13:00 (720 - 780 mins, 1 hour)
     // Break : 13:00 - 14:00 (780 - 840 mins, 1 hour)
-    // Slot 2: 14:00 - 15:00 (840 - 900 mins, 1 hour)
-    // Slot 3: 15:00 - 16:00 (900 - 960 mins, 1 hour)
-    // Slot 4: 16:00 - 17:00 (960 - 1020 mins, 1 hour)
+    // Slot 3: 14:00 - 15:00 (840 - 900 mins, 1 hour)
+    // Slot 4: 15:00 - 16:00 (900 - 960 mins, 1 hour)
+    // Slot 5: 16:00 - 17:00 (960 - 1020 mins, 1 hour)
 
     if (mins < 600) {
       // Before 10:00 AM
-      const firstClass = TT.grid[dayIdx]?.[0];
+      const firstCell = currentBranch.grid[dayIdx]?.[0];
       return {
         status: 'before',
-        nextClass: firstClass?.l,
+        nextClass: firstCell?.l,
+        faculty: firstCell?.fac,
+        room: currentBranch.room,
         nextClassTime: '10:00 AM',
         dayIndex: dayIdx,
         slotIndex: -1,
+        cellIndex: -1,
       };
     }
 
@@ -116,19 +136,23 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
         status: 'after',
         dayIndex: dayIdx,
         slotIndex: -1,
+        cellIndex: -1,
       };
     }
 
-    // Lunch break: 1:00 PM - 2:00 PM (780 - 840)
+    // Lunch break: 1:00 PM - 2:00 PM (780 - 840 mins)
     if (mins >= 780 && mins < 840) {
-      const nextClass = TT.grid[dayIdx]?.[2];
+      const match = getCellForSlot(currentBranch.grid[dayIdx], 3);
       return {
         status: 'break',
         minutesRemaining: 840 - mins,
-        nextClass: nextClass?.l,
+        nextClass: match?.cell.l,
+        faculty: match?.cell.fac,
+        room: currentBranch.room,
         nextClassTime: '2:00 PM',
         dayIndex: dayIdx,
         slotIndex: -1,
+        cellIndex: -1,
       };
     }
 
@@ -136,40 +160,59 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
     let slotEndMins = 0;
     let slotLabel = '';
 
-    if (mins >= 600 && mins < 720) {
+    if (mins >= 600 && mins < 660) {
       slotIdx = 0;
-      slotEndMins = 720;
-      slotLabel = '10:00 AM – 12:00 PM';
-    } else if (mins >= 720 && mins < 780) {
+      slotEndMins = 660;
+      slotLabel = '10:00 AM – 11:00 AM';
+    } else if (mins >= 660 && mins < 720) {
       slotIdx = 1;
+      slotEndMins = 720;
+      slotLabel = '11:00 AM – 12:00 PM';
+    } else if (mins >= 720 && mins < 780) {
+      slotIdx = 2;
       slotEndMins = 780;
       slotLabel = '12:00 PM – 1:00 PM';
     } else if (mins >= 840 && mins < 900) {
-      slotIdx = 2;
+      slotIdx = 3;
       slotEndMins = 900;
       slotLabel = '2:00 PM – 3:00 PM';
     } else if (mins >= 900 && mins < 960) {
-      slotIdx = 3;
+      slotIdx = 4;
       slotEndMins = 960;
       slotLabel = '3:00 PM – 4:00 PM';
     } else if (mins >= 960 && mins < 1020) {
-      slotIdx = 4;
+      slotIdx = 5;
       slotEndMins = 1020;
       slotLabel = '4:00 PM – 5:00 PM';
     }
 
-    const currentCell = TT.grid[dayIdx]?.[slotIdx];
+    const row = currentBranch.grid[dayIdx] || [];
+    const match = getCellForSlot(row, slotIdx);
+    const currentCell = match?.cell;
+
+    if (currentCell && (currentCell.h || 1) >= 2) {
+      if (slotIdx === 4 || slotIdx === 5) {
+        slotEndMins = 1020;
+        slotLabel = '3:00 PM – 5:00 PM (2-Hour Lab)';
+      } else if (slotIdx === 1 || slotIdx === 2) {
+        slotEndMins = 780;
+        slotLabel = '11:00 AM – 1:00 PM (2-Hour Lab)';
+      }
+    }
 
     return {
       status: 'running',
       subjectCode: currentCell?.k,
       subjectLabel: currentCell?.l,
+      faculty: currentCell?.fac,
+      room: currentCell?.room || currentBranch.room,
       timeSlot: slotLabel,
       minutesRemaining: Math.max(1, slotEndMins - mins),
       dayIndex: dayIdx,
       slotIndex: slotIdx,
+      cellIndex: match?.cellIndex ?? -1,
     };
-  }, [currentTime, simulationMode, simDay, simTimeMinutes]);
+  }, [currentTime, simulationMode, simDay, simTimeMinutes, currentBranch]);
 
   // Filter university holidays
   const filteredHolidays = useMemo(() => {
@@ -203,7 +246,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
 
   return (
     <div id="modal" ref={modalRef} role="dialog" aria-modal="true" aria-label="Classes Scheduled" className="on">
-      <div className="mw max-w-4xl max-h-[92vh] flex flex-col">
+      <div className="mw max-h-[92vh] flex flex-col" style={{ maxWidth: '1120px', width: '96%' }}>
         {/* Modal Header */}
         <div className="mh pb-3 border-b-2 border-ink">
           <div>
@@ -212,7 +255,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
               <h2 className="font-hand text-3xl font-bold text-ink">Classes Scheduled &amp; University Calendar</h2>
             </div>
             <p className="text-sm text-dim mt-1 font-sans">
-              Room 13 Weekly Timetable (w.e.f. 28.09.26) · Official 2026 University Holiday Calendar
+              LNJPIT Chapra · Revised Timetable (w.e.f. 29.10.2026, Session July–December 2026) · Official 2026 Holidays
             </p>
           </div>
           <button type="button" className="btn" onClick={onClose} aria-label="Close modal">
@@ -220,8 +263,8 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
           </button>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="flex items-center justify-between border-b border-ink/30 px-1 pt-3 pb-2 bg-paper gap-2 flex-wrap">
+        {/* Tab & Branch Navigation */}
+        <div className="flex items-center justify-between border-b border-ink/30 px-3 pt-3 pb-2 bg-paper gap-2 flex-wrap">
           <div className="flex gap-2">
             <button
               type="button"
@@ -248,23 +291,46 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
           </div>
 
           {activeTab === 'timetable' && (
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold text-dim">Lab Group:</span>
-              <div className="seg inline-flex border border-ink/40 rounded p-0.5 bg-paper">
-                <button
-                  type="button"
-                  onClick={() => onChangeLabGroup('G1')}
-                  className={`px-2 py-0.5 text-xs font-bold rounded ${labGroup === 'G1' ? 'bg-ink text-paper' : 'text-dim hover:text-ink'}`}
+            <div className="flex items-center gap-3 flex-wrap">
+              {/* Branch Selector */}
+              <div className="flex items-center gap-1.5">
+                <label htmlFor="branch-select" className="text-xs font-mono font-bold text-dim">
+                  Branch:
+                </label>
+                <select
+                  id="branch-select"
+                  value={selectedBranchId}
+                  onChange={(e) => setSelectedBranchId(e.target.value)}
+                  className="text-xs font-sans font-bold border border-ink/40 rounded px-2 py-1 bg-paper text-ink shadow-xs focus:outline-none focus:ring-1 focus:ring-ink"
                 >
-                  G1
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onChangeLabGroup('G2')}
-                  className={`px-2 py-0.5 text-xs font-bold rounded ${labGroup === 'G2' ? 'bg-ink text-paper' : 'text-dim hover:text-ink'}`}
-                >
-                  G2
-                </button>
+                  <option value="mnc">🎓 Mathematics &amp; Computing (Room 13 GF)</option>
+                  <option value="cse">💻 Computer Science &amp; Engg (EDUSAT)</option>
+                  <option value="eee">⚡ Electrical &amp; Electronics Engg (Room 3)</option>
+                  <option value="ce">🏗️ Civil Engineering (Room 1)</option>
+                  <option value="me">⚙️ Mechanical Engineering (Room 4)</option>
+                  <option value="fpp">🍃 Food Processing &amp; Preserv. (Room 14)</option>
+                </select>
+              </div>
+
+              {/* Lab Group Toggle */}
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-mono font-bold text-dim">Lab Group:</span>
+                <div className="seg inline-flex border border-ink/40 rounded p-0.5 bg-paper">
+                  <button
+                    type="button"
+                    onClick={() => onChangeLabGroup('G1')}
+                    className={`px-2 py-0.5 text-xs font-bold rounded ${labGroup === 'G1' ? 'bg-ink text-paper' : 'text-dim hover:text-ink'}`}
+                  >
+                    G1
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onChangeLabGroup('G2')}
+                    className={`px-2 py-0.5 text-xs font-bold rounded ${labGroup === 'G2' ? 'bg-ink text-paper' : 'text-dim hover:text-ink'}`}
+                  >
+                    G2
+                  </button>
+                </div>
               </div>
             </div>
           )}
@@ -291,14 +357,21 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
                     <div>
                       {activeClass.status === 'running' && (
                         <div className="font-sans">
-                          <span className="text-xs font-bold uppercase tracking-wider text-accentRed font-mono">
-                            ● CLASS RUNNING RIGHT NOW (ROOM 13)
-                          </span>
-                          <h4 className="font-hand text-2xl font-bold text-ink leading-tight">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-xs font-bold uppercase tracking-wider text-accentRed font-mono">
+                              ● CLASS RUNNING RIGHT NOW ({activeClass.room})
+                            </span>
+                            {activeClass.faculty && (
+                              <span className="text-xs font-mono text-dim bg-paper2 px-1.5 py-0.5 rounded border border-ink/20">
+                                Faculty: {activeClass.faculty}
+                              </span>
+                            )}
+                          </div>
+                          <h4 className="font-hand text-2xl font-bold text-ink leading-tight mt-0.5">
                             {activeClass.subjectLabel} · {activeClass.timeSlot}
                           </h4>
                           <p className="text-xs text-dim">
-                            Approximately {activeClass.minutesRemaining} minutes remaining in this class slot.
+                            Approximately {activeClass.minutesRemaining} minutes remaining in this class period.
                           </p>
                         </div>
                       )}
@@ -309,7 +382,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
                             ☕ LUNCH BREAK (1:00 PM – 2:00 PM)
                           </span>
                           <h4 className="font-hand text-xl font-bold text-ink">
-                            Next Class: {activeClass.nextClass} at {activeClass.nextClassTime}
+                            Next Class: {activeClass.nextClass} {activeClass.faculty ? `(${activeClass.faculty})` : ''} at {activeClass.nextClassTime}
                           </h4>
                           <p className="text-xs text-dim">
                             Break ends in ~{activeClass.minutesRemaining} minutes.
@@ -323,7 +396,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
                             ⏰ MORNING PREPARATION
                           </span>
                           <h4 className="font-hand text-xl font-bold text-ink">
-                            First Class: {activeClass.nextClass} starts at {activeClass.nextClassTime} (Room 13)
+                            First Class: {activeClass.nextClass} starts at {activeClass.nextClassTime} ({activeClass.room})
                           </h4>
                         </div>
                       )}
@@ -381,7 +454,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
                           onChange={(e) => setSimDay(parseInt(e.target.value, 10))}
                           className="text-xs border border-ink/40 rounded px-1.5 py-0.5 bg-paper font-mono"
                         >
-                          {TT.days.map((d, idx) => (
+                          {currentBranch.days.map((d, idx) => (
                             <option key={d} value={idx}>{d}</option>
                           ))}
                         </select>
@@ -390,12 +463,13 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
                           onChange={(e) => setSimTimeMinutes(parseInt(e.target.value, 10))}
                           className="text-xs border border-ink/40 rounded px-1.5 py-0.5 bg-paper font-mono"
                         >
-                          <option value={630}>10:30 AM (Slot 1)</option>
-                          <option value={750}>12:30 PM (Slot 2)</option>
-                          <option value={800}>1:20 PM (Lunch Break)</option>
-                          <option value={860}>2:20 PM (Slot 3)</option>
-                          <option value={920}>3:20 PM (Slot 4)</option>
-                          <option value={980}>4:20 PM (Slot 5)</option>
+                          <option value={630}>10:30 AM (Period 1)</option>
+                          <option value={690}>11:30 AM (Period 2)</option>
+                          <option value={750}>12:30 PM (Period 3)</option>
+                          <option value={810}>01:30 PM (Lunch Break)</option>
+                          <option value={870}>02:30 PM (Period 4)</option>
+                          <option value={930}>03:30 PM (Period 5 / Lab)</option>
+                          <option value={990}>04:30 PM (Period 6 / Lab)</option>
                         </select>
                       </div>
                     )}
@@ -405,34 +479,37 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
 
               {/* TIMETABLE TABLE */}
               <div className="overflow-x-auto border-2 border-ink rounded-lg shadow-sketchy bg-paper">
-                <table className="w-full text-center text-xs font-sans border-collapse">
+                <table className="w-full text-center text-xs font-sans border-collapse min-w-[760px]">
                   <thead>
-                    <tr className="bg-paper2 border-b-2 border-ink text-sm font-sans font-bold">
-                      <th className="p-2.5 border-r-2 border-ink text-left w-20">Day</th>
-                      <th colSpan={2} className={`p-2.5 border-r border-ink ${activeClass.dayIndex >= 0 && activeClass.slotIndex === 0 ? 'bg-gold/25 font-bold text-accentRed' : ''}`}>
-                        10:00–12:00 (2h)
+                    <tr className="bg-paper2 border-b-2 border-ink text-xs md:text-sm font-sans font-bold">
+                      <th className="p-2 border-r-2 border-ink text-left w-16">Day</th>
+                      <th className={`p-2 border-r border-ink ${activeClass.dayIndex >= 0 && activeClass.slotIndex === 0 ? 'bg-gold/25 font-bold text-accentRed' : ''}`}>
+                        10:00–11:00
                       </th>
-                      <th className={`p-2.5 border-r border-ink ${activeClass.dayIndex >= 0 && activeClass.slotIndex === 1 ? 'bg-gold/25 font-bold text-accentRed' : ''}`}>
+                      <th className={`p-2 border-r border-ink ${activeClass.dayIndex >= 0 && activeClass.slotIndex === 1 ? 'bg-gold/25 font-bold text-accentRed' : ''}`}>
+                        11:00–12:00
+                      </th>
+                      <th className={`p-2 border-r border-ink ${activeClass.dayIndex >= 0 && activeClass.slotIndex === 2 ? 'bg-gold/25 font-bold text-accentRed' : ''}`}>
                         12:00–1:00
                       </th>
-                      <th className={`p-2.5 border-r border-ink bg-paper2/80 text-dim ${activeClass.status === 'break' ? 'bg-gold/30 font-bold text-accentRed' : ''}`}>
+                      <th className={`p-2 border-r border-ink bg-paper2/80 text-dim w-16 ${activeClass.status === 'break' ? 'bg-gold/30 font-bold text-accentRed' : ''}`}>
                         1:00–2:00
                       </th>
-                      <th className={`p-2.5 border-r border-ink ${activeClass.dayIndex >= 0 && activeClass.slotIndex === 2 ? 'bg-gold/25 font-bold text-accentRed' : ''}`}>
+                      <th className={`p-2 border-r border-ink ${activeClass.dayIndex >= 0 && activeClass.slotIndex === 3 ? 'bg-gold/25 font-bold text-accentRed' : ''}`}>
                         2:00–3:00
                       </th>
-                      <th className={`p-2.5 border-r border-ink ${activeClass.dayIndex >= 0 && activeClass.slotIndex === 3 ? 'bg-gold/25 font-bold text-accentRed' : ''}`}>
+                      <th className={`p-2 border-r border-ink ${activeClass.dayIndex >= 0 && activeClass.slotIndex === 4 ? 'bg-gold/25 font-bold text-accentRed' : ''}`}>
                         3:00–4:00
                       </th>
-                      <th className={`p-2.5 ${activeClass.dayIndex >= 0 && activeClass.slotIndex === 4 ? 'bg-gold/25 font-bold text-accentRed' : ''}`}>
+                      <th className={`p-2 ${activeClass.dayIndex >= 0 && activeClass.slotIndex === 5 ? 'bg-gold/25 font-bold text-accentRed' : ''}`}>
                         4:00–5:00
                       </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {TT.grid.map((row, dIdx) => {
+                    {currentBranch.grid.map((row, dIdx) => {
                       const isTodayRow = activeClass.dayIndex === dIdx;
-                      let slotCounter = 0;
+                      let currentSlot = 0;
 
                       return (
                         <tr
@@ -446,36 +523,36 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
                           }`}>
                             <div className="flex items-center gap-1.5">
                               {isTodayRow && <span className="w-1.5 h-1.5 rounded-full bg-accentRed shrink-0" />}
-                              <span>{TT.days[dIdx]}</span>
+                              <span>{currentBranch.days[dIdx]}</span>
                             </div>
                           </th>
 
                           {row.map((cell, cIdx) => {
+                            const slotStart = currentSlot;
                             const span = cell.h || 1;
-                            const isSlotActive = isTodayRow && activeClass.slotIndex === cIdx;
+                            currentSlot += span;
+
+                            const isSlotActive = isTodayRow && activeClass.cellIndex === cIdx;
                             const isGroupOff = cell.g && cell.g !== labGroup && cell.g !== 'G1 & G2';
                             const isFree = cell.k === 'x' || cell.k === 'lib';
-                            const showBreakCol = slotCounter === 3 && dIdx === 0;
-                            slotCounter += span;
+                            const showBreakBefore = slotStart === 3;
 
                             return (
                               <React.Fragment key={cIdx}>
-                                {showBreakCol && (
+                                {showBreakBefore && (
                                   <td
-                                    rowSpan={6}
-                                    className={`border-r border-ink/40 p-1 font-mono text-xs font-bold text-dim bg-paper2/50 ${
-                                      activeClass.status === 'break' ? 'bg-gold/30 text-accentRed border-2 border-accentRed' : ''
+                                    className={`border-r border-ink/40 p-1.5 font-mono text-xs text-center bg-paper2/50 ${
+                                      activeClass.status === 'break' ? 'bg-gold/30 text-accentRed font-bold' : 'text-dim'
                                     }`}
                                   >
-                                    <div className="writing-mode-vertical rotate-180 tracking-widest uppercase">
-                                      LUNCH BREAK (1–2)
-                                    </div>
+                                    <span className="text-[11px] block uppercase font-bold">Lunch</span>
+                                    <span className="text-[10px] text-dim block">1–2 PM</span>
                                   </td>
                                 )}
 
                                 <td
                                   colSpan={span}
-                                  className={`p-2.5 border-r border-ink/30 relative transition-all ${
+                                  className={`p-2 border-r border-ink/30 relative transition-all ${
                                     isSlotActive
                                       ? 'ring-2 ring-accentRed bg-accentRed/15 font-bold text-ink shadow-inner z-10'
                                       : isGroupOff
@@ -487,16 +564,29 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
                                   style={{ borderLeftColor: HUE[cell.k] || HUE.x }}
                                 >
                                   {isSlotActive && (
-                                    <span className="absolute -top-2 right-1 px-1.5 py-0.5 rounded-full text-xs font-mono font-bold bg-accentRed text-paper shadow-sm animate-pulse">
+                                    <span className="absolute -top-2 right-1 px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold bg-accentRed text-paper shadow-sm animate-pulse">
                                       RUNNING
                                     </span>
                                   )}
                                   <div className="font-hand text-base leading-tight font-bold text-ink">
                                     {cell.l}
                                   </div>
+                                  {cell.fac && (
+                                    <div
+                                      className="text-[11px] font-sans text-dim truncate max-w-[130px] mx-auto mt-0.5"
+                                      title={cell.fac}
+                                    >
+                                      {cell.fac}
+                                    </div>
+                                  )}
+                                  {cell.h && cell.h > 1 && (
+                                    <span className="text-[10px] font-mono text-ink/80 bg-ink/10 px-1 rounded inline-block mt-0.5 font-semibold">
+                                      {cell.h * 60}m block
+                                    </span>
+                                  )}
                                   {cell.g && (
                                     <span className="text-xs font-mono text-dim block mt-0.5">
-                                      Batch {cell.g} ({span * 60}m)
+                                      Batch {cell.g}
                                     </span>
                                   )}
                                 </td>
@@ -510,10 +600,61 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
                 </table>
               </div>
 
+              {/* OFFICIAL FACULTY & COURSE ALLOCATION TABLE */}
+              <div className="border border-ink/30 rounded-lg bg-paper overflow-hidden shadow-xs">
+                <button
+                  type="button"
+                  onClick={() => setShowFacultyList((v) => !v)}
+                  className="w-full flex items-center justify-between p-3 bg-paper2/70 hover:bg-gold/15 transition-colors font-hand text-lg font-bold text-ink border-b border-ink/20 text-left"
+                >
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span>📋 Official Faculty &amp; Course Allocation · {currentBranch.branchName}</span>
+                    <span className="text-xs font-mono font-semibold text-accentRed px-1.5 py-0.5 rounded bg-paper border border-ink/30">
+                      {currentBranch.room}
+                    </span>
+                    <span className="text-xs font-mono text-dim">
+                      (w.e.f. {currentBranch.effectiveDate})
+                    </span>
+                  </div>
+                  <span className="text-xs font-mono font-bold text-dim shrink-0">
+                    {showFacultyList ? '▲ Hide List' : `▼ View List (${currentBranch.faculty.length})`}
+                  </span>
+                </button>
+
+                {showFacultyList && (
+                  <div className="overflow-x-auto p-3">
+                    <table className="w-full text-left text-xs font-sans border-collapse">
+                      <thead>
+                        <tr className="bg-paper2 border-b-2 border-ink/30 font-bold font-sans">
+                          <th className="p-2 border-r border-ink/20 w-10 text-center">#</th>
+                          <th className="p-2 border-r border-ink/20">Subject Name</th>
+                          <th className="p-2 border-r border-ink/20">Course Short</th>
+                          <th className="p-2 border-r border-ink/20 text-center">L-T-P</th>
+                          <th className="p-2 border-r border-ink/20 text-center">Allotted Hours/Wk</th>
+                          <th className="p-2">Faculty Incharge</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {currentBranch.faculty.map((f) => (
+                          <tr key={f.sNo} className="border-b border-ink/15 hover:bg-gold/10 transition-colors">
+                            <td className="p-2 border-r border-ink/20 text-center font-mono text-dim font-bold">{f.sNo}</td>
+                            <td className="p-2 border-r border-ink/20 font-medium text-ink">{f.subject}</td>
+                            <td className="p-2 border-r border-ink/20 font-mono font-bold text-accentRed">{f.shortForm}</td>
+                            <td className="p-2 border-r border-ink/20 text-center font-mono">{f.ltp}</td>
+                            <td className="p-2 border-r border-ink/20 text-center font-mono">{f.hours}</td>
+                            <td className="p-2 font-hand text-base font-bold text-ink">{f.faculty}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+
               {/* Subject Color Legend */}
               <div className="p-3 bg-paper rounded-lg border border-dashed border-ink/30">
                 <div className="text-xs font-mono uppercase tracking-wider text-dim font-bold mb-1.5">
-                  Subject Color Reference (Group A Syllabus · Room 13):
+                  Subject Color Reference (Syllabus &amp; Schedule):
                 </div>
                 <div className="flex gap-2 flex-wrap">
                   {Object.entries(HUE).map(([k, col]) => (

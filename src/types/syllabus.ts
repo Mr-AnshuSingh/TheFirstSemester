@@ -120,11 +120,37 @@ export interface SceneDefinition {
 
 export type WorkedExampleMap = Record<string, string>;
 
+export type TimetableSubjectKey = SubjectId | 'lib' | 'x' | 'chem' | 'cs' | 'egd' | 'be';
+
 export interface TimetableCell {
-  k: SubjectId | 'lib' | 'x';
+  k: TimetableSubjectKey;
   l: string;
   g?: 'G1' | 'G2' | 'G1 & G2';
   h?: number;
+  fac?: string;
+  room?: string;
+}
+
+export interface FacultyAllocation {
+  sNo: number;
+  subject: string;
+  shortForm: string;
+  ltp: string;
+  hours: string;
+  faculty: string;
+}
+
+export interface BranchTimetable {
+  branchId: string;
+  branchName: string;
+  room: string;
+  effectiveDate: string;
+  session: string;
+  slots: string[];
+  days: string[];
+  full: string[];
+  grid: TimetableCell[][];
+  faculty: FacultyAllocation[];
 }
 
 export interface TimetableData {
