@@ -12,9 +12,7 @@ import {
   Target,
   HelpCircle,
   FileText,
-  ChevronRight,
   Zap,
-  RefreshCw,
   Printer,
   ArrowLeft,
   Calculator,
@@ -24,10 +22,8 @@ import {
   Square,
   Cpu,
   Layers,
-  GraduationCap,
   Play,
   RotateCcw,
-  AlertTriangle,
   Lightbulb,
 } from 'lucide-react';
 import {
@@ -35,7 +31,6 @@ import {
   BEU_REAL_PAPERS_2026,
   MidsemCourse,
   MidsemUnit,
-  MidsemTopic,
   BeuPaper,
 } from '@/data/midsemNotes';
 import { MIDSEM_MCQS, MidsemMcq } from '@/data/midsemMCQs';
@@ -44,7 +39,7 @@ import { LNJPIT_EXAM_SITTINGS, LNJPIT_EXAM_NOTICE, ExamSitting } from '@/data/mi
 import { KatexText } from '@/components/study/KatexRenderer';
 
 type ViewTab = 'notes' | 'numericals' | 'mcq' | 'guess' | 'papers' | 'simulator' | 'predictor' | 'calculator';
-type ThemeMode = 'cyber' | 'noir' | 'matrix' | 'solar';
+type ThemeMode = 'notebook' | 'parchment' | 'blueprint';
 
 const READINESS_PILLARS = [
   { id: 'p1', label: 'Unit 1 Fundamentals & Definitions Memorized', weight: 6 },
@@ -68,7 +63,7 @@ export default function MidsemRevisionPage() {
   const [activeSubjectCode, setActiveSubjectCode] = useState<string>('100111'); // BEEE is 1st exam
   const [activeUnitNo, setActiveUnitNo] = useState<number>(0); // 0 = All Units, 1, 2, 3
   const [activeTab, setActiveTab] = useState<ViewTab>('notes');
-  const [theme, setTheme] = useState<ThemeMode>('cyber');
+  const [theme, setTheme] = useState<ThemeMode>('notebook');
 
   // MCQ state
   const [userAnswers, setUserAnswers] = useState<Record<string, number>>({});
@@ -104,7 +99,7 @@ export default function MidsemRevisionPage() {
 
   useEffect(() => {
     const updateCountdown = () => {
-      // Find current or next sitting
+      // Find target date
       const targetDate = new Date('2026-11-25T11:00:00+05:30').getTime();
       const now = new Date().getTime();
       const diff = targetDate - now;
@@ -232,7 +227,7 @@ export default function MidsemRevisionPage() {
   }, [rlcL, rlcC]);
 
   const theveninPower = useMemo(() => {
-    if (thevR + thevRl <= 0) return { il: 0, pl: 0 };
+    if (thevR + thevRl <= 0) return { il: '0.000', pl: '0.000' };
     const il = thevV / (thevR + thevRl);
     const pl = il * il * thevRl;
     return { il: il.toFixed(3), pl: pl.toFixed(3) };
@@ -254,103 +249,111 @@ export default function MidsemRevisionPage() {
     return (cacheH * cacheTc + (1 - cacheH) * cacheTm).toFixed(3);
   }, [cacheH, cacheTc, cacheTm]);
 
-  // Theme styling classes
-  const themeClasses = {
-    cyber: {
-      bg: 'bg-[#090d16]',
-      card: 'bg-[#0f172a]/90 border border-slate-700/60 shadow-xl backdrop-blur-md',
-      cardHover: 'hover:border-cyan-500/50 hover:shadow-cyan-500/10',
+  // Notebook Theme Palette Configurations
+  const currentTheme = {
+    notebook: {
+      bg: 'bg-paper',
+      text: 'text-ink',
+      subtext: 'text-dim',
+      headerBg: 'bg-paper/95',
+      card: 'bg-paper2 border-2 border-ink shadow-sketchy',
+      cardInner: 'bg-paper border-2 border-ink shadow-sketchy',
+      box: 'border-2 border-ink shadow-sketchy',
+      codeBox: 'bg-paper3 border-2 border-ink/40 text-ink',
+      tipBox: 'bg-gold/15 border-2 border-accentGold/60 text-ink',
+      pillActive: 'bg-accentRed text-paper border-2 border-ink shadow-sketch',
+      pillInactive: 'bg-paper text-ink border-2 border-ink/40 hover:bg-paper3 hover:border-ink',
+      tabActive: 'bg-paper text-ink border-2 border-ink shadow-sketch',
+      tabInactive: 'text-dim hover:text-ink hover:bg-paper2 border-2 border-transparent',
+    },
+    parchment: {
+      bg: 'bg-[#ede3cc]',
+      text: 'text-[#2b2217]',
+      subtext: 'text-[#5a4a35]',
+      headerBg: 'bg-[#ede3cc]/95',
+      card: 'bg-[#e2d5b8] border-2 border-[#3d3122] shadow-sketchy',
+      cardInner: 'bg-[#f4ebd6] border-2 border-[#3d3122] shadow-sketchy',
+      box: 'border-2 border-[#3d3122] shadow-sketchy',
+      codeBox: 'bg-[#dacab0] border-2 border-[#3d3122]/40 text-[#2b2217]',
+      tipBox: 'bg-[#e8c872]/25 border-2 border-[#b8810b]/70 text-[#2b2217]',
+      pillActive: 'bg-[#9e3512] text-white border-2 border-[#3d3122] shadow-sketch',
+      pillInactive: 'bg-[#f4ebd6] text-[#2b2217] border-2 border-[#3d3122]/40 hover:bg-[#dacab0]',
+      tabActive: 'bg-[#f4ebd6] text-[#2b2217] border-2 border-[#3d3122] shadow-sketch',
+      tabInactive: 'text-[#5a4a35] hover:text-[#2b2217] hover:bg-[#e2d5b8] border-2 border-transparent',
+    },
+    blueprint: {
+      bg: 'bg-[#0b1324]',
       text: 'text-slate-100',
-      subtext: 'text-slate-400',
-      accent: 'text-cyan-400',
-      badge: 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30',
-      glow: 'shadow-[0_0_20px_rgba(6,182,212,0.15)]',
-    },
-    noir: {
-      bg: 'bg-black',
-      card: 'bg-zinc-950 border border-zinc-800 shadow-2xl',
-      cardHover: 'hover:border-zinc-500',
-      text: 'text-white',
-      subtext: 'text-zinc-400',
-      accent: 'text-amber-400',
-      badge: 'bg-zinc-800 text-zinc-200 border border-zinc-700',
-      glow: 'shadow-[0_0_15px_rgba(255,255,255,0.08)]',
-    },
-    matrix: {
-      bg: 'bg-[#041208]',
-      card: 'bg-[#061e0d]/90 border border-emerald-800/60 shadow-xl backdrop-blur-md',
-      cardHover: 'hover:border-emerald-400/60',
-      text: 'text-emerald-100',
-      subtext: 'text-emerald-400/80',
-      accent: 'text-emerald-400',
-      badge: 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30',
-      glow: 'shadow-[0_0_20px_rgba(16,185,129,0.15)]',
-    },
-    solar: {
-      bg: 'bg-slate-50',
-      card: 'bg-white border border-slate-200 shadow-md',
-      cardHover: 'hover:border-indigo-400',
-      text: 'text-slate-900',
-      subtext: 'text-slate-600',
-      accent: 'text-indigo-600',
-      badge: 'bg-indigo-50 text-indigo-700 border border-indigo-200',
-      glow: 'shadow-sm',
+      subtext: 'text-cyan-200/70',
+      headerBg: 'bg-[#0f1b33]/95',
+      card: 'bg-[#13223f] border-2 border-cyan-500/50 shadow-sketchy',
+      cardInner: 'bg-[#0d182d] border-2 border-cyan-500/40 shadow-sketchy',
+      box: 'border-2 border-cyan-500/50 shadow-sketchy',
+      codeBox: 'bg-[#08101e] border-2 border-cyan-500/40 text-cyan-200',
+      tipBox: 'bg-cyan-950/60 border-2 border-cyan-500/50 text-cyan-200',
+      pillActive: 'bg-cyan-500 text-slate-950 border-2 border-cyan-300 shadow-sketch',
+      pillInactive: 'bg-[#0d182d] text-cyan-200 border-2 border-cyan-500/40 hover:bg-[#13223f]',
+      tabActive: 'bg-[#13223f] text-cyan-300 border-2 border-cyan-400 shadow-sketch',
+      tabInactive: 'text-cyan-200/60 hover:text-cyan-200 hover:bg-[#13223f]/60 border-2 border-transparent',
     },
   }[theme];
 
   return (
-    <div className={`min-h-screen ${themeClasses.bg} ${themeClasses.text} transition-colors duration-300 font-sans pb-24`}>
-      {/* TOP COMMAND HUD */}
-      <header className="sticky top-0 z-40 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl px-4 py-3">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 flex-wrap">
+    <div className={`min-h-screen ${currentTheme.bg} ${currentTheme.text} transition-colors duration-200 font-sans pb-24 overflow-x-hidden selection:bg-gold/30 selection:text-ink`}>
+      {/* =========================================================================
+          TOP COMMAND HUD (NOTEBOOK HEADER)
+         ========================================================================= */}
+      <header className={`sticky top-0 z-40 border-b-2 border-ink ${currentTheme.headerBg} backdrop-blur-md px-3 sm:px-4 py-2.5 sm:py-3 shadow-sketchy`}>
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2.5 sm:gap-3 flex-wrap">
           {/* Brand & Routine Info */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
             <Link
               href="/"
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-900/60 hover:bg-slate-800 text-xs font-semibold transition-colors"
-              title="Return to Main 3D Notebook"
+              className="btn flex items-center gap-1 px-2 py-1 sm:px-2.5 sm:py-1.5 text-xs font-bold border-2 border-ink bg-paper2 hover:bg-ink hover:text-paper shadow-sketchy transition-colors shrink-0"
+              title="Return to Main Notebook"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back to Sem-I</span>
+              <span className="hidden sm:inline">Back to Sem-I</span>
+              <span className="sm:hidden">Sem-I</span>
             </Link>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-extrabold tracking-tight text-base sm:text-lg flex items-center gap-1.5">
-                  <span className="text-cyan-400">⚡ M&amp;C Mid-Sem Hub</span>
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30 font-mono">
-                    Batch 2026
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="font-hand text-xl sm:text-2xl md:text-3xl font-bold text-ink flex items-center gap-1.5 leading-none">
+                  <span className="text-accentRed">⚡ M&amp;C Mid-Sem Hub</span>
+                  <span className="text-[10px] sm:text-xs px-2 py-0.5 rounded-full border-2 border-ink bg-gold/25 text-ink font-mono font-bold shadow-sketchy shrink-0">
+                    2026
                   </span>
                 </span>
-                <span className="hidden md:inline-block text-xs text-slate-400">
+                <span className="hidden md:inline-block text-xs font-semibold text-dim">
                   LNJPIT Chapra · Group A
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 truncate max-w-md">
-                Ref No: {LNJPIT_EXAM_NOTICE.refNo} · Revised Exam: Nov 25–27, 2026 (Units 1, 2 &amp; 3)
+              <p className="text-[10px] sm:text-[11px] text-dim truncate max-w-[250px] sm:max-w-md font-mono mt-0.5">
+                Ref: {LNJPIT_EXAM_NOTICE.refNo} · Revised Routine: Nov 25–27, 2026
               </p>
             </div>
           </div>
 
-          {/* Countdown & Quick Controls */}
-          <div className="flex items-center gap-2.5 flex-wrap">
+          {/* Countdown, Theme & Quick Controls */}
+          <div className="flex items-center gap-2 flex-wrap shrink-0">
             {/* Live Countdown Pill */}
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-950/40 border border-cyan-500/30 text-cyan-300 font-mono text-xs">
-              <Clock className="w-3.5 h-3.5 animate-pulse text-cyan-400" />
-              <span className="hidden sm:inline text-slate-400">Starts:</span>
-              <strong className="text-cyan-300">{timeUntilNext || '25 Nov 2026'}</strong>
+            <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full border-2 border-ink bg-paper2 text-ink font-mono text-[11px] sm:text-xs shadow-sketchy">
+              <Clock className="w-3.5 h-3.5 animate-pulse text-accentRed" />
+              <span className="hidden sm:inline text-dim font-bold">Starts:</span>
+              <strong className="text-accentRed font-bold">{timeUntilNext || '25 Nov 2026'}</strong>
             </div>
 
-            {/* Theme Toggle */}
-            <div className="flex items-center bg-slate-900/80 border border-slate-800 rounded-lg p-0.5 text-xs">
-              {(['cyber', 'noir', 'matrix', 'solar'] as ThemeMode[]).map((t) => (
+            {/* Theme Toggle (Notebook, Parchment, Blueprint) */}
+            <div className="flex items-center bg-paper2 border-2 border-ink rounded-lg p-0.5 text-xs shadow-sketchy">
+              {(['notebook', 'parchment', 'blueprint'] as ThemeMode[]).map((t) => (
                 <button
                   key={t}
                   type="button"
                   onClick={() => setTheme(t)}
-                  className={`px-2 py-1 rounded capitalize font-medium transition-colors ${
+                  className={`px-2 py-0.5 sm:px-2.5 sm:py-1 rounded font-bold capitalize text-[11px] sm:text-xs transition-colors ${
                     theme === t
-                      ? 'bg-slate-700 text-white shadow-xs'
-                      : 'text-slate-400 hover:text-slate-200'
+                      ? 'bg-ink text-paper shadow-xs'
+                      : 'text-dim hover:text-ink'
                   }`}
                 >
                   {t}
@@ -362,28 +365,30 @@ export default function MidsemRevisionPage() {
             <button
               type="button"
               onClick={() => window.print()}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-xs text-slate-300 font-medium transition-colors"
+              className="btn flex items-center gap-1 px-2 py-1 sm:px-2.5 sm:py-1.5 border-2 border-ink bg-paper2 hover:bg-ink hover:text-paper text-xs text-ink font-bold shadow-sketchy transition-colors"
               title="Print A4 Clean Notes & Papers"
             >
-              <Printer className="w-3.5 h-3.5 text-slate-400" />
-              <span className="hidden sm:inline">Print / PDF</span>
+              <Printer className="w-3.5 h-3.5 text-dim" />
+              <span className="hidden sm:inline">Print</span>
             </button>
           </div>
         </div>
       </header>
 
-      {/* SITTING BANNER (OFFICIAL LNJPIT CHAPRA SCHEDULE) */}
+      {/* =========================================================================
+          SITTING BANNER (OFFICIAL LNJPIT CHAPRA SCHEDULE)
+         ========================================================================= */}
       <section className="max-w-7xl mx-auto px-4 pt-4">
-        <div className="rounded-xl border border-cyan-500/20 bg-linear-to-r from-cyan-950/30 via-slate-900/40 to-violet-950/30 p-3 sm:p-4 backdrop-blur-md">
+        <div className={`rounded-xl p-3 sm:p-4 ${currentTheme.card}`}>
           <div className="flex items-center justify-between gap-2 flex-wrap mb-2.5">
             <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-cyan-400" />
-              <span className="text-xs font-bold uppercase tracking-wider text-cyan-300">
+              <Calendar className="w-4 h-4 text-accentRed" />
+              <span className="font-hand text-xl font-bold text-ink">
                 Official Examination Schedule (Mathematics &amp; Computing Group A)
               </span>
             </div>
-            <span className="text-[11px] text-slate-400 font-mono">
-              Full Marks: 20 · Time: 2 Hours per sitting
+            <span className="text-[11px] text-dim font-mono font-bold">
+              Full Marks: 20 · Time: 2 Hours per sitting · Revised Routine Nov 2026
             </span>
           </div>
 
@@ -403,20 +408,20 @@ export default function MidsemRevisionPage() {
                       setActiveSubjectCode(matchedCourse.code);
                     }
                   }}
-                  className={`flex flex-col text-left p-2.5 rounded-lg border transition-all ${
+                  className={`flex flex-col text-left p-2.5 rounded-xl border-2 transition-all ${
                     isSelected
-                      ? 'border-cyan-400 bg-cyan-950/60 shadow-md shadow-cyan-500/10'
-                      : 'border-slate-800/80 bg-slate-900/40 hover:border-slate-700 hover:bg-slate-900/70'
+                      ? 'border-ink bg-gold/30 shadow-sketch font-bold scale-[1.02]'
+                      : 'border-ink/40 bg-paper hover:border-ink hover:bg-paper3 shadow-sketchy'
                   }`}
                 >
-                  <div className="flex items-center justify-between text-[10px] text-slate-400 font-medium mb-1">
+                  <div className="flex items-center justify-between text-[10px] text-dim font-mono mb-1">
                     <span>{sitting.day.slice(0, 3)}, {sitting.date.slice(5)}</span>
-                    <span className="font-mono text-cyan-400/90">{sitting.timing.split('–')[0].trim()}</span>
+                    <span className="font-bold text-accentRed">{sitting.timing.split('–')[0].trim()}</span>
                   </div>
-                  <strong className="text-sm font-bold text-slate-100 flex items-center gap-1">
+                  <strong className="font-hand text-lg font-bold text-ink leading-tight">
                     {sitting.subjectShort}
                   </strong>
-                  <span className="text-[10px] text-slate-400 truncate mt-0.5">
+                  <span className="text-[10px] text-dim truncate mt-0.5 font-mono">
                     {sitting.sitting} · {sitting.subjectCode}
                   </span>
                 </button>
@@ -426,7 +431,9 @@ export default function MidsemRevisionPage() {
         </div>
       </section>
 
-      {/* SUBJECT AND UNIT STRIP */}
+      {/* =========================================================================
+          SUBJECT AND SCOPE STRIP
+         ========================================================================= */}
       <section className="max-w-7xl mx-auto px-4 pt-4">
         {/* Row 1: Subject Chips */}
         <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
@@ -440,38 +447,38 @@ export default function MidsemRevisionPage() {
                   setActiveSubjectCode(course.code);
                   setActiveUnitNo(0); // reset unit to All
                 }}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs sm:text-sm font-semibold shrink-0 transition-all ${
-                  active
-                    ? 'border-cyan-400 bg-cyan-500/20 text-cyan-200 shadow-md shadow-cyan-500/15'
-                    : 'border-slate-800 bg-slate-900/60 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold shrink-0 transition-all ${
+                  active ? currentTheme.pillActive : currentTheme.pillInactive
                 }`}
               >
                 <span
-                  className="w-2.5 h-2.5 rounded-full"
+                  className="w-2.5 h-2.5 rounded-full border border-ink/30 shrink-0"
                   style={{ backgroundColor: course.color }}
                 />
-                <span>{course.short}</span>
-                <span className="text-[11px] font-mono text-slate-400">({course.code})</span>
+                <span className="font-hand text-lg leading-none">{course.short}</span>
+                <span className={`text-[11px] font-mono ${active ? 'text-paper/90' : 'text-dim'}`}>
+                  ({course.code})
+                </span>
               </button>
             );
           })}
         </div>
 
         {/* Row 2: Unit Filter & Feature Tabs */}
-        <div className="flex items-center justify-between gap-3 mt-3 flex-wrap border-b border-slate-800/80 pb-3">
-          {/* Unit Pills */}
-          <div className="flex items-center gap-1.5 bg-slate-900/80 p-1 rounded-xl border border-slate-800 text-xs">
-            <span className="text-slate-400 px-2 font-medium flex items-center gap-1">
-              <Filter className="w-3 h-3 text-cyan-400" />
+        <div className="flex items-center justify-between gap-3 mt-3 flex-wrap border-b-2 border-ink/30 pb-3">
+          {/* Unit Scope Filter */}
+          <div className="flex items-center gap-1.5 bg-paper2 p-1 rounded-xl border-2 border-ink shadow-sketchy text-xs">
+            <span className="text-dim px-2 font-bold flex items-center gap-1">
+              <Filter className="w-3.5 h-3.5 text-accentRed" />
               <span>Scope:</span>
             </span>
             <button
               type="button"
               onClick={() => setActiveUnitNo(0)}
-              className={`px-2.5 py-1 rounded-lg font-semibold transition-colors ${
+              className={`px-2.5 py-1 rounded-lg font-bold transition-colors ${
                 activeUnitNo === 0
-                  ? 'bg-cyan-500 text-slate-950 shadow-xs'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-ink text-paper shadow-xs'
+                  : 'text-dim hover:text-ink hover:bg-paper3'
               }`}
             >
               All Units (1, 2 &amp; 3)
@@ -481,10 +488,10 @@ export default function MidsemRevisionPage() {
                 key={u}
                 type="button"
                 onClick={() => setActiveUnitNo(u)}
-                className={`px-2.5 py-1 rounded-lg font-semibold transition-colors ${
+                className={`px-2.5 py-1 rounded-lg font-bold transition-colors ${
                   activeUnitNo === u
-                    ? 'bg-cyan-500 text-slate-950 shadow-xs'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-ink text-paper shadow-xs'
+                    : 'text-dim hover:text-ink hover:bg-paper3'
                 }`}
               >
                 Unit {u}
@@ -493,7 +500,7 @@ export default function MidsemRevisionPage() {
           </div>
 
           {/* View Mode Tabs */}
-          <nav className="flex items-center gap-1 overflow-x-auto scrollbar-none text-xs">
+          <nav className="flex items-center gap-1.5 overflow-x-auto scrollbar-none text-xs">
             {[
               { id: 'notes', label: 'Master Notes', icon: BookOpen },
               { id: 'numericals', label: 'Solved Numericals', icon: Target },
@@ -511,13 +518,11 @@ export default function MidsemRevisionPage() {
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id as ViewTab)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all shrink-0 ${
-                    isTabActive
-                      ? 'bg-slate-800 text-cyan-300 border border-cyan-500/40 shadow-xs'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all shrink-0 ${
+                    isTabActive ? currentTheme.tabActive : currentTheme.tabInactive
                   }`}
                 >
-                  <Icon className="w-3.5 h-3.5" />
+                  <Icon className="w-3.5 h-3.5 text-accentRed" />
                   <span>{tab.label}</span>
                 </button>
               );
@@ -526,31 +531,33 @@ export default function MidsemRevisionPage() {
         </div>
       </section>
 
-      {/* MAIN CONTENT AREA */}
+      {/* =========================================================================
+          MAIN CONTENT AREA
+         ========================================================================= */}
       <main className="max-w-7xl mx-auto px-4 pt-6">
         {/* Active Subject Meta Card */}
-        <div className={`p-4 rounded-xl ${themeClasses.card} mb-6 flex items-start justify-between gap-4 flex-wrap`}>
+        <div className={`p-5 rounded-2xl mb-6 flex items-start justify-between gap-4 flex-wrap ${currentTheme.card}`}>
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs px-2 py-0.5 rounded-md font-mono font-bold bg-slate-800 text-cyan-400 border border-slate-700">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <span className="text-xs px-2.5 py-0.5 rounded-md font-mono font-bold border-2 border-ink bg-paper text-ink shadow-sketchy">
                 Code: {currentCourse.code}
               </span>
-              <span className="text-xs px-2 py-0.5 rounded-md font-mono bg-violet-950/60 text-violet-300 border border-violet-700/50">
+              <span className="text-xs px-2.5 py-0.5 rounded-md font-mono font-semibold border-2 border-ink bg-gold/25 text-ink shadow-sketchy">
                 {currentSitting?.day} · {currentSitting?.sitting} ({currentSitting?.timing})
               </span>
             </div>
-            <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-100">
+            <h1 className="font-hand text-2xl sm:text-3xl font-bold text-ink">
               {currentCourse.title}
             </h1>
-            <p className="text-xs text-slate-400 mt-1">
-              Focus: <span className="text-slate-300 font-medium">{currentSitting?.keyFocus}</span>
+            <p className="text-xs text-dim mt-1">
+              Focus: <span className="text-ink font-semibold">{currentSitting?.keyFocus}</span>
             </p>
           </div>
 
           <div className="flex items-center gap-3 text-right">
             <div>
-              <div className="text-[11px] text-slate-400 uppercase tracking-wider">Exam Syllabus</div>
-              <div className="text-sm font-bold text-cyan-300 font-mono">
+              <div className="text-[11px] text-dim uppercase tracking-wider font-mono font-bold">Exam Syllabus</div>
+              <div className="text-sm font-bold text-accentRed font-mono">
                 {activeUnitNo === 0 ? 'Units 1, 2 & 3 Full Coverage' : `Unit ${activeUnitNo} Deep Dive`}
               </div>
             </div>
@@ -563,21 +570,21 @@ export default function MidsemRevisionPage() {
         {activeTab === 'notes' && (
           <div className="space-y-8">
             {displayedUnits.map((unit) => (
-              <section key={unit.unitNo} className={`p-5 sm:p-6 rounded-2xl ${themeClasses.card} ${themeClasses.glow}`}>
+              <section key={unit.unitNo} className={`p-5 sm:p-6 rounded-2xl ${currentTheme.card}`}>
                 {/* Unit Header */}
-                <div className="border-b border-slate-800/80 pb-3 mb-5">
+                <div className="border-b-2 border-ink/30 pb-3 mb-5">
                   <div className="flex items-center justify-between gap-2 flex-wrap">
-                    <h2 className="text-lg sm:text-xl font-extrabold text-slate-100 flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-md bg-cyan-500/20 text-cyan-300 flex items-center justify-center text-xs font-bold border border-cyan-500/30">
+                    <h2 className="font-hand text-2xl sm:text-3xl font-bold text-ink flex items-center gap-2.5">
+                      <span className="w-8 h-8 rounded-lg border-2 border-ink bg-accentTeal text-paper flex items-center justify-center text-sm font-bold shadow-sketchy">
                         {unit.unitNo}
                       </span>
                       <span>{unit.title}</span>
                     </h2>
-                    <span className="text-xs text-slate-400 font-mono">
-                      {unit.topics.length} Key Revision Topics
+                    <span className="text-xs font-mono font-bold text-dim bg-paper border-2 border-ink px-2.5 py-0.5 rounded-lg shadow-sketchy">
+                      {unit.topics.length} Key Topics
                     </span>
                   </div>
-                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">{unit.summary}</p>
+                  <p className="text-xs sm:text-sm text-dim mt-1.5 leading-relaxed">{unit.summary}</p>
                 </div>
 
                 {/* Inline SVG Diagrams for this Unit */}
@@ -586,16 +593,18 @@ export default function MidsemRevisionPage() {
                     {currentDiagrams
                       .filter((d) => d.unitNo === unit.unitNo)
                       .map((diag) => (
-                        <div key={diag.id} className="p-4 rounded-xl bg-slate-950/60 border border-slate-800">
-                          <div className="flex items-center justify-between text-xs font-semibold text-cyan-300 mb-2">
-                            <span>📐 Exam Schematic: {diag.title}</span>
-                            <span className="text-[11px] text-slate-400 font-mono">SVG 2D/3D Diagram</span>
+                        <div key={diag.id} className={`p-4 rounded-xl ${currentTheme.cardInner}`}>
+                          <div className="flex items-center justify-between text-xs font-bold text-ink mb-2">
+                            <span className="font-hand text-lg">📐 Exam Schematic: {diag.title}</span>
+                            <span className="text-[11px] font-mono border-2 border-ink/40 bg-paper2 px-2 py-0.5 rounded shadow-sketchy text-dim">
+                              SVG Schematic
+                            </span>
                           </div>
                           <div
-                            className="overflow-x-auto rounded-lg border border-slate-800/80 bg-slate-900/50"
+                            className="overflow-x-auto rounded-lg border-2 border-ink bg-[#0f172a] p-2 shadow-inner"
                             dangerouslySetInnerHTML={{ __html: diag.svg }}
                           />
-                          <p className="text-xs text-slate-400 mt-2 italic leading-relaxed">
+                          <p className="text-xs text-dim mt-2 italic leading-relaxed">
                             💡 Caption: {diag.caption}
                           </p>
                         </div>
@@ -608,33 +617,33 @@ export default function MidsemRevisionPage() {
                   {unit.topics.map((topic, tIdx) => (
                     <article
                       key={tIdx}
-                      className="p-4 sm:p-5 rounded-xl bg-slate-900/60 border border-slate-800/80 space-y-3"
+                      className={`p-4 sm:p-5 rounded-xl ${currentTheme.cardInner} space-y-3`}
                     >
-                      <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
-                        <span className="text-cyan-400">§ {tIdx + 1}.</span>
+                      <h3 className="font-hand text-xl sm:text-2xl font-bold text-ink flex items-center gap-2">
+                        <span className="text-accentRed">§ {tIdx + 1}.</span>
                         <span>{topic.heading}</span>
                       </h3>
 
                       {/* Plain Explanation */}
-                      <p className="text-sm text-slate-300 leading-relaxed font-sans">
+                      <p className="text-sm text-ink/90 leading-relaxed font-sans">
                         {topic.plainExplanation}
                       </p>
 
                       {/* Key Formula Box */}
-                      <div className="p-3.5 rounded-lg bg-slate-950/80 border border-cyan-500/20 text-xs sm:text-sm font-mono text-cyan-200 whitespace-pre-line leading-relaxed">
-                        <div className="text-[10px] text-cyan-400/80 font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
-                          <Zap className="w-3 h-3 text-cyan-400" />
+                      <div className={`p-3.5 rounded-xl ${currentTheme.codeBox} text-xs sm:text-sm font-mono whitespace-pre-line leading-relaxed shadow-xs`}>
+                        <div className="text-[10px] text-accentRed font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
+                          <Zap className="w-3.5 h-3.5 text-accentRed" />
                           <span>Core Equations &amp; Formulas:</span>
                         </div>
                         <KatexText htmlOrText={topic.keyFormula} />
                       </div>
 
                       {/* Exam Tip Alert */}
-                      <div className="flex items-start gap-2.5 p-3 rounded-lg bg-amber-950/30 border border-amber-500/30 text-amber-200 text-xs leading-relaxed">
-                        <Lightbulb className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                      <div className={`flex items-start gap-2.5 p-3 rounded-xl ${currentTheme.tipBox} text-xs leading-relaxed shadow-sketchy`}>
+                        <Lightbulb className="w-4 h-4 text-accentGold shrink-0 mt-0.5" />
                         <div>
-                          <strong className="text-amber-300 font-semibold">Topper Exam Tip: </strong>
-                          <span>{topic.examTip}</span>
+                          <strong className="text-ink font-bold">Topper Exam Tip: </strong>
+                          <span className="text-ink/90 font-medium">{topic.examTip}</span>
                         </div>
                       </div>
                     </article>
@@ -652,33 +661,33 @@ export default function MidsemRevisionPage() {
           <div className="space-y-6">
             {displayedUnits.map((unit) => (
               <div key={unit.unitNo} className="space-y-4">
-                <h2 className="text-lg font-bold text-slate-200 flex items-center gap-2 border-b border-slate-800 pb-2">
-                  <Target className="w-4 h-4 text-cyan-400" />
+                <h2 className="font-hand text-2xl font-bold text-ink flex items-center gap-2 border-b-2 border-ink/30 pb-2">
+                  <Target className="w-5 h-5 text-accentRed" />
                   <span>{unit.title} — Solved Problems</span>
                 </h2>
 
                 {unit.standardProblems.map((prob, pIdx) => (
                   <div
                     key={pIdx}
-                    className={`p-5 rounded-2xl ${themeClasses.card} space-y-4 border-l-4 border-l-cyan-500`}
+                    className={`p-5 rounded-2xl ${currentTheme.card} space-y-4 border-l-6 border-l-accentTeal`}
                   >
                     {/* Problem Statement */}
                     <div>
-                      <span className="text-xs px-2 py-0.5 rounded font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                      <span className="text-xs px-2.5 py-0.5 rounded font-mono font-bold border-2 border-ink bg-accentTeal text-paper shadow-sketchy">
                         Problem {unit.unitNo}.{pIdx + 1}
                       </span>
-                      <h3 className="text-base font-semibold text-slate-100 mt-2">
+                      <h3 className="text-base font-bold text-ink mt-2">
                         {prob.q}
                       </h3>
                     </div>
 
                     {/* Step-by-Step Boxed Solution */}
-                    <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
-                      <div className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                    <div className={`p-4 rounded-xl ${currentTheme.cardInner} space-y-2`}>
+                      <div className="text-xs font-bold text-accentTeal uppercase tracking-wider flex items-center gap-1.5 mb-2">
+                        <CheckCircle2 className="w-4 h-4 text-accentGreen" />
                         <span>Step-by-Step Derivation &amp; Solution (4-Box Format):</span>
                       </div>
-                      <div className="text-xs sm:text-sm font-mono text-slate-300 whitespace-pre-line leading-relaxed">
+                      <div className="text-xs sm:text-sm font-mono text-ink whitespace-pre-line leading-relaxed">
                         <KatexText htmlOrText={prob.solution} />
                       </div>
                     </div>
@@ -695,34 +704,34 @@ export default function MidsemRevisionPage() {
         {activeTab === 'mcq' && (
           <div className="space-y-6">
             {/* Header Score & Filter Bar */}
-            <div className={`p-4 rounded-xl ${themeClasses.card} flex items-center justify-between gap-3 flex-wrap`}>
+            <div className={`p-4 rounded-xl ${currentTheme.card} flex items-center justify-between gap-3 flex-wrap`}>
               <div>
-                <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
-                  <HelpCircle className="w-4 h-4 text-cyan-400" />
+                <h2 className="font-hand text-2xl font-bold text-ink flex items-center gap-2">
+                  <HelpCircle className="w-5 h-5 text-accentRed" />
                   <span>Interactive CBT Objective Questions</span>
                 </h2>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-dim mt-0.5 font-medium">
                   1-mark university questions · Instant green/red validation with detailed explanations
                 </p>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2.5 flex-wrap">
                 {/* Score Pill */}
-                <div className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-mono">
-                  <span className="text-slate-400">Score: </span>
-                  <strong className="text-emerald-400">{mcqStats.correct}</strong>
-                  <span className="text-slate-500"> / {mcqStats.attempted}</span>
-                  <span className="text-cyan-400 ml-1.5 font-bold">({mcqStats.pct}%)</span>
+                <div className="px-3.5 py-1.5 rounded-lg border-2 border-ink bg-paper text-xs font-mono font-bold text-ink shadow-sketchy">
+                  <span className="text-dim">Score: </span>
+                  <strong className="text-accentGreen">{mcqStats.correct}</strong>
+                  <span className="text-dim"> / {mcqStats.attempted}</span>
+                  <span className="text-accentRed ml-1.5 font-bold">({mcqStats.pct}%)</span>
                 </div>
 
                 {/* Filter Missed Button */}
                 <button
                   type="button"
                   onClick={() => setOnlyMissed(!onlyMissed)}
-                  className={`text-xs px-3 py-1.5 rounded-lg font-medium border transition-colors ${
+                  className={`text-xs px-3 py-1.5 rounded-lg font-bold border-2 transition-colors shadow-sketchy ${
                     onlyMissed
-                      ? 'bg-red-500/20 text-red-300 border-red-500/40'
-                      : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
+                      ? 'border-accentRed bg-accentRed text-paper'
+                      : 'border-ink bg-paper text-ink hover:bg-paper3'
                   }`}
                 >
                   {onlyMissed ? 'Showing Missed Only' : 'Filter Missed'}
@@ -732,17 +741,17 @@ export default function MidsemRevisionPage() {
                 <button
                   type="button"
                   onClick={() => setUserAnswers({})}
-                  className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200"
+                  className="p-1.5 rounded-lg border-2 border-ink bg-paper text-dim hover:text-ink hover:bg-paper3 shadow-sketchy"
                   title="Reset All Answers"
                 >
-                  <RotateCcw className="w-3.5 h-3.5" />
+                  <RotateCcw className="w-4 h-4" />
                 </button>
               </div>
             </div>
 
             {/* Questions List */}
             {filteredMcqs.length === 0 ? (
-              <div className="p-8 text-center rounded-xl bg-slate-900/40 border border-slate-800 text-slate-400 text-sm">
+              <div className={`p-8 text-center rounded-xl border-2 border-ink bg-paper2 text-dim text-sm shadow-sketchy`}>
                 No questions found under this filter. Reset your filters to continue practicing.
               </div>
             ) : (
@@ -755,30 +764,30 @@ export default function MidsemRevisionPage() {
                   return (
                     <div
                       key={q.id}
-                      className={`p-5 rounded-2xl ${themeClasses.card} space-y-4 transition-all ${
+                      className={`p-5 rounded-2xl border-2 shadow-sketchy space-y-4 transition-all ${
                         hasAnswered
                           ? isCorrect
-                            ? 'border-emerald-500/50 bg-emerald-950/10'
-                            : 'border-rose-500/50 bg-rose-950/10'
-                          : ''
+                            ? 'border-accentGreen bg-accentGreen/15'
+                            : 'border-accentRed bg-accentRed/15'
+                          : 'border-ink bg-paper'
                       }`}
                     >
                       {/* Question Header */}
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2">
-                          <span className="w-6 h-6 rounded-md bg-slate-800 text-cyan-400 flex items-center justify-center text-xs font-mono font-bold border border-slate-700">
+                          <span className="w-7 h-7 rounded-md border-2 border-ink bg-paper2 text-ink flex items-center justify-center text-xs font-mono font-bold shadow-sketchy">
                             Q{idx + 1}
                           </span>
-                          <span className="text-xs font-mono text-slate-400">
+                          <span className="text-xs font-mono font-semibold text-dim">
                             Unit {q.unitNo} · {q.topic}
                           </span>
                         </div>
                         {hasAnswered && (
                           <span
-                            className={`text-xs font-bold px-2 py-0.5 rounded flex items-center gap-1 ${
+                            className={`text-xs font-bold px-2.5 py-0.5 rounded-md border-2 flex items-center gap-1 shadow-sketchy ${
                               isCorrect
-                                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                                : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                                ? 'border-accentGreen bg-accentGreen text-paper'
+                                : 'border-accentRed bg-accentRed text-paper'
                             }`}
                           >
                             {isCorrect ? (
@@ -795,7 +804,7 @@ export default function MidsemRevisionPage() {
                       </div>
 
                       {/* Question Text */}
-                      <p className="text-sm sm:text-base font-semibold text-slate-100">
+                      <p className="text-sm sm:text-base font-bold text-ink">
                         {q.q}
                       </p>
 
@@ -805,14 +814,14 @@ export default function MidsemRevisionPage() {
                           const isOptionSelected = selectedIdx === optIdx;
                           const isOptionCorrect = q.ans === optIdx;
 
-                          let optionBtnClass = 'border-slate-800 bg-slate-950/60 text-slate-300 hover:border-slate-700 hover:bg-slate-900';
+                          let optionBtnClass = 'border-2 border-ink/40 bg-paper2 text-ink hover:border-ink hover:bg-paper3';
                           if (hasAnswered) {
                             if (isOptionCorrect) {
-                              optionBtnClass = 'border-emerald-500 bg-emerald-500/20 text-emerald-200 font-semibold shadow-xs';
+                              optionBtnClass = 'border-2 border-accentGreen bg-accentGreen/25 text-ink font-bold shadow-sketchy';
                             } else if (isOptionSelected) {
-                              optionBtnClass = 'border-rose-500 bg-rose-500/20 text-rose-200 font-semibold';
+                              optionBtnClass = 'border-2 border-accentRed bg-accentRed/25 text-ink font-bold shadow-sketchy';
                             } else {
-                              optionBtnClass = 'border-slate-900 bg-slate-950/30 text-slate-500 opacity-60';
+                              optionBtnClass = 'border-2 border-ink/20 bg-paper text-dim opacity-50';
                             }
                           }
 
@@ -826,25 +835,25 @@ export default function MidsemRevisionPage() {
                                   [q.id]: optIdx,
                                 }));
                               }}
-                              className={`flex items-center gap-3 p-3 rounded-xl border text-left text-xs sm:text-sm transition-all ${optionBtnClass}`}
+                              className={`flex items-center gap-3 p-3 rounded-xl border text-left text-xs sm:text-sm transition-all shadow-sketchy ${optionBtnClass}`}
                             >
-                              <span className="w-5 h-5 rounded-full border border-slate-600 flex items-center justify-center text-[10px] font-mono shrink-0">
+                              <span className="w-6 h-6 rounded-full border-2 border-ink flex items-center justify-center text-xs font-mono font-bold shrink-0 bg-paper">
                                 {String.fromCharCode(65 + optIdx)}
                               </span>
-                              <span className="flex-1 leading-snug">{opt}</span>
+                              <span className="flex-1 leading-snug font-medium">{opt}</span>
                             </button>
                           );
                         })}
                       </div>
 
-                      {/* Explanation Drawer (Shows upon answering) */}
+                      {/* Explanation Drawer */}
                       {hasAnswered && (
-                        <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800/80 text-xs text-slate-300 space-y-1">
-                          <strong className="text-cyan-300 font-semibold flex items-center gap-1">
-                            <Lightbulb className="w-3.5 h-3.5 text-cyan-400" />
+                        <div className="p-3.5 rounded-xl border-2 border-ink/40 bg-gold/15 text-xs text-ink space-y-1 shadow-sketchy">
+                          <strong className="text-accentRed font-bold flex items-center gap-1">
+                            <Lightbulb className="w-4 h-4 text-accentGold" />
                             <span>Detailed Exam Explanation:</span>
                           </strong>
-                          <p className="leading-relaxed text-slate-400">{q.explanation}</p>
+                          <p className="leading-relaxed text-ink/90 font-medium">{q.explanation}</p>
                         </div>
                       )}
                     </div>
@@ -860,17 +869,17 @@ export default function MidsemRevisionPage() {
            ========================================================================= */}
         {activeTab === 'guess' && (
           <div className="space-y-6">
-            <div className={`p-4 rounded-xl ${themeClasses.card} flex items-center justify-between gap-3`}>
+            <div className={`p-4 rounded-xl ${currentTheme.card} flex items-center justify-between gap-3 flex-wrap`}>
               <div>
-                <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-amber-400" />
+                <h2 className="font-hand text-2xl font-bold text-ink flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-accentGold" />
                   <span>BEU 2026 High-Probability Guess Questions</span>
                 </h2>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-dim mt-0.5 font-medium">
                   Hand-picked based on question patterns from GEC Bhojpur, Lakhisarai, Aurangabad &amp; LNJPIT Chapra
                 </p>
               </div>
-              <span className="text-xs px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono">
+              <span className="text-xs px-3 py-1 rounded-full border-2 border-ink bg-gold/30 text-ink font-mono font-bold shadow-sketchy">
                 ⭐ 95% Yield
               </span>
             </div>
@@ -878,33 +887,33 @@ export default function MidsemRevisionPage() {
             {/* Guess Question Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* 2-Mark Short Concept Questions */}
-              <div className={`p-5 rounded-2xl ${themeClasses.card} space-y-3`}>
-                <div className="flex items-center gap-2 text-xs font-bold text-cyan-400 uppercase tracking-wider border-b border-slate-800 pb-2">
+              <div className={`p-5 rounded-2xl ${currentTheme.card} space-y-3`}>
+                <div className="flex items-center gap-2 text-xs font-bold text-accentTeal uppercase tracking-wider border-b-2 border-ink/20 pb-2">
                   <Zap className="w-4 h-4" />
                   <span>2 Marks — Rapid Definitions &amp; Formulae</span>
                 </div>
-                <div className="space-y-3 text-xs leading-relaxed text-slate-300">
-                  <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800">
-                    <strong className="text-slate-100 block mb-1">
+                <div className="space-y-3 text-xs leading-relaxed text-ink">
+                  <div className={`p-3 rounded-xl border-2 border-ink/30 bg-paper shadow-sketchy`}>
+                    <strong className="text-ink block mb-1 font-bold text-sm">
                       1. State the condition for Maximum Power Transfer in DC circuits.
                     </strong>
-                    <span className="text-slate-400">
+                    <span className="text-dim font-medium">
                       R_L = R_th. The maximum power delivered is P_max = V_th² / (4·R_th) with 50% efficiency.
                     </span>
                   </div>
-                  <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800">
-                    <strong className="text-slate-100 block mb-1">
+                  <div className={`p-3 rounded-xl border-2 border-ink/30 bg-paper shadow-sketchy`}>
+                    <strong className="text-ink block mb-1 font-bold text-sm">
                       2. Define the rank of a matrix in terms of its row echelon form.
                     </strong>
-                    <span className="text-slate-400">
+                    <span className="text-dim font-medium">
                       The rank ρ(A) equals the number of non-zero rows after reducing A to row echelon form using elementary row operations.
                     </span>
                   </div>
-                  <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800">
-                    <strong className="text-slate-100 block mb-1">
+                  <div className={`p-3 rounded-xl border-2 border-ink/30 bg-paper shadow-sketchy`}>
+                    <strong className="text-ink block mb-1 font-bold text-sm">
                       3. Why is the center of Newton&apos;s rings dark under reflected light?
                     </strong>
-                    <span className="text-slate-400">
+                    <span className="text-dim font-medium">
                       At contact point t = 0, Stokes&apos; phase shift of π at denser glass boundary introduces path difference λ/2, causing destructive interference.
                     </span>
                   </div>
@@ -912,33 +921,33 @@ export default function MidsemRevisionPage() {
               </div>
 
               {/* 5-Mark & 10-Mark Core Long Questions */}
-              <div className={`p-5 rounded-2xl ${themeClasses.card} space-y-3`}>
-                <div className="flex items-center gap-2 text-xs font-bold text-violet-400 uppercase tracking-wider border-b border-slate-800 pb-2">
+              <div className={`p-5 rounded-2xl ${currentTheme.card} space-y-3`}>
+                <div className="flex items-center gap-2 text-xs font-bold text-accentRed uppercase tracking-wider border-b-2 border-ink/20 pb-2">
                   <Award className="w-4 h-4" />
                   <span>5 &amp; 10 Marks — Derivations &amp; Schematics</span>
                 </div>
-                <div className="space-y-3 text-xs leading-relaxed text-slate-300">
-                  <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800">
-                    <strong className="text-slate-100 block mb-1">
+                <div className="space-y-3 text-xs leading-relaxed text-ink">
+                  <div className={`p-3 rounded-xl border-2 border-ink/30 bg-paper shadow-sketchy`}>
+                    <strong className="text-ink block mb-1 font-bold text-sm">
                       1. Prove that for y = (sin⁻¹ x)², (1 - x²)y_(n+2) - (2n+1)x y_(n+1) - n² y_n = 0.
                     </strong>
-                    <span className="text-slate-400">
+                    <span className="text-dim font-medium">
                       Differentiate once: (1-x²)y₁² = 4y. Differentiate again: (1-x²)y₂ - xy₁ - 2 = 0. Apply Leibnitz n times.
                     </span>
                   </div>
-                  <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800">
-                    <strong className="text-slate-100 block mb-1">
+                  <div className={`p-3 rounded-xl border-2 border-ink/30 bg-paper shadow-sketchy`}>
+                    <strong className="text-ink block mb-1 font-bold text-sm">
                       2. Explain Full-Wave Bridge Rectifier with waveforms, V_dc, and ripple factor.
                     </strong>
-                    <span className="text-slate-400">
+                    <span className="text-dim font-medium">
                       Draw 4-diode diamond bridge. Derive V_dc = 2V_m/π, V_rms = V_m/√2, η = 81.2%, and γ = 0.482.
                     </span>
                   </div>
-                  <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800">
-                    <strong className="text-slate-100 block mb-1">
+                  <div className={`p-3 rounded-xl border-2 border-ink/30 bg-paper shadow-sketchy`}>
+                    <strong className="text-ink block mb-1 font-bold text-sm">
                       3. State Maxwell&apos;s 4 equations and derive the Displacement Current density J_d.
                     </strong>
-                    <span className="text-slate-400">
+                    <span className="text-dim font-medium">
                       Show Ampere law inconsistency with charge continuity. Introduce J_d = ∂D/∂t = ε₀(∂E/∂t).
                     </span>
                   </div>
@@ -954,21 +963,21 @@ export default function MidsemRevisionPage() {
         {activeTab === 'papers' && (
           <div className="space-y-6">
             {currentPaper ? (
-              <div className={`p-6 rounded-2xl ${themeClasses.card} space-y-6`}>
+              <div className={`p-6 sm:p-8 rounded-2xl ${currentTheme.card} space-y-6`}>
                 {/* Paper Header */}
-                <div className="border-b border-slate-800 pb-4 text-center space-y-1">
-                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-mono font-bold border border-cyan-500/30">
+                <div className="border-b-2 border-ink/30 pb-4 text-center space-y-1.5">
+                  <span className="text-xs px-3 py-1 rounded-full border-2 border-ink bg-paper text-ink font-mono font-bold shadow-sketchy inline-block">
                     {currentPaper.colleges}
                   </span>
-                  <h2 className="text-xl font-extrabold text-slate-100 tracking-tight">
+                  <h2 className="font-hand text-2xl sm:text-3xl font-bold text-ink tracking-tight">
                     {currentPaper.title}
                   </h2>
-                  <div className="text-xs text-slate-400 font-mono flex items-center justify-center gap-4 pt-1">
+                  <div className="text-xs text-dim font-mono flex items-center justify-center gap-4 pt-1 flex-wrap font-bold">
                     <span>Course Code: {currentPaper.code}</span>
                     <span>Full Marks: {currentPaper.fullMarks}</span>
                     <span>Time: {currentPaper.timeHours} Hours</span>
                   </div>
-                  <p className="text-xs text-amber-300/90 italic pt-1">
+                  <p className="text-xs text-accentRed italic pt-1 font-medium">
                     Instructions: {currentPaper.instructions}
                   </p>
                 </div>
@@ -977,7 +986,7 @@ export default function MidsemRevisionPage() {
                 <div className="space-y-6">
                   {currentPaper.sections.map((sec, sIdx) => (
                     <div key={sIdx} className="space-y-4">
-                      <div className="text-xs font-bold uppercase tracking-wider text-cyan-400 bg-slate-900/80 px-3 py-1.5 rounded-lg border border-slate-800">
+                      <div className="text-xs font-bold uppercase tracking-wider text-ink bg-paper px-3 py-1.5 rounded-lg border-2 border-ink shadow-sketchy inline-block">
                         {sec.name}
                       </div>
 
@@ -985,25 +994,25 @@ export default function MidsemRevisionPage() {
                         {sec.questions.map((q, qIdx) => (
                           <div
                             key={qIdx}
-                            className="p-4 rounded-xl bg-slate-900/60 border border-slate-800/80 space-y-3"
+                            className={`p-4 sm:p-5 rounded-xl ${currentTheme.cardInner} space-y-3`}
                           >
                             <div className="flex items-start justify-between gap-2">
-                              <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-                                <span className="text-cyan-400">Q.{q.qNum}</span>
-                                <span className="font-mono text-xs text-slate-400">
+                              <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+                                <span className="text-accentRed font-mono font-bold">Q.{q.qNum}</span>
+                                <span className="font-mono text-xs text-dim">
                                   [{q.marks} {q.marks === 1 ? 'Mark' : 'Marks'}]
                                 </span>
                               </h3>
                             </div>
 
-                            <p className="text-xs sm:text-sm text-slate-200 whitespace-pre-line leading-relaxed font-sans">
+                            <p className="text-xs sm:text-sm text-ink whitespace-pre-line leading-relaxed font-sans font-medium">
                               {q.q}
                             </p>
 
                             {/* Solved Answer */}
-                            <div className="p-3.5 rounded-lg bg-slate-950/80 border border-emerald-500/20 text-xs sm:text-sm font-mono text-emerald-200 whitespace-pre-line leading-relaxed">
-                              <div className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
-                                <CheckCircle2 className="w-3 h-3" />
+                            <div className={`p-3.5 rounded-xl border-2 border-accentTeal/50 bg-paper3 text-xs sm:text-sm font-mono text-ink whitespace-pre-line leading-relaxed shadow-xs`}>
+                              <div className="text-[10px] text-accentTeal font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
+                                <CheckCircle2 className="w-3.5 h-3.5 text-accentGreen" />
                                 <span>Official Verified Topper Solution:</span>
                               </div>
                               <KatexText htmlOrText={q.sol} />
@@ -1016,7 +1025,7 @@ export default function MidsemRevisionPage() {
                 </div>
               </div>
             ) : (
-              <div className="p-8 text-center rounded-xl bg-slate-900/40 border border-slate-800 text-slate-400 text-sm">
+              <div className={`p-8 text-center rounded-xl border-2 border-ink bg-paper2 text-dim text-sm shadow-sketchy`}>
                 No transcribed paper available for this subject yet.
               </div>
             )}
@@ -1028,20 +1037,20 @@ export default function MidsemRevisionPage() {
            ========================================================================= */}
         {activeTab === 'simulator' && (
           <div className="space-y-6">
-            <div className={`p-6 rounded-2xl ${themeClasses.card} space-y-5 text-center`}>
-              <div className="inline-flex p-3 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 mb-1">
+            <div className={`p-6 sm:p-8 rounded-2xl ${currentTheme.card} space-y-5 text-center`}>
+              <div className="inline-flex p-3 rounded-full border-2 border-ink bg-accentRed/10 text-accentRed mb-1 shadow-sketchy">
                 <Clock className="w-8 h-8" />
               </div>
-              <h2 className="text-xl font-bold text-slate-100">
+              <h2 className="font-hand text-2xl sm:text-3xl font-bold text-ink">
                 15-Minute Rapid Mid-Sem Diagnostic Simulator
               </h2>
-              <p className="text-xs text-slate-400 max-w-lg mx-auto">
+              <p className="text-xs text-dim max-w-lg mx-auto font-medium">
                 Test your speed and accuracy on 10 randomized high-yield questions for {currentCourse.title}. Timed simulation replicates actual exam pressure.
               </p>
 
               {/* Timer Display */}
               <div className="py-2">
-                <span className="font-mono text-4xl sm:text-5xl font-extrabold text-cyan-300 tracking-wider">
+                <span className="font-mono text-5xl sm:text-6xl font-extrabold text-accentRed tracking-wider drop-shadow-xs">
                   {Math.floor(mockSecondsLeft / 60)
                     .toString()
                     .padStart(2, '0')}
@@ -1060,9 +1069,9 @@ export default function MidsemRevisionPage() {
                       setMockSecondsLeft(900);
                       setMockUserAnswers({});
                     }}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm shadow-md transition-colors"
+                    className="btn red border-2 border-ink px-6 py-2.5 font-bold text-sm shadow-sketch transition-transform hover:scale-105"
                   >
-                    <Play className="w-4 h-4 fill-slate-950" />
+                    <Play className="w-4 h-4 fill-white inline mr-1.5" />
                     <span>Start Timed Mock Test</span>
                   </button>
                 ) : mockRunning ? (
@@ -1072,9 +1081,9 @@ export default function MidsemRevisionPage() {
                       setMockSubmitted(true);
                       setMockRunning(false);
                     }}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm shadow-md transition-colors"
+                    className="btn border-2 border-ink bg-accentGreen text-paper hover:bg-ink hover:text-paper px-6 py-2.5 font-bold text-sm shadow-sketch transition-transform hover:scale-105"
                   >
-                    <CheckCircle2 className="w-4 h-4" />
+                    <CheckCircle2 className="w-4 h-4 inline mr-1.5" />
                     <span>Submit &amp; View Result</span>
                   </button>
                 ) : (
@@ -1086,9 +1095,9 @@ export default function MidsemRevisionPage() {
                       setMockSecondsLeft(900);
                       setMockUserAnswers({});
                     }}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm border border-slate-700 transition-colors"
+                    className="btn border-2 border-ink bg-paper hover:bg-ink hover:text-paper px-6 py-2.5 font-bold text-sm shadow-sketch transition-transform hover:scale-105"
                   >
-                    <RotateCcw className="w-4 h-4" />
+                    <RotateCcw className="w-4 h-4 inline mr-1.5" />
                     <span>Retake Simulator</span>
                   </button>
                 )}
@@ -1106,19 +1115,19 @@ export default function MidsemRevisionPage() {
                   return (
                     <div
                       key={q.id}
-                      className={`p-4 rounded-xl ${themeClasses.card} space-y-3 ${
+                      className={`p-5 rounded-2xl border-2 shadow-sketchy space-y-3 ${
                         mockSubmitted
                           ? correct
-                            ? 'border-emerald-500/50 bg-emerald-950/10'
-                            : 'border-rose-500/50 bg-rose-950/10'
-                          : ''
+                            ? 'border-accentGreen bg-accentGreen/15'
+                            : 'border-accentRed bg-accentRed/15'
+                          : 'border-ink bg-paper'
                       }`}
                     >
-                      <div className="flex items-center justify-between text-xs font-mono text-slate-400">
+                      <div className="flex items-center justify-between text-xs font-mono font-bold text-dim">
                         <span>Question {idx + 1} of 10</span>
                         <span>Unit {q.unitNo}</span>
                       </div>
-                      <p className="text-sm font-semibold text-slate-100">{q.q}</p>
+                      <p className="text-sm font-bold text-ink">{q.q}</p>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {q.options.map((opt, oIdx) => (
                           <button
@@ -1133,13 +1142,13 @@ export default function MidsemRevisionPage() {
                                 }));
                               }
                             }}
-                            className={`p-2.5 rounded-lg border text-left text-xs transition-colors ${
+                            className={`p-3 rounded-xl border-2 text-left text-xs transition-colors shadow-sketchy ${
                               userAns === oIdx
-                                ? 'border-cyan-400 bg-cyan-500/20 text-cyan-200'
-                                : 'border-slate-800 bg-slate-900/60 text-slate-400'
+                                ? 'border-ink bg-accentTeal text-paper font-bold'
+                                : 'border-ink/40 bg-paper2 text-ink hover:border-ink hover:bg-paper3'
                             } ${
                               mockSubmitted && q.ans === oIdx
-                                ? 'border-emerald-500 bg-emerald-500/20 text-emerald-300 font-bold'
+                                ? 'border-accentGreen bg-accentGreen text-paper font-bold'
                                 : ''
                             }`}
                           >
@@ -1149,8 +1158,8 @@ export default function MidsemRevisionPage() {
                         ))}
                       </div>
                       {mockSubmitted && (
-                        <div className="text-xs text-slate-300 pt-2 border-t border-slate-800">
-                          <strong className="text-cyan-300">Explanation: </strong>
+                        <div className="text-xs text-ink pt-2 border-t-2 border-ink/20 font-medium">
+                          <strong className="text-accentRed">Explanation: </strong>
                           <span>{q.explanation}</span>
                         </div>
                       )}
@@ -1167,30 +1176,30 @@ export default function MidsemRevisionPage() {
            ========================================================================= */}
         {activeTab === 'predictor' && (
           <div className="space-y-6">
-            <div className={`p-6 rounded-2xl ${themeClasses.card} space-y-4`}>
+            <div className={`p-6 sm:p-8 rounded-2xl ${currentTheme.card} space-y-4`}>
               <div className="flex items-center justify-between gap-3 flex-wrap">
                 <div>
-                  <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-                    <Award className="w-5 h-5 text-amber-400" />
+                  <h2 className="font-hand text-2xl sm:text-3xl font-bold text-ink flex items-center gap-2">
+                    <Award className="w-6 h-6 text-accentGold" />
                     <span>15-Pillar Full Marks (20/20) Readiness Audit</span>
                   </h2>
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <p className="text-xs text-dim mt-0.5 font-medium">
                     Tick each item you have verified. Aim for 100% to guarantee full marks in Semester-I Mid-Sem exams.
                   </p>
                 </div>
                 {/* Readiness Meter */}
                 <div className="text-right">
-                  <div className="text-xs text-slate-400 font-mono">Predicted Readiness</div>
-                  <div className="text-2xl font-extrabold text-amber-400 font-mono">
+                  <div className="text-xs text-dim font-mono font-bold">Predicted Readiness</div>
+                  <div className="font-mono text-3xl sm:text-4xl font-extrabold text-accentRed">
                     {totalPillarsScore}%
                   </div>
                 </div>
               </div>
 
               {/* Progress Bar */}
-              <div className="w-full h-3 rounded-full bg-slate-800 overflow-hidden">
+              <div className="w-full h-4 rounded-full border-2 border-ink bg-paper p-0.5 overflow-hidden shadow-inner">
                 <div
-                  className="h-full bg-linear-to-r from-cyan-500 via-amber-400 to-emerald-400 transition-all duration-500"
+                  className="h-full rounded-full bg-linear-to-r from-accentTeal via-accentGold to-accentRed transition-all duration-500"
                   style={{ width: `${totalPillarsScore}%` }}
                 />
               </div>
@@ -1209,20 +1218,20 @@ export default function MidsemRevisionPage() {
                           [pillar.id]: !prev[pillar.id],
                         }))
                       }
-                      className={`flex items-start gap-3 p-3 rounded-xl border text-left transition-colors ${
+                      className={`flex items-start gap-3 p-3.5 rounded-xl border-2 text-left transition-all shadow-sketchy ${
                         checked
-                          ? 'border-emerald-500/40 bg-emerald-950/20 text-slate-200'
-                          : 'border-slate-800 bg-slate-900/40 text-slate-400 hover:border-slate-700'
+                          ? 'border-accentGreen bg-accentGreen/15 text-ink'
+                          : 'border-ink/40 bg-paper text-dim hover:border-ink hover:bg-paper3'
                       }`}
                     >
                       {checked ? (
-                        <CheckSquare className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                        <CheckSquare className="w-4 h-4 text-accentGreen shrink-0 mt-0.5" />
                       ) : (
-                        <Square className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
+                        <Square className="w-4 h-4 text-dim shrink-0 mt-0.5" />
                       )}
                       <div className="text-xs">
-                        <span className="font-semibold block leading-snug">{pillar.label}</span>
-                        <span className="text-[10px] text-slate-400 font-mono">
+                        <span className="font-bold text-ink block leading-snug">{pillar.label}</span>
+                        <span className="text-[10px] text-dim font-mono font-medium">
                           Pillar weight: +{pillar.weight}%
                         </span>
                       </div>
@@ -1240,181 +1249,181 @@ export default function MidsemRevisionPage() {
         {activeTab === 'calculator' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* 1. Series RLC Resonant Frequency Calculator */}
-            <div className={`p-5 rounded-2xl ${themeClasses.card} space-y-4`}>
-              <h3 className="text-sm font-bold text-cyan-300 flex items-center gap-2">
-                <Zap className="w-4 h-4 text-cyan-400" />
+            <div className={`p-6 rounded-2xl ${currentTheme.card} space-y-4`}>
+              <h3 className="font-hand text-xl sm:text-2xl font-bold text-ink flex items-center gap-2">
+                <Zap className="w-5 h-5 text-accentRed" />
                 <span>Series RLC Resonant Frequency (f_0)</span>
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-dim font-mono font-semibold">
                 Formula: f_0 = 1 / [2π√(L · C)]
               </p>
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div>
-                  <label className="text-slate-400 block mb-1">Inductance L (Henrys):</label>
+                  <label className="text-dim font-bold block mb-1">Inductance L (Henrys):</label>
                   <input
                     type="number"
                     step="0.01"
                     value={rlcL}
                     onChange={(e) => setRlcL(parseFloat(e.target.value) || 0)}
-                    className="w-full p-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-200 font-mono"
+                    className="w-full p-2.5 rounded-lg border-2 border-ink bg-paper text-ink font-mono text-sm focus:border-accentRed focus:outline-none shadow-sketchy"
                   />
                 </div>
                 <div>
-                  <label className="text-slate-400 block mb-1">Capacitance C (µF):</label>
+                  <label className="text-dim font-bold block mb-1">Capacitance C (µF):</label>
                   <input
                     type="number"
                     step="0.1"
                     value={rlcC}
                     onChange={(e) => setRlcC(parseFloat(e.target.value) || 0)}
-                    className="w-full p-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-200 font-mono"
+                    className="w-full p-2.5 rounded-lg border-2 border-ink bg-paper text-ink font-mono text-sm focus:border-accentRed focus:outline-none shadow-sketchy"
                   />
                 </div>
               </div>
-              <div className="p-3 rounded-lg bg-cyan-950/30 border border-cyan-500/30 text-center font-mono">
-                <span className="text-xs text-slate-400">Resonant Frequency f_0: </span>
-                <strong className="text-lg text-cyan-300">{rlcResonantFreq} Hz</strong>
+              <div className="p-3.5 rounded-xl border-2 border-ink bg-gold/20 text-center font-mono shadow-sketchy">
+                <span className="text-xs text-dim font-semibold">Resonant Frequency f_0: </span>
+                <strong className="text-lg text-accentRed font-bold">{rlcResonantFreq} Hz</strong>
               </div>
             </div>
 
             {/* 2. Thevenin Maximum Power Calculator */}
-            <div className={`p-5 rounded-2xl ${themeClasses.card} space-y-4`}>
-              <h3 className="text-sm font-bold text-cyan-300 flex items-center gap-2">
-                <Cpu className="w-4 h-4 text-cyan-400" />
+            <div className={`p-6 rounded-2xl ${currentTheme.card} space-y-4`}>
+              <h3 className="font-hand text-xl sm:text-2xl font-bold text-ink flex items-center gap-2">
+                <Cpu className="w-5 h-5 text-accentTeal" />
                 <span>Thevenin &amp; Max Power Calculator</span>
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-dim font-mono font-semibold">
                 Formula: I_L = V_th / (R_th + R_L), P_L = I_L² · R_L
               </p>
               <div className="grid grid-cols-3 gap-2 text-xs">
                 <div>
-                  <label className="text-slate-400 block mb-1">V_th (V):</label>
+                  <label className="text-dim font-bold block mb-1">V_th (V):</label>
                   <input
                     type="number"
                     value={thevV}
                     onChange={(e) => setThevV(parseFloat(e.target.value) || 0)}
-                    className="w-full p-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-200 font-mono"
+                    className="w-full p-2.5 rounded-lg border-2 border-ink bg-paper text-ink font-mono text-sm focus:border-accentRed focus:outline-none shadow-sketchy"
                   />
                 </div>
                 <div>
-                  <label className="text-slate-400 block mb-1">R_th (Ω):</label>
+                  <label className="text-dim font-bold block mb-1">R_th (Ω):</label>
                   <input
                     type="number"
                     value={thevR}
                     onChange={(e) => setThevR(parseFloat(e.target.value) || 0)}
-                    className="w-full p-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-200 font-mono"
+                    className="w-full p-2.5 rounded-lg border-2 border-ink bg-paper text-ink font-mono text-sm focus:border-accentRed focus:outline-none shadow-sketchy"
                   />
                 </div>
                 <div>
-                  <label className="text-slate-400 block mb-1">R_L (Ω):</label>
+                  <label className="text-dim font-bold block mb-1">R_L (Ω):</label>
                   <input
                     type="number"
                     value={thevRl}
                     onChange={(e) => setThevRl(parseFloat(e.target.value) || 0)}
-                    className="w-full p-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-200 font-mono"
+                    className="w-full p-2.5 rounded-lg border-2 border-ink bg-paper text-ink font-mono text-sm focus:border-accentRed focus:outline-none shadow-sketchy"
                   />
                 </div>
               </div>
-              <div className="p-3 rounded-lg bg-cyan-950/30 border border-cyan-500/30 text-center font-mono flex items-center justify-around">
+              <div className="p-3.5 rounded-xl border-2 border-ink bg-gold/20 text-center font-mono flex items-center justify-around shadow-sketchy">
                 <div>
-                  <span className="text-[11px] text-slate-400 block">Load Current I_L</span>
-                  <strong className="text-sm text-cyan-300">{theveninPower.il} A</strong>
+                  <span className="text-[11px] text-dim block font-bold">Load Current I_L</span>
+                  <strong className="text-sm text-accentTeal font-bold">{theveninPower.il} A</strong>
                 </div>
                 <div>
-                  <span className="text-[11px] text-slate-400 block">Load Power P_L</span>
-                  <strong className="text-sm text-cyan-300">{theveninPower.pl} W</strong>
+                  <span className="text-[11px] text-dim block font-bold">Load Power P_L</span>
+                  <strong className="text-sm text-accentRed font-bold">{theveninPower.pl} W</strong>
                 </div>
               </div>
             </div>
 
             {/* 3. Optical Fiber Numerical Aperture (NA) Calculator */}
-            <div className={`p-5 rounded-2xl ${themeClasses.card} space-y-4`}>
-              <h3 className="text-sm font-bold text-cyan-300 flex items-center gap-2">
-                <Layers className="w-4 h-4 text-cyan-400" />
+            <div className={`p-6 rounded-2xl ${currentTheme.card} space-y-4`}>
+              <h3 className="font-hand text-xl sm:text-2xl font-bold text-ink flex items-center gap-2">
+                <Layers className="w-5 h-5 text-accentRed" />
                 <span>Optical Fiber NA &amp; Acceptance Angle</span>
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-dim font-mono font-semibold">
                 Formula: NA = √(n₁² - n₂²), θ_a = arcsin(NA), θ_c = arcsin(n₂/n₁)
               </p>
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div>
-                  <label className="text-slate-400 block mb-1">Core Index n1:</label>
+                  <label className="text-dim font-bold block mb-1">Core Index n1:</label>
                   <input
                     type="number"
                     step="0.01"
                     value={fiberN1}
                     onChange={(e) => setFiberN1(parseFloat(e.target.value) || 0)}
-                    className="w-full p-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-200 font-mono"
+                    className="w-full p-2.5 rounded-lg border-2 border-ink bg-paper text-ink font-mono text-sm focus:border-accentRed focus:outline-none shadow-sketchy"
                   />
                 </div>
                 <div>
-                  <label className="text-slate-400 block mb-1">Cladding Index n2:</label>
+                  <label className="text-dim font-bold block mb-1">Cladding Index n2:</label>
                   <input
                     type="number"
                     step="0.01"
                     value={fiberN2}
                     onChange={(e) => setFiberN2(parseFloat(e.target.value) || 0)}
-                    className="w-full p-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-200 font-mono"
+                    className="w-full p-2.5 rounded-lg border-2 border-ink bg-paper text-ink font-mono text-sm focus:border-accentRed focus:outline-none shadow-sketchy"
                   />
                 </div>
               </div>
-              <div className="p-3 rounded-lg bg-cyan-950/30 border border-cyan-500/30 text-center font-mono flex items-center justify-around">
+              <div className="p-3.5 rounded-xl border-2 border-ink bg-gold/20 text-center font-mono flex items-center justify-around shadow-sketchy">
                 <div>
-                  <span className="text-[11px] text-slate-400 block">NA</span>
-                  <strong className="text-sm text-cyan-300">{fiberParams.na}</strong>
+                  <span className="text-[11px] text-dim block font-bold">NA</span>
+                  <strong className="text-sm text-accentRed font-bold">{fiberParams.na}</strong>
                 </div>
                 <div>
-                  <span className="text-[11px] text-slate-400 block">Acceptance Angle</span>
-                  <strong className="text-sm text-cyan-300">{fiberParams.thetaA}</strong>
+                  <span className="text-[11px] text-dim block font-bold">Acceptance Angle</span>
+                  <strong className="text-sm text-accentTeal font-bold">{fiberParams.thetaA}</strong>
                 </div>
                 <div>
-                  <span className="text-[11px] text-slate-400 block">Critical Angle</span>
-                  <strong className="text-sm text-cyan-300">{fiberParams.thetaC}</strong>
+                  <span className="text-[11px] text-dim block font-bold">Critical Angle</span>
+                  <strong className="text-sm text-ink font-bold">{fiberParams.thetaC}</strong>
                 </div>
               </div>
             </div>
 
             {/* 4. Cache Average Access Time Calculator */}
-            <div className={`p-5 rounded-2xl ${themeClasses.card} space-y-4`}>
-              <h3 className="text-sm font-bold text-cyan-300 flex items-center gap-2">
-                <Cpu className="w-4 h-4 text-cyan-400" />
+            <div className={`p-6 rounded-2xl ${currentTheme.card} space-y-4`}>
+              <h3 className="font-hand text-xl sm:text-2xl font-bold text-ink flex items-center gap-2">
+                <Cpu className="w-5 h-5 text-accentTeal" />
                 <span>Cache Memory Average Access Time</span>
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-dim font-mono font-semibold">
                 Formula: T_avg = h · t_c + (1 - h) · t_m
               </p>
               <div className="grid grid-cols-3 gap-2 text-xs">
                 <div>
-                  <label className="text-slate-400 block mb-1">Hit Ratio h (0-1):</label>
+                  <label className="text-dim font-bold block mb-1">Hit Ratio h (0-1):</label>
                   <input
                     type="number"
                     step="0.01"
                     value={cacheH}
                     onChange={(e) => setCacheH(parseFloat(e.target.value) || 0)}
-                    className="w-full p-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-200 font-mono"
+                    className="w-full p-2.5 rounded-lg border-2 border-ink bg-paper text-ink font-mono text-sm focus:border-accentRed focus:outline-none shadow-sketchy"
                   />
                 </div>
                 <div>
-                  <label className="text-slate-400 block mb-1">Cache t_c (ns):</label>
+                  <label className="text-dim font-bold block mb-1">Cache t_c (ns):</label>
                   <input
                     type="number"
                     value={cacheTc}
                     onChange={(e) => setCacheTc(parseFloat(e.target.value) || 0)}
-                    className="w-full p-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-200 font-mono"
+                    className="w-full p-2.5 rounded-lg border-2 border-ink bg-paper text-ink font-mono text-sm focus:border-accentRed focus:outline-none shadow-sketchy"
                   />
                 </div>
                 <div>
-                  <label className="text-slate-400 block mb-1">Main t_m (ns):</label>
+                  <label className="text-dim font-bold block mb-1">Main t_m (ns):</label>
                   <input
                     type="number"
                     value={cacheTm}
                     onChange={(e) => setCacheTm(parseFloat(e.target.value) || 0)}
-                    className="w-full p-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-200 font-mono"
+                    className="w-full p-2.5 rounded-lg border-2 border-ink bg-paper text-ink font-mono text-sm focus:border-accentRed focus:outline-none shadow-sketchy"
                   />
                 </div>
               </div>
-              <div className="p-3 rounded-lg bg-cyan-950/30 border border-cyan-500/30 text-center font-mono">
-                <span className="text-xs text-slate-400">Average Memory Access Time T_avg: </span>
-                <strong className="text-lg text-cyan-300">{cacheTavg} ns</strong>
+              <div className="p-3.5 rounded-xl border-2 border-ink bg-gold/20 text-center font-mono shadow-sketchy">
+                <span className="text-xs text-dim font-semibold">Average Memory Access Time T_avg: </span>
+                <strong className="text-lg text-accentRed font-bold">{cacheTavg} ns</strong>
               </div>
             </div>
           </div>
