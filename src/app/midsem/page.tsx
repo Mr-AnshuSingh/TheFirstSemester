@@ -39,7 +39,7 @@ import { LNJPIT_EXAM_SITTINGS, LNJPIT_EXAM_NOTICE, ExamSitting } from '@/data/mi
 import { KatexText } from '@/components/study/KatexRenderer';
 
 type ViewTab = 'notes' | 'numericals' | 'mcq' | 'guess' | 'papers' | 'simulator' | 'predictor' | 'calculator';
-type ThemeMode = 'notebook' | 'parchment' | 'blueprint';
+type ThemeMode = 'notebook' | 'parchment';
 
 const READINESS_PILLARS = [
   { id: 'p1', label: 'Unit 1 Fundamentals & Definitions Memorized', weight: 6 },
@@ -281,21 +281,6 @@ export default function MidsemRevisionPage() {
       tabActive: 'bg-[#f4ebd6] text-[#2b2217] border-2 border-[#3d3122] shadow-sketch',
       tabInactive: 'text-[#5a4a35] hover:text-[#2b2217] hover:bg-[#e2d5b8] border-2 border-transparent',
     },
-    blueprint: {
-      bg: 'bg-[#0b1324]',
-      text: 'text-slate-100',
-      subtext: 'text-cyan-200/70',
-      headerBg: 'bg-[#0f1b33]/95',
-      card: 'bg-[#13223f] border-2 border-cyan-500/50 shadow-sketchy',
-      cardInner: 'bg-[#0d182d] border-2 border-cyan-500/40 shadow-sketchy',
-      box: 'border-2 border-cyan-500/50 shadow-sketchy',
-      codeBox: 'bg-[#08101e] border-2 border-cyan-500/40 text-cyan-200',
-      tipBox: 'bg-cyan-950/60 border-2 border-cyan-500/50 text-cyan-200',
-      pillActive: 'bg-cyan-500 text-slate-950 border-2 border-cyan-300 shadow-sketch',
-      pillInactive: 'bg-[#0d182d] text-cyan-200 border-2 border-cyan-500/40 hover:bg-[#13223f]',
-      tabActive: 'bg-[#13223f] text-cyan-300 border-2 border-cyan-400 shadow-sketch',
-      tabInactive: 'text-cyan-200/60 hover:text-cyan-200 hover:bg-[#13223f]/60 border-2 border-transparent',
-    },
   }[theme];
 
   return (
@@ -343,9 +328,9 @@ export default function MidsemRevisionPage() {
               <strong className="text-accentRed font-bold">{timeUntilNext || '25 Nov 2026'}</strong>
             </div>
 
-            {/* Theme Toggle (Notebook, Parchment, Blueprint) */}
+            {/* Theme Toggle (Notebook, Parchment) */}
             <div className="flex items-center bg-paper2 border-2 border-ink rounded-lg p-0.5 text-xs shadow-sketchy">
-              {(['notebook', 'parchment', 'blueprint'] as ThemeMode[]).map((t) => (
+              {(['notebook', 'parchment'] as ThemeMode[]).map((t) => (
                 <button
                   key={t}
                   type="button"
@@ -601,7 +586,7 @@ export default function MidsemRevisionPage() {
                             </span>
                           </div>
                           <div
-                            className="overflow-x-auto rounded-lg border-2 border-ink bg-[#0f172a] p-2 shadow-inner"
+                            className="overflow-x-auto rounded-xl border-2 border-ink bg-paper3 p-2 shadow-sketchy"
                             dangerouslySetInnerHTML={{ __html: diag.svg }}
                           />
                           <p className="text-xs text-dim mt-2 italic leading-relaxed">

@@ -13,17 +13,26 @@ async function run() {
   console.log('Navigating to http://localhost:3000/midsem...');
   await page.goto('http://localhost:3000/midsem', { waitUntil: 'networkidle' });
 
-  // 1. Notes Tab (Default)
+  // 1. Notes Tab with New Paper SVG Diagram
   console.log('Capturing Notes Tab in Notebook Theme...');
   await page.screenshot({
     path: path.join(ARTIFACTS_DIR, 'verify_midsem_notebook_notes.png'),
     fullPage: false,
   });
 
+  // Capture isolated SVG diagram in Notebook Theme
+  const svgLocator = page.locator('svg[viewBox="0 0 600 240"]').first();
+  if (await svgLocator.isVisible()) {
+    console.log('Capturing styled SVG diagram in Notebook theme...');
+    await svgLocator.screenshot({
+      path: path.join(ARTIFACTS_DIR, 'verify_midsem_svg_diagram_notebook.png'),
+    });
+  }
+
   // 2. Numericals Tab
   console.log('Switching to Solved Numericals...');
   await page.click('button:has-text("Solved Numericals")');
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(400);
   await page.screenshot({
     path: path.join(ARTIFACTS_DIR, 'verify_midsem_notebook_numericals.png'),
     fullPage: false,
@@ -32,8 +41,7 @@ async function run() {
   // 3. CBT MCQs Tab
   console.log('Switching to CBT MCQs...');
   await page.click('button:has-text("CBT MCQs")');
-  await page.waitForTimeout(500);
-  // Click first option to verify green/red feedback style
+  await page.waitForTimeout(400);
   const firstOption = page.locator('button:has-text("A.")').first();
   if (await firstOption.isVisible()) {
     await firstOption.click();
@@ -47,7 +55,7 @@ async function run() {
   // 4. Guess Questions Tab
   console.log('Switching to Guess Questions...');
   await page.click('button:has-text("Guess Questions")');
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(400);
   await page.screenshot({
     path: path.join(ARTIFACTS_DIR, 'verify_midsem_notebook_guess.png'),
     fullPage: false,
@@ -56,7 +64,7 @@ async function run() {
   // 5. BEU Solved Papers Tab
   console.log('Switching to BEU Solved Papers...');
   await page.click('button:has-text("BEU Solved Papers")');
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(400);
   await page.screenshot({
     path: path.join(ARTIFACTS_DIR, 'verify_midsem_notebook_papers.png'),
     fullPage: false,
@@ -65,7 +73,7 @@ async function run() {
   // 6. Mock Exam Simulator Tab
   console.log('Switching to Mock Exam Simulator...');
   await page.click('button:has-text("Mock Exam")');
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(400);
   await page.screenshot({
     path: path.join(ARTIFACTS_DIR, 'verify_midsem_notebook_simulator.png'),
     fullPage: false,
@@ -74,7 +82,7 @@ async function run() {
   // 7. Score Predictor Tab
   console.log('Switching to Score Predictor...');
   await page.click('button:has-text("Score Predictor")');
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(400);
   await page.screenshot({
     path: path.join(ARTIFACTS_DIR, 'verify_midsem_notebook_predictor.png'),
     fullPage: false,
@@ -83,14 +91,16 @@ async function run() {
   // 8. Calculators Tab
   console.log('Switching to Calculators...');
   await page.click('button:has-text("Calculators")');
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(400);
   await page.screenshot({
     path: path.join(ARTIFACTS_DIR, 'verify_midsem_notebook_calculator.png'),
     fullPage: false,
   });
 
-  // 9. Parchment Theme Toggle
-  console.log('Testing Parchment Theme...');
+  // 9. Parchment Theme Toggle (Switch to Notes to see SVG in Parchment mode)
+  console.log('Testing Parchment Theme on Notes & SVG...');
+  await page.click('button:has-text("Master Notes")');
+  await page.waitForTimeout(300);
   await page.click('button:has-text("parchment")');
   await page.waitForTimeout(400);
   await page.screenshot({
@@ -98,16 +108,7 @@ async function run() {
     fullPage: false,
   });
 
-  // 10. Blueprint Theme Toggle
-  console.log('Testing Blueprint Theme...');
-  await page.click('button:has-text("blueprint")');
-  await page.waitForTimeout(400);
-  await page.screenshot({
-    path: path.join(ARTIFACTS_DIR, 'verify_midsem_blueprint_theme.png'),
-    fullPage: false,
-  });
-
-  // 11. Switch back to notebook theme and check Mobile 390px
+  // 10. Switch back to notebook theme and check Mobile 390px
   console.log('Testing Mobile 390px Viewport in Notebook Theme...');
   await page.click('button:has-text("notebook")');
   await page.setViewportSize({ width: 390, height: 844 });
