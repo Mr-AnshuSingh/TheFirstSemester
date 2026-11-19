@@ -135,7 +135,7 @@ export const Header: React.FC<HeaderProps> = ({
             type="button"
             className="btn gold text-xs md:text-sm flex items-center gap-1.5"
             onClick={onOpenClassesModal}
-            title="Room 13 Class Schedule & 2026 University Holiday Calendar"
+            title="Room 14 Class Schedule & 2026 University Holiday Calendar"
           >
             <span className="w-2 h-2 rounded-full bg-accentRed animate-ping inline-block" />
             <Calendar className="w-3.5 h-3.5" />

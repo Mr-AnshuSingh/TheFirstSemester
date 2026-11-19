@@ -5,8 +5,7 @@ import {
   TT,
   HUE,
   UNIVERSITY_HOLIDAYS_2026,
-  BRANCH_TIMETABLES,
-  DEFAULT_BRANCH_ID,
+  MNC_TIMETABLE,
   getCellForSlot,
 } from '@/data/schedule';
 import { UniversityHoliday } from '@/types/syllabus';
@@ -43,7 +42,6 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
 }) => {
   const modalRef = useModalA11y(open, onClose);
   const [activeTab, setActiveTab] = useState<'timetable' | 'holidays'>('timetable');
-  const [selectedBranchId, setSelectedBranchId] = useState<string>(DEFAULT_BRANCH_ID);
   const [showFacultyList, setShowFacultyList] = useState<boolean>(true);
   const [monthFilter, setMonthFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -52,7 +50,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
   const [simTimeMinutes, setSimTimeMinutes] = useState<number>(630); // 10:30 AM = 630 mins
   const [currentTime, setCurrentTime] = useState<Date>(() => new Date());
 
-  const currentBranch = BRANCH_TIMETABLES[selectedBranchId] || BRANCH_TIMETABLES[DEFAULT_BRANCH_ID];
+  const currentBranch = MNC_TIMETABLE;
 
   // Update real-time clock every 30 seconds
   useEffect(() => {
@@ -255,7 +253,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
               <h2 className="font-hand text-3xl font-bold text-ink">Classes Scheduled &amp; University Calendar</h2>
             </div>
             <p className="text-sm text-dim mt-1 font-sans">
-              LNJPIT Chapra · Revised Timetable (w.e.f. 29.10.2026, Session July–December 2026) · Official 2026 Holidays
+              LNJPIT Chapra · Mathematics &amp; Computing (Room No: 14) · Revised Timetable (w.e.f. 29.10.2026, Session July–December 2026) · Official 2026 Holidays
             </p>
           </div>
           <button type="button" className="btn" onClick={onClose} aria-label="Close modal">
@@ -263,7 +261,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
           </button>
         </div>
 
-        {/* Tab & Branch Navigation */}
+        {/* Tab & Room Navigation */}
         <div className="flex items-center justify-between border-b border-ink/30 px-3 pt-3 pb-2 bg-paper gap-2 flex-wrap">
           <div className="flex gap-2">
             <button
@@ -292,24 +290,14 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
 
           {activeTab === 'timetable' && (
             <div className="flex items-center gap-3 flex-wrap">
-              {/* Branch Selector */}
-              <div className="flex items-center gap-1.5">
-                <label htmlFor="branch-select" className="text-xs font-mono font-bold text-dim">
-                  Branch:
-                </label>
-                <select
-                  id="branch-select"
-                  value={selectedBranchId}
-                  onChange={(e) => setSelectedBranchId(e.target.value)}
-                  className="text-xs font-sans font-bold border border-ink/40 rounded px-2 py-1 bg-paper text-ink shadow-xs focus:outline-none focus:ring-1 focus:ring-ink"
-                >
-                  <option value="mnc">🎓 Mathematics &amp; Computing (Room 13 GF)</option>
-                  <option value="cse">💻 Computer Science &amp; Engg (EDUSAT)</option>
-                  <option value="eee">⚡ Electrical &amp; Electronics Engg (Room 3)</option>
-                  <option value="ce">🏗️ Civil Engineering (Room 1)</option>
-                  <option value="me">⚙️ Mechanical Engineering (Room 4)</option>
-                  <option value="fpp">🍃 Food Processing &amp; Preserv. (Room 14)</option>
-                </select>
+              {/* Mathematics & Computing Room Badge */}
+              <div className="flex items-center gap-1.5 font-sans">
+                <span className="px-2.5 py-1 rounded font-mono text-xs font-bold bg-accentRed/15 text-accentRed border border-accentRed/40">
+                  📍 Room No: 14
+                </span>
+                <span className="text-xs font-sans text-dim hidden sm:inline">
+                  Mathematics &amp; Computing
+                </span>
               </div>
 
               {/* Lab Group Toggle */}
@@ -654,7 +642,7 @@ export const ClassesScheduledModal: React.FC<ClassesScheduledModalProps> = ({
               {/* Subject Color Legend */}
               <div className="p-3 bg-paper rounded-lg border border-dashed border-ink/30">
                 <div className="text-xs font-mono uppercase tracking-wider text-dim font-bold mb-1.5">
-                  Subject Color Reference (Syllabus &amp; Schedule):
+                  Subject Color Reference (Mathematics &amp; Computing · Room No: 14):
                 </div>
                 <div className="flex gap-2 flex-wrap">
                   {Object.entries(HUE).map(([k, col]) => (

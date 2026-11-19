@@ -68,7 +68,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
         id: 'act-classes',
         type: 'action',
         title: 'Open Classes Scheduled & University Holiday Calendar',
-        subtitle: 'Room 13 weekly class schedule, live running class, and 2026 holidays',
+        subtitle: 'Room 14 weekly class schedule, live running class, and 2026 holidays',
         badge: 'Schedule',
         onSelect: () => {
           onClose();

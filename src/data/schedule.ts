@@ -9,10 +9,6 @@ export const HUE: Record<string, string> = {
   uhv: '#a89aa0',
   pps: '#9d9d94',
   eic: '#a98f7a',
-  chem: '#5a9eb4',
-  cs: '#c48b71',
-  egd: '#8ea89d',
-  be: '#c7a14f',
   lib: '#8a867b',
   x: '#8a867b',
 };
@@ -38,7 +34,7 @@ export function getCellForSlot(
 }
 
 /**
- * Primary Timetable: Mathematics & Computing (Room 13 Ground Floor)
+ * Primary Timetable: Mathematics & Computing (Room No: 14)
  * LNJPIT Chapra, Revised w.e.f. 29.10.2026, Session July–December 2026
  */
 export const TT: TimetableData = {
@@ -102,398 +98,34 @@ export const TT: TimetableData = {
 };
 
 /**
- * All 6 Engineering Branch Timetables
+ * Dedicated Mathematics & Computing Schedule
  * Lok Nayak Jai Prakash Institute of Technology (LNJPIT), Chapra
- * Session: July–December, 2026 (Revised Time Table w.e.f. 29.10.2026)
+ * Session: July–December, 2026 (Revised Time Table w.e.f. 29.10.2026) · Room No: 14
  */
+export const MNC_TIMETABLE: BranchTimetable = {
+  branchId: 'mnc',
+  branchName: 'Mathematics & Computing',
+  room: 'Room No: 14',
+  effectiveDate: '29.10.2026',
+  session: 'July–December, 2026',
+  slots: TT.slots,
+  days: TT.days,
+  full: TT.full,
+  grid: TT.grid,
+  faculty: [
+    { sNo: 1, subject: 'Engineering Physics', shortForm: 'Physics', ltp: '3-0-2', hours: '3-0-2', faculty: 'Dr. Niharika Kulshrestha' },
+    { sNo: 2, subject: 'Engineering Mathematics-I', shortForm: 'Math-I', ltp: '3-0-0', hours: '3-0-0', faculty: 'Dr. G.N. Tripathi' },
+    { sNo: 3, subject: 'Programming for Problem Solving Lab', shortForm: 'PPS', ltp: '0-0-2', hours: '0-0-2', faculty: 'Miss. Kripa Singh' },
+    { sNo: 4, subject: 'Introduction to AI', shortForm: 'IAI', ltp: '3-0-0', hours: '3-0-0', faculty: 'Mr. Nauman Jawaid' },
+    { sNo: 5, subject: 'Basics of Electrical & Electronics Engineering', shortForm: 'BEEE', ltp: '3-0-2', hours: '3-0-2', faculty: 'Mr. Vikash Kumar' },
+    { sNo: 6, subject: 'Computer Fundamentals & Emerging Technologies', shortForm: 'CFET', ltp: '3-0-0', hours: '3-0-0', faculty: 'Miss. Aiswarya Singh' },
+    { sNo: 7, subject: 'Universal Human Values', shortForm: 'UHV', ltp: '2-0-0', hours: '2-0-0', faculty: 'Mr. Ravi Ranajan' },
+    { sNo: 8, subject: 'Essence of Indian Constitution', shortForm: 'EIC', ltp: '3-0-0', hours: '0-0-0', faculty: 'Dr. Ghanashyam Kumar Prajapati' },
+  ],
+};
+
 export const BRANCH_TIMETABLES: Record<string, BranchTimetable> = {
-  mnc: {
-    branchId: 'mnc',
-    branchName: 'Mathematics & Computing',
-    room: 'Room No: 13 Ground Floor',
-    effectiveDate: '29.10.2026',
-    session: 'July–December, 2026',
-    slots: TT.slots,
-    days: TT.days,
-    full: TT.full,
-    grid: TT.grid,
-    faculty: [
-      { sNo: 1, subject: 'Engineering Physics', shortForm: 'Physics', ltp: '3-0-2', hours: '3-0-2', faculty: 'Dr. Niharika Kulshrestha' },
-      { sNo: 2, subject: 'Engineering Mathematics-I', shortForm: 'Math-I', ltp: '3-0-0', hours: '3-0-0', faculty: 'Dr. G.N. Tripathi' },
-      { sNo: 3, subject: 'Programming for Problem Solving Lab', shortForm: 'PPS', ltp: '0-0-2', hours: '0-0-2', faculty: 'Miss. Kripa Singh' },
-      { sNo: 4, subject: 'Introduction to AI', shortForm: 'IAI', ltp: '3-0-0', hours: '3-0-0', faculty: 'Mr. Nauman Jawaid' },
-      { sNo: 5, subject: 'Basics of Electrical & Electronics Engineering', shortForm: 'BEEE', ltp: '3-0-2', hours: '3-0-2', faculty: 'Mr. Vikash Kumar' },
-      { sNo: 6, subject: 'Computer Fundamentals & Emerging Technologies', shortForm: 'CFET', ltp: '3-0-0', hours: '3-0-0', faculty: 'Miss. Aiswarya Singh' },
-      { sNo: 7, subject: 'Universal Human Values', shortForm: 'UHV', ltp: '2-0-0', hours: '2-0-0', faculty: 'Mr. Ravi Ranajan' },
-      { sNo: 8, subject: 'Essence of Indian Constitution', shortForm: 'EIC', ltp: '3-0-0', hours: '0-0-0', faculty: 'Dr. Ghanashyam Kumar Prajapati' },
-    ],
-  },
-  cse: {
-    branchId: 'cse',
-    branchName: 'Computer Science & Engineering',
-    room: 'EDUSAT (Section-A & B)',
-    effectiveDate: '29.10.2026',
-    session: 'July–December, 2026',
-    slots: TT.slots,
-    days: TT.days,
-    full: TT.full,
-    grid: [
-      // Mon
-      [
-        { k: 'math', l: 'Math-I', fac: 'Dr. Atul Kumar Tiwari' },
-        { k: 'phy', l: 'Physics', fac: 'Dr. Niharika Kulshrestha' },
-        { k: 'ai', l: 'IAI', fac: 'Mr. Nauman Jawaid' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. Atul Kumar Tiwari' },
-        { k: 'phy', l: 'Physics', fac: 'Dr. Niharika Kulshrestha' },
-        { k: 'ai', l: 'IAI', fac: 'Mr. Nauman Jawaid' },
-      ],
-      // Tue
-      [
-        { k: 'cfet', l: 'CFET', fac: 'Miss. Aiswarya Singh' },
-        { k: 'phy', l: 'Physics', fac: 'Dr. Niharika Kulshrestha' },
-        { k: 'x', l: 'Foreign Language' },
-        { k: 'cfet', l: 'CFET', fac: 'Miss. Aiswarya Singh' },
-        { k: 'beee', l: 'BEEE Lab', h: 2, fac: 'Mr. Avinash Kumar' },
-      ],
-      // Wed
-      [
-        { k: 'math', l: 'Math-I', fac: 'Dr. Atul Kumar Tiwari' },
-        { k: 'cfet', l: 'CFET', fac: 'Miss. Aiswarya Singh' },
-        { k: 'ai', l: 'IAI', fac: 'Mr. Nauman Jawaid' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. Atul Kumar Tiwari' },
-        { k: 'cfet', l: 'CFET', fac: 'Miss. Aiswarya Singh' },
-        { k: 'ai', l: 'IAI', fac: 'Mr. Nauman Jawaid' },
-      ],
-      // Thu
-      [
-        { k: 'math', l: 'Math-I', fac: 'Dr. Atul Kumar Tiwari' },
-        { k: 'beee', l: 'BEEE', fac: 'Mr. Avinash Kumar' },
-        { k: 'ai', l: 'IAI', fac: 'Mr. Nauman Jawaid' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. Atul Kumar Tiwari' },
-        { k: 'beee', l: 'BEEE', fac: 'Mr. Avinash Kumar' },
-        { k: 'ai', l: 'IAI', fac: 'Mr. Nauman Jawaid' },
-      ],
-      // Fri
-      [
-        { k: 'beee', l: 'BEEE', fac: 'Mr. Avinash Kumar' },
-        { k: 'phy', l: 'Physics', fac: 'Dr. Niharika Kulshrestha' },
-        { k: 'uhv', l: 'UHV', fac: 'Mr. Shakti Deo Kumar' },
-        { k: 'beee', l: 'BEEE', fac: 'Mr. Avinash Kumar' },
-        { k: 'phy', l: 'Physics', fac: 'Dr. Niharika Kulshrestha' },
-        { k: 'uhv', l: 'UHV', fac: 'Mr. Shakti Deo Kumar' },
-      ],
-      // Sat
-      [
-        { k: 'cfet', l: 'CFET', fac: 'Miss. Aiswarya Singh' },
-        { k: 'uhv', l: 'UHV', fac: 'Mr. Shakti Deo Kumar' },
-        { k: 'beee', l: 'BEEE', fac: 'Mr. Avinash Kumar' },
-        { k: 'cfet', l: 'CFET', fac: 'Miss. Aiswarya Singh' },
-        { k: 'pps', l: 'PPS Lab', h: 2, fac: 'Mr. Shakti Deo Kumar / Kripa Singh' },
-      ],
-    ],
-    faculty: [
-      { sNo: 1, subject: 'Engineering Physics', shortForm: 'Physics', ltp: '3-0-2', hours: '3-0-2', faculty: 'Dr. Niharika Kulshrestha (Theory) / Dr. Arun Kumar Singh (Lab)' },
-      { sNo: 2, subject: 'Engineering Mathematics-I', shortForm: 'Math-I', ltp: '3-0-0', hours: '3-0-0', faculty: 'Dr. Atul Kumar Tiwari' },
-      { sNo: 3, subject: 'Programming for Problem Solving Lab', shortForm: 'PPS', ltp: '0-0-2', hours: '0-0-2', faculty: 'Mr. Shakti Deo Kumar / Kripa Singh' },
-      { sNo: 4, subject: 'Introduction to AI', shortForm: 'IAI', ltp: '3-0-0', hours: '3-0-0', faculty: 'Mr. Nauman Jawaid' },
-      { sNo: 5, subject: 'Basics of Electrical & Electronics Engineering', shortForm: 'BEEE', ltp: '3-0-2', hours: '3-0-2', faculty: 'Mr. Avinash Kumar' },
-      { sNo: 6, subject: 'Computer Fundamentals & Emerging Technologies', shortForm: 'CFET', ltp: '3-0-0', hours: '3-0-0', faculty: 'Miss. Aiswarya Singh' },
-      { sNo: 7, subject: 'Universal Human Values', shortForm: 'UHV', ltp: '2-0-0', hours: '2-0-0', faculty: 'Mr. Shakti Deo Kumar / Miss. Aiswarya Singh' },
-      { sNo: 8, subject: 'Essence of Indian Constitution', shortForm: 'EIC', ltp: '3-0-0', hours: '0-0-0', faculty: 'Dr. Atul Kumar Tiwari' },
-    ],
-  },
-  eee: {
-    branchId: 'eee',
-    branchName: 'Electrical and Electronics Engineering',
-    room: 'Room No: 3',
-    effectiveDate: '29.10.2026',
-    session: 'July–December, 2026',
-    slots: TT.slots,
-    days: TT.days,
-    full: TT.full,
-    grid: [
-      // Mon
-      [
-        { k: 'phy', l: 'Physics', fac: 'Dr. Niharika Kulshrestha' },
-        { k: 'be', l: 'BE', fac: 'Mr. Vicky Kumar' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. Ritesh Kumar' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. Ritesh Kumar' },
-        { k: 'be', l: 'BE', fac: 'Mr. Vicky Kumar' },
-        { k: 'phy', l: 'Physics', fac: 'Dr. Niharika Kulshrestha' },
-      ],
-      // Tue
-      [
-        { k: 'math', l: 'Math-I', fac: 'Dr. Ritesh Kumar' },
-        { k: 'ai', l: 'IAI', fac: 'Miss. Kripa Singh' },
-        { k: 'x', l: 'Mentor–Mentee' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. Ritesh Kumar' },
-        { k: 'ai', l: 'IAI', fac: 'Miss. Kripa Singh' },
-        { k: 'x', l: 'Mentor–Mentee' },
-      ],
-      // Wed
-      [
-        { k: 'cs', l: 'Communication Skills', fac: 'Mr. Aneesh Kumar M P' },
-        { k: 'phy', l: 'Physics', fac: 'Dr. Niharika Kulshrestha' },
-        { k: 'lib', l: 'Library' },
-        { k: 'phy', l: 'Physics', fac: 'Dr. Niharika Kulshrestha' },
-        { k: 'pps', l: 'PPS Lab', h: 2, fac: 'Miss. Kripa Singh' },
-      ],
-      // Thu
-      [
-        { k: 'math', l: 'Math-I', fac: 'Dr. Ritesh Kumar' },
-        { k: 'be', l: 'BE', fac: 'Mr. Vicky Kumar' },
-        { k: 'cs', l: 'Communication Skills', fac: 'Mr. Aneesh Kumar M P' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. Ritesh Kumar' },
-        { k: 'be', l: 'BE', fac: 'Mr. Vicky Kumar' },
-        { k: 'cs', l: 'Communication Skills', fac: 'Mr. Aneesh Kumar M P' },
-      ],
-      // Fri
-      [
-        { k: 'ai', l: 'IAI', fac: 'Miss. Kripa Singh' },
-        { k: 'be', l: 'BE', fac: 'Mr. Vicky Kumar' },
-        { k: 'x', l: 'Foreign Language' },
-        { k: 'ai', l: 'IAI', fac: 'Miss. Kripa Singh' },
-        { k: 'be', l: 'BE Lab', h: 2, fac: 'Mr. Vicky Kumar' },
-      ],
-      // Sat
-      [
-        { k: 'ai', l: 'IAI', fac: 'Miss. Kripa Singh' },
-        { k: 'phy', l: 'Physics', fac: 'Dr. Niharika Kulshrestha' },
-        { k: 'cs', l: 'Communication Skills', fac: 'Mr. Aneesh Kumar M P' },
-        { k: 'ai', l: 'IAI', fac: 'Miss. Kripa Singh' },
-        { k: 'phy', l: 'Physics', fac: 'Dr. Niharika Kulshrestha' },
-        { k: 'cs', l: 'Communication Skills', fac: 'Mr. Aneesh Kumar M P' },
-      ],
-    ],
-    faculty: [
-      { sNo: 1, subject: 'Engineering Physics', shortForm: 'Physics', ltp: '3-0-2', hours: '3-0-2', faculty: 'Dr. Niharika Kulshrestha (Theory) / Dr. Arun Kumar Singh (Lab)' },
-      { sNo: 2, subject: 'Engineering Mathematics-I', shortForm: 'Math-I', ltp: '3-0-0', hours: '3-0-0', faculty: 'Dr. Ritesh Kumar' },
-      { sNo: 3, subject: 'Programming for Problem Solving Lab', shortForm: 'PPS', ltp: '0-0-2', hours: '0-0-2', faculty: 'Miss. Kripa Singh' },
-      { sNo: 4, subject: 'Introduction to AI', shortForm: 'IAI', ltp: '3-0-0', hours: '3-0-0', faculty: 'Miss. Kripa Singh' },
-      { sNo: 5, subject: 'Basic Electrical Engineering', shortForm: 'BE', ltp: '3-0-2', hours: '3-0-2', faculty: 'Mr. Vicky Kumar' },
-      { sNo: 6, subject: 'Communication Skills', shortForm: 'CS', ltp: '3-0-2', hours: '3-0-2', faculty: 'Mr. Aneesh Kumar M P' },
-      { sNo: 7, subject: 'Sports/Yoga/NCC/NSS', shortForm: 'SYNN', ltp: '0-0-2', hours: '0-0-2', faculty: 'Mr. Avinash Kumar / Vaibhav Mishra' },
-    ],
-  },
-  ce: {
-    branchId: 'ce',
-    branchName: 'Civil Engineering',
-    room: 'Room No: 1',
-    effectiveDate: '29.10.2026',
-    session: 'July–December, 2026',
-    slots: TT.slots,
-    days: TT.days,
-    full: TT.full,
-    grid: [
-      // Mon
-      [
-        { k: 'ai', l: 'IAI', fac: 'Miss. Kripa Singh' },
-        { k: 'chem', l: 'Chemistry', fac: 'Dr. Rupam Yadav / Dr. Kumari Priti' },
-        { k: 'cs', l: 'Communication Skills', fac: 'Dr. Vivekananda Kumar / Aneesh Kumar M P' },
-        { k: 'ai', l: 'IAI', fac: 'Miss. Kripa Singh' },
-        { k: 'chem', l: 'Chemistry', fac: 'Dr. Rupam Yadav / Dr. Kumari Priti' },
-        { k: 'cs', l: 'Communication Skills', fac: 'Dr. Vivekananda Kumar / Aneesh Kumar M P' },
-      ],
-      // Tue
-      [
-        { k: 'chem', l: 'Chemistry', fac: 'Dr. Rupam Yadav / Dr. Kumari Priti' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. Ritesh Kumar' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. Ritesh Kumar' },
-        { k: 'chem', l: 'Chemistry', fac: 'Dr. Rupam Yadav / Dr. Kumari Priti' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. Ritesh Kumar' },
-        { k: 'lib', l: 'Library' },
-      ],
-      // Wed
-      [
-        { k: 'egd', l: 'EGD', fac: 'Mr. Sachindra Kumar' },
-        { k: 'chem', l: 'Chemistry Lab', h: 2, fac: 'Dr. Rupam Yadav / Dr. Kumari Priti' },
-        { k: 'egd', l: 'EGD', fac: 'Mr. Sachindra Kumar' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. Ritesh Kumar' },
-        { k: 'x', l: 'Mentor–Mentee' },
-      ],
-      // Thu
-      [
-        { k: 'ai', l: 'IAI', fac: 'Miss. Kripa Singh' },
-        { k: 'chem', l: 'Chemistry', fac: 'Dr. Rupam Yadav / Dr. Kumari Priti' },
-        { k: 'x', l: 'Foreign Language' },
-        { k: 'ai', l: 'IAI', fac: 'Miss. Kripa Singh' },
-        { k: 'pps', l: 'PPS Lab', h: 2, fac: 'Mr. Nauman Jawaid' },
-      ],
-      // Fri
-      [
-        { k: 'cs', l: 'Communication Skills', fac: 'Dr. Vivekananda Kumar / Aneesh Kumar M P' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. Ritesh Kumar' },
-        { k: 'egd', l: 'EGD', fac: 'Mr. Sachindra Kumar' },
-        { k: 'cs', l: 'Communication Skills', fac: 'Dr. Vivekananda Kumar / Aneesh Kumar M P' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. Ritesh Kumar' },
-        { k: 'egd', l: 'EGD', fac: 'Mr. Sachindra Kumar' },
-      ],
-      // Sat
-      [
-        { k: 'cs', l: 'Communication Skills', fac: 'Dr. Vivekananda Kumar / Aneesh Kumar M P' },
-        { k: 'ai', l: 'IAI', fac: 'Miss. Kripa Singh' },
-        { k: 'lib', l: 'Library' },
-        { k: 'cs', l: 'Communication Skills', fac: 'Dr. Vivekananda Kumar / Aneesh Kumar M P' },
-        { k: 'ai', l: 'IAI', fac: 'Miss. Kripa Singh' },
-        { k: 'chem', l: 'Chemistry', fac: 'Dr. Rupam Yadav / Dr. Kumari Priti' },
-      ],
-    ],
-    faculty: [
-      { sNo: 1, subject: 'Engineering Chemistry', shortForm: 'Chemistry', ltp: '3-0-2', hours: '3-0-2', faculty: 'Dr. Rupam Yadav / Dr. Kumari Priti' },
-      { sNo: 2, subject: 'Engineering Mathematics-I', shortForm: 'Math-I', ltp: '3-0-0', hours: '3-0-0', faculty: 'Dr. Ritesh Kumar' },
-      { sNo: 3, subject: 'Communication Skills', shortForm: 'CS', ltp: '3-0-2', hours: '3-0-2', faculty: 'Dr. Vivekananda Kumar / Aneesh Kumar M P' },
-      { sNo: 4, subject: 'Engineering Graphics and Design', shortForm: 'EGD', ltp: '2-0-4', hours: '2-0-4', faculty: 'Mr. Sachindra Kumar' },
-      { sNo: 5, subject: 'Introduction to AI', shortForm: 'IAI', ltp: '3-0-0', hours: '3-0-0', faculty: 'Miss. Kripa Singh' },
-      { sNo: 6, subject: 'Programming for Problem Solving Lab', shortForm: 'PPS Lab', ltp: '0-0-2', hours: '0-0-2', faculty: 'Mr. Nauman Jawaid' },
-      { sNo: 7, subject: 'Sports/Yoga/NCC/NSS', shortForm: 'SYNN', ltp: '0-0-2', hours: '0-0-2', faculty: 'Mr. Avinash Kumar / Vaibhav Mishra' },
-    ],
-  },
-  me: {
-    branchId: 'me',
-    branchName: 'Mechanical Engineering',
-    room: 'Room No: 4',
-    effectiveDate: '29.10.2026',
-    session: 'July–December, 2026',
-    slots: TT.slots,
-    days: TT.days,
-    full: TT.full,
-    grid: [
-      // Mon
-      [
-        { k: 'cs', l: 'Communication Skills', fac: 'Dr. Vivekananda Kumar / Aneesh Kumar M P' },
-        { k: 'egd', l: 'EGD', fac: 'Mr. Sachindra Kumar' },
-        { k: 'ai', l: 'IAI', fac: 'Miss. Kripa Singh' },
-        { k: 'cs', l: 'Communication Skills', fac: 'Dr. Vivekananda Kumar / Aneesh Kumar M P' },
-        { k: 'egd', l: 'EGD', fac: 'Mr. Sachindra Kumar' },
-        { k: 'ai', l: 'IAI', fac: 'Miss. Kripa Singh' },
-      ],
-      // Tue
-      [
-        { k: 'cs', l: 'Communication Skills', fac: 'Dr. Vivekananda Kumar / Aneesh Kumar M P' },
-        { k: 'chem', l: 'Chemistry Lab', h: 2, fac: 'Dr. Rupam Yadav / Dr. Kumari Priti' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. Ritesh Kumar' },
-        { k: 'pps', l: 'PPS Lab', h: 2, fac: 'Mr. Nauman Jawaid' },
-      ],
-      // Wed
-      [
-        { k: 'ai', l: 'IAI', fac: 'Miss. Kripa Singh' },
-        { k: 'egd', l: 'EGD', fac: 'Mr. Sachindra Kumar' },
-        { k: 'chem', l: 'Chemistry', fac: 'Dr. Rupam Yadav / Dr. Kumari Priti' },
-        { k: 'ai', l: 'IAI', fac: 'Miss. Kripa Singh' },
-        { k: 'egd', l: 'EGD', fac: 'Mr. Sachindra Kumar' },
-        { k: 'chem', l: 'Chemistry', fac: 'Dr. Rupam Yadav / Dr. Kumari Priti' },
-      ],
-      // Thu
-      [
-        { k: 'cs', l: 'Communication Skills', fac: 'Dr. Vivekananda Kumar / Aneesh Kumar M P' },
-        { k: 'ai', l: 'IAI', fac: 'Miss. Kripa Singh' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. Ritesh Kumar' },
-        { k: 'cs', l: 'Communication Skills', fac: 'Dr. Vivekananda Kumar / Aneesh Kumar M P' },
-        { k: 'ai', l: 'IAI', fac: 'Miss. Kripa Singh' },
-        { k: 'x', l: 'Mentor–Mentee' },
-      ],
-      // Fri
-      [
-        { k: 'chem', l: 'Chemistry', fac: 'Dr. Rupam Yadav / Dr. Kumari Priti' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. Ritesh Kumar' },
-        { k: 'x', l: 'Foreign Language' },
-        { k: 'chem', l: 'Chemistry', fac: 'Dr. Rupam Yadav / Dr. Kumari Priti' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. Ritesh Kumar' },
-        { k: 'x', l: 'Foreign Language' },
-      ],
-      // Sat
-      [
-        { k: 'chem', l: 'Chemistry', fac: 'Dr. Rupam Yadav / Dr. Kumari Priti' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. Ritesh Kumar' },
-        { k: 'lib', l: 'Library' },
-        { k: 'chem', l: 'Chemistry', fac: 'Dr. Rupam Yadav / Dr. Kumari Priti' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. Ritesh Kumar' },
-        { k: 'lib', l: 'Library' },
-      ],
-    ],
-    faculty: [
-      { sNo: 1, subject: 'Engineering Chemistry', shortForm: 'Chemistry', ltp: '3-0-2', hours: '3-0-2', faculty: 'Dr. Rupam Yadav / Dr. Kumari Priti' },
-      { sNo: 2, subject: 'Engineering Mathematics-I', shortForm: 'Math-I', ltp: '3-0-0', hours: '3-0-0', faculty: 'Dr. Ritesh Kumar' },
-      { sNo: 3, subject: 'Communication Skills', shortForm: 'CS', ltp: '3-0-2', hours: '3-0-2', faculty: 'Dr. Vivekananda Kumar / Aneesh Kumar M P' },
-      { sNo: 4, subject: 'Engineering Graphics and Design', shortForm: 'EGD', ltp: '2-0-4', hours: '2-0-4', faculty: 'Mr. Sachindra Kumar' },
-      { sNo: 5, subject: 'Introduction to AI', shortForm: 'IAI', ltp: '3-0-0', hours: '3-0-0', faculty: 'Miss. Kripa Singh' },
-      { sNo: 6, subject: 'Programming for Problem Solving Lab', shortForm: 'PPS Lab', ltp: '0-0-2', hours: '0-0-2', faculty: 'Mr. Nauman Jawaid' },
-      { sNo: 7, subject: 'Sports/Yoga/NCC/NSS', shortForm: 'SYNN', ltp: '0-0-2', hours: '0-0-2', faculty: 'Mr. Avinash Kumar / Vaibhav Mishra' },
-    ],
-  },
-  fpp: {
-    branchId: 'fpp',
-    branchName: 'Food Processing & Preservation',
-    room: 'Room No: 14',
-    effectiveDate: '29.10.2026',
-    session: 'July–December, 2026',
-    slots: TT.slots,
-    days: TT.days,
-    full: TT.full,
-    grid: [
-      // Mon
-      [
-        { k: 'chem', l: 'Chemistry', fac: 'Dr. Rupam Yadav' },
-        { k: 'egd', l: 'EGD', fac: 'Mr. Pankaj Kumar' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. G.K Prajapati' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. G.K Prajapati' },
-        { k: 'egd', l: 'EGD', fac: 'Mr. Pankaj Kumar' },
-        { k: 'chem', l: 'Chemistry', fac: 'Dr. Rupam Yadav' },
-      ],
-      // Tue
-      [
-        { k: 'egd', l: 'EGD', fac: 'Mr. Pankaj Kumar' },
-        { k: 'cs', l: 'Communication Skills', fac: 'Dr. Vivekananda Kumar / Aneesh Kumar M P' },
-        { k: 'ai', l: 'IAI', fac: 'Miss. Kripa Singh' },
-        { k: 'egd', l: 'EGD', fac: 'Mr. Pankaj Kumar' },
-        { k: 'cs', l: 'Communication Skills', fac: 'Dr. Vivekananda Kumar / Aneesh Kumar M P' },
-        { k: 'ai', l: 'IAI', fac: 'Miss. Kripa Singh' },
-      ],
-      // Wed
-      [
-        { k: 'cs', l: 'Communication Skills', fac: 'Dr. Vivekananda Kumar / Aneesh Kumar M P' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. G.K Prajapati' },
-        { k: 'ai', l: 'IAI', fac: 'Miss. Kripa Singh' },
-        { k: 'cs', l: 'Communication Skills', fac: 'Dr. Vivekananda Kumar / Aneesh Kumar M P' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. G.K Prajapati' },
-        { k: 'ai', l: 'IAI', fac: 'Miss. Kripa Singh' },
-      ],
-      // Thu
-      [
-        { k: 'chem', l: 'Chemistry', fac: 'Dr. Rupam Yadav' },
-        { k: 'cs', l: 'Communication Skills', fac: 'Dr. Vivekananda Kumar / Aneesh Kumar M P' },
-        { k: 'lib', l: 'Library' },
-        { k: 'chem', l: 'Chemistry', fac: 'Dr. Rupam Yadav' },
-        { k: 'cs', l: 'Communication Skills', fac: 'Dr. Vivekananda Kumar / Aneesh Kumar M P' },
-        { k: 'lib', l: 'Library' },
-      ],
-      // Fri
-      [
-        { k: 'chem', l: 'Chemistry', fac: 'Dr. Rupam Yadav' },
-        { k: 'ai', l: 'IAI', fac: 'Miss. Kripa Singh' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. G.K Prajapati' },
-        { k: 'math', l: 'Math-I', fac: 'Dr. G.K Prajapati' },
-        { k: 'pps', l: 'PPS Lab', h: 2, fac: 'Miss Aiswarya' },
-      ],
-      // Sat
-      [
-        { k: 'x', l: 'Foreign Language' },
-        { k: 'chem', l: 'Chemistry Lab', h: 2, fac: 'Dr. Rupam Yadav' },
-        { k: 'x', l: 'Foreign Language' },
-        { k: 'chem', l: 'Chemistry', fac: 'Dr. Rupam Yadav' },
-        { k: 'x', l: 'Mentor–Mentee' },
-      ],
-    ],
-    faculty: [
-      { sNo: 1, subject: 'Engineering Chemistry', shortForm: 'Chemistry', ltp: '3-0-2', hours: '3-0-2', faculty: 'Dr. Rupam Yadav' },
-      { sNo: 2, subject: 'Engineering Mathematics-I', shortForm: 'Math-I', ltp: '3-0-0', hours: '3-0-0', faculty: 'Dr. G.K Prajapati' },
-      { sNo: 3, subject: 'Communication Skills', shortForm: 'CS', ltp: '3-0-2', hours: '3-0-2', faculty: 'Dr. Vivekananda Kumar / Aneesh Kumar M P' },
-      { sNo: 4, subject: 'Engineering Graphics and Design', shortForm: 'EGD', ltp: '2-0-4', hours: '2-0-4', faculty: 'Mr. Pankaj Kumar' },
-      { sNo: 5, subject: 'Introduction to AI', shortForm: 'IAI', ltp: '3-0-0', hours: '3-0-0', faculty: 'Miss. Kripa Singh' },
-      { sNo: 6, subject: 'Programming for Problem Solving Lab', shortForm: 'PPS Lab', ltp: '0-0-2', hours: '0-0-2', faculty: 'Miss Aiswarya' },
-      { sNo: 7, subject: 'Sports/Yoga/NCC/NSS', shortForm: 'SYNN', ltp: '0-0-2', hours: '0-0-2', faculty: 'Mr. Avinash Kumar / Vaibhav Mishra' },
-    ],
-  },
+  mnc: MNC_TIMETABLE,
 };
 
 export const DEFAULT_BRANCH_ID = 'mnc';
