@@ -94,11 +94,19 @@ export const SvgDiagramViewer: React.FC<SvgDiagramViewerProps> = ({
 
   const current = diagrams[Math.min(activeIdx, diagrams.length - 1)];
 
-  // Process SVG for Redraw Mode if active
+  // Process SVG for Arrowhead marker definition & Redraw Mode
   const renderSvgContent = (rawSvg: string) => {
-    if (!redrawMode) return rawSvg;
-    // In Redraw mode: hide text labels for self-testing sketch practice
-    return rawSvg.replace(/<text\b[^>]*>([\s\S]*?)<\/text>/gi, '');
+    let svg = rawSvg;
+    if (redrawMode) {
+      // In Redraw mode: hide text labels for self-testing sketch practice
+      svg = svg.replace(/<text\b[^>]*>([\s\S]*?)<\/text>/gi, '');
+    }
+    // Inject standard arrowhead marker definition if not already present
+    if (!svg.includes('id="ar"') && !svg.includes("id='ar'")) {
+      const markerDef = `<defs><marker id="ar" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#2b2a28" stroke="none"/></marker></defs>`;
+      svg = svg.replace(/<svg\b([^>]*)>/i, `<svg $1>${markerDef}`);
+    }
+    return svg;
   };
 
   return (
@@ -152,7 +160,7 @@ export const SvgDiagramViewer: React.FC<SvgDiagramViewerProps> = ({
         title="Click to enlarge diagram"
       >
         <div
-          className="w-full max-w-2xl flex-1 flex items-center justify-center overflow-auto [&_svg]:w-full [&_svg]:h-auto [&_svg]:max-h-[52vh] [&_svg]:overflow-visible [&_svg_.l]:stroke-[#2b2a28] [&_svg_.l]:fill-none [&_svg_.l]:stroke-[1.8] [&_svg_.a]:stroke-[#c85025] [&_svg_.a]:fill-none [&_svg_.a]:stroke-[2.2] [&_svg_.d]:stroke-[#555046] [&_svg_.d]:fill-none [&_svg_.d]:stroke-dasharray-[4,3] [&_svg_.fa]:fill-[#f6e3b4] [&_svg_.fa]:stroke-[#2b2a28] [&_svg_.t]:fill-[#2b2a28] [&_svg_.t]:font-sans [&_svg_.t]:text-[9.5px] [&_svg_.ta]:fill-[#c85025] [&_svg_.ta]:font-bold [&_svg_.ta]:font-sans [&_svg_.ta]:text-[10px]"
+          className="w-full max-w-2xl flex-1 flex items-center justify-center overflow-auto [&_svg]:w-full [&_svg]:h-auto [&_svg]:max-h-[52vh] [&_svg]:overflow-visible [&_svg_.l]:stroke-[#2b2a28] [&_svg_.l]:fill-none [&_svg_.l]:stroke-[1.8] [&_svg_.l]:stroke-linecap-round [&_svg_.l]:stroke-linejoin-round [&_svg_.a]:stroke-[#2b2a28] [&_svg_.a]:fill-none [&_svg_.a]:stroke-[2] [&_svg_.a]:stroke-linecap-round [&_svg_.a]:stroke-linejoin-round [&_svg_.d]:stroke-[#555046] [&_svg_.d]:fill-none [&_svg_.d]:stroke-dasharray-[4,3] [&_svg_.fa]:fill-[#f6e3b4] [&_svg_.fa]:stroke-[#2b2a28] [&_svg_.fa]:stroke-[1.6] [&_svg_.t]:fill-[#2b2a28] [&_svg_.t]:font-hand [&_svg_.t]:font-medium [&_svg_.t]:text-[13px] [&_svg_.ta]:fill-[#c85025] [&_svg_.ta]:font-bold [&_svg_.ta]:font-hand [&_svg_.ta]:text-[14px]"
           dangerouslySetInnerHTML={{ __html: renderSvgContent(current.svg) }}
         />
         {redrawMode && (
@@ -194,7 +202,7 @@ export const SvgDiagramViewer: React.FC<SvgDiagramViewerProps> = ({
             </div>
 
             <div
-              className="p-4 bg-paper2 rounded-xl border border-ink/20 flex-1 overflow-auto flex items-center justify-center [&_svg]:w-full [&_svg]:h-auto [&_svg]:max-h-[65vh] [&_svg_.l]:stroke-[#2b2a28] [&_svg_.l]:fill-none [&_svg_.l]:stroke-[1.8] [&_svg_.a]:stroke-[#c85025] [&_svg_.a]:fill-none [&_svg_.a]:stroke-[2.2] [&_svg_.d]:stroke-[#555046] [&_svg_.d]:fill-none [&_svg_.d]:stroke-dasharray-[4,3] [&_svg_.fa]:fill-[#f6e3b4] [&_svg_.fa]:stroke-[#2b2a28] [&_svg_.t]:fill-[#2b2a28] [&_svg_.t]:font-sans [&_svg_.t]:text-[11.5px] [&_svg_.ta]:fill-[#c85025] [&_svg_.ta]:font-bold [&_svg_.ta]:font-sans [&_svg_.ta]:text-[12px]"
+              className="p-4 bg-paper2 rounded-xl border border-ink/20 flex-1 overflow-auto flex items-center justify-center [&_svg]:w-full [&_svg]:h-auto [&_svg]:max-h-[65vh] [&_svg_.l]:stroke-[#2b2a28] [&_svg_.l]:fill-none [&_svg_.l]:stroke-[1.8] [&_svg_.l]:stroke-linecap-round [&_svg_.l]:stroke-linejoin-round [&_svg_.a]:stroke-[#2b2a28] [&_svg_.a]:fill-none [&_svg_.a]:stroke-[2] [&_svg_.a]:stroke-linecap-round [&_svg_.a]:stroke-linejoin-round [&_svg_.d]:stroke-[#555046] [&_svg_.d]:fill-none [&_svg_.d]:stroke-dasharray-[4,3] [&_svg_.fa]:fill-[#f6e3b4] [&_svg_.fa]:stroke-[#2b2a28] [&_svg_.fa]:stroke-[1.6] [&_svg_.t]:fill-[#2b2a28] [&_svg_.t]:font-hand [&_svg_.t]:font-medium [&_svg_.t]:text-[15px] [&_svg_.ta]:fill-[#c85025] [&_svg_.ta]:font-bold [&_svg_.ta]:font-hand [&_svg_.ta]:text-[16px]"
               dangerouslySetInnerHTML={{ __html: renderSvgContent(current.svg) }}
             />
 

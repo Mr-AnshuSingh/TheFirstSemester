@@ -303,7 +303,7 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
       cv.width = Math.round(eng.W * dpr);
       cv.height = Math.round(eng.H * dpr);
 
-      // Apply non-compounding transform
+      // Non-compounding backing-store transformation
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       const b = document.createElement('canvas');
@@ -322,7 +322,7 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
         }
       }
       eng.bg = b;
-      eng.ofsY = 0;
+      eng.ofsY = typeof window !== 'undefined' && window.innerWidth > 900 && capRef.current ? Math.round(capRef.current.offsetHeight * 0.45) : 0;
 
       // Update test hook info
       if (typeof window !== 'undefined') {
@@ -402,7 +402,7 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
       const sp = pp.map((p) => [p[0], p[1]]);
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
-      ctx.setLineDash(it.o.d ? it.o.d : []);
+      ctx.setLineDash(it.o.d ? it.o.d.map((v) => v * (engineRef.current.zoom > 1 ? 1 : 1)) : []);
       ctx.strokeStyle = col;
       ctx.lineWidth = w;
       tracePath(rough(sp, it.id * 1.31, 1.2), close);
@@ -426,63 +426,60 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
       const zs = Math.max(0.75, Math.min(1.4, Math.sqrt(eng.zoom)));
 
       if (it.k === 'L') {
-        const w = (o.w || 1.8) * zs;
-        if (o.f) {
-          ctx.fillStyle = o.f;
-          tracePath(
-            pp.map((p) => [p[0], p[1]]),
-            true
-          );
-          ctx.fill();
-        }
-        if (!o.nostroke) {
-          stroke(pp, it, w, col, lite, false);
-        }
-      } else if (it.k === 'P') {
-        const w = (o.w || 1.8) * zs;
-        if (o.f) {
-          ctx.fillStyle = o.f;
-          tracePath(
-            pp.map((p) => [p[0], p[1]]),
-            true
-          );
-          ctx.fill();
-        }
-        if (!o.nostroke) {
-          stroke(pp, it, w, col, lite, true);
-        }
-      } else if (it.k === 'T') {
-        const pt = pp[0];
-        const sc = pt ? pt[3] : 1;
-        const sz = e.adjSz ?? Math.max(14, Math.round((o.sz || 16) * zs * (0.8 + 0.3 * sc)));
-        ctx.font = `${o.b ? 'bold ' : ''}${sz}px Caveat, cursive`;
-        ctx.fillStyle = col;
-        ctx.textAlign = (o.a as CanvasTextAlign) || 'center';
-        ctx.textBaseline = 'middle';
-        const drawX = e.adjX ?? (pt ? pt[0] + (o.dx || 0) * zs : eng.W / 2);
-        const drawY = e.adjY ?? (pt ? pt[1] + (o.dy || 0) * zs : eng.H / 2);
-        ctx.fillText(it.str || '', drawX, drawY);
-      } else if (it.k === 'D') {
-        const pt = pp[0];
-        const r = Math.max(2, (it.r || 3) * zs * pt[3]);
-        ctx.fillStyle = col;
-        ctx.beginPath();
-        ctx.arc(pt[0], pt[1], r, 0, PI * 2);
-        ctx.fill();
+        stroke(pp, it, (o.w || 2.2) * zs, col, lite, false);
       } else if (it.k === 'A') {
-        const w = (o.w || 2.2) * zs;
-        stroke(pp, it, w, col, lite, false);
-        const p1 = pp[pp.length - 1];
-        const p0 = pp[pp.length - 2] || pp[0];
-        const ang = Math.atan2(p1[1] - p0[1], p1[0] - p0[0]);
-        const ah = Math.max(7, 9 * zs);
+        const [p, q] = pp;
+        const dx = q[0] - p[0];
+        const dy = q[1] - p[1];
+        const l = Math.hypot(dx, dy);
+        if (l < 2) return;
+        const ux = dx / l;
+        const uy = dy / l;
+        const hl = Math.min(13 * zs, l * 0.6);
+        const bx = q[0] - ux * hl;
+        const by = q[1] - uy * hl;
+        stroke([p, [bx, by]], it, (o.w || 2.4) * zs, col, lite, false);
         ctx.fillStyle = col;
         ctx.beginPath();
-        ctx.moveTo(p1[0], p1[1]);
-        ctx.lineTo(p1[0] - ah * cos(ang - 0.42), p1[1] - ah * sin(ang - 0.42));
-        ctx.lineTo(p1[0] - ah * 0.4 * cos(ang), p1[1] - ah * 0.4 * sin(ang));
-        ctx.lineTo(p1[0] - ah * cos(ang + 0.42), p1[1] - ah * sin(ang + 0.42));
+        ctx.moveTo(q[0], q[1]);
+        ctx.lineTo(bx - uy * hl * 0.42, by + ux * hl * 0.42);
+        ctx.lineTo(bx + uy * hl * 0.42, by - ux * hl * 0.42);
         ctx.closePath();
+        ctx.fill();
+      } else if (it.k === 'P') {
+        const sp = pp.map((p) => [p[0], p[1]]);
+        if (o.f) {
+          const alpha = typeof o.a === 'number' ? o.a : 0.2;
+          ctx.globalAlpha *= alpha;
+          ctx.fillStyle = o.f;
+          ctx.beginPath();
+          sp.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])));
+          ctx.closePath();
+          ctx.fill();
+          ctx.globalAlpha /= alpha;
+        }
+        if (!o.nostroke) {
+          stroke(pp.concat([pp[0]]), it, (o.w || 1.5) * zs, o.c || COL.ink, true, true);
+        }
+      } else if (it.k === 'D') {
+        const sc = pp[0][3];
+        const r = Math.max(3, (it.r || 3) * sc * eng.unit);
+        const f = o.f || COL.ink;
+        ctx.fillStyle = f;
+        ctx.globalAlpha *= 0.88;
+        ctx.beginPath();
+        ctx.arc(pp[0][0], pp[0][1], r, 0, 2 * PI);
+        ctx.fill();
+        ctx.globalAlpha /= 0.88;
+        const ring: number[][] = [];
+        for (let i = 0; i <= 12; i++) {
+          const a = (i / 12) * 2 * PI;
+          ring.push([pp[0][0] + cos(a) * r, pp[0][1] + sin(a) * r, 0]);
+        }
+        stroke(ring, it, 1.4, COL.ink, true, true);
+        ctx.fillStyle = 'rgba(255,255,255,0.55)';
+        ctx.beginPath();
+        ctx.arc(pp[0][0] - r * 0.3, pp[0][1] - r * 0.3, r * 0.22, 0, 2 * PI);
         ctx.fill();
       }
     };
@@ -490,51 +487,81 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
     const drawFrame = () => {
       try {
         const eng = engineRef.current;
-        eng.unit = Math.min(eng.W, eng.H) * 0.082 * eng.zoom;
+        eng.unit = Math.min(eng.W / 14.5, eng.H / 9.2) * eng.zoom;
 
-        const cy = cos(eng.yaw);
-        const sy = sin(eng.yaw);
+        const sway = eng.idle > 2.2 ? 0.2 * sin((eng.idle - 2.2) * 0.5) : 0;
+        const yw = eng.yaw + sway;
+        const cy = cos(yw);
+        const sy = sin(yw);
         const cp = cos(eng.pitch);
         const sp = sin(eng.pitch);
         const cs = { cy, sy, cp, sp };
 
-        ctx.clearRect(0, 0, eng.W, eng.H);
+        // Render crisp paper backing-store dot-grid
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         if (eng.bg) {
-          ctx.drawImage(eng.bg, 0, 0, eng.W, eng.H);
+          ctx.drawImage(eng.bg, 0, 0);
         }
+        ctx.setTransform(eng.dpr, 0, 0, eng.dpr, 0, 0);
 
-        const ents: ProjectedEntity[] = [];
+        const cur = eng.step;
+        const fade = Math.min(1, (performance.now() - eng.stepT) / 450);
+
+        const rawItems: PrimitiveItem[] = [];
 
         // Static primitives
         for (const it of eng.stat) {
-          if (it.step > eng.step) continue;
-          if (it.only && it.step !== eng.step) continue;
-          ents.push({
-            it,
-            pp: it.pts.map((p) => proj(p, cs)),
-            d: 0,
-          });
+          if (it.only ? it.step === cur : it.step <= cur) {
+            rawItems.push(it);
+          }
         }
 
         // Dynamic primitives
         if (eng.dyns.length > 0) {
-          const dB = new Builder(eng.scene.steps);
-          dB.s(eng.step);
           for (const d of eng.dyns) {
-            if (d.step > eng.step) continue;
-            if (d.only && d.step !== eng.step) continue;
+            if (!(d.only ? d.step === cur : d.step <= cur)) continue;
+            const dB = new Builder(eng.scene.steps);
+            dB.idBase = 10000 + d.step * 500;
+            dB.step = d.step;
+            dB.only = d.only;
             d.fn(eng.time, dB, eng.params);
-          }
-          for (const it of dB.items) {
-            ents.push({
-              it,
-              pp: it.pts.map((p) => proj(p, cs)),
-              d: 0,
-            });
+            for (const it of dB.items) {
+              it.step = d.step;
+              it.only = d.only;
+              rawItems.push(it);
+            }
           }
         }
 
-        // Pre-compute text label layout & resolve screen-space overlaps
+        const lite = rawItems.length > 900;
+        const list: ProjectedEntity[] = [];
+        const texts: ProjectedEntity[] = [];
+
+        for (const it of rawItems) {
+          const pp = it.pts.map((p) => proj(p, cs));
+          let d = 0;
+          for (const p of pp) d += p[2];
+          d /= pp.length || 1;
+          const e: ProjectedEntity = { it, pp, d };
+          if (it.k === 'T') {
+            texts.push(e);
+          } else {
+            list.push(e);
+          }
+        }
+
+        // Painter's algorithm depth sorting (furthest first)
+        list.sort((a, b) => b.d - a.d);
+
+        // Draw 3D lines, arrows, polygons, and spheres
+        for (const e of list) {
+          const a = e.it.step === cur && cur > 0 ? fade : 1;
+          ctx.globalAlpha = a;
+          drawItem(e, lite);
+        }
+        ctx.globalAlpha = 1;
+
+        // Pre-compute text label relaxation to avoid collisions
         interface TextLabelLayout {
           e: ProjectedEntity;
           minX: number;
@@ -544,17 +571,16 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
           sz: number;
         }
         const textLabels: TextLabelLayout[] = [];
-        const zs = Math.max(0.75, Math.min(1.4, Math.sqrt(eng.zoom)));
-        for (const e of ents) {
-          if (e.it.k === 'T' && e.pp[0]) {
+        const zs = Math.max(0.85, Math.min(1.25, Math.sqrt(eng.zoom))) * Math.min(1, Math.max(0.6, eng.W / 760));
+        for (const e of texts) {
+          if (e.pp[0]) {
             const pt = e.pp[0];
-            const sc = pt ? pt[3] : 1;
-            const sz = Math.max(14, Math.round((e.it.o?.sz || 16) * zs * (0.8 + 0.3 * sc)));
+            const sz = (e.it.o?.sz || 19) * zs;
             const str = e.it.str || '';
             const estWidth = str.length * sz * 0.52;
             const estHeight = sz * 1.15;
-            let left = pt[0] + (e.it.o?.dx || 0) * zs;
-            const top = pt[1] + (e.it.o?.dy || 0) * zs - estHeight / 2;
+            let left = pt[0] + (e.it.o?.dx || 0);
+            const top = pt[1] + (e.it.o?.dy || 0) - estHeight / 2;
 
             if (e.it.o?.a === 'center' || !e.it.o?.a) {
               left -= estWidth / 2;
@@ -562,7 +588,6 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
               left -= estWidth;
             }
 
-            // Clamp initial bounds inside canvas
             left = Math.max(10, Math.min(eng.W - estWidth - 10, left));
             const clampedTop = Math.max(10, Math.min(eng.H - estHeight - 10, top));
 
@@ -577,8 +602,8 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
           }
         }
 
-        // 2D screen-space relaxation to eliminate overlaps
-        for (let iter = 0; iter < 18; iter++) {
+        // 2D screen-space relaxation
+        for (let iter = 0; iter < 12; iter++) {
           let anyOverlap = false;
           for (let i = 0; i < textLabels.length; i++) {
             for (let j = i + 1; j < textLabels.length; j++) {
@@ -596,14 +621,14 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
               if (overlapX > 0 && overlapY > 0) {
                 anyOverlap = true;
                 if (overlapX < overlapY && Math.abs(dx) > 0.5) {
-                  const shiftX = overlapX / 2 + 1.5;
+                  const shiftX = overlapX / 2 + 1.2;
                   const dirX = dx >= 0 ? 1 : -1;
                   a.minX += shiftX * dirX;
                   a.maxX += shiftX * dirX;
                   b.minX -= shiftX * dirX;
                   b.maxX -= shiftX * dirX;
                 } else {
-                  const shiftY = overlapY / 2 + 1.5;
+                  const shiftY = overlapY / 2 + 1.2;
                   const dirY = dy >= 0 ? 1 : -1;
                   a.minY += shiftY * dirY;
                   a.maxY += shiftY * dirY;
@@ -613,33 +638,9 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
               }
             }
           }
-
-          // Enforce canvas boundaries inside each relaxation iteration
-          for (const l of textLabels) {
-            const w = l.maxX - l.minX;
-            const h = l.maxY - l.minY;
-            if (l.minX < 10) {
-              l.minX = 10;
-              l.maxX = Math.min(eng.W - 10, 10 + w);
-            }
-            if (l.maxX > eng.W - 10) {
-              l.maxX = eng.W - 10;
-              l.minX = Math.max(10, eng.W - 10 - w);
-            }
-            if (l.minY < 10) {
-              l.minY = 10;
-              l.maxY = Math.min(eng.H - 10, 10 + h);
-            }
-            if (l.maxY > eng.H - 10) {
-              l.maxY = eng.H - 10;
-              l.minY = Math.max(10, eng.H - 10 - h);
-            }
-          }
-
           if (!anyOverlap) break;
         }
 
-        // Apply finalized coordinates to projected entities
         for (const l of textLabels) {
           const align = l.e.it.o?.a || 'center';
           l.e.adjX = align === 'center' ? (l.minX + l.maxX) / 2 : align === 'right' ? l.maxX : l.minX;
@@ -647,17 +648,32 @@ export const NotebookCanvas3D: React.FC<NotebookCanvas3DProps> = ({
           l.e.adjSz = l.sz;
         }
 
-        for (const e of ents) {
-          let s = 0;
-          for (const p of e.pp) s += p[2];
-          e.d = s / (e.pp.length || 1);
-        }
-        ents.sort((a, b) => b.d - a.d);
+        // Draw 3D handwritten labels on top with 5px paper halo outline
+        for (const e of texts) {
+          const it = e.it;
+          const a = it.step === cur && cur > 0 ? fade : 1;
+          ctx.globalAlpha = a;
+          const [x, y] = e.pp[0];
+          const o = it.o;
+          const sz = (e.adjSz || (o.sz || 19) * zs);
+          ctx.font = `${o.b ? 700 : 500} ${sz}px Caveat, "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive`;
+          ctx.textAlign = (o.a as CanvasTextAlign) || 'center';
+          ctx.textBaseline = 'middle';
+          const tx = (e.adjX ?? x) + (o.dx || 0);
+          const ty = (e.adjY ?? y) + (o.dy || 0);
 
-        const lite = ents.length > 220;
-        for (const e of ents) {
-          drawItem(e, lite);
+          // 5px halo outline in paper color for crisp legibility
+          ctx.lineWidth = 5;
+          ctx.strokeStyle = COL.paper;
+          ctx.lineJoin = 'round';
+          ctx.strokeText(it.str || '', tx, ty);
+
+          // Authentic handwritten ink fill
+          ctx.fillStyle = o.c || COL.ink;
+          ctx.fillText(it.str || '', tx, ty);
         }
+        ctx.globalAlpha = 1;
+
         drawErrorCountRef.current = 0;
       } catch (err) {
         drawErrorCountRef.current += 1;

@@ -89,6 +89,25 @@ import { UnitDiagramItem } from '@/components/study/SvgDiagramViewer';
 
 const TABS = ['Explain', 'Notes', 'Topics', 'Quiz', 'Exam', 'AI Tutor'] as const;
 
+const SUBJECT_DG_UNIT_MAP: Record<string, number[]> = {
+  beee: [0, 1, 1, 2, 3, 3, 3, 4, 4],
+  phy: [0, 0, 1, 1, 3, 4, 4],
+  math: [0, 0, 1, 2, 3, 4],
+  ai: [0, 1, 1, 1, 2, 3, 4],
+  cfet: [0, 0, 1, 1, 3, 3, 4],
+  uhv: [0, 1, 3],
+  pps: [0, 2, 3, 4],
+  eic: [1, 4, 3],
+};
+
+const extractDiagramTitle = (svg: string, fallback: string): string => {
+  const match = svg.match(/<text[^>]*class=["'][^"']*ta[^"']*["'][^>]*>([^<]+)<\/text>/i);
+  if (match && match[1]) return match[1].trim();
+  const firstText = svg.match(/<text[^>]*>([^<]+)<\/text>/i);
+  if (firstText && firstText[1]) return firstText[1].trim();
+  return fallback;
+};
+
 export default function SemesterOnePage() {
   const [st, setSt] = useState<PersistedStudyState>(DEFAULT_STUDY_STATE);
   const [si, setSi] = useState<number>(0);
@@ -353,9 +372,26 @@ export default function SemesterOnePage() {
     window.history.replaceState(null, '', url.toString());
   }, [activeSubject.id, ui, currentUnitView.mode, currentUnitView.step]);
 
-  // Current unit diagrams from topicContent in syllabus order
+  // Current unit diagrams from activeSubject.dg and topicContent in syllabus order
   const currentUnitDiagrams = useMemo<UnitDiagramItem[]>(() => {
     const list: UnitDiagramItem[] = [];
+
+    // 1. Add mapped core hand-drawn exam diagrams for this specific unit first
+    if (activeSubject.dg && activeSubject.dg.length > 0) {
+      const unitMap = SUBJECT_DG_UNIT_MAP[activeSubject.id] || [];
+      activeSubject.dg.forEach((dg, i) => {
+        const mappedUnit = unitMap[i] ?? -1;
+        if (mappedUnit === ui) {
+          list.push({
+            title: `★ ${extractDiagramTitle(dg.svg, `${activeSubject.co} Core Diagram #${i + 1}`)}`,
+            svg: dg.svg,
+            caption: dg.c || `Hand-drawn exam diagram for Unit ${ui + 1}`,
+          });
+        }
+      });
+    }
+
+    // 2. Add topic-level diagrams from syllabus
     activeUnit.topics.forEach((tStr, tIdx) => {
       const tc = getTopicContent(activeSubject.id, ui, tIdx);
       if (tc?.diagram?.svg) {
@@ -367,12 +403,14 @@ export default function SemesterOnePage() {
         });
       }
     });
+
+    // 3. Fallback: if no unit-specific diagrams exist, provide all subject exam diagrams
     if (list.length === 0 && activeSubject.dg && activeSubject.dg.length > 0) {
       activeSubject.dg.forEach((dg, i) => {
         list.push({
-          title: `${activeSubject.co} Exam Diagram #${i + 1}`,
+          title: extractDiagramTitle(dg.svg, `${activeSubject.co} Exam Diagram #${i + 1}`),
           svg: dg.svg,
-          caption: dg.c,
+          caption: dg.c || '',
         });
       });
     }
@@ -488,11 +526,11 @@ export default function SemesterOnePage() {
           {/* TAB 0: EXPLAIN ("Understand it") */}
           {Math.min(st.tab, TABS.length - 1) === 0 && (
             <div className="space-y-5">
-              {/* 3-Part Unit Big Picture Story */}
+              {/* In simple English / Big Picture */}
               {unitStory ? (
                 <div className="box space-y-3 bg-paper p-4 rounded-lg border-[1.5px] border-ink shadow-sketchy">
                   <h3 className="font-hand text-xl font-bold text-accentRed pb-1 border-b border-dashed border-ink/20">
-                    Unit Big Picture
+                    In Simple English &amp; Big Picture
                   </h3>
                   <div className="space-y-2 text-base text-ink/90 font-normal leading-relaxed font-sans">
                     <div>
@@ -511,10 +549,60 @@ export default function SemesterOnePage() {
                 </div>
               ) : (
                 <div className="box">
-                  <h3>Unit Big Picture</h3>
+                  <h3 className="font-hand text-xl font-bold text-accentRed">In Simple English</h3>
                   <p className="text-base leading-relaxed text-ink/90 font-normal font-sans">
                     <KatexText htmlOrText={activeUnit.s} />
                   </p>
+                </div>
+              )}
+
+              {/* Step by step, with the 3D diagram */}
+              <div className="box space-y-3">
+                <div className="flex items-center justify-between pb-1 border-b-2 border-ink">
+                  <h3 className="font-hand text-xl font-bold text-ink">Step by Step, with the 3D Diagram</h3>
+                  <span className="text-xs font-mono text-dim">{activeScene.steps.length} steps</span>
+                </div>
+                <div className="space-y-2">
+                  {activeScene.steps.map((p, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => updateUnitView({ step: i, mode: '3d' })}
+                      className={`w-full text-left p-3 rounded-lg border-[1.5px] transition-all flex items-start gap-3 cursor-pointer ${
+                        i === currentUnitView.step && currentUnitView.mode === '3d'
+                          ? 'bg-gold/15 border-accentRed shadow-sketchy font-semibold'
+                          : 'bg-paper border-ink/30 hover:border-ink hover:bg-gold/10'
+                      }`}
+                      title={`Jump 3D model to Step ${i + 1}`}
+                    >
+                      <i className={`not-italic w-6 h-6 rounded-full border border-ink flex items-center justify-center font-mono font-bold text-xs shrink-0 ${
+                        i === currentUnitView.step && currentUnitView.mode === '3d' ? 'bg-accentRed text-paper' : 'bg-paper text-ink'
+                      }`}>
+                        {i + 1}
+                      </i>
+                      <div className="flex-1 min-w-0">
+                        <b className="font-hand text-base sm:text-lg text-ink block leading-snug">{p.t}</b>
+                        <span className="text-xs sm:text-sm text-dim font-sans leading-relaxed block mt-0.5">{p.d}</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Key moves to learn cold */}
+              {activeUnit.k && activeUnit.k.length > 0 && (
+                <div className="box space-y-2 bg-paper p-4 rounded-lg border-[1.5px] border-ink shadow-sketchy">
+                  <h3 className="font-hand text-xl font-bold text-accentRed pb-1 border-b border-dashed border-ink/20">
+                    Key Moves to Learn Cold
+                  </h3>
+                  <ul className="keys space-y-2 list-none p-0 m-0">
+                    {activeUnit.k.map((kStr, kIdx) => (
+                      <li key={kIdx} className="flex items-start gap-2.5 text-sm sm:text-base text-ink font-sans leading-relaxed">
+                        <span className="w-1.5 h-1.5 rounded-full bg-accentRed mt-2 shrink-0" />
+                        <div><KatexText htmlOrText={kStr} /></div>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
 
@@ -557,14 +645,23 @@ export default function SemesterOnePage() {
                         <div className="mt-2 pt-2 border-t border-dashed border-ink/20">
                           <div
                             dangerouslySetInnerHTML={{
-                              __html: topicData.diagram.svg.includes('aria-label')
-                                ? topicData.diagram.svg
-                                : topicData.diagram.svg.replace(
-                                    '<svg ',
-                                    `<svg aria-label="${(topicData.diagram.caption || cleanTitle).replace(/"/g, '&quot;')} diagram" `
-                                  ),
+                              __html: (() => {
+                                let svg = topicData.diagram.svg;
+                                if (!svg.includes('id="ar"') && !svg.includes("id='ar'")) {
+                                  svg = svg.replace(
+                                    /<svg\b([^>]*)>/i,
+                                    `<svg $1><defs><marker id="ar" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#2b2a28" stroke="none"/></marker></defs>`
+                                  );
+                                }
+                                return svg.includes('aria-label')
+                                  ? svg
+                                  : svg.replace(
+                                      '<svg ',
+                                      `<svg aria-label="${(topicData.diagram.caption || cleanTitle).replace(/"/g, '&quot;')} diagram" `
+                                    );
+                              })(),
                             }}
-                            className="w-full bg-paper rounded border border-ink/20 p-2 overflow-x-auto [&_svg]:w-full [&_svg]:h-auto [&_svg_.l]:stroke-[#2b2a28] [&_svg_.l]:fill-none [&_svg_.l]:stroke-[1.8] [&_svg_.a]:stroke-[#c85025] [&_svg_.a]:fill-none [&_svg_.a]:stroke-[2.2] [&_svg_.d]:stroke-[#6b665b] [&_svg_.d]:fill-none [&_svg_.d]:stroke-dasharray-[4,3] [&_svg_.fa]:fill-[#f6e3b4] [&_svg_.fa]:stroke-[#2b2a28] [&_svg_.t]:fill-[#2b2a28] [&_svg_.t]:text-[13px] [&_svg_.ta]:fill-[#c85025] [&_svg_.ta]:font-bold [&_svg_.ta]:text-[13.5px]"
+                            className="w-full bg-paper rounded border border-ink/20 p-2 overflow-x-auto [&_svg]:w-full [&_svg]:h-auto [&_svg_.l]:stroke-[#2b2a28] [&_svg_.l]:fill-none [&_svg_.l]:stroke-[1.8] [&_svg_.l]:stroke-linecap-round [&_svg_.l]:stroke-linejoin-round [&_svg_.a]:stroke-[#2b2a28] [&_svg_.a]:fill-none [&_svg_.a]:stroke-[2] [&_svg_.a]:stroke-linecap-round [&_svg_.a]:stroke-linejoin-round [&_svg_.d]:stroke-[#555046] [&_svg_.d]:fill-none [&_svg_.d]:stroke-dasharray-[4,3] [&_svg_.fa]:fill-[#f6e3b4] [&_svg_.fa]:stroke-[#2b2a28] [&_svg_.fa]:stroke-[1.6] [&_svg_.t]:fill-[#2b2a28] [&_svg_.t]:font-hand [&_svg_.t]:font-medium [&_svg_.t]:text-[13px] [&_svg_.ta]:fill-[#c85025] [&_svg_.ta]:font-bold [&_svg_.ta]:font-hand [&_svg_.ta]:text-[14px]"
                           />
                           <p className="text-sm text-dim font-hand mt-1 not-italic text-center">
                             Figure {ui + 1}.{tIdx + 1}: {topicData.diagram.caption}
@@ -577,9 +674,9 @@ export default function SemesterOnePage() {
               </div>
 
               {workedExample && (
-                <div className="box">
-                  <h3>Exam Model Worked Problem</h3>
-                  <div className="text-sm md:text-base font-mono bg-paper p-3.5 rounded-lg border-[1.5px] border-ink whitespace-pre-wrap leading-relaxed">
+                <div className="box space-y-2">
+                  <h3 className="font-hand text-xl font-bold text-ink">Exam Model Worked Problem</h3>
+                  <div className="text-sm md:text-base font-mono bg-paper p-3.5 rounded-lg border-[1.5px] border-ink whitespace-pre-wrap leading-relaxed shadow-sketch">
                     <KatexText htmlOrText={workedExample} />
                   </div>
                 </div>
