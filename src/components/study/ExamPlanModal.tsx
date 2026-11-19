@@ -43,6 +43,24 @@ export const ExamPlanModal: React.FC<ExamPlanModalProps> = ({
           </button>
         </div>
 
+        {/* Mid-Sem Banner */}
+        <div className="mx-4 my-2 p-3 bg-accentRed/10 border-2 border-accentRed/40 rounded-lg flex items-center justify-between gap-3 flex-wrap">
+          <div>
+            <div className="text-xs font-bold text-accentRed flex items-center gap-1.5">
+              <span>⚡ OFFICIAL MID-SEM EXAMINATION (NOV 25–27, 2026)</span>
+            </div>
+            <p className="text-xs text-ink/80 mt-0.5">
+              Units 1, 2 &amp; 3 Master Notes, Solved Numericals, CBT MCQs, and 2026 BEU Papers ready.
+            </p>
+          </div>
+          <a
+            href="/midsem"
+            className="btn gold text-xs font-bold px-3 py-1.5 text-accentRed border border-accentRed/50 hover:bg-accentRed/20"
+          >
+            Open Mid-Sem Hub →
+          </a>
+        </div>
+
         <div className="ms">
           <h3>
             <span>1</span>Six-week countdown

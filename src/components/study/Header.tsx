@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import {
   Search,
   Wrench,
@@ -15,6 +16,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronDown,
+  Sparkles,
 } from 'lucide-react';
 import { Subject } from '@/types/syllabus';
 import { getCurrentUser, onAuthStateChange } from '@/lib/supabaseClient';
@@ -152,6 +154,19 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="hidden sm:inline">Schedule</span>
           </button>
 
+          {/* Official M&C Mid-Sem Hub Link */}
+          <Link
+            href="/midsem"
+            className="btn flex items-center gap-1.5 text-xs md:text-sm font-bold border-2 border-accentRed bg-accentRed/10 hover:bg-accentRed/20 text-accentRed shadow-xs transition-colors"
+            title="Official M&C Mid-Sem Hub (Nov 25–27, 2026)"
+          >
+            <span className="w-2 h-2 rounded-full bg-accentRed animate-ping inline-block" />
+            <span>🔥 Mid-Sem Hub</span>
+            <span className="hidden lg:inline text-[10px] bg-accentRed text-white px-1.5 py-0.5 rounded font-mono font-semibold">
+              Nov 25–27
+            </span>
+          </Link>
+
           {/* Student Account / Google Sign In */}
           {onOpenAuthModal && (
             <button
@@ -198,6 +213,18 @@ export const Header: React.FC<HeaderProps> = ({
                 role="menu"
                 className="absolute right-0 top-full mt-1.5 w-60 bg-paper border-2 border-ink rounded-lg shadow-sketchy p-1.5 z-50 flex flex-col gap-1 font-sans text-xs text-ink animate-fadeIn"
               >
+                <Link
+                  href="/midsem"
+                  role="menuitem"
+                  onClick={() => setToolsOpen(false)}
+                  className="flex items-center gap-2.5 p-2 rounded hover:bg-accentRed/10 text-left transition-colors font-medium border-b border-dashed border-ink/20"
+                >
+                  <Sparkles className="w-4 h-4 text-accentRed shrink-0" />
+                  <div>
+                    <strong className="block text-accentRed font-bold">⚡ M&amp;C Mid-Sem Hub</strong>
+                    <span className="text-[11px] text-dim">Nov 25–27 · Units 1–3 Notes &amp; CBT</span>
+                  </div>
+                </Link>
                 <button
                   type="button"
                   role="menuitem"

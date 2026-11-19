@@ -63,6 +63,18 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
     const list: SearchItem[] = [];
 
     // Quick Actions
+    list.push({
+      id: 'act-midsem',
+      type: 'action',
+      title: '⚡ M&C Mid-Sem Hub (Nov 25–27, 2026 Examination)',
+      subtitle: 'Official LNJPIT Chapra revised routine, Units 1–3 Master Notes, CBT MCQs, & 2026 BEU Solved Papers',
+      badge: 'Mid-Sem',
+      onSelect: () => {
+        onClose();
+        window.location.href = '/midsem';
+      },
+    });
+
     if (onOpenClasses) {
       list.push({
         id: 'act-classes',
