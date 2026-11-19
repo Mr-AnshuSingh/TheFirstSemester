@@ -11,12 +11,14 @@ import {
   Database,
   Calendar,
   Layers,
-  Cloud,
+  User,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
 } from 'lucide-react';
 import { Subject } from '@/types/syllabus';
+import { getCurrentUser, onAuthStateChange } from '@/lib/supabaseClient';
+import { User as SupabaseUser } from '@supabase/supabase-js';
 
 interface HeaderProps {
   subjects: Subject[];
@@ -54,10 +56,18 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenAuthModal,
 }) => {
   const [toolsOpen, setToolsOpen] = useState<boolean>(false);
+  const [currentUser, setCurrentUser] = useState<SupabaseUser | null>(null);
   const toolsMenuRef = useRef<HTMLDivElement | null>(null);
   const scrollerRef = useRef<HTMLElement | null>(null);
 
   const pct = totalTopicsAll ? (totalClearedAll / totalTopicsAll) * 100 : 0;
+
+  // Track authenticated user state
+  useEffect(() => {
+    getCurrentUser().then(setCurrentUser).catch(() => setCurrentUser(null));
+    const unsubscribe = onAuthStateChange(setCurrentUser);
+    return () => unsubscribe();
+  }, []);
 
   // Close tools dropdown on outside click
   useEffect(() => {
@@ -141,6 +151,30 @@ export const Header: React.FC<HeaderProps> = ({
             <Calendar className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Schedule</span>
           </button>
+
+          {/* Student Account / Google Sign In */}
+          {onOpenAuthModal && (
+            <button
+              type="button"
+              className="btn flex items-center gap-1.5 text-xs md:text-sm font-medium border border-ink/30 hover:border-ink hover:bg-gold/15"
+              onClick={onOpenAuthModal}
+              title={currentUser ? `Signed in as ${currentUser.email}` : 'Sign in with Google'}
+            >
+              {currentUser?.user_metadata?.avatar_url ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  src={currentUser.user_metadata.avatar_url}
+                  alt="Profile"
+                  className="w-4 h-4 rounded-full object-cover shrink-0"
+                />
+              ) : (
+                <User className="w-3.5 h-3.5 text-accentTeal shrink-0" />
+              )}
+              <span className="hidden md:inline max-w-[90px] truncate">
+                {currentUser?.user_metadata?.full_name?.split(' ')[0] || (currentUser ? 'Account' : 'Sign in')}
+              </span>
+            </button>
+          )}
 
           {/* Tools Dropdown Menu */}
           <div ref={toolsMenuRef} className="relative">
@@ -252,12 +286,14 @@ export const Header: React.FC<HeaderProps> = ({
                       setToolsOpen(false);
                       onOpenAuthModal();
                     }}
-                    className="flex items-center gap-2.5 p-2 rounded hover:bg-gold/15 text-left transition-colors font-medium"
+                    className="flex items-center gap-2.5 p-2 rounded hover:bg-gold/15 text-left transition-colors font-medium border-t border-dashed border-ink/20 pt-1.5"
                   >
-                    <Cloud className="w-4 h-4 text-accentGreen shrink-0" />
-                    <div>
-                      <strong className="block text-ink">Supabase Cloud Sync</strong>
-                      <span className="text-[11px] text-dim">Sync notes &amp; progress across devices</span>
+                    <User className="w-4 h-4 text-accentTeal shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <strong className="block text-ink">Student Account</strong>
+                      <span className="text-[11px] text-dim truncate block">
+                        {currentUser ? currentUser.email : 'Sign in with Google (Supabase)'}
+                      </span>
                     </div>
                   </button>
                 )}

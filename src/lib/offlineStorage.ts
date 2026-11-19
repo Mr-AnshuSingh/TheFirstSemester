@@ -49,16 +49,10 @@ export const DEFAULT_STUDY_STATE: PersistedStudyState = {
 
 /**
  * Checks whether server synchronization is configured and enabled.
- * If no auth is configured, the app runs fully local-first and avoids network calls to /api/progress.
+ * Returns false as study state persistence is local-first in IndexedDB.
  */
 export function isServerSyncEnabled(): boolean {
-  if (typeof window === 'undefined') return false;
-  const hasAuth = Boolean(
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY)
-  );
-  const syncExplicit = process.env.NEXT_PUBLIC_ENABLE_SERVER_SYNC === 'true';
-  return hasAuth || syncExplicit;
+  return false;
 }
 
 /**
@@ -214,31 +208,6 @@ export async function saveStudyState(next: PersistedStudyState): Promise<void> {
     }
   } catch {
     // Ignore storage quote errors
-  }
-
-  // 3. Conditional server sync (ONLY if auth/server sync is explicitly configured)
-  if (isServerSyncEnabled()) {
-    try {
-      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-      if (typeof window !== 'undefined') {
-        try {
-          const { getSessionToken } = await import('@/lib/supabaseClient');
-          const token = await getSessionToken();
-          if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
-          }
-        } catch {
-          // Token extraction fallback
-        }
-      }
-      await fetch('/api/progress', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(payload),
-      });
-    } catch {
-      // Offline/local-first: state safely saved in IndexedDB & localStorage
-    }
   }
 }
 
