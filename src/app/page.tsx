@@ -568,7 +568,7 @@ export default function SemesterOnePage() {
                       key={i}
                       type="button"
                       onClick={() => updateUnitView({ step: i, mode: '3d' })}
-                      className={`w-full text-left p-3 rounded-lg border-[1.5px] transition-all flex items-start gap-3 cursor-pointer ${
+                      className={`w-full text-left p-3 rounded-lg border-[1.5px] transition-all flex items-start gap-3 cursor-pointer whitespace-normal break-words min-w-0 ${
                         i === currentUnitView.step && currentUnitView.mode === '3d'
                           ? 'bg-gold/15 border-accentRed shadow-sketchy font-semibold'
                           : 'bg-paper border-ink/30 hover:border-ink hover:bg-gold/10'
@@ -581,8 +581,8 @@ export default function SemesterOnePage() {
                         {i + 1}
                       </i>
                       <div className="flex-1 min-w-0">
-                        <b className="font-hand text-base sm:text-lg text-ink block leading-snug">{p.t}</b>
-                        <span className="text-xs sm:text-sm text-dim font-sans leading-relaxed block mt-0.5">{p.d}</span>
+                        <b className="font-hand text-base sm:text-lg text-ink block leading-snug whitespace-normal break-words">{p.t}</b>
+                        <span className="text-xs sm:text-sm text-dim font-sans leading-relaxed block mt-0.5 whitespace-normal break-words">{p.d}</span>
                       </div>
                     </button>
                   ))}
@@ -599,7 +599,7 @@ export default function SemesterOnePage() {
                     {activeUnit.k.map((kStr, kIdx) => (
                       <li key={kIdx} className="flex items-start gap-2.5 text-sm sm:text-base text-ink font-sans leading-relaxed">
                         <span className="w-1.5 h-1.5 rounded-full bg-accentRed mt-2 shrink-0" />
-                        <div><KatexText htmlOrText={kStr} /></div>
+                        <div className="min-w-0 flex-1 overflow-x-auto"><KatexText htmlOrText={kStr} /></div>
                       </li>
                     ))}
                   </ul>
@@ -736,7 +736,7 @@ export default function SemesterOnePage() {
                             <span className="font-bold text-dim uppercase tracking-wider text-xs block font-mono">
                               2. FORMULA / RULE
                             </span>
-                            <div className="p-2.5 bg-gold/10 border-[1.5px] border-ink rounded font-mono text-base my-1.5">
+                            <div className="p-2.5 bg-gold/10 border-[1.5px] border-ink rounded font-mono text-base my-1.5 overflow-x-auto max-w-full">
                               <KatexText htmlOrText={topicData.formula} />
                             </div>
                           </div>

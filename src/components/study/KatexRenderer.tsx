@@ -37,6 +37,43 @@ const MATH_REPLACEMENTS: [RegExp, string][] = [
   [/P\(A\|B\) = P\(B\|A\)·P\(A\)\/P\(B\)/g, '$P(A\\mid B) = \\frac{P(B\\mid A)P(A)}{P(B)}$'],
 ];
 
+const MATH_FUNCS_AND_UNITS = new Set([
+  'sin', 'cos', 'tan', 'sec', 'csc', 'cot', 'sinh', 'cosh', 'tanh',
+  'log', 'ln', 'exp', 'det', 'dim', 'ker', 'max', 'min', 'lim', 'sup', 'inf', 'gcd', 'lcm', 'deg', 'arg', 'rank', 'div', 'curl',
+  'dx', 'dy', 'dz', 'dt', 'dr', 'ds', 'da', 'db', 'dc', 'dn', 'dp', 'dq', 'du', 'dv', 'dw',
+  'const', 'var', 'cov', 'diag', 'sgn', 'span',
+  'khz', 'mhz', 'ghz', 'ev', 'mev', 'gev', 'var', 'rms', 'opt'
+]);
+
+export function isPureMathFormula(str: string): boolean {
+  if (!str || str.includes('$')) return false;
+  if (!/(?:\\(?:frac|begin|boxed|quad|sqrt|int|sum|prod|partial|mathbf|vec|bmatrix|pmatrix|cases|left|right|text|lim|infty|approx|times|cdot|iff|implies|to|nabla|oint|iint|iiint))\b/.test(str)) {
+    return false;
+  }
+
+  // Strip \text{...}, \mathbf{...}, \mathrm{...}, etc.
+  let s = str;
+  for (let i = 0; i < 3; i++) {
+    s = s.replace(/\\(?:text|mathbf|mathrm|operatorname|mathit|mathsf|mathtt|mathbb|mathcal)\{[^{}]*\}/g, ' ');
+  }
+  // Strip LaTeX environment delimiters
+  s = s.replace(/\\(?:begin|end)\{[a-zA-Z*]+\}/g, ' ');
+  // Strip LaTeX command names
+  s = s.replace(/\\[a-zA-Z]+/g, ' ');
+
+  // Extract remaining alphabetical words of length >= 3
+  const words = s.match(/[a-zA-Z]{3,}/g) || [];
+  const nonMathWords = words.filter(w => !MATH_FUNCS_AND_UNITS.has(w.toLowerCase()));
+
+  // Common short English prose words that indicate a sentence rather than a formula
+  const hasCommonShortWords = /\b(is|in|on|at|of|by|as|if|or|an|we|so|do|up|no|to|the)\s+[a-zA-Z]/i.test(s);
+
+  if (nonMathWords.length > 0 || hasCommonShortWords) {
+    return false;
+  }
+  return true;
+}
+
 export function escapeHtml(str: string): string {
   return str
     .replace(/&/g, '&amp;')
@@ -62,14 +99,10 @@ export function renderRichMathHtml(rawText: string | null | undefined): string {
     macros: { '\\oiint': '\\oint\\!\\oint' },
   };
 
-  // 0. If text contains raw LaTeX math commands without $ delimiters (e.g. syllabus formulas),
-  // parse the entire expression directly if it is a pure formula, or extract LaTeX chunks.
-  if (
-    !processed.includes('$') &&
-    /(?:\\(?:frac|begin|boxed|quad|sqrt|int|sum|prod|partial|mathbf|vec|bmatrix|pmatrix|cases|left|right|text|lim|infty|approx|times|cdot|iff|implies|to|nabla|oint|iint|iiint))\b/.test(
-      processed
-    )
-  ) {
+  // 0. If text contains raw LaTeX math commands without $ delimiters,
+  // ONLY parse the entire expression directly if it is a pure mathematical formula.
+  // Prose sentences with embedded LaTeX will fall through to inline token parsing.
+  if (isPureMathFormula(processed)) {
     try {
       const rendered = katex.renderToString(processed.trim(), {
         displayMode: false,
@@ -120,6 +153,16 @@ export function renderRichMathHtml(rawText: string | null | undefined): string {
     });
     processed = processed.replace(
       /\\frac\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}/g,
+      (match) => {
+        try {
+          return katex.renderToString(match.trim(), KATEX_OPTIONS_INLINE);
+        } catch {
+          return match;
+        }
+      }
+    );
+    processed = processed.replace(
+      /\\(?:to|implies|iff|approx|cdot|times|pm|mp|le|ge|ne|equiv|sim|subset|subseteq|in|notin|cap|cup|land|lor|neg|forall|exists|partial|nabla|infty)\b/g,
       (match) => {
         try {
           return katex.renderToString(match.trim(), KATEX_OPTIONS_INLINE);

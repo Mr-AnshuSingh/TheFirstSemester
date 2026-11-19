@@ -1051,7 +1051,7 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
         )}
 
         {/* Smart Syllabus Presets */}
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap gap-1.5 w-full max-w-full min-w-0">
           {attachedImage
             ? [
                 `Solve this handwritten problem step-by-step with full workings.`,
@@ -1067,7 +1067,7 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                     setQuestion(preset);
                     askTutor(preset);
                   }}
-                  className="text-xs sm:text-sm px-3 py-1 rounded-full bg-gold/15 hover:bg-ink hover:text-paper border border-ink/40 transition text-left font-sans disabled:opacity-50"
+                  className="text-xs sm:text-sm px-3 py-1.5 rounded-lg bg-gold/15 hover:bg-ink hover:text-paper border border-ink/40 transition text-left font-sans disabled:opacity-50 max-w-full whitespace-normal break-words min-w-0"
                 >
                   {preset}
                 </button>
@@ -1087,7 +1087,7 @@ export const AiTutorPanel: React.FC<AiTutorPanelProps> = ({
                     setQuestion(preset);
                     askTutor(preset);
                   }}
-                  className="text-xs sm:text-sm px-3 py-1 rounded-full bg-paper2 hover:bg-ink hover:text-paper border border-ink/40 transition text-left font-sans disabled:opacity-50"
+                  className="text-xs sm:text-sm px-3 py-1.5 rounded-lg bg-paper2 hover:bg-ink hover:text-paper border border-ink/40 transition text-left font-sans disabled:opacity-50 max-w-full whitespace-normal break-words min-w-0"
                 >
                   {preset}
                 </button>

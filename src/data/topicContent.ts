@@ -101,7 +101,7 @@ export const TOPIC_CONTENT: Record<string, TopicContent> = {
     formula: '\\text{Rank}(A) = \\text{number of non-zero rows in Echelon form}',
     steps: [
       '1. Choose a non-zero pivot in column 1; swap rows if necessary.',
-      '2. Use elementary row operations R_i \\to R_i - c \\cdot R_1 to clear all entries below the pivot.',
+      '2. Use elementary row operations $R_i \\to R_i - c \\cdot R_1$ to clear all entries below the pivot.',
       '3. Repeat for subsequent columns until the staircase pattern is complete.',
       '4. Count the number of non-zero rows; this is Rank(A).',
     ],

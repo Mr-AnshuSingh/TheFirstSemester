@@ -35,7 +35,7 @@ export const ExamPlanModal: React.FC<ExamPlanModalProps> = ({
           <div>
             <h2>Exam plan</h2>
             <p className="text-sm text-dim mt-1.5">
-              From your real timetable (revised, w.e.f. 28.09.26, Room 13) and the Group A syllabus credits.
+              From your real timetable (revised, w.e.f. 29.10.2026, Room 14) and the Mathematics &amp; Computing syllabus credits.
             </p>
           </div>
           <button type="button" className="btn" onClick={onClose}>

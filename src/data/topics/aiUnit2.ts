@@ -29,11 +29,11 @@ export const AI_UNIT2_TOPICS: Record<string, TopicContent> = {
       'Propositional Logic is a monotonic, declarative knowledge representation language where atomic propositions represent true/false facts connected by Boolean operators, with logical consequence governed by model entailment.',
     formula: 'KB \\models \\alpha \\iff M(KB) \\subseteq M(\\alpha) \\iff (KB \\land \\neg \\alpha) \\text{ is unsatisfiable}',
     steps: [
-      'Syntax: Proposition symbols P, Q, R... connected by \\neg, \\land, \\lor, \\implies, \\iff.',
-      'Truth Table Semantics: P \\implies Q \\equiv \\neg P \\lor Q; P \\iff Q \\equiv (P \\implies Q) \\land (Q \\implies P).',
-      'Model Checking: Truth-table enumeration enumerates all 2^n valuations. Sound and complete, but O(2^n) exponential.',
-      'Soundness: An inference algorithm \\vdash is sound if whenever KB \\vdash \\alpha, KB \\models \\alpha.',
-      'Completeness: An inference algorithm \\vdash is complete if whenever KB \\models \\alpha, KB \\vdash \\alpha.',
+      'Syntax: Proposition symbols $P, Q, R...$ connected by $\\neg, \\land, \\lor, \\implies, \\iff$.',
+      'Truth Table Semantics: $P \\implies Q \\equiv \\neg P \\lor Q$; $P \\iff Q \\equiv (P \\implies Q) \\land (Q \\implies P)$.',
+      'Model Checking: Truth-table enumeration enumerates all $2^n$ valuations. Sound and complete, but $O(2^n)$ exponential.',
+      'Soundness: An inference algorithm $\\vdash$ is sound if whenever $KB \\vdash \\alpha$, $KB \\models \\alpha$.',
+      'Completeness: An inference algorithm $\\vdash$ is complete if whenever $KB \\models \\alpha$, $KB \\vdash \\alpha$.',
     ],
     examAnswer: [
       'Define Knowledge Base, Entailment (KB |= alpha), Soundness, and Completeness.',
@@ -68,11 +68,11 @@ export const AI_UNIT2_TOPICS: Record<string, TopicContent> = {
       'Resolution is a rule of inference that yields a sound and refutation-complete proof system by iteratively canceling complementary literals from clauses in Conjunctive Normal Form until an empty contradiction (⊥) is produced.',
     formula: '\\frac{l_1 \\lor \\dots \\lor l_k, \\quad m_1 \\lor \\dots \\lor m_n}{l_1 \\lor \\dots \\lor l_{i-1} \\lor l_{i+1} \\lor \\dots \\lor l_k \\lor m_1 \\lor \\dots \\lor m_{j-1} \\lor m_{j+1} \\lor \\dots \\lor m_n} \\quad (l_i \\equiv \\neg m_j)',
     steps: [
-      'Step 1: Eliminate \\iff: (A \\iff B) \\to (A \\implies B) \\land (B \\implies A).',
-      'Step 2: Eliminate \\implies: (A \\implies B) \\to (\\neg A \\lor B).',
-      'Step 3: De Morgan’s Laws: move \\neg inward; eliminate double negation \\neg\\neg A \\to A.',
-      'Step 4: Distribute \\lor over \\land: (A \\lor (B \\land C)) \\to (A \\lor B) \\land (A \\lor C).',
-      'Step 5 (Refutation): Add \\neg \\alpha to the clause set. Pair complementary literals until deriving empty clause ⊥.',
+      'Step 1: Eliminate $\\iff$: $(A \\iff B) \\to (A \\implies B) \\land (B \\implies A)$.',
+      'Step 2: Eliminate $\\implies$: $(A \\implies B) \\to (\\neg A \\lor B)$.',
+      'Step 3: De Morgan’s Laws: move $\\neg$ inward; eliminate double negation $\\neg\\neg A \\to A$.',
+      'Step 4: Distribute $\\lor$ over $\\land$: $(A \\lor (B \\land C)) \\to (A \\lor B) \\land (A \\lor C)$.',
+      'Step 5 (Refutation): Add $\\neg \\alpha$ to the clause set. Pair complementary literals until deriving empty clause $\\bot$.',
     ],
     examAnswer: [
       'State the resolution inference rule precisely with complementary literals.',
@@ -132,7 +132,7 @@ export const AI_UNIT2_TOPICS: Record<string, TopicContent> = {
       'Translate English sentences into FOL: e.g. "Every student loves some subject" -> \\forall x (Student(x) => \\exists y (Subject(y) & Loves(x,y))).',
       'State the duality equivalence relations between \\forall and \\exists under negation.',
     ],
-    slip: 'Never pair \\forall with \\land unless you explicitly intend that every single entity in the universe satisfies the premise; never pair \\exists with \\implies because false premises make implications vacuously true.',
+    slip: 'Never pair $\\forall$ with $\\land$ unless you explicitly intend that every single entity in the universe satisfies the premise; never pair $\\exists$ with $\\implies$ because false premises make implications vacuously true.',
     diagram: {
       svg: S(
         360,
@@ -261,7 +261,7 @@ export const AI_UNIT2_TOPICS: Record<string, TopicContent> = {
       'First-Order Resolution is a refutation-complete inference procedure that applies Most General Unifiers (MGU) to align differing predicate arguments, canceling complementary literals in Skolemized CNF clauses.',
     formula: '\\text{UNIFY}(P(x, g(x)), P(A, y)) = \\{x / A, \\; y / g(A)\\}',
     steps: [
-      'Step 1: Eliminate implications: \\alpha \\implies \\beta \\to \\neg \\alpha \\lor \\beta.',
+      'Step 1: Eliminate implications: $\\alpha \\implies \\beta \\to \\neg \\alpha \\lor \\beta$.',
       'Step 2: Move \\neg inward (De Morgan for quantifiers).',
       'Step 3: Standardize variables apart across quantifiers.',
       'Step 4: Skolemize: Replace existential variables with Skolem functions of enclosing universal variables.',

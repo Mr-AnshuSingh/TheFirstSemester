@@ -648,4 +648,4 @@ hook:'Algorithm, flowchart, code, output. Ampersand in scanf. Base case first. C
  SUBJECTS.sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id));
  SUBJECTS.forEach((s,i)=>{s.num=String(i+1).padStart(2,'0');s.topN=s.units.reduce((n,u)=>n+u.topics.length,0);});
 })();
-/* real timetable: Revised w.e.f. 28.09.26, Room 13 Ground Floor. Slots: 10-12, 12-1, 2-3, 3-4, 4-5 (break 1-2) */
+/* real timetable: Revised w.e.f. 29.10.2026, Room 14 Ground Floor. Slots: 10-11, 11-12, 12-1, 1:30-2:30, 2:30-3:30, 3:30-4:30 (break 1-1:30) */

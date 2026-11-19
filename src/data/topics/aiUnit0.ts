@@ -132,7 +132,7 @@ export const AI_UNIT0_TOPICS: Record<string, TopicContent> = {
       'Philosophy: Solved how mind emerges from physical brain; established epistemology and formal syllogisms.',
       'Mathematics: Gödel showed true statements exist that cannot be proved; Turing proved undecidability of halting problem.',
       'Intractability & NP-Completeness: Cook and Karp showed exponential search cannot always be avoided, necessitating heuristics.',
-      'Economics: von Neumann & Morgenstern formulated Expected Utility Theory: EU(a) = \\sum P(s\'|a,e) U(s\').',
+      'Economics: von Neumann & Morgenstern formulated Expected Utility Theory: $EU(a) = \\sum P(s\'|a,e) U(s\')$.',
       'Neuroscience: McCulloch & Pitts (1943) built the first mathematical model of biological synaptic thresholds.',
     ],
     examAnswer: [

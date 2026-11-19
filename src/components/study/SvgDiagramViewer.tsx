@@ -112,12 +112,12 @@ export const SvgDiagramViewer: React.FC<SvgDiagramViewerProps> = ({
   return (
     <div className="w-full h-full flex flex-col justify-between overflow-y-auto pt-3 pb-3 px-3 sm:px-5 bg-paper space-y-2">
       {/* 2D Viewer Controls Header with right clearance for floating #tools */}
-      <div className="flex items-center justify-between gap-2 flex-wrap border-b border-dashed border-ink/20 pb-1.5 pr-32 sm:pr-40 min-h-[40px]">
-        <div className="min-w-0">
-          <span className="text-[11px] font-mono font-bold uppercase text-accentRed tracking-wider block">
+      <div className="flex items-center justify-between gap-2 flex-wrap border-b border-dashed border-ink/20 pb-1.5 pr-28 sm:pr-40 min-h-[40px]">
+        <div className="min-w-0 flex-1">
+          <span className="text-[11px] font-mono font-bold uppercase text-accentRed tracking-wider block truncate">
             2D Exam Sketchbook · {subjectShortName} ({activeIdx + 1}/{diagrams.length})
           </span>
-          <h4 className="font-hand text-base sm:text-lg font-bold text-ink m-0 leading-tight">
+          <h4 className="font-hand text-base sm:text-lg font-bold text-ink m-0 leading-tight break-words">
             {current.title}
           </h4>
         </div>

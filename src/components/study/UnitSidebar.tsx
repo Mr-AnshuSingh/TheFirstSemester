@@ -30,11 +30,11 @@ export const UnitSidebar: React.FC<UnitSidebarProps> = ({
             key={uIdx}
             type="button"
             onClick={() => onSelectUnit(uIdx)}
-            className={`un ${uIdx === activeUnitIndex ? 'on' : ''}`}
+            className={`un ${uIdx === activeUnitIndex ? 'on' : ''} min-w-0 w-full`}
           >
-            <div className="a">
+            <div className="a min-w-0">
               <i>{uIdx + 1}</i>
-              <b>{u.t}</b>
+              <b className="min-w-0 break-words whitespace-normal">{u.t}</b>
             </div>
             <div className="b">
               <span>{u.h}</span>

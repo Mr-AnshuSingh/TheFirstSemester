@@ -181,7 +181,7 @@ export const AllNotesModal: React.FC<AllNotesModalProps> = ({ open, subjects, on
                                 <KatexText htmlOrText={tc.definition} />
                               </div>
                               {tc.formula && (
-                                <div className="mb-2 p-1.5 bg-paper rounded border border-rule/50 text-sm font-mono text-ink">
+                                <div className="mb-2 p-1.5 bg-paper rounded border border-rule/50 text-sm font-mono text-ink overflow-x-auto max-w-full">
                                   <span className="font-sans font-semibold text-ink uppercase text-xs tracking-wide">Formula: </span>
                                   <KatexText htmlOrText={tc.formula} />
                                 </div>

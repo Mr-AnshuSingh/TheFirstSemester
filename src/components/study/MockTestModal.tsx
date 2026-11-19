@@ -159,14 +159,14 @@ export const MockTestModal: React.FC<MockTestModalProps> = ({
                           key={optIdx}
                           type="button"
                           onClick={() => handleSelectOption(currentQ.id, optIdx)}
-                          className={`w-full text-left p-3 rounded-lg border-[1.5px] text-sm transition-all flex items-start gap-3 ${
+                          className={`w-full text-left p-3 rounded-lg border-[1.5px] text-sm transition-all flex items-start gap-3 whitespace-normal break-words min-w-0 ${
                             isSelected
                               ? 'border-ink bg-gold/25 font-bold shadow-xs'
                               : 'border-ink/30 hover:border-ink hover:bg-gold/10'
                           }`}
                         >
                           <span className="font-mono font-bold text-dim shrink-0">{optLetter}.</span>
-                          <span className="flex-1">
+                          <span className="flex-1 min-w-0 whitespace-normal break-words">
                             <KatexText htmlOrText={opt} />
                           </span>
                         </button>
@@ -320,10 +320,10 @@ export const MockTestModal: React.FC<MockTestModalProps> = ({
                           return (
                             <div
                               key={optIdx}
-                              className={`p-2.5 rounded border-[1.5px] text-sm flex items-start gap-2 ${style}`}
+                              className={`p-2.5 rounded border-[1.5px] text-sm flex items-start gap-2 whitespace-normal break-words min-w-0 ${style}`}
                             >
-                              <span className="font-mono font-bold">{optLetter}.</span>
-                              <span>
+                              <span className="font-mono font-bold shrink-0">{optLetter}.</span>
+                              <span className="flex-1 min-w-0 whitespace-normal break-words">
                                 <KatexText htmlOrText={opt} />
                               </span>
                             </div>

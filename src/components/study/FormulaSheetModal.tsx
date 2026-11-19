@@ -142,7 +142,7 @@ export const FormulaSheetModal: React.FC<FormulaSheetModalProps> = ({
                             className="flex items-start gap-2 p-1.5 rounded hover:bg-gold/10 transition-colors font-medium leading-relaxed"
                           >
                             <span className="text-accentRed font-bold font-mono shrink-0">▪</span>
-                            <span className="flex-1 font-mono text-sm">
+                            <span className="flex-1 min-w-0 font-mono text-sm overflow-x-auto">
                               <KatexText htmlOrText={fm} />
                             </span>
                           </li>

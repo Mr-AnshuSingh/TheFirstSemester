@@ -26,14 +26,14 @@ export const AI_UNIT1_TOPICS: Record<string, TopicContent> = {
       'A state space graph has unique nodes for physical states, whereas a search tree can contain infinite redundant branches if loopy paths are not pruned with an explored set (closed list).',
     ],
     definition:
-      'Problem formulation is the formal representation of a search problem as a 5-tuple: \\mathcal{P} = \\langle S_0, \\text{ACTIONS}, \\text{RESULT}, \\text{GOAL-TEST}, \\text{STEP-COST} \\rangle defining the state space reachable by an agent.',
+      'Problem formulation is the formal representation of a search problem as a 5-tuple: $\\mathcal{P} = \\langle S_0, \\text{ACTIONS}, \\text{RESULT}, \\text{GOAL-TEST}, \\text{STEP-COST} \\rangle$ defining the state space reachable by an agent.',
     formula: '\\mathcal{P} = \\langle s_0, \\mathcal{A}(s), \\text{Result}(s, a), G(s), c(s, a, s\') \\rangle, \\quad g(n) = \\sum_{i=1}^k c(s_{i-1}, a_i, s_i)',
     steps: [
-      'Initial State s_0: The state the agent starts in (e.g. In(Arad)).',
-      'Actions(s): Set of legal actions executable from state s: \\mathcal{A}(s) = \\{a \\mid \\text{Legal}(s, a)\\}.',
-      'Transition Model: Returns state resulting from doing action a in state s: s\' = \\text{Result}(s, a).',
-      'Goal Test: Boolean predicate G(s) determining if s is a goal state (e.g. s == In(Bucharest)).',
-      'Path Cost: Numerical cost function g(n); optimal solution has path cost g^*(n) = \\min_{\\pi} g(\\pi).',
+      'Initial State $s_0$: The state the agent starts in (e.g. In(Arad)).',
+      'Actions(s): Set of legal actions executable from state s: $\\mathcal{A}(s) = \\{a \\mid \\text{Legal}(s, a)\\}$.',
+      'Transition Model: Returns state resulting from doing action a in state s: $s\' = \\text{Result}(s, a)$.',
+      'Goal Test: Boolean predicate $G(s)$ determining if s is a goal state (e.g. s == In(Bucharest)).',
+      'Path Cost: Numerical cost function $g(n)$; optimal solution has path cost $g^*(n) = \\min_{\\pi} g(\\pi)$.',
     ],
     examAnswer: [
       'List all 5 formal problem components: Initial state, Actions, Transition model, Goal test, Step cost function.',

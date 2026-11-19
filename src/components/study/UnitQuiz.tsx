@@ -140,10 +140,10 @@ export const UnitQuiz: React.FC<UnitQuizProps> = ({
                     type="button"
                     disabled={isAnswered}
                     onClick={() => handleSelect(q, optIdx)}
-                    className={`w-full text-left p-2.5 rounded border-[1.5px] text-sm transition-all flex items-start gap-2.5 ${optStyle}`}
+                    className={`w-full text-left p-2.5 rounded border-[1.5px] text-sm transition-all flex items-start gap-2.5 whitespace-normal break-words min-w-0 ${optStyle}`}
                   >
                     <span className="font-mono font-bold text-dim shrink-0">{optLetter}.</span>
-                    <span className="flex-1">
+                    <span className="flex-1 min-w-0 whitespace-normal break-words">
                       <KatexText htmlOrText={opt} />
                     </span>
                   </button>
@@ -152,7 +152,7 @@ export const UnitQuiz: React.FC<UnitQuizProps> = ({
             </div>
 
             {showExplanations[q.id] && (
-              <div className="mt-3 p-2.5 bg-paper border-t border-dashed border-ink/30 text-sm text-ink leading-relaxed font-sans">
+              <div className="mt-3 p-2.5 bg-paper border-t border-dashed border-ink/30 text-sm text-ink leading-relaxed font-sans min-w-0 break-words">
                 <span className="font-bold text-accentRed block mb-0.5 uppercase tracking-wide font-sans text-xs">
                   Reasoning &amp; Marking Scheme:
                 </span>
