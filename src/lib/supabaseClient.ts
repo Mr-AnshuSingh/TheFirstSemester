@@ -81,6 +81,26 @@ export async function getCurrentUser(): Promise<User | null> {
 }
 
 /**
+ * Signs the user in anonymously (instant 1-click access directly through Supabase with no external provider).
+ */
+export async function signInAnonymously(): Promise<{ error: Error | null; user?: User | null }> {
+  const sb = getSupabase();
+  if (!sb) {
+    return {
+      error: new Error(
+        'Supabase credentials are not configured. Please ensure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set.'
+      ),
+    };
+  }
+
+  const { data, error } = await sb.auth.signInAnonymously();
+  return {
+    error: error ? new Error(error.message) : null,
+    user: data?.user ?? null,
+  };
+}
+
+/**
  * Signs the user out from Supabase Auth and clears session cookies.
  */
 export async function signOutUser(): Promise<{ error: Error | null }> {

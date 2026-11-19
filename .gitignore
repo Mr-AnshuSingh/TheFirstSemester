@@ -12,3 +12,6 @@ lighthouse*.json
 *.log
 coverage
 .DS_Store
+.mcp.json
+supabase/.temp/
+
