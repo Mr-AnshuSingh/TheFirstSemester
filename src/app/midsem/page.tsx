@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
@@ -25,6 +25,16 @@ import {
   Play,
   RotateCcw,
   Lightbulb,
+  Search,
+  Check,
+  ChevronRight,
+  BookmarkCheck,
+  AlertCircle,
+  Compass,
+  Maximize2,
+  Eye,
+  EyeOff,
+  X,
 } from 'lucide-react';
 import {
   MIDSEM_DATA,
@@ -36,10 +46,554 @@ import {
 import { MIDSEM_MCQS, MidsemMcq } from '@/data/midsemMCQs';
 import { MIDSEM_DIAGRAMS, MidsemDiagram } from '@/data/midsemDiagrams';
 import { LNJPIT_EXAM_SITTINGS, LNJPIT_EXAM_NOTICE, ExamSitting } from '@/data/midsemTimetable';
+import { MIDSEM_PRACTICE_QUESTIONS, MidsemPracticeItem } from '@/data/midsemPracticeQues';
 import { KatexText } from '@/components/study/KatexRenderer';
 
-type ViewTab = 'notes' | 'numericals' | 'mcq' | 'guess' | 'papers' | 'simulator' | 'predictor' | 'calculator';
-type ThemeMode = 'notebook' | 'parchment';
+// Safe Math Text wrapper
+const MathText: React.FC<{ text: string | null | undefined; className?: string }> = ({ text, className }) => (
+  <KatexText htmlOrText={text} className={`whitespace-pre-wrap ${className || ''}`} />
+);
+
+type ViewTab = 'notes' | 'practice' | 'mcq' | 'papers' | 'diagrams' | 'chapters' | 'simulator' | 'predictor' | 'calculator';
+
+// Comprehensive Chapter & Syllabus Topic Mapping for BEU 1st Sem M&C
+interface ChapterMapping {
+  subjectCode: string;
+  subjectShort: string;
+  subjectTitle: string;
+  unitNo: number;
+  unitTitle: string;
+  chapters: {
+    chapterNo: number;
+    title: string;
+    topics: string[];
+    weightage: string;
+    examTips: string;
+  }[];
+}
+
+const SYLLABUS_CHAPTER_MAPPINGS: ChapterMapping[] = [
+  // --- CFET (100108) ---
+  {
+    subjectCode: '100108',
+    subjectShort: 'CFET',
+    subjectTitle: 'Computer Fundamentals & Emerging Technologies',
+    unitNo: 1,
+    unitTitle: 'Fundamentals of Computing & Architecture',
+    chapters: [
+      {
+        chapterNo: 1,
+        title: 'Computer Evolution & Stored Program Concept',
+        topics: ['Evolution of Computers (Generations 1-5)', 'Von Neumann Architecture Principle', 'Harvard vs Von Neumann Architecture', 'Von Neumann Bottleneck & Mitigations'],
+        weightage: '4 Marks (Compulsory subparts or Q2)',
+        examTips: 'Always draw the 4-box block diagram: CPU (ALU + CU + Registers), Memory, I/O, and System Bus.'
+      },
+      {
+        chapterNo: 2,
+        title: 'CPU Internal Organization & Registers',
+        topics: ['Arithmetic Logic Unit (ALU)', 'Control Unit (Hardwired vs Microprogrammed)', 'Internal Registers: PC, MAR, MDR, IR, Accumulator', 'Fetch-Decode-Execute Cycle'],
+        weightage: '4 Marks (Frequent)',
+        examTips: 'Explain PC increment step and differentiate between MAR and MDR clearly.'
+      },
+      {
+        chapterNo: 3,
+        title: 'Memory Architecture & Memory Hierarchy',
+        topics: ['Memory Pyramid (Speed vs Cost vs Capacity)', 'Cache Memory & Multi-Level Cache (L1, L2, L3)', 'Locality of Reference (Temporal & Spatial)', 'Average Memory Access Time (T_avg) Formula', 'Primary vs Secondary Storage'],
+        weightage: '4 Marks (Numerical or Theory)',
+        examTips: 'Memorize T_avg = h * t_c + (1 - h) * t_m. Show numerical substitution step-by-step.'
+      },
+    ]
+  },
+  {
+    subjectCode: '100108',
+    subjectShort: 'CFET',
+    subjectTitle: 'Computer Fundamentals & Emerging Technologies',
+    unitNo: 2,
+    unitTitle: 'Data Representation & Signed Arithmetic',
+    chapters: [
+      {
+        chapterNo: 1,
+        title: 'Number Systems & Base Conversions',
+        topics: ['Binary, Octal, Decimal, Hexadecimal Radixes', 'Integer Radix Conversion (Repeated Division)', 'Fractional Radix Conversion (Repeated Multiplication)', 'Direct Binary-Octal (3-bit) and Binary-Hex (4-bit) Grouping'],
+        weightage: '4 Marks (Guaranteed in Mid-Sem)',
+        examTips: 'Group 3 bits from radix point for octal and 4 bits for hex. Always specify subscripts like (365.125)₁₀.'
+      },
+      {
+        chapterNo: 2,
+        title: 'Signed Numbers & 2&apos;s Complement Arithmetic',
+        topics: ['Signed-Magnitude representation', '1\'s Complement Representation', '2&apos;s Complement Subtraction Arithmetic', 'End-Around Carry Rules', 'Hardware Overflow Detection (V = Cin XOR Cout)'],
+        weightage: '4 Marks (Guaranteed)',
+        examTips: 'For 2&apos;s complement subtraction (+A) - (+B), compute 2&apos;s complement of B, add to A, and discard end carry.'
+      },
+      {
+        chapterNo: 3,
+        title: 'Floating Point & Character Encoding',
+        topics: ['IEEE 754 32-Bit Single Precision Format (1s, 8e, 23m)', 'Normalized Scientific Representation', 'ASCII (7-bit & 8-bit)', 'Unicode & UTF-8 Encoding'],
+        weightage: '1-4 Marks',
+        examTips: 'Remember exponent bias for 32-bit single precision is 127.'
+      },
+    ]
+  },
+  {
+    subjectCode: '100108',
+    subjectShort: 'CFET',
+    subjectTitle: 'Computer Fundamentals & Emerging Technologies',
+    unitNo: 3,
+    unitTitle: 'Digital Logic & Operating Systems',
+    chapters: [
+      {
+        chapterNo: 1,
+        title: 'Boolean Algebra & Universal Gates',
+        topics: ['Boolean Axioms & De Morgan\'s Laws', 'Canonical SOP and POS Forms', 'Universal Gate Proof: NAND Only Implementations', 'Universal Gate Proof: NOR Only Implementations'],
+        weightage: '4 Marks',
+        examTips: 'Show how NOT, AND, OR are each constructed using NAND and NOR gates.'
+      },
+      {
+        chapterNo: 2,
+        title: 'K-Map Minimization & Combinational Adders',
+        topics: ['3-Variable and 4-Variable Karnaugh Maps', 'Gray Code Cell Addressing (00, 01, 11, 10)', 'Grouping Rules: Pairs, Quads, Octets with Don\'t Care (d)', 'Half Adder Design (XOR + AND)', 'Full Adder Design (2 Half Adders + 1 OR gate)'],
+        weightage: '4 Marks',
+        examTips: 'Clearly circle your groupings in the K-Map and write the factored minimal SOP expression.'
+      },
+      {
+        chapterNo: 3,
+        title: 'Operating System Principles',
+        topics: ['OS as Resource Manager (CPU, Memory, File, I/O)', 'Kernel Architecture & System Calls Interface', 'Process vs Program Comparison', '5-State Process Lifecycle (New, Ready, Running, Waiting, Terminated)'],
+        weightage: '4 Marks',
+        examTips: 'Draw the 5-state transition diagram with dispatch, interrupt, I/O wait, and exit arrows.'
+      },
+    ]
+  },
+  {
+    subjectCode: '100108',
+    subjectShort: 'CFET',
+    subjectTitle: 'Computer Fundamentals & Emerging Technologies',
+    unitNo: 4,
+    unitTitle: 'Computer Networks & Topologies',
+    chapters: [
+      {
+        chapterNo: 1,
+        title: 'Transmission Media & Topologies',
+        topics: ['Guided Media: Twisted Pair (UTP/STP), Coaxial, Optical Fibre', 'Topologies: Star, Bus, Ring, Full Mesh Comparison', 'Fault Tolerance & Cabling Formulas (N(N-1)/2 for Mesh)', 'Campus Network Medium Selection'],
+        weightage: '4 Marks',
+        examTips: 'Highlight why Optical Fibre is ideal between university campus buildings (high bandwidth, zero EMI).'
+      },
+      {
+        chapterNo: 2,
+        title: 'Network Protocols & OSI Layers',
+        topics: ['TCP vs UDP Comparison (Reliability vs Latency)', 'TCP 3-Way Handshake (SYN, SYN-ACK, ACK)', 'DNS (Domain Name Resolution)', 'OSI 7-Layer vs TCP/IP 5-Layer Hierarchy'],
+        weightage: '4 Marks',
+        examTips: 'Draw the 3-Way Handshake timing diagram with Seq = x, Seq = y, Ack = x+1, Ack = y+1.'
+      },
+    ]
+  },
+  {
+    subjectCode: '100108',
+    subjectShort: 'CFET',
+    subjectTitle: 'Computer Fundamentals & Emerging Technologies',
+    unitNo: 5,
+    unitTitle: 'Cybersecurity & Emerging Technologies',
+    chapters: [
+      {
+        chapterNo: 1,
+        title: 'Cybersecurity & The CIA Triad',
+        topics: ['Confidentiality (AES-256 Encryption, Access Control)', 'Integrity (SHA-256 Hashing, Digital Signatures)', 'Availability (Redundancy, Backups, DDoS Mitigation)', 'Common Cyber Threats (Phishing, Ransomware, MITM)'],
+        weightage: '4 Marks',
+        examTips: 'Provide a real-world banking example for every leg of the CIA triangle.'
+      },
+      {
+        chapterNo: 2,
+        title: 'Blockchain & AI Overview',
+        topics: ['Blockchain Immutability via Cryptographic Hashing', 'Previous Block Hash Pointer & Distributed Consensus', 'AI & Machine Learning Paradigms (Supervised, Unsupervised, Reinforcement)'],
+        weightage: '4 Marks',
+        examTips: 'Explain the avalanche effect: changing 1 bit in Block N invalidates hashes across the entire forward chain.'
+      },
+    ]
+  },
+
+  // --- BEEE (100111) ---
+  {
+    subjectCode: '100111',
+    subjectShort: 'BEEE',
+    subjectTitle: 'Basic Electrical & Electronics Engineering',
+    unitNo: 1,
+    unitTitle: 'DC Circuits & Network Theorems',
+    chapters: [
+      {
+        chapterNo: 1,
+        title: 'Circuit Fundamentals & Mesh/Nodal Analysis',
+        topics: ['Ohm\'s Law, KCL and KVL', 'Independent and Dependent Sources', 'Mesh Current Analysis Matrix Equations', 'Node Voltage Analysis with Supernodes'],
+        weightage: '4 Marks',
+        examTips: 'Carefully maintain sign conventions (+ to - is voltage drop) when writing loop KVL.'
+      },
+      {
+        chapterNo: 2,
+        title: 'Thevenin\'s & Norton\'s Theorems',
+        topics: ['Thevenin Equivalent Circuit (V_th and R_th)', 'Norton Equivalent Circuit (I_N and R_th)', 'Source Transformation (I_N = V_th / R_th)', 'Superposition Theorem Application Rules'],
+        weightage: '4 Marks (Guaranteed)',
+        examTips: 'Remember to deactivate sources when finding R_th: open-circuit current sources and short-circuit voltage sources.'
+      },
+      {
+        chapterNo: 3,
+        title: 'Maximum Power Transfer Theorem',
+        topics: ['Condition for Maximum Power (R_L = R_th)', 'Mathematical Derivation of P_max = V_th² / (4 R_th)', 'Efficiency under Maximum Power Transfer (exactly 50%)'],
+        weightage: '4 Marks (Guaranteed Numerical)',
+        examTips: 'State the theorem, calculate V_th and R_th, set R_L = R_th, and compute P_max with units (Watts).'
+      },
+    ]
+  },
+  {
+    subjectCode: '100111',
+    subjectShort: 'BEEE',
+    subjectTitle: 'Basic Electrical & Electronics Engineering',
+    unitNo: 2,
+    unitTitle: 'AC Circuits & Resonance',
+    chapters: [
+      {
+        chapterNo: 1,
+        title: 'Single-Phase AC Fundamentals',
+        topics: ['Sinusoidal AC Waveforms & Phasor Representation', 'Average and RMS Value Derivations', 'Form Factor (k_f = 1.11) and Peak Factor (k_p = 1.414)', 'Active Power (P = VI cos φ), Reactive Power (Q), Apparent Power (S)'],
+        weightage: '4 Marks',
+        examTips: 'Show the calculus integration steps for RMS: V_rms = sqrt((1/2π) ∫ V_m² sin²θ dθ) = V_m / √2.'
+      },
+      {
+        chapterNo: 2,
+        title: 'Series RLC Circuit & Resonance',
+        topics: ['Series RLC Impedance Z = R + j(X_L - X_C)', 'Resonant Frequency Derivation (f_0 = 1 / [2π √(LC)])', 'Impedance at Resonance (Z = R minimum, Unity Power Factor)', 'Quality Factor Q = (1/R) √(L/C) and Bandwidth BW = f_0 / Q'],
+        weightage: '4 Marks (High Probability Numerical)',
+        examTips: 'At resonance, reactive components cancel completely. Current is maximum I_0 = V / R.'
+      },
+      {
+        chapterNo: 3,
+        title: 'Balanced Three-Phase Systems',
+        topics: ['Star (Y) Connection: Line vs Phase Relations (V_L = √3 V_ph, I_L = I_ph)', 'Delta (Δ) Connection: Line vs Phase Relations (V_L = V_ph, I_L = √3 I_ph)', 'Three-Phase Power Formula P = √3 V_L I_L cos φ'],
+        weightage: '4 Marks',
+        examTips: 'Draw the star connection phasor diagram showing the 30° phase shift between line and phase voltages.'
+      },
+    ]
+  },
+  {
+    subjectCode: '100111',
+    subjectShort: 'BEEE',
+    subjectTitle: 'Basic Electrical & Electronics Engineering',
+    unitNo: 3,
+    unitTitle: 'Semiconductor Diodes & Transistors',
+    chapters: [
+      {
+        chapterNo: 1,
+        title: 'Semiconductor Materials & P-N Junction',
+        topics: ['Intrinsic vs Extrinsic Semiconductors', 'N-Type (Pentavalent) vs P-Type (Trivalent) Doping', 'Law of Mass Action (n * p = n_i²)', 'P-N Junction Depletion Layer & Barrier Potential (0.7V Si, 0.3V Ge)', 'Forward and Reverse Bias V-I Characteristics'],
+        weightage: '4 Marks (Guaranteed)',
+        examTips: 'Sketch the complete diode V-I curve showing forward knee voltage and reverse breakdown voltage.'
+      },
+      {
+        chapterNo: 2,
+        title: 'Rectifiers & Voltage Regulators',
+        topics: ['Half-Wave Rectifier Derivations (V_dc = Vm/π, η = 40.6%, γ = 1.21)', 'Full-Wave Bridge Rectifier Derivations (V_dc = 2Vm/π, η = 81.2%, γ = 0.482)', 'Zener Diode vs Avalanche Breakdown Mechanisms', 'Zener Diode as Shunt Voltage Regulator (Series Resistor R_s Calculation)'],
+        weightage: '4 Marks (Guaranteed)',
+        examTips: 'For Zener regulator numericals, calculate R_s = (V_in(min) - V_Z) / (I_Z(min) + I_L(max)).'
+      },
+      {
+        chapterNo: 3,
+        title: 'Bipolar Junction Transistor (BJT)',
+        topics: ['BJT Structure: Emitter, Base, Collector Roles & Doping Levels', 'Common Emitter (CE) Configuration & Characteristic Curves', 'Operating Regions: Cutoff, Active, and Saturation', 'Current Gain Relationship Proof: β = α / (1 - α)'],
+        weightage: '4 Marks (Guaranteed)',
+        examTips: 'Begin from KCL: I_E = I_B + I_C. Substitute I_E = I_C/α and I_B = I_C/β to derive the formula.'
+      },
+    ]
+  },
+
+  // --- Mathematics-I (100102) ---
+  {
+    subjectCode: '100102',
+    subjectShort: 'Math-I',
+    subjectTitle: 'Engineering Mathematics-I',
+    unitNo: 1,
+    unitTitle: 'Matrices & Linear Algebra',
+    chapters: [
+      {
+        chapterNo: 1,
+        title: 'Matrix Rank & Canonical Normal Form',
+        topics: ['Elementary Row and Column Operations', 'Row Echelon Form', 'Reduction to Normal Canonical Form [I_r, 0; 0, 0]', 'Determination of Rank ρ(A)'],
+        weightage: '4 Marks (Guaranteed)',
+        examTips: 'Remember that column operations can only be used when reducing to Normal Form, NOT for finding inverse or solving AX = B.'
+      },
+      {
+        chapterNo: 2,
+        title: 'System of Linear Equations',
+        topics: ['Matrix Equation AX = B & Augmented Matrix [A|B]', 'Rouche-Capelli Consistency Criteria', 'Unique Solution (ρ(A) = ρ(A|B) = n)', 'Infinitely Many Solutions (ρ(A) = ρ(A|B) < n)', 'Homogeneous System AX = O Non-Trivial Solution (|A| = 0)'],
+        weightage: '4 Marks',
+        examTips: 'Check consistency first before applying back substitution to solve for x, y, z.'
+      },
+      {
+        chapterNo: 3,
+        title: 'Eigenvalues & Cayley-Hamilton Theorem',
+        topics: ['Characteristic Equation |A - λI| = 0', 'Eigenvalues and Eigenvectors Computation', 'Properties: Trace = Sum of Eigenvalues, Det = Product of Eigenvalues', 'Cayley-Hamilton Theorem Statement & Verification', 'Computation of A⁻¹ and A³ using Cayley-Hamilton Equation'],
+        weightage: '4 Marks (Guaranteed)',
+        examTips: 'To find A⁻¹, multiply the characteristic matrix polynomial by A⁻¹ and solve for A⁻¹ directly.'
+      },
+    ]
+  },
+  {
+    subjectCode: '100102',
+    subjectShort: 'Math-I',
+    subjectTitle: 'Engineering Mathematics-I',
+    unitNo: 2,
+    unitTitle: 'Single Variable Differential Calculus',
+    chapters: [
+      {
+        chapterNo: 1,
+        title: 'Mean Value Theorems & Series Expansions',
+        topics: ['Rolle\'s Theorem Conditions and Geometric Meaning', 'Lagrange\'s Mean Value Theorem (LMVT)', 'Cauchy\'s Mean Value Theorem (CMVT)', 'Taylor\'s and Maclaurin\'s Series Expansions', 'Indeterminate Forms & L\'Hopital\'s Rule'],
+        weightage: '4 Marks',
+        examTips: 'For Rolle\'s theorem, verify continuity on [a,b], differentiability on (a,b), and f(a) = f(b) before solving f\'(c) = 0.'
+      },
+      {
+        chapterNo: 2,
+        title: 'Successive Differentiation & Leibnitz Theorem',
+        topics: ['n-th Order Derivatives of Standard Functions', 'Leibnitz\'s Theorem for n-th Derivative of a Product (u * v)', 'Proof of (1 - x²) y_{n+2} - (2n + 1)x y_{n+1} - n² y_n = 0 for y = (sin⁻¹ x)²', 'Radius of Curvature ρ = [1 + y₁²]^(3/2) / y₂'],
+        weightage: '4 Marks (Guaranteed Topper Question)',
+        examTips: 'Differentiate y twice to obtain (1 - x²) y₂ - x y₁ - 2 = 0, then apply Leibnitz theorem term-by-term.'
+      },
+    ]
+  },
+  {
+    subjectCode: '100102',
+    subjectShort: 'Math-I',
+    subjectTitle: 'Engineering Mathematics-I',
+    unitNo: 3,
+    unitTitle: 'Multivariable Calculus & Extrema',
+    chapters: [
+      {
+        chapterNo: 1,
+        title: 'Partial Differentiation & Euler\'s Theorem',
+        topics: ['First and Second Order Partial Derivatives', 'Homogeneous Functions Definition', 'Euler\'s Theorem 1st Order: x u_x + y u_y = n u', 'Euler\'s Theorem 2nd Order: x² u_xx + 2xy u_xy + y² u_yy = n(n-1)u', 'Application to composite inverse trigonometric functions'],
+        weightage: '4 Marks (Guaranteed)',
+        examTips: 'For u = sin⁻¹[(x+y)/(√x+√y)], let z = sin u. Find degree n = 1/2 of z, apply Euler to z, then divide by cos u.'
+      },
+      {
+        chapterNo: 2,
+        title: 'Maxima, Minima & Saddle Points',
+        topics: ['Stationary Points (f_x = 0 and f_y = 0)', 'Second Derivative Quantities: r = f_xx, s = f_xy, t = f_yy', 'Discriminant rt - s² > 0 with r < 0 (Maximum) vs r > 0 (Minimum)', 'Saddle Point Condition (rt - s² < 0)', 'Lagrange\'s Method of Multipliers'],
+        weightage: '4 Marks',
+        examTips: 'List stationary points in a table and evaluate r, s, t, rt - s² to classify each point.'
+      },
+    ]
+  },
+
+  // --- Physics (100104) ---
+  {
+    subjectCode: '100104',
+    subjectShort: 'Physics',
+    subjectTitle: 'Engineering Physics',
+    unitNo: 1,
+    unitTitle: 'Wave Optics (Interference & Diffraction)',
+    chapters: [
+      {
+        chapterNo: 1,
+        title: 'Interference & Newton\'s Rings',
+        topics: ['Thin Film Interference & Cosine Law', 'Stokes\' Phase Shift (λ/2 path change at denser boundary)', 'Newton\'s Rings: Proof of Central Dark Spot', 'Dark Ring Diameters D_n² = 4nλR', 'Determination of Light Wavelength λ and Liquid Refractive Index μ'],
+        weightage: '4 Marks (Guaranteed)',
+        examTips: 'State the path difference Δ = 2t + λ/2. At center t = 0, Δ = λ/2 (destructive interference), proving it is always dark.'
+      },
+      {
+        chapterNo: 2,
+        title: 'Diffraction & Resolving Power',
+        topics: ['Fraunhofer Single-Slit Diffraction: Minima Condition (a sin θ = m λ)', 'Central Maximum Angular Width (2λ / a)', 'Plane Transmission Diffraction Grating', 'Resolving Power of Grating (RP = n * N)'],
+        weightage: '4 Marks',
+        examTips: 'Distinguish between interference (superposition of waves from 2 coherent sources) and diffraction (superposition of secondary wavelets from same wavefront).'
+      },
+    ]
+  },
+  {
+    subjectCode: '100104',
+    subjectShort: 'Physics',
+    subjectTitle: 'Engineering Physics',
+    unitNo: 2,
+    unitTitle: 'Lasers & Fiber Optics',
+    chapters: [
+      {
+        chapterNo: 1,
+        title: 'Lasers & He-Ne Gas Laser',
+        topics: ['Stimulated vs Spontaneous Emission & Einstein Coefficients A_21, B_21', 'Population Inversion & Metastable States', 'He-Ne Gas Laser Construction & Gas Ratio (10:1 He:Ne)', 'Resonant Energy Transfer & 632.8 nm Red Output Transition'],
+        weightage: '4 Marks (Guaranteed)',
+        examTips: 'Draw the 4-level energy diagram showing 20.61 eV He* transfer to 3s Ne level, followed by 3s -> 2p lasing transition.'
+      },
+      {
+        chapterNo: 2,
+        title: 'Optical Fibers & Propagation',
+        topics: ['Total Internal Reflection in Step-Index Fiber', 'Numerical Aperture Derivation: NA = √(n₁² - n₂²)', 'Acceptance Angle θ_a = sin⁻¹(NA)', 'Normalized Frequency (V-Number) & Single-Mode Condition (V < 2.405)'],
+        weightage: '4 Marks (Guaranteed Numerical)',
+        examTips: 'Apply Snell\'s law at entrance: n_0 sin θ_a = n_1 cos θ_c, with sin θ_c = n_2 / n_1.'
+      },
+    ]
+  },
+  {
+    subjectCode: '100104',
+    subjectShort: 'Physics',
+    subjectTitle: 'Engineering Physics',
+    unitNo: 3,
+    unitTitle: 'Electromagnetism & Magnetic Materials',
+    chapters: [
+      {
+        chapterNo: 1,
+        title: 'Maxwell\'s Equations & Displacement Current',
+        topics: ['Maxwell\'s 4 Field Equations (Differential & Integral Forms)', 'Inconsistency in Ampere\'s Law with Charge Continuity', 'Displacement Current Density J_d = ε_0 (∂E/∂t)', 'Electromagnetic Wave Velocity in Vacuum c = 1 / √(μ_0 ε_0)'],
+        weightage: '4 Marks (Guaranteed)',
+        examTips: 'Take divergence of curl H: div(curl H) = 0 = div J. Compare with continuity div J = -∂ρ/∂t to prove displacement current.'
+      },
+      {
+        chapterNo: 2,
+        title: 'Poynting Vector & Magnetic Materials',
+        topics: ['Poynting Vector S = E × H (Energy flux density in W/m²)', 'Diamagnetism, Paramagnetism, Ferromagnetism Comparison', 'Curie-Weiss Law χ = C / (T - θ)', 'B-H Hysteresis Loop & Magnetic Energy Loss per Cycle'],
+        weightage: '4 Marks',
+        examTips: 'Poynting vector S points in direction of wave propagation with magnitude equal to power per unit area.'
+      },
+    ]
+  },
+
+  // --- Introduction to AI (100105) ---
+  {
+    subjectCode: '100105',
+    subjectShort: 'IAI',
+    subjectTitle: 'Introduction to Artificial Intelligence',
+    unitNo: 1,
+    unitTitle: 'Intelligent Agents & Environments',
+    chapters: [
+      {
+        chapterNo: 1,
+        title: 'Intelligent Agents & PEAS Framework',
+        topics: ['Definition of Rational Agent', 'PEAS Framework (Performance Measure, Environment, Actuators, Sensors)', 'Case Studies: Autonomous Vehicle, Medical Diagnosis System, Vacuum Cleaner', 'Agent Architectures: Reflex, Goal-Based, Utility-Based, Learning Agent'],
+        weightage: '4 Marks (Guaranteed)',
+        examTips: 'Construct the 4-column PEAS table with exact bullet points for car actuators, sensors, and safety metrics.'
+      },
+      {
+        chapterNo: 2,
+        title: 'Environment Classification',
+        topics: ['Fully vs Partially Observable', 'Deterministic vs Stochastic', 'Episodic vs Sequential', 'Static vs Dynamic vs Semi-Dynamic', 'Discrete vs Continuous', 'Single-Agent vs Multi-Agent (Chess vs Driving)'],
+        weightage: '4 Marks',
+        examTips: 'Classify driving as partially observable, stochastic, sequential, dynamic, continuous, and multi-agent.'
+      },
+    ]
+  },
+  {
+    subjectCode: '100105',
+    subjectShort: 'IAI',
+    subjectTitle: 'Introduction to Artificial Intelligence',
+    unitNo: 2,
+    unitTitle: 'Problem Solving & Heuristic Search',
+    chapters: [
+      {
+        chapterNo: 1,
+        title: 'Uninformed Search Algorithms',
+        topics: ['State Space Formulation (State, Action, Transition, Goal, Path Cost)', 'Breadth-First Search (BFS): Completeness, Optimality, O(b^d) Exponential Space', 'Depth-First Search (DFS): Linear O(b*m) Space, Incompleteness on infinite trees', 'Uniform Cost Search (UCS / Dijkstra\'s Algorithm)'],
+        weightage: '4 Marks',
+        examTips: 'Emphasize that BFS memory consumption O(b^d) is its biggest practical limitation.'
+      },
+      {
+        chapterNo: 2,
+        title: 'Heuristic Search & A* Optimality',
+        topics: ['Evaluation Function f(n) = g(n) + h(n)', 'Greedy Best-First Search vs A* Search', 'Admissible Heuristics (0 ≤ h(n) ≤ h*(n))', 'Consistent (Monotonic) Heuristics (Triangle Inequality)', 'Mathematical Proof of A* Tree-Search Optimality'],
+        weightage: '4 Marks (Guaranteed)',
+        examTips: 'Prove by contradiction: assume suboptimal goal G_2 is selected; show ancestor node n on frontier has f(n) ≤ C* < f(G_2).'
+      },
+    ]
+  },
+  {
+    subjectCode: '100105',
+    subjectShort: 'IAI',
+    subjectTitle: 'Introduction to Artificial Intelligence',
+    unitNo: 3,
+    unitTitle: 'Adversarial Games & Pruning',
+    chapters: [
+      {
+        chapterNo: 1,
+        title: 'Game Trees & Minimax Algorithm',
+        topics: ['Two-Player Zero-Sum Deterministic Games', 'Minimax Value Computation at MAX and MIN Nodes', 'Time Complexity O(b^m) and Space Complexity O(b*m)'],
+        weightage: '4 Marks',
+        examTips: 'Show bottom-up backup values from terminal leaves to the root node.'
+      },
+      {
+        chapterNo: 2,
+        title: 'Alpha-Beta Pruning',
+        topics: ['Alpha (Best choice for MAX) and Beta (Best choice for MIN)', 'Cutoff Condition: Prune when α ≥ β', 'Move Ordering Impact: Optimal branching drops time complexity to O(b^(m/2))'],
+        weightage: '4 Marks (Guaranteed)',
+        examTips: 'Walk through an example game tree, maintain [α, β] intervals at each node, and mark pruned branches with a strike.'
+      },
+    ]
+  },
+
+  // --- Universal Human Values (100109) ---
+  {
+    subjectCode: '100109',
+    subjectShort: 'UHV',
+    subjectTitle: 'Universal Human Values',
+    unitNo: 1,
+    unitTitle: 'Introduction to Value Education',
+    chapters: [
+      {
+        chapterNo: 1,
+        title: 'Human Aspirations & Priorities',
+        topics: ['Continuous Happiness (Sukha) and Prosperity (Samridhi)', 'The 3 Priorities: 1. Right Understanding -> 2. Relationships -> 3. Physical Facilities', 'Physical Facilities: Necessary but NOT Sufficient for human beings', 'Animal Consciousness (Only Physical Facilities) vs Human Consciousness'],
+        weightage: '4 Marks',
+        examTips: 'Contrast animal living (needs fulfilled by facilities alone) with human living (needs right understanding and relationships).'
+      },
+      {
+        chapterNo: 2,
+        title: 'Process of Self-Exploration',
+        topics: ['Self-Exploration Definition & Purpose', 'Natural Acceptance (Sahaj Svikriti): Invariant with time, place, and person', 'Experiential Validation: Living in accordance and verifying results', 'Living in Harmony at 4 Levels (Individual, Family, Society, Nature)'],
+        weightage: '4 Marks',
+        examTips: 'Explain that Natural Acceptance is not belief or conditioning; it is intrinsic to all human beings.'
+      },
+    ]
+  },
+  {
+    subjectCode: '100109',
+    subjectShort: 'UHV',
+    subjectTitle: 'Universal Human Values',
+    unitNo: 2,
+    unitTitle: 'Harmony in the Human Being (Self & Body)',
+    chapters: [
+      {
+        chapterNo: 1,
+        title: 'Co-existence of Self (\'I\') and Body',
+        topics: ['Conscious Self (\'I\') vs Material Body', 'Needs: Qualitative & Continuous in \'I\' vs Quantitative & Temporary in Body', 'Activities: Desiring, Thinking, Expecting in \'I\' vs Physiological in Body', 'Responses: Knowing, Assuming, Recognizing, Fulfilling in \'I\' vs Only Recognizing & Fulfilling in Body'],
+        weightage: '4 Marks (Guaranteed)',
+        examTips: 'Create the 6-row comparison table between Self (\'I\') and Body.'
+      },
+      {
+        chapterNo: 2,
+        title: 'Sanyama and Swasthya',
+        topics: ['Sanyama: Feeling of responsibility in \'I\' for nurturing, protecting, rightly utilizing Body', 'Swasthya: Health of Body, organs functioning in mutual harmony', 'Correct Appraisal of Physical Needs (Eliminating unlimited consumerism)'],
+        weightage: '4 Marks',
+        examTips: 'Show that Swasthya is the natural physical outcome when the conscious Self maintains Sanyama.'
+      },
+    ]
+  },
+  {
+    subjectCode: '100109',
+    subjectShort: 'UHV',
+    subjectTitle: 'Universal Human Values',
+    unitNo: 3,
+    unitTitle: 'Harmony in Family & Society',
+    chapters: [
+      {
+        chapterNo: 1,
+        title: 'Trust (Vishwas): Foundational Value',
+        topics: ['Trust on Intention vs Trust on Competence', 'The Human Error: Evaluating self by intention, evaluating others by competence', 'How Doubting Intention Causes Irritation, Anger, and Broken Relationships', 'Resolution: Unconditional Trust on Intention + Helping Competence'],
+        weightage: '4 Marks (Guaranteed)',
+        examTips: 'Explain clearly that everybody naturally intends mutual happiness; mistakes occur solely from lack of competence.'
+      },
+      {
+        chapterNo: 2,
+        title: 'Respect (Samman) & The 9 Values',
+        topics: ['Respect Definition: Right Evaluation (Yathartha Mulyankan)', 'Disrespect Modes: Over-evaluation, Under-evaluation, Otherwise-evaluation', 'Nine Values in Relationships: Trust, Respect, Affection, Care, Guidance, Reverence, Glory, Gratitude, Love (Purna Mulya)', 'Comprehensive Human Goals: Samadhan, Samridhi, Abhay, Sah-astitva'],
+        weightage: '4 Marks',
+        examTips: 'Define Respect as Right Evaluation. Differentiate between Differentiation (based on body, wealth, beliefs) and Respect.'
+      },
+    ]
+  },
+];
 
 const READINESS_PILLARS = [
   { id: 'p1', label: 'Unit 1 Fundamentals & Definitions Memorized', weight: 6 },
@@ -55,25 +609,30 @@ const READINESS_PILLARS = [
   { id: 'p11', label: 'Maxwell 4 Equations & Displacement Current Derivation Memorized', weight: 7 },
   { id: 'p12', label: 'AI Search Comparison (BFS vs DFS vs A* Admissibility)', weight: 6 },
   { id: 'p13', label: 'Alpha-Beta Pruning Cutoff Condition (α ≥ β) Trace Ready', weight: 6 },
-  { id: 'p14', label: 'CFET 4-Variable K-Map & IEEE 754 32-bit Conversion Practiced', weight: 6 },
+  { id: 'p14', label: 'CFET 4-Variable K-Map & Number System Conversions Practiced', weight: 6 },
   { id: 'p15', label: 'UHV Trust on Intention vs Competence & 9 Values Articulated', weight: 5 },
 ];
 
 export default function MidsemRevisionPage() {
   const [activeSubjectCode, setActiveSubjectCode] = useState<string>('100111'); // BEEE is 1st exam
-  const [activeUnitNo, setActiveUnitNo] = useState<number>(0); // 0 = All Units, 1, 2, 3
+  const [activeUnitNo, setActiveUnitNo] = useState<number>(0); // 0 = All Units
   const [activeTab, setActiveTab] = useState<ViewTab>('notes');
-  const [theme, setTheme] = useState<ThemeMode>('notebook');
+  const [searchFilter, setSearchFilter] = useState<string>('');
 
   // MCQ state
+  // Diagram states
+  const [diagramModal, setDiagramModal] = useState<MidsemDiagram | null>(null);
+  const [hideLabels, setHideLabels] = useState<Record<string, boolean>>({});
+  const [globalHideLabels, setGlobalHideLabels] = useState<boolean>(false);
+
   const [userAnswers, setUserAnswers] = useState<Record<string, number>>({});
   const [onlyMissed, setOnlyMissed] = useState<boolean>(false);
 
   // 15-Pillar Score Predictor state
   const [readinessChecks, setReadinessChecks] = useState<Record<string, boolean>>({
-    'p1': true,
-    'p2': true,
-    'p3': true,
+    p1: true,
+    p2: true,
+    p3: true,
   });
 
   // Calculators state
@@ -90,17 +649,16 @@ export default function MidsemRevisionPage() {
 
   // Timed Mock Simulator state
   const [mockRunning, setMockRunning] = useState<boolean>(false);
-  const [mockSecondsLeft, setMockSecondsLeft] = useState<number>(900); // 15 mins rapid sprint
+  const [mockSecondsLeft, setMockSecondsLeft] = useState<number>(900); // 15 mins
   const [mockUserAnswers, setMockUserAnswers] = useState<Record<string, number>>({});
   const [mockSubmitted, setMockSubmitted] = useState<boolean>(false);
 
-  // Countdown timer to next exam
+  // Countdown timer to Nov 27 11:00 AM
   const [timeUntilNext, setTimeUntilNext] = useState<string>('');
 
   useEffect(() => {
     const updateCountdown = () => {
-      // Find target date
-      const targetDate = new Date('2026-11-25T11:00:00+05:30').getTime();
+      const targetDate = new Date('2026-11-27T11:00:00+05:30').getTime();
       const now = new Date().getTime();
       const diff = targetDate - now;
 
@@ -143,7 +701,7 @@ export default function MidsemRevisionPage() {
   // Current course
   const currentCourse: MidsemCourse = useMemo(() => {
     return (
-      MIDSEM_DATA.courses.find((c) => c.code === activeSubjectCode) ||
+      MIDSEM_DATA.courses.find((c) => c.code === activeSubjectCode || activeSubjectCode.includes(c.code)) ||
       MIDSEM_DATA.courses[0]
     );
   }, [activeSubjectCode]);
@@ -160,13 +718,40 @@ export default function MidsemRevisionPage() {
       const matchSubject = m.courseCode === currentCourse.code || m.subject === currentCourse.short;
       const matchUnit = activeUnitNo === 0 || m.unitNo === activeUnitNo;
       if (!matchSubject || !matchUnit) return false;
+      if (searchFilter.trim()) {
+        const qText = (m.q + ' ' + m.topic + ' ' + m.explanation).toLowerCase();
+        if (!qText.includes(searchFilter.toLowerCase())) return false;
+      }
       if (onlyMissed) {
         const userAns = userAnswers[m.id];
         return userAns !== undefined && userAns !== m.ans;
       }
       return true;
     });
-  }, [currentCourse, activeUnitNo, onlyMissed, userAnswers]);
+  }, [currentCourse, activeUnitNo, onlyMissed, userAnswers, searchFilter]);
+
+  // Practice Questions
+  const filteredPractice: MidsemPracticeItem[] = useMemo(() => {
+    return MIDSEM_PRACTICE_QUESTIONS.filter((p) => {
+      const matchSubject = p.courseCode === currentCourse.code || p.subject === currentCourse.short;
+      const matchUnit = activeUnitNo === 0 || p.unitNo === activeUnitNo;
+      if (!matchSubject || !matchUnit) return false;
+      if (searchFilter.trim()) {
+        const text = (p.title + ' ' + p.question + ' ' + p.stepByStepSolution).toLowerCase();
+        if (!text.includes(searchFilter.toLowerCase())) return false;
+      }
+      return true;
+    });
+  }, [currentCourse, activeUnitNo, searchFilter]);
+
+  // Chapter Mappings for current course
+  const currentChapterMappings: ChapterMapping[] = useMemo(() => {
+    return SYLLABUS_CHAPTER_MAPPINGS.filter((m) => {
+      const matchSubject = m.subjectCode === currentCourse.code || m.subjectShort === currentCourse.short;
+      const matchUnit = activeUnitNo === 0 || m.unitNo === activeUnitNo;
+      return matchSubject && matchUnit;
+    });
+  }, [currentCourse, activeUnitNo]);
 
   // MCQ Stats
   const mcqStats = useMemo(() => {
@@ -199,18 +784,18 @@ export default function MidsemRevisionPage() {
   // Real paper for current course
   const currentPaper: BeuPaper | undefined = useMemo(() => {
     return BEU_REAL_PAPERS_2026.find(
-      (p) => p.code === currentCourse.code || p.subject === currentCourse.short
+      (p) => p.code === currentCourse.code || p.subject === currentCourse.short || currentCourse.code.includes(p.code)
     );
   }, [currentCourse]);
 
   // Sitting for current course
   const currentSitting: ExamSitting | undefined = useMemo(() => {
     return LNJPIT_EXAM_SITTINGS.find(
-      (s) => s.subjectCode.includes(currentCourse.code) || s.subjectShort === currentCourse.short
+      (s) => s.subjectCode.includes(currentCourse.code) || currentCourse.code.includes(s.subjectCode) || s.subjectShort === currentCourse.short
     );
   }, [currentCourse]);
 
-  // Calculate Readiness Score
+  // Readiness Score
   const totalPillarsScore = useMemo(() => {
     let score = 0;
     READINESS_PILLARS.forEach((p) => {
@@ -221,7 +806,7 @@ export default function MidsemRevisionPage() {
 
   // Calculator computations
   const rlcResonantFreq = useMemo(() => {
-    if (rlcL <= 0 || rlcC <= 0) return 0;
+    if (rlcL <= 0 || rlcC <= 0) return '0.00';
     const cFarads = rlcC * 1e-6;
     return (1 / (2 * Math.PI * Math.sqrt(rlcL * cFarads))).toFixed(2);
   }, [rlcL, rlcC]);
@@ -249,598 +834,586 @@ export default function MidsemRevisionPage() {
     return (cacheH * cacheTc + (1 - cacheH) * cacheTm).toFixed(3);
   }, [cacheH, cacheTc, cacheTm]);
 
-  // Notebook Theme Palette Configurations
-  const currentTheme = {
-    notebook: {
-      bg: 'bg-paper',
-      text: 'text-ink',
-      subtext: 'text-dim',
-      headerBg: 'bg-paper/95',
-      card: 'bg-paper2 border-2 border-ink shadow-sketchy',
-      cardInner: 'bg-paper border-2 border-ink shadow-sketchy',
-      box: 'border-2 border-ink shadow-sketchy',
-      codeBox: 'bg-paper3 border-2 border-ink/40 text-ink',
-      tipBox: 'bg-gold/15 border-2 border-accentGold/60 text-ink',
-      pillActive: 'bg-accentRed text-paper border-2 border-ink shadow-sketch',
-      pillInactive: 'bg-paper text-ink border-2 border-ink/40 hover:bg-paper3 hover:border-ink',
-      tabActive: 'bg-paper text-ink border-2 border-ink shadow-sketch',
-      tabInactive: 'text-dim hover:text-ink hover:bg-paper2 border-2 border-transparent',
-    },
-    parchment: {
-      bg: 'bg-[#ede3cc]',
-      text: 'text-[#2b2217]',
-      subtext: 'text-[#5a4a35]',
-      headerBg: 'bg-[#ede3cc]/95',
-      card: 'bg-[#e2d5b8] border-2 border-[#3d3122] shadow-sketchy',
-      cardInner: 'bg-[#f4ebd6] border-2 border-[#3d3122] shadow-sketchy',
-      box: 'border-2 border-[#3d3122] shadow-sketchy',
-      codeBox: 'bg-[#dacab0] border-2 border-[#3d3122]/40 text-[#2b2217]',
-      tipBox: 'bg-[#e8c872]/25 border-2 border-[#b8810b]/70 text-[#2b2217]',
-      pillActive: 'bg-[#9e3512] text-white border-2 border-[#3d3122] shadow-sketch',
-      pillInactive: 'bg-[#f4ebd6] text-[#2b2217] border-2 border-[#3d3122]/40 hover:bg-[#dacab0]',
-      tabActive: 'bg-[#f4ebd6] text-[#2b2217] border-2 border-[#3d3122] shadow-sketch',
-      tabInactive: 'text-[#5a4a35] hover:text-[#2b2217] hover:bg-[#e2d5b8] border-2 border-transparent',
-    },
-  }[theme];
-
   return (
-    <div className={`min-h-screen ${currentTheme.bg} ${currentTheme.text} transition-colors duration-200 font-sans pb-24 overflow-x-hidden selection:bg-gold/30 selection:text-ink`}>
-      {/* =========================================================================
-          TOP COMMAND HUD (NOTEBOOK HEADER)
-         ========================================================================= */}
-      <header className={`sticky top-0 z-40 border-b-2 border-ink ${currentTheme.headerBg} backdrop-blur-md px-3 sm:px-4 py-2.5 sm:py-3 shadow-sketchy`}>
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2.5 sm:gap-3 flex-wrap">
-          {/* Brand & Routine Info */}
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+    <div className="min-h-screen bg-paper text-ink font-sans antialiased pb-24 selection:bg-accentGold/20">
+      {/* TOP COMMAND HUD */}
+      <header className="sticky top-0 z-40 border-b-2 border-ink bg-paper2/95 backdrop-blur-md px-4 py-3 shadow-sketchy">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="btn flex items-center gap-1 px-2 py-1 sm:px-2.5 sm:py-1.5 text-xs font-bold border-2 border-ink bg-paper2 hover:bg-ink hover:text-paper shadow-sketchy transition-colors shrink-0"
-              title="Return to Main Notebook"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-ink bg-paper text-ink text-sm font-bold shadow-sketchy hover:bg-paper3 transition-all"
             >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Back to Sem-I</span>
-              <span className="sm:hidden">Sem-I</span>
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to 3D Notebook</span>
             </Link>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="font-hand text-xl sm:text-2xl md:text-3xl font-bold text-ink flex items-center gap-1.5 leading-none">
-                  <span className="text-accentRed">⚡ M&amp;C Mid-Sem Hub</span>
-                  <span className="text-[10px] sm:text-xs px-2 py-0.5 rounded-full border-2 border-ink bg-gold/25 text-ink font-mono font-bold shadow-sketchy shrink-0">
-                    2026
-                  </span>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-xs uppercase tracking-wider text-accentRed font-bold">
+                  LNJPIT Chapra · BEU Mid-Sem
                 </span>
-                <span className="hidden md:inline-block text-xs font-semibold text-dim">
-                  LNJPIT Chapra · Group A
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-ink text-xs font-bold bg-accentTeal/15 text-accentTeal">
+                  <BookmarkCheck className="w-3 h-3" /> Group A: M&amp;C
                 </span>
               </div>
-              <p className="text-[10px] sm:text-[11px] text-dim truncate max-w-[250px] sm:max-w-md font-mono mt-0.5">
-                Ref: {LNJPIT_EXAM_NOTICE.refNo} · Revised Routine: Nov 25–27, 2026
-              </p>
+              <h1 className="font-hand text-2xl md:text-3xl font-bold text-ink leading-tight">
+                Mid-Semester Exam Portal 2026
+              </h1>
             </div>
           </div>
 
-          {/* Countdown, Theme & Quick Controls */}
-          <div className="flex items-center gap-2 flex-wrap shrink-0">
-            {/* Live Countdown Pill */}
-            <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full border-2 border-ink bg-paper2 text-ink font-mono text-[11px] sm:text-xs shadow-sketchy">
-              <Clock className="w-3.5 h-3.5 animate-pulse text-accentRed" />
-              <span className="hidden sm:inline text-dim font-bold">Starts:</span>
-              <strong className="text-accentRed font-bold">{timeUntilNext || '25 Nov 2026'}</strong>
+          {/* Countdown & Quick Action HUD */}
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border-2 border-accentRed bg-accentRed/10 text-accentRed text-xs font-mono font-bold">
+              <Clock className="w-4 h-4 animate-pulse" />
+              <span>Exams: 27 Nov · {timeUntilNext}</span>
             </div>
-
-            {/* Theme Toggle (Notebook, Parchment) */}
-            <div className="flex items-center bg-paper2 border-2 border-ink rounded-lg p-0.5 text-xs shadow-sketchy">
-              {(['notebook', 'parchment'] as ThemeMode[]).map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => setTheme(t)}
-                  className={`px-2 py-0.5 sm:px-2.5 sm:py-1 rounded font-bold capitalize text-[11px] sm:text-xs transition-colors ${
-                    theme === t
-                      ? 'bg-ink text-paper shadow-xs'
-                      : 'text-dim hover:text-ink'
-                  }`}
-                >
-                  {t}
-                </button>
-              ))}
-            </div>
-
-            {/* Print A4 Mode */}
             <button
-              type="button"
               onClick={() => window.print()}
-              className="btn flex items-center gap-1 px-2 py-1 sm:px-2.5 sm:py-1.5 border-2 border-ink bg-paper2 hover:bg-ink hover:text-paper text-xs text-ink font-bold shadow-sketchy transition-colors"
-              title="Print A4 Clean Notes & Papers"
+              className="p-2 rounded-lg border-2 border-ink bg-paper text-ink hover:bg-paper3 shadow-sketchy text-xs font-bold"
+              title="Print Revision Sheet"
             >
-              <Printer className="w-3.5 h-3.5 text-dim" />
-              <span className="hidden sm:inline">Print</span>
+              <Printer className="w-4 h-4" />
             </button>
           </div>
         </div>
       </header>
 
-      {/* =========================================================================
-          SITTING BANNER (OFFICIAL LNJPIT CHAPRA SCHEDULE)
-         ========================================================================= */}
-      <section className="max-w-7xl mx-auto px-4 pt-4">
-        <div className={`rounded-xl p-3 sm:p-4 ${currentTheme.card}`}>
-          <div className="flex items-center justify-between gap-2 flex-wrap mb-2.5">
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-accentRed" />
-              <span className="font-hand text-xl font-bold text-ink">
-                Official Examination Schedule (Mathematics &amp; Computing Group A)
-              </span>
+      {/* MAIN CONTAINER */}
+      <main className="max-w-7xl mx-auto px-4 pt-6">
+        {/* EXAM NOTICE BANNER */}
+        <div className="border-2 border-ink bg-paper2 rounded-xl p-4 shadow-sketch mb-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2 text-xs font-bold font-mono text-accentRed uppercase">
+                <AlertCircle className="w-4 h-4" /> Official LNJPIT Timetable (Ref: {LNJPIT_EXAM_NOTICE.refNo})
+              </div>
+              <p className="text-sm text-dim mt-1">
+                Mid-Sem Examination begins <strong>27-11-2026</strong>. 20 Marks Official BEU Pattern (Q1 Compulsory 4×1M + Any 4 of Q2-Q6 4×4M = 20M).
+              </p>
             </div>
-            <span className="text-[11px] text-dim font-mono font-bold">
-              Full Marks: 20 · Time: 2 Hours per sitting · Revised Routine Nov 2026
-            </span>
+            {currentSitting && (
+              <div className="flex items-center gap-3 px-3 py-2 rounded-lg border-2 border-ink bg-paper3 text-xs font-mono">
+                <div>
+                  <div className="text-dim">Next Sitting:</div>
+                  <div className="font-bold text-ink text-sm">{currentSitting.date} · {currentSitting.sitting}</div>
+                  <div className="text-accentTeal font-bold">{currentSitting.timing}</div>
+                </div>
+              </div>
+            )}
           </div>
+        </div>
 
-          {/* Sittings Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-            {LNJPIT_EXAM_SITTINGS.map((sitting) => {
-              const isSelected = activeSubjectCode === sitting.subjectCode || currentCourse.code.includes(sitting.subjectCode.slice(0, 6));
+        {/* 6 SUBJECT SELECTION BAR */}
+        <div className="mb-6">
+          <div className="text-xs font-mono uppercase tracking-wider text-dim font-bold mb-2 flex items-center gap-1.5">
+            <Layers className="w-3.5 h-3.5 text-accentTeal" /> Select Examination Subject (Group A M&amp;C)
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
+            {MIDSEM_DATA.courses.map((c) => {
+              const isSelected = c.code === activeSubjectCode || activeSubjectCode.includes(c.code);
               return (
                 <button
-                  key={sitting.id}
-                  type="button"
+                  key={c.code}
                   onClick={() => {
-                    const matchedCourse = MIDSEM_DATA.courses.find(
-                      (c) => c.code === sitting.subjectCode || sitting.subjectCode.includes(c.code)
-                    );
-                    if (matchedCourse) {
-                      setActiveSubjectCode(matchedCourse.code);
-                    }
+                    setActiveSubjectCode(c.code);
+                    setActiveUnitNo(0);
                   }}
-                  className={`flex flex-col text-left p-2.5 rounded-xl border-2 transition-all ${
+                  className={`p-3 rounded-xl border-2 text-left transition-all relative ${
                     isSelected
-                      ? 'border-ink bg-gold/30 shadow-sketch font-bold scale-[1.02]'
-                      : 'border-ink/40 bg-paper hover:border-ink hover:bg-paper3 shadow-sketchy'
+                      ? 'border-ink bg-accentTeal text-paper shadow-sketch font-bold scale-[1.02]'
+                      : 'border-ink/40 bg-paper2 text-ink hover:bg-paper3 shadow-sketchy hover:border-ink'
                   }`}
                 >
-                  <div className="flex items-center justify-between text-[10px] text-dim font-mono mb-1">
-                    <span>{sitting.day.slice(0, 3)}, {sitting.date.slice(5)}</span>
-                    <span className="font-bold text-accentRed">{sitting.timing.split('–')[0].trim()}</span>
+                  <div className={`text-xs font-mono ${isSelected ? 'text-paper/80' : 'text-accentRed'} font-bold`}>
+                    {c.code}
                   </div>
-                  <strong className="font-hand text-lg font-bold text-ink leading-tight">
-                    {sitting.subjectShort}
-                  </strong>
-                  <span className="text-[10px] text-dim truncate mt-0.5 font-mono">
-                    {sitting.sitting} · {sitting.subjectCode}
-                  </span>
+                  <div className="font-hand text-xl font-bold leading-tight mt-0.5 truncate">
+                    {c.short}
+                  </div>
+                  <div className={`text-[11px] truncate ${isSelected ? 'text-paper/90' : 'text-dim'}`}>
+                    {c.title}
+                  </div>
                 </button>
               );
             })}
           </div>
         </div>
-      </section>
 
-      {/* =========================================================================
-          SUBJECT AND SCOPE STRIP
-         ========================================================================= */}
-      <section className="max-w-7xl mx-auto px-4 pt-4">
-        {/* Row 1: Subject Chips */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-          {MIDSEM_DATA.courses.map((course) => {
-            const active = course.code === activeSubjectCode;
+        {/* 8 STUDY TABS */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-6 border-b-2 border-hair">
+          {[
+            { id: 'notes', label: '📖 High-Yield Notes', badge: `${displayedUnits.length} Units` },
+            { id: 'practice', label: '📝 Solved Practice', badge: `${filteredPractice.length} Qs` },
+            { id: 'mcq', label: '🎯 CBT MCQ Bank', badge: `${filteredMcqs.length} MCQs` },
+            { id: 'papers', label: '📑 BEU Papers 2026', badge: '20M Solved' },
+            { id: 'diagrams', label: '📐 Exam Diagrams', badge: `${currentDiagrams.length} Schematics` },
+            { id: 'chapters', label: '🗺️ Chapter Index', badge: 'All Units' },
+            { id: 'simulator', label: '⏱️ Mock Test', badge: '15 Min CBT' },
+            { id: 'predictor', label: '📊 15-Pillar Score', badge: `${totalPillarsScore}%` },
+            { id: 'calculator', label: '🧮 Calculators', badge: '4 Tools' },
+          ].map((tab) => {
+            const isActive = activeTab === tab.id;
             return (
               <button
-                key={course.code}
-                type="button"
-                onClick={() => {
-                  setActiveSubjectCode(course.code);
-                  setActiveUnitNo(0); // reset unit to All
-                }}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold shrink-0 transition-all ${
-                  active ? currentTheme.pillActive : currentTheme.pillInactive
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as ViewTab)}
+                className={`px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all border-2 flex items-center gap-2 ${
+                  isActive
+                    ? 'border-ink bg-paper3 text-ink shadow-sketch scale-[1.01]'
+                    : 'border-transparent text-dim hover:text-ink hover:bg-paper2 hover:border-ink/30'
                 }`}
               >
-                <span
-                  className="w-2.5 h-2.5 rounded-full border border-ink/30 shrink-0"
-                  style={{ backgroundColor: course.color }}
-                />
-                <span className="font-hand text-lg leading-none">{course.short}</span>
-                <span className={`text-[11px] font-mono ${active ? 'text-paper/90' : 'text-dim'}`}>
-                  ({course.code})
+                <span>{tab.label}</span>
+                <span className={`text-[11px] font-mono px-2 py-0.5 rounded-full border ${
+                  isActive ? 'border-ink bg-paper text-ink font-bold' : 'border-ink/20 bg-paper3/60 text-dim'
+                }`}>
+                  {tab.badge}
                 </span>
               </button>
             );
           })}
         </div>
 
-        {/* Row 2: Unit Filter & Feature Tabs */}
-        <div className="flex items-center justify-between gap-3 mt-3 flex-wrap border-b-2 border-ink/30 pb-3">
-          {/* Unit Scope Filter */}
-          <div className="flex items-center gap-1.5 bg-paper2 p-1 rounded-xl border-2 border-ink shadow-sketchy text-xs">
-            <span className="text-dim px-2 font-bold flex items-center gap-1">
-              <Filter className="w-3.5 h-3.5 text-accentRed" />
-              <span>Scope:</span>
-            </span>
-            <button
-              type="button"
-              onClick={() => setActiveUnitNo(0)}
-              className={`px-2.5 py-1 rounded-lg font-bold transition-colors ${
-                activeUnitNo === 0
-                  ? 'bg-ink text-paper shadow-xs'
-                  : 'text-dim hover:text-ink hover:bg-paper3'
-              }`}
-            >
-              All Units (1, 2 &amp; 3)
-            </button>
-            {[1, 2, 3].map((u) => (
-              <button
-                key={u}
-                type="button"
-                onClick={() => setActiveUnitNo(u)}
-                className={`px-2.5 py-1 rounded-lg font-bold transition-colors ${
-                  activeUnitNo === u
-                    ? 'bg-ink text-paper shadow-xs'
-                    : 'text-dim hover:text-ink hover:bg-paper3'
-                }`}
-              >
-                Unit {u}
-              </button>
-            ))}
-          </div>
-
-          {/* View Mode Tabs */}
-          <nav className="flex items-center gap-1.5 overflow-x-auto scrollbar-none text-xs">
-            {[
-              { id: 'notes', label: 'Master Notes', icon: BookOpen },
-              { id: 'numericals', label: 'Solved Numericals', icon: Target },
-              { id: 'mcq', label: `CBT MCQs (${mcqStats.correct}/${mcqStats.attempted})`, icon: HelpCircle },
-              { id: 'guess', label: 'Guess Questions', icon: Sparkles },
-              { id: 'papers', label: 'BEU Solved Papers', icon: FileText },
-              { id: 'simulator', label: 'Mock Exam', icon: Clock },
-              { id: 'predictor', label: `Score Predictor (${totalPillarsScore}%)`, icon: Award },
-              { id: 'calculator', label: 'Calculators', icon: Calculator },
-            ].map((tab) => {
-              const Icon = tab.icon;
-              const isTabActive = activeTab === tab.id;
+        {/* UNIT FILTER CHIPS & SEARCH BAR */}
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-6 bg-paper2 p-3 rounded-xl border-2 border-ink shadow-sketchy">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-xs font-mono uppercase text-dim font-bold mr-1">Unit:</span>
+            {[0, 1, 2, 3, 4, 5].map((u) => {
+              // Only render units that exist in this course
+              if (u !== 0 && !currentCourse.units.some((cu) => cu.unitNo === u)) return null;
+              const isSelected = activeUnitNo === u;
               return (
                 <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setActiveTab(tab.id as ViewTab)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all shrink-0 ${
-                    isTabActive ? currentTheme.tabActive : currentTheme.tabInactive
+                  key={u}
+                  onClick={() => setActiveUnitNo(u)}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold border-2 transition-all ${
+                    isSelected
+                      ? 'border-ink bg-accentGold text-paper shadow-sketchy font-bold'
+                      : 'border-ink/30 bg-paper text-ink hover:bg-paper3'
                   }`}
                 >
-                  <Icon className="w-3.5 h-3.5 text-accentRed" />
-                  <span>{tab.label}</span>
+                  {u === 0 ? 'All Units' : `Unit ${u}`}
                 </button>
               );
             })}
-          </nav>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          MAIN CONTENT AREA
-         ========================================================================= */}
-      <main className="max-w-7xl mx-auto px-4 pt-6">
-        {/* Active Subject Meta Card */}
-        <div className={`p-5 rounded-2xl mb-6 flex items-start justify-between gap-4 flex-wrap ${currentTheme.card}`}>
-          <div>
-            <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <span className="text-xs px-2.5 py-0.5 rounded-md font-mono font-bold border-2 border-ink bg-paper text-ink shadow-sketchy">
-                Code: {currentCourse.code}
-              </span>
-              <span className="text-xs px-2.5 py-0.5 rounded-md font-mono font-semibold border-2 border-ink bg-gold/25 text-ink shadow-sketchy">
-                {currentSitting?.day} · {currentSitting?.sitting} ({currentSitting?.timing})
-              </span>
-            </div>
-            <h1 className="font-hand text-2xl sm:text-3xl font-bold text-ink">
-              {currentCourse.title}
-            </h1>
-            <p className="text-xs text-dim mt-1">
-              Focus: <span className="text-ink font-semibold">{currentSitting?.keyFocus}</span>
-            </p>
           </div>
 
-          <div className="flex items-center gap-3 text-right">
-            <div>
-              <div className="text-[11px] text-dim uppercase tracking-wider font-mono font-bold">Exam Syllabus</div>
-              <div className="text-sm font-bold text-accentRed font-mono">
-                {activeUnitNo === 0 ? 'Units 1, 2 & 3 Full Coverage' : `Unit ${activeUnitNo} Deep Dive`}
-              </div>
-            </div>
+          <div className="relative min-w-[220px]">
+            <Search className="w-4 h-4 text-dim absolute left-2.5 top-2.5" />
+            <input
+              type="text"
+              placeholder="Search concepts, formulas, topics..."
+              value={searchFilter}
+              onChange={(e) => setSearchFilter(e.target.value)}
+              className="w-full pl-8 pr-3 py-1.5 rounded-lg border-2 border-ink bg-paper text-ink text-xs focus:outline-none focus:ring-2 focus:ring-accentTeal"
+            />
           </div>
         </div>
 
-        {/* =========================================================================
-            TAB 1: HIGH-YIELD MASTER NOTES (WITH INLINE SVG DIAGRAMS)
-           ========================================================================= */}
+        {/* ========================================================================= */}
+        {/* TAB 1: HIGH-YIELD NOTES */}
+        {/* ========================================================================= */}
+        {/* TAB 1: HIGH-YIELD NOTES */}
+        {/* ========================================================================= */}
         {activeTab === 'notes' && (
-          <div className="space-y-8">
+          <div className="space-y-6">
             {displayedUnits.map((unit) => (
-              <section key={unit.unitNo} className={`p-5 sm:p-6 rounded-2xl ${currentTheme.card}`}>
-                {/* Unit Header */}
-                <div className="border-b-2 border-ink/30 pb-3 mb-5">
-                  <div className="flex items-center justify-between gap-2 flex-wrap">
-                    <h2 className="font-hand text-2xl sm:text-3xl font-bold text-ink flex items-center gap-2.5">
-                      <span className="w-8 h-8 rounded-lg border-2 border-ink bg-accentTeal text-paper flex items-center justify-center text-sm font-bold shadow-sketchy">
-                        {unit.unitNo}
-                      </span>
-                      <span>{unit.title}</span>
-                    </h2>
-                    <span className="text-xs font-mono font-bold text-dim bg-paper border-2 border-ink px-2.5 py-0.5 rounded-lg shadow-sketchy">
-                      {unit.topics.length} Key Topics
+              <div key={unit.unitNo} className="border-2 border-ink bg-paper2 rounded-xl p-5 shadow-sketch">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-hair pb-3 mb-4">
+                  <div>
+                    <span className="text-xs font-mono uppercase tracking-wider text-accentRed font-bold">
+                      Unit {unit.unitNo} · {currentCourse.short}
                     </span>
+                    <h2 className="font-hand text-3xl font-bold text-ink mt-0.5">
+                      {unit.title}
+                    </h2>
                   </div>
-                  <p className="text-xs sm:text-sm text-dim mt-1.5 leading-relaxed">{unit.summary}</p>
+                  <div className="text-xs font-mono font-bold text-accentTeal bg-accentTeal/10 px-3 py-1 rounded-full border border-accentTeal/30">
+                    {unit.topics.length} Core Topics Mapped
+                  </div>
                 </div>
 
-                {/* Inline SVG Diagrams for this Unit */}
-                {currentDiagrams.filter((d) => d.unitNo === unit.unitNo).length > 0 && (
-                  <div className="mb-6 space-y-4">
-                    {currentDiagrams
-                      .filter((d) => d.unitNo === unit.unitNo)
-                      .map((diag) => (
-                        <div key={diag.id} className={`p-4 rounded-xl ${currentTheme.cardInner}`}>
-                          <div className="flex items-center justify-between text-xs font-bold text-ink mb-2">
-                            <span className="font-hand text-lg">📐 Exam Schematic: {diag.title}</span>
-                            <span className="text-[11px] font-mono border-2 border-ink/40 bg-paper2 px-2 py-0.5 rounded shadow-sketchy text-dim">
-                              SVG Schematic
-                            </span>
+                <p className="text-xs text-dim italic mb-4">{unit.summary}</p>
+
+                {/* Topics Cards */}
+                <div className="space-y-4">
+                  {unit.topics.map((top, tIdx) => (
+                    <div key={tIdx} className="border-2 border-ink/40 bg-paper rounded-xl p-4 shadow-sketchy">
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <h3 className="font-bold text-base text-ink flex items-center gap-2">
+                          <span className="w-6 h-6 rounded-full border-2 border-ink bg-accentGold/20 text-ink text-xs font-bold inline-flex items-center justify-center font-mono">
+                            {tIdx + 1}
+                          </span>
+                          {top.heading}
+                        </h3>
+                        <span className="px-2 py-0.5 rounded-full border border-accentRed bg-accentRed/10 text-accentRed text-[11px] font-mono font-bold">
+                          ★ High Yield
+                        </span>
+                      </div>
+
+                      {/* Explanation with KaTeX */}
+                      <div className="text-sm text-ink/90 leading-relaxed font-sans prose prose-sm max-w-none">
+                        <MathText text={top.plainExplanation} />
+                      </div>
+
+                      {/* Key Formula */}
+                      {top.keyFormula && (
+                        <div className="mt-3 p-3 rounded-lg border-2 border-ink bg-paper3">
+                          <div className="text-xs font-mono uppercase tracking-wider text-accentTeal font-bold mb-1 flex items-center gap-1.5">
+                            <Sparkles className="w-3.5 h-3.5" /> High-Yield Formula Sheet
                           </div>
-                          <div
-                            className="overflow-x-auto rounded-xl border-2 border-ink bg-paper3 p-2 shadow-sketchy"
-                            dangerouslySetInnerHTML={{ __html: diag.svg }}
-                          />
-                          <p className="text-xs text-dim mt-2 italic leading-relaxed">
-                            💡 Caption: {diag.caption}
-                          </p>
+                          <div className="text-xs font-mono text-ink bg-paper p-2 rounded border border-ink/30">
+                            <MathText text={top.keyFormula} />
+                          </div>
                         </div>
-                      ))}
-                  </div>
-                )}
+                      )}
 
-                {/* Topics in this Unit */}
-                <div className="grid grid-cols-1 gap-5">
-                  {unit.topics.map((topic, tIdx) => (
-                    <article
-                      key={tIdx}
-                      className={`p-4 sm:p-5 rounded-xl ${currentTheme.cardInner} space-y-3`}
-                    >
-                      <h3 className="font-hand text-xl sm:text-2xl font-bold text-ink flex items-center gap-2">
-                        <span className="text-accentRed">§ {tIdx + 1}.</span>
-                        <span>{topic.heading}</span>
-                      </h3>
-
-                      {/* Plain Explanation */}
-                      <p className="text-sm text-ink/90 leading-relaxed font-sans">
-                        {topic.plainExplanation}
-                      </p>
-
-                      {/* Key Formula Box */}
-                      <div className={`p-3.5 rounded-xl ${currentTheme.codeBox} text-xs sm:text-sm font-mono whitespace-pre-line leading-relaxed shadow-xs`}>
-                        <div className="text-[10px] text-accentRed font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
-                          <Zap className="w-3.5 h-3.5 text-accentRed" />
-                          <span>Core Equations &amp; Formulas:</span>
+                      {/* Exam Pro-Tip */}
+                      {top.examTip && (
+                        <div className="mt-2 text-xs font-sans text-dim italic flex items-center gap-1.5">
+                          <Lightbulb className="w-3.5 h-3.5 text-accentGold shrink-0" />
+                          <span><strong>Topper Tip:</strong> {top.examTip}</span>
                         </div>
-                        <KatexText htmlOrText={topic.keyFormula} />
-                      </div>
-
-                      {/* Exam Tip Alert */}
-                      <div className={`flex items-start gap-2.5 p-3 rounded-xl ${currentTheme.tipBox} text-xs leading-relaxed shadow-sketchy`}>
-                        <Lightbulb className="w-4 h-4 text-accentGold shrink-0 mt-0.5" />
-                        <div>
-                          <strong className="text-ink font-bold">Topper Exam Tip: </strong>
-                          <span className="text-ink/90 font-medium">{topic.examTip}</span>
-                        </div>
-                      </div>
-                    </article>
+                      )}
+                    </div>
                   ))}
                 </div>
-              </section>
-            ))}
-          </div>
-        )}
 
-        {/* =========================================================================
-            TAB 2: STEP-BY-STEP SOLVED NUMERICALS (4-BOX LAYOUT)
-           ========================================================================= */}
-        {activeTab === 'numericals' && (
-          <div className="space-y-6">
-            {displayedUnits.map((unit) => (
-              <div key={unit.unitNo} className="space-y-4">
-                <h2 className="font-hand text-2xl font-bold text-ink flex items-center gap-2 border-b-2 border-ink/30 pb-2">
-                  <Target className="w-5 h-5 text-accentRed" />
-                  <span>{unit.title} — Solved Problems</span>
-                </h2>
-
-                {unit.standardProblems.map((prob, pIdx) => (
-                  <div
-                    key={pIdx}
-                    className={`p-5 rounded-2xl ${currentTheme.card} space-y-4 border-l-6 border-l-accentTeal`}
-                  >
-                    {/* Problem Statement */}
-                    <div>
-                      <span className="text-xs px-2.5 py-0.5 rounded font-mono font-bold border-2 border-ink bg-accentTeal text-paper shadow-sketchy">
-                        Problem {unit.unitNo}.{pIdx + 1}
-                      </span>
-                      <h3 className="text-base font-bold text-ink mt-2">
-                        {prob.q}
-                      </h3>
-                    </div>
-
-                    {/* Step-by-Step Boxed Solution */}
-                    <div className={`p-4 rounded-xl ${currentTheme.cardInner} space-y-2`}>
-                      <div className="text-xs font-bold text-accentTeal uppercase tracking-wider flex items-center gap-1.5 mb-2">
-                        <CheckCircle2 className="w-4 h-4 text-accentGreen" />
-                        <span>Step-by-Step Derivation &amp; Solution (4-Box Format):</span>
-                      </div>
-                      <div className="text-xs sm:text-sm font-mono text-ink whitespace-pre-line leading-relaxed">
-                        <KatexText htmlOrText={prob.solution} />
-                      </div>
+                {/* Standard Solved Problems for this unit */}
+                {unit.standardProblems && unit.standardProblems.length > 0 && (
+                  <div className="mt-6 pt-4 border-t-2 border-hair">
+                    <h3 className="font-hand text-2xl font-bold text-ink mb-3 flex items-center gap-2">
+                      <HelpCircle className="w-5 h-5 text-accentRed" />
+                      Unit {unit.unitNo} Standard Exam Numericals &amp; Solutions
+                    </h3>
+                    <div className="space-y-3">
+                      {unit.standardProblems.map((prob, pIdx) => (
+                        <div key={pIdx} className="border border-ink/40 bg-paper rounded-lg p-3">
+                          <div className="font-bold text-xs text-ink mb-1">
+                            Q{pIdx + 1}: <MathText text={prob.q} />
+                          </div>
+                          <div className="p-2.5 bg-paper3 rounded border border-ink/20 text-xs">
+                            <strong className="text-accentTeal font-mono text-[11px] block mb-1">Standard Solution:</strong>
+                            <MathText text={prob.solution} />
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                ))}
+                )}
               </div>
             ))}
           </div>
         )}
 
-        {/* =========================================================================
-            TAB 3: INTERACTIVE CBT OBJECTIVE MCQS (TICKABLE WITH FEEDBACK)
-           ========================================================================= */}
+        {/* ========================================================================= */}
+        {activeTab === 'practice' && (
+          <div className="space-y-6">
+            <div className="border-2 border-ink bg-paper2 rounded-xl p-4 shadow-sketch flex items-center justify-between">
+              <div>
+                <h2 className="font-hand text-2xl font-bold text-ink">
+                  {currentCourse.short} Solved Practice Questions ({filteredPractice.length})
+                </h2>
+                <p className="text-xs text-dim mt-0.5">
+                  Full step-by-step topper solutions covering derivations, numericals, 2&apos;s complements, K-Maps, and proofs.
+                </p>
+              </div>
+              <span className="font-mono text-xs font-bold text-accentTeal px-3 py-1 bg-accentTeal/10 rounded-full border border-accentTeal/30">
+                4 Marks Each
+              </span>
+            </div>
+
+            {filteredPractice.map((p, idx) => (
+              <div key={p.id} className="border-2 border-ink bg-paper2 rounded-xl p-5 shadow-sketch">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-hair pb-2 mb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="w-7 h-7 rounded-lg border-2 border-ink bg-accentTeal text-paper text-xs font-bold font-mono inline-flex items-center justify-center">
+                      Q{idx + 1}
+                    </span>
+                    <div>
+                      <span className="text-xs font-mono font-bold text-accentRed uppercase">
+                        Unit {p.unitNo} · {p.category}
+                      </span>
+                      <h3 className="font-bold text-base text-ink">{p.title}</h3>
+                    </div>
+                  </div>
+                  <span className="font-mono text-xs font-bold text-ink bg-paper3 px-2 py-0.5 rounded border border-ink/40">
+                    {p.marks} Marks
+                  </span>
+                </div>
+
+                {/* Problem Statement */}
+                <div className="border-2 border-ink/30 bg-paper p-3.5 rounded-lg text-sm font-sans text-ink leading-relaxed mb-4">
+                  <MathText text={p.question} />
+                </div>
+
+                {/* Step-by-Step Solution */}
+                <div className="border-2 border-ink bg-paper3 p-4 rounded-lg">
+                  <div className="text-xs font-mono font-bold uppercase tracking-wider text-accentTeal mb-2 flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4" /> Official Step-by-Step Topper Solution
+                  </div>
+                  <div className="text-sm font-sans text-ink leading-relaxed prose prose-sm max-w-none">
+                    <MathText text={p.stepByStepSolution} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* TAB 3: CBT MCQ BANK (137 Tickable Questions) */}
+        {/* ========================================================================= */}
         {activeTab === 'mcq' && (
           <div className="space-y-6">
-            {/* Header Score & Filter Bar */}
-            <div className={`p-4 rounded-xl ${currentTheme.card} flex items-center justify-between gap-3 flex-wrap`}>
+            {/* MCQ Stats Bar */}
+            <div className="border-2 border-ink bg-paper2 rounded-xl p-4 shadow-sketch flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="font-hand text-2xl font-bold text-ink flex items-center gap-2">
-                  <HelpCircle className="w-5 h-5 text-accentRed" />
-                  <span>Interactive CBT Objective Questions</span>
+                <h2 className="font-hand text-2xl font-bold text-ink">
+                  {currentCourse.short} Objective MCQ Bank ({filteredMcqs.length} Questions)
                 </h2>
-                <p className="text-xs text-dim mt-0.5 font-medium">
-                  1-mark university questions · Instant green/red validation with detailed explanations
+                <p className="text-xs text-dim">
+                  Authentic BEU Compulsory 1-Mark format. Instant feedback, 0-based option checking, and detailed explanations.
                 </p>
               </div>
 
-              <div className="flex items-center gap-2.5 flex-wrap">
-                {/* Score Pill */}
-                <div className="px-3.5 py-1.5 rounded-lg border-2 border-ink bg-paper text-xs font-mono font-bold text-ink shadow-sketchy">
-                  <span className="text-dim">Score: </span>
-                  <strong className="text-accentGreen">{mcqStats.correct}</strong>
-                  <span className="text-dim"> / {mcqStats.attempted}</span>
-                  <span className="text-accentRed ml-1.5 font-bold">({mcqStats.pct}%)</span>
+              <div className="flex items-center gap-3">
+                <div className="text-xs font-mono bg-paper p-2 rounded-lg border border-ink/40">
+                  <span>Score: </span>
+                  <strong className="text-accentTeal">{mcqStats.correct}</strong> / {mcqStats.attempted} ({mcqStats.pct}%)
                 </div>
-
-                {/* Filter Missed Button */}
                 <button
-                  type="button"
                   onClick={() => setOnlyMissed(!onlyMissed)}
-                  className={`text-xs px-3 py-1.5 rounded-lg font-bold border-2 transition-colors shadow-sketchy ${
+                  className={`px-3 py-1.5 rounded-lg border-2 text-xs font-bold font-mono transition-all ${
                     onlyMissed
-                      ? 'border-accentRed bg-accentRed text-paper'
-                      : 'border-ink bg-paper text-ink hover:bg-paper3'
+                      ? 'border-accentRed bg-accentRed text-paper shadow-sketchy'
+                      : 'border-ink/40 bg-paper text-ink hover:bg-paper3'
                   }`}
                 >
-                  {onlyMissed ? 'Showing Missed Only' : 'Filter Missed'}
+                  {onlyMissed ? 'Showing Missed' : 'Show Missed Only'}
                 </button>
-
-                {/* Reset Answers */}
                 <button
-                  type="button"
                   onClick={() => setUserAnswers({})}
-                  className="p-1.5 rounded-lg border-2 border-ink bg-paper text-dim hover:text-ink hover:bg-paper3 shadow-sketchy"
-                  title="Reset All Answers"
+                  className="p-1.5 rounded-lg border-2 border-ink bg-paper hover:bg-paper3 text-xs"
+                  title="Reset Answers"
                 >
-                  <RotateCcw className="w-4 h-4" />
+                  <RotateCcw className="w-4 h-4 text-dim" />
                 </button>
               </div>
             </div>
 
             {/* Questions List */}
-            {filteredMcqs.length === 0 ? (
-              <div className={`p-8 text-center rounded-xl border-2 border-ink bg-paper2 text-dim text-sm shadow-sketchy`}>
-                No questions found under this filter. Reset your filters to continue practicing.
+            <div className="space-y-4">
+              {filteredMcqs.map((mcq, idx) => {
+                const userAns = userAnswers[mcq.id];
+                const isAnswered = userAns !== undefined;
+                const isCorrect = userAns === mcq.ans;
+
+                return (
+                  <div key={mcq.id} className="border-2 border-ink bg-paper2 rounded-xl p-4 shadow-sketch">
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="w-6 h-6 rounded-full border-2 border-ink bg-paper text-ink text-xs font-mono font-bold inline-flex items-center justify-center">
+                          {idx + 1}
+                        </span>
+                        <span className="text-xs font-mono uppercase text-dim font-bold">
+                          Unit {mcq.unitNo} · {mcq.topic}
+                        </span>
+                      </div>
+                      {isAnswered && (
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-xs font-bold font-mono ${
+                          isCorrect
+                            ? 'border-accentTeal bg-accentTeal/15 text-accentTeal'
+                            : 'border-accentRed bg-accentRed/15 text-accentRed'
+                        }`}>
+                          {isCorrect ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                          {isCorrect ? 'Correct +1' : 'Incorrect 0'}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Question text */}
+                    <div className="text-sm font-bold text-ink mb-3 leading-relaxed">
+                      <MathText text={mcq.q} />
+                    </div>
+
+                    {/* 4 Options Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
+                      {mcq.options.map((opt, oIdx) => {
+                        const isChosen = userAns === oIdx;
+                        const isThisCorrect = oIdx === mcq.ans;
+
+                        let optStyle = 'border-ink/30 bg-paper text-ink hover:bg-paper3';
+                        if (isAnswered) {
+                          if (isThisCorrect) {
+                            optStyle = 'border-2 border-accentTeal bg-accentTeal/20 text-accentTeal font-bold shadow-sketchy';
+                          } else if (isChosen && !isCorrect) {
+                            optStyle = 'border-2 border-accentRed bg-accentRed/20 text-accentRed line-through';
+                          } else {
+                            optStyle = 'border-ink/20 bg-paper/60 text-dim opacity-70';
+                          }
+                        }
+
+                        return (
+                          <button
+                            key={oIdx}
+                            onClick={() => setUserAnswers((prev) => ({ ...prev, [mcq.id]: oIdx }))}
+                            className={`p-2.5 rounded-lg border text-left text-xs transition-all flex items-center gap-2.5 ${optStyle}`}
+                          >
+                            <span className="w-5 h-5 rounded-full border border-ink/40 inline-flex items-center justify-center font-mono font-bold text-[11px] shrink-0">
+                              {String.fromCharCode(65 + oIdx)}
+                            </span>
+                            <span className="flex-1"><MathText text={opt} /></span>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Explanation */}
+                    {isAnswered && (
+                      <div className="mt-3 p-3 rounded-lg border-2 border-ink bg-paper3 text-xs leading-relaxed">
+                        <strong className="text-accentTeal font-mono uppercase block mb-1">
+                          Explanation:
+                        </strong>
+                        <MathText text={mcq.explanation} />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+                {/* ========================================================================= */}
+        {/* TAB 4: REAL BEU PAPERS 2026 (20 Marks Format) */}
+                {/* ========================================================================= */}
+        {/* TAB 5: HAND-DRAWN EXAM DIAGRAMS STUDIO */}
+        {/* ========================================================================= */}
+        {activeTab === 'diagrams' && (
+          <div className="space-y-6">
+            {/* Studio Header */}
+            <div className="border-2 border-ink bg-paper2 rounded-xl p-5 shadow-sketch flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-lg border-2 border-ink bg-accentTeal/20 text-accentTeal inline-flex items-center justify-center font-bold">
+                    📐
+                  </span>
+                  <h2 className="font-hand text-3xl font-bold text-ink">
+                    {currentCourse.short} Hand-Drawn Exam Schematics ({currentDiagrams.length})
+                  </h2>
+                </div>
+                <p className="text-xs text-dim mt-1">
+                  Master compulsory 4-mark pencil diagrams. Toggle labels to test active recall before entering the exam hall.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={() => setGlobalHideLabels(!globalHideLabels)}
+                  className={`px-3 py-1.5 rounded-lg border-2 text-xs font-mono font-bold transition-all flex items-center gap-1.5 ${
+                    globalHideLabels
+                      ? 'border-accentRed bg-accentRed text-paper shadow-sketchy'
+                      : 'border-ink bg-paper text-ink hover:bg-paper3'
+                  }`}
+                >
+                  {globalHideLabels ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {globalHideLabels ? 'Labels Hidden (Testing Recall)' : 'Hide All Labels (Test Recall)'}
+                </button>
+                <div className="text-xs font-mono bg-paper px-3 py-1.5 rounded-lg border border-ink/40 font-bold text-accentTeal">
+                  Unit {activeUnitNo === 0 ? 'All' : activeUnitNo} Schematics
+                </div>
+              </div>
+            </div>
+
+            {/* Diagrams Grid */}
+            {currentDiagrams.length === 0 ? (
+              <div className="border-2 border-dashed border-ink/40 bg-paper2 rounded-xl p-8 text-center text-dim text-xs font-mono">
+                No diagrams found matching current subject and search filter.
               </div>
             ) : (
-              <div className="space-y-4">
-                {filteredMcqs.map((q, idx) => {
-                  const selectedIdx = userAnswers[q.id];
-                  const hasAnswered = selectedIdx !== undefined;
-                  const isCorrect = hasAnswered && selectedIdx === q.ans;
-
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {currentDiagrams.map((d) => {
+                  const isLabelHidden = globalHideLabels || hideLabels[d.id] || false;
                   return (
                     <div
-                      key={q.id}
-                      className={`p-5 rounded-2xl border-2 shadow-sketchy space-y-4 transition-all ${
-                        hasAnswered
-                          ? isCorrect
-                            ? 'border-accentGreen bg-accentGreen/15'
-                            : 'border-accentRed bg-accentRed/15'
-                          : 'border-ink bg-paper'
-                      }`}
+                      key={d.id}
+                      className="border-2 border-ink bg-paper2 rounded-xl p-5 shadow-sketch flex flex-col justify-between"
                     >
-                      {/* Question Header */}
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex items-center gap-2">
-                          <span className="w-7 h-7 rounded-md border-2 border-ink bg-paper2 text-ink flex items-center justify-center text-xs font-mono font-bold shadow-sketchy">
-                            Q{idx + 1}
-                          </span>
-                          <span className="text-xs font-mono font-semibold text-dim">
-                            Unit {q.unitNo} · {q.topic}
-                          </span>
-                        </div>
-                        {hasAnswered && (
-                          <span
-                            className={`text-xs font-bold px-2.5 py-0.5 rounded-md border-2 flex items-center gap-1 shadow-sketchy ${
-                              isCorrect
-                                ? 'border-accentGreen bg-accentGreen text-paper'
-                                : 'border-accentRed bg-accentRed text-paper'
-                            }`}
+                      <div>
+                        {/* Diagram Card Header */}
+                        <div className="flex items-center justify-between border-b-2 border-hair pb-2 mb-3">
+                          <div>
+                            <span className="text-xs font-mono uppercase tracking-wider text-accentRed font-bold">
+                              Unit {d.unitNo} · {d.subject}
+                            </span>
+                            <h3 className="font-bold text-base text-ink mt-0.5">
+                              {d.title}
+                            </h3>
+                          </div>
+                          <button
+                            onClick={() => setDiagramModal(d)}
+                            className="p-1.5 rounded-lg border-2 border-ink bg-paper hover:bg-paper3 text-ink transition-all"
+                            title="Zoom Diagram"
                           >
-                            {isCorrect ? (
-                              <>
-                                <CheckCircle2 className="w-3.5 h-3.5" /> Correct
-                              </>
-                            ) : (
-                              <>
-                                <XCircle className="w-3.5 h-3.5" /> Incorrect
-                              </>
-                            )}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Question Text */}
-                      <p className="text-sm sm:text-base font-bold text-ink">
-                        {q.q}
-                      </p>
-
-                      {/* 4 Tickable Options */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                        {q.options.map((opt, optIdx) => {
-                          const isOptionSelected = selectedIdx === optIdx;
-                          const isOptionCorrect = q.ans === optIdx;
-
-                          let optionBtnClass = 'border-2 border-ink/40 bg-paper2 text-ink hover:border-ink hover:bg-paper3';
-                          if (hasAnswered) {
-                            if (isOptionCorrect) {
-                              optionBtnClass = 'border-2 border-accentGreen bg-accentGreen/25 text-ink font-bold shadow-sketchy';
-                            } else if (isOptionSelected) {
-                              optionBtnClass = 'border-2 border-accentRed bg-accentRed/25 text-ink font-bold shadow-sketchy';
-                            } else {
-                              optionBtnClass = 'border-2 border-ink/20 bg-paper text-dim opacity-50';
-                            }
-                          }
-
-                          return (
-                            <button
-                              key={optIdx}
-                              type="button"
-                              onClick={() => {
-                                setUserAnswers((prev) => ({
-                                  ...prev,
-                                  [q.id]: optIdx,
-                                }));
-                              }}
-                              className={`flex items-center gap-3 p-3 rounded-xl border text-left text-xs sm:text-sm transition-all shadow-sketchy ${optionBtnClass}`}
-                            >
-                              <span className="w-6 h-6 rounded-full border-2 border-ink flex items-center justify-center text-xs font-mono font-bold shrink-0 bg-paper">
-                                {String.fromCharCode(65 + optIdx)}
-                              </span>
-                              <span className="flex-1 leading-snug font-medium">{opt}</span>
-                            </button>
-                          );
-                        })}
-                      </div>
-
-                      {/* Explanation Drawer */}
-                      {hasAnswered && (
-                        <div className="p-3.5 rounded-xl border-2 border-ink/40 bg-gold/15 text-xs text-ink space-y-1 shadow-sketchy">
-                          <strong className="text-accentRed font-bold flex items-center gap-1">
-                            <Lightbulb className="w-4 h-4 text-accentGold" />
-                            <span>Detailed Exam Explanation:</span>
-                          </strong>
-                          <p className="leading-relaxed text-ink/90 font-medium">{q.explanation}</p>
+                            <Maximize2 className="w-4 h-4" />
+                          </button>
                         </div>
-                      )}
+
+                        {/* SVG Drawing Canvas */}
+                        <div
+                          className={`relative border-2 border-ink rounded-xl bg-paper overflow-hidden p-2 shadow-inner transition-all ${
+                            isLabelHidden ? '[&_text]:opacity-0 hover:[&_text]:opacity-100' : ''
+                          }`}
+                        >
+                          <div
+                            dangerouslySetInnerHTML={{ __html: d.svg }}
+                            className="w-full flex items-center justify-center select-none"
+                          />
+                          {isLabelHidden && (
+                            <div className="absolute top-3 right-3 text-[10px] font-mono font-bold bg-accentRed text-paper px-2 py-0.5 rounded shadow">
+                              Hover to reveal labels
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Caption */}
+                        <p className="text-xs text-dim mt-3 leading-relaxed">
+                          <strong>Principle &amp; Analysis:</strong> {d.caption}
+                        </p>
+
+                        {/* 3-Minute Exam Sketching Guide */}
+                        <div className="mt-3 p-3 rounded-lg border border-ink/30 bg-paper3 text-xs leading-relaxed">
+                          <strong className="text-accentTeal font-mono uppercase text-[11px] block mb-1">
+                            ✏️ 3-Minute Exam Sketching Technique:
+                          </strong>
+                          <ul className="list-disc list-inside space-y-0.5 text-ink/90 text-[11px]">
+                            <li>Always sketch with sharp 2B pencil; write axis labels &amp; values in neat ink.</li>
+                            <li>Mark coordinates, direction arrows, and cutoff boundaries before shading.</li>
+                            <li>State the governing formula alongside the sketch to guarantee full 4 marks.</li>
+                          </ul>
+                        </div>
+                      </div>
+
+                      {/* Card Footer Actions */}
+                      <div className="mt-4 pt-3 border-t border-hair flex items-center justify-between gap-2">
+                        <button
+                          onClick={() =>
+                            setHideLabels((prev) => ({ ...prev, [d.id]: !isLabelHidden }))
+                          }
+                          className="px-3 py-1.5 rounded-lg border border-ink/40 bg-paper text-xs font-mono font-bold text-ink hover:bg-paper3 transition-all flex items-center gap-1.5"
+                        >
+                          {isLabelHidden ? <Eye className="w-3.5 h-3.5 text-accentTeal" /> : <EyeOff className="w-3.5 h-3.5 text-accentRed" />}
+                          {isLabelHidden ? 'Show Labels' : 'Hide Labels (Recall Test)'}
+                        </button>
+                        <button
+                          onClick={() => setDiagramModal(d)}
+                          className="px-3 py-1.5 rounded-lg border-2 border-ink bg-accentTeal text-paper text-xs font-bold shadow-sketchy hover:bg-accentTeal/90 transition-all flex items-center gap-1.5"
+                        >
+                          <Maximize2 className="w-3.5 h-3.5" /> Full Size
+                        </button>
+                      </div>
                     </div>
                   );
                 })}
@@ -849,376 +1422,320 @@ export default function MidsemRevisionPage() {
           </div>
         )}
 
-        {/* =========================================================================
-            TAB 4: EXAM GUESS QUESTIONS (2M, 5M, 10M)
-           ========================================================================= */}
-        {activeTab === 'guess' && (
+{/* ========================================================================= */}
+        {activeTab === 'papers' && currentPaper && (
           <div className="space-y-6">
-            <div className={`p-4 rounded-xl ${currentTheme.card} flex items-center justify-between gap-3 flex-wrap`}>
-              <div>
-                <h2 className="font-hand text-2xl font-bold text-ink flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-accentGold" />
-                  <span>BEU 2026 High-Probability Guess Questions</span>
+            <div className="border-2 border-ink bg-paper2 rounded-xl p-5 shadow-sketch">
+              <div className="text-center border-b-2 border-ink pb-4 mb-4">
+                <div className="text-xs font-mono font-bold uppercase tracking-wider text-accentRed">
+                  Bihar Engineering University, Patna · LNJPIT Chapra
+                </div>
+                <h2 className="font-hand text-3xl font-bold text-ink mt-1">
+                  B.Tech 1st Semester Mid-Term Examination 2026
                 </h2>
-                <p className="text-xs text-dim mt-0.5 font-medium">
-                  Hand-picked based on question patterns from GEC Bhojpur, Lakhisarai, Aurangabad &amp; LNJPIT Chapra
+                <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-mono text-dim mt-2">
+                  <span><strong>Subject:</strong> {currentPaper.subject} ({currentPaper.code})</span>
+                  <span><strong>Branch:</strong> Mathematics &amp; Computing</span>
+                  <span><strong>Time:</strong> {currentPaper.timeHours} Hours</span>
+                  <span><strong>Max Marks:</strong> {currentPaper.fullMarks}</span>
+                </div>
+                <p className="text-xs font-sans text-dim italic mt-2">
+                  Instructions: {currentPaper.instructions}
                 </p>
               </div>
-              <span className="text-xs px-3 py-1 rounded-full border-2 border-ink bg-gold/30 text-ink font-mono font-bold shadow-sketchy">
-                ⭐ 95% Yield
-              </span>
-            </div>
 
-            {/* Guess Question Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* 2-Mark Short Concept Questions */}
-              <div className={`p-5 rounded-2xl ${currentTheme.card} space-y-3`}>
-                <div className="flex items-center gap-2 text-xs font-bold text-accentTeal uppercase tracking-wider border-b-2 border-ink/20 pb-2">
-                  <Zap className="w-4 h-4" />
-                  <span>2 Marks — Rapid Definitions &amp; Formulae</span>
-                </div>
-                <div className="space-y-3 text-xs leading-relaxed text-ink">
-                  <div className={`p-3 rounded-xl border-2 border-ink/30 bg-paper shadow-sketchy`}>
-                    <strong className="text-ink block mb-1 font-bold text-sm">
-                      1. State the condition for Maximum Power Transfer in DC circuits.
-                    </strong>
-                    <span className="text-dim font-medium">
-                      R_L = R_th. The maximum power delivered is P_max = V_th² / (4·R_th) with 50% efficiency.
-                    </span>
-                  </div>
-                  <div className={`p-3 rounded-xl border-2 border-ink/30 bg-paper shadow-sketchy`}>
-                    <strong className="text-ink block mb-1 font-bold text-sm">
-                      2. Define the rank of a matrix in terms of its row echelon form.
-                    </strong>
-                    <span className="text-dim font-medium">
-                      The rank ρ(A) equals the number of non-zero rows after reducing A to row echelon form using elementary row operations.
-                    </span>
-                  </div>
-                  <div className={`p-3 rounded-xl border-2 border-ink/30 bg-paper shadow-sketchy`}>
-                    <strong className="text-ink block mb-1 font-bold text-sm">
-                      3. Why is the center of Newton&apos;s rings dark under reflected light?
-                    </strong>
-                    <span className="text-dim font-medium">
-                      At contact point t = 0, Stokes&apos; phase shift of π at denser glass boundary introduces path difference λ/2, causing destructive interference.
-                    </span>
-                  </div>
-                </div>
-              </div>
+              {/* Sections with Questions */}
+              <div className="space-y-6">
+                {currentPaper.sections.map((sec, sIdx) => (
+                  <div key={sIdx} className="space-y-4">
+                    <div className="font-mono text-xs font-bold text-accentTeal uppercase tracking-wider border-b-2 border-hair pb-1">
+                      {sec.name}
+                    </div>
+                    {sec.questions.map((q) => (
+                      <div key={q.qNum} className="border-2 border-ink/40 bg-paper rounded-xl p-4 shadow-sketchy">
+                        <div className="flex items-center justify-between border-b border-hair pb-2 mb-2">
+                          <span className="font-mono text-xs font-bold text-accentRed">
+                            Question {q.qNum} {q.co ? `[${q.co}${q.bl ? ' · ' + q.bl : ''}]` : ''}
+                          </span>
+                          <span className="font-mono text-xs font-bold text-ink bg-paper3 px-2 py-0.5 rounded border border-ink/30">
+                            {q.marks} Marks
+                          </span>
+                        </div>
 
-              {/* 5-Mark & 10-Mark Core Long Questions */}
-              <div className={`p-5 rounded-2xl ${currentTheme.card} space-y-3`}>
-                <div className="flex items-center gap-2 text-xs font-bold text-accentRed uppercase tracking-wider border-b-2 border-ink/20 pb-2">
-                  <Award className="w-4 h-4" />
-                  <span>5 &amp; 10 Marks — Derivations &amp; Schematics</span>
-                </div>
-                <div className="space-y-3 text-xs leading-relaxed text-ink">
-                  <div className={`p-3 rounded-xl border-2 border-ink/30 bg-paper shadow-sketchy`}>
-                    <strong className="text-ink block mb-1 font-bold text-sm">
-                      1. Prove that for y = (sin⁻¹ x)², (1 - x²)y_(n+2) - (2n+1)x y_(n+1) - n² y_n = 0.
-                    </strong>
-                    <span className="text-dim font-medium">
-                      Differentiate once: (1-x²)y₁² = 4y. Differentiate again: (1-x²)y₂ - xy₁ - 2 = 0. Apply Leibnitz n times.
-                    </span>
+                        <div className="text-sm font-bold text-ink mb-3 leading-relaxed">
+                          <MathText text={q.q} />
+                        </div>
+
+                        {/* Topper Solution Box */}
+                        <div className="border-2 border-ink bg-paper3 p-3.5 rounded-lg text-xs leading-relaxed">
+                          <strong className="text-accentTeal font-mono uppercase block mb-1.5 flex items-center gap-1.5">
+                            <Award className="w-3.5 h-3.5" /> Topper Model Solution:
+                          </strong>
+                          <div className="prose prose-sm max-w-none text-ink">
+                            <MathText text={q.sol} />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <div className={`p-3 rounded-xl border-2 border-ink/30 bg-paper shadow-sketchy`}>
-                    <strong className="text-ink block mb-1 font-bold text-sm">
-                      2. Explain Full-Wave Bridge Rectifier with waveforms, V_dc, and ripple factor.
-                    </strong>
-                    <span className="text-dim font-medium">
-                      Draw 4-diode diamond bridge. Derive V_dc = 2V_m/π, V_rms = V_m/√2, η = 81.2%, and γ = 0.482.
-                    </span>
-                  </div>
-                  <div className={`p-3 rounded-xl border-2 border-ink/30 bg-paper shadow-sketchy`}>
-                    <strong className="text-ink block mb-1 font-bold text-sm">
-                      3. State Maxwell&apos;s 4 equations and derive the Displacement Current density J_d.
-                    </strong>
-                    <span className="text-dim font-medium">
-                      Show Ampere law inconsistency with charge continuity. Introduce J_d = ∂D/∂t = ε₀(∂E/∂t).
-                    </span>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
         )}
 
-        {/* =========================================================================
-            TAB 5: AUTHENTIC 2026 BEU SOLVED EXAM PAPERS
-           ========================================================================= */}
-        {activeTab === 'papers' && (
+        {/* TAB 5: CHAPTER & SYLLABUS TOPIC BREAKDOWN */}
+        {/* ========================================================================= */}
+        {activeTab === 'chapters' && (
           <div className="space-y-6">
-            {currentPaper ? (
-              <div className={`p-6 sm:p-8 rounded-2xl ${currentTheme.card} space-y-6`}>
-                {/* Paper Header */}
-                <div className="border-b-2 border-ink/30 pb-4 text-center space-y-1.5">
-                  <span className="text-xs px-3 py-1 rounded-full border-2 border-ink bg-paper text-ink font-mono font-bold shadow-sketchy inline-block">
-                    {currentPaper.colleges}
-                  </span>
-                  <h2 className="font-hand text-2xl sm:text-3xl font-bold text-ink tracking-tight">
-                    {currentPaper.title}
-                  </h2>
-                  <div className="text-xs text-dim font-mono flex items-center justify-center gap-4 pt-1 flex-wrap font-bold">
-                    <span>Course Code: {currentPaper.code}</span>
-                    <span>Full Marks: {currentPaper.fullMarks}</span>
-                    <span>Time: {currentPaper.timeHours} Hours</span>
+            <div className="border-2 border-ink bg-paper2 rounded-xl p-4 shadow-sketch flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div>
+                <h2 className="font-hand text-2xl font-bold text-ink flex items-center gap-2">
+                  <Compass className="w-6 h-6 text-accentTeal" />
+                  {currentCourse.short} Chapter &amp; Topic Syllabus Breakdown
+                </h2>
+                <p className="text-xs text-dim mt-0.5">
+                  Detailed mapping of every teacher-guess concept, derivation, and numerical to its exact Unit and Chapter.
+                </p>
+              </div>
+              <div className="text-xs font-mono bg-paper px-3 py-1.5 rounded-lg border border-ink/40 font-bold text-accentTeal">
+                {currentChapterMappings.length} Units Mapped
+              </div>
+            </div>
+
+            {currentChapterMappings.map((mapItem) => (
+              <div key={mapItem.unitNo} className="border-2 border-ink bg-paper2 rounded-xl p-5 shadow-sketch">
+                <div className="border-b-2 border-hair pb-2 mb-4 flex items-center justify-between">
+                  <div>
+                    <span className="text-xs font-mono uppercase tracking-wider text-accentRed font-bold">
+                      Unit {mapItem.unitNo}
+                    </span>
+                    <h3 className="font-hand text-2xl font-bold text-ink">
+                      {mapItem.unitTitle}
+                    </h3>
                   </div>
-                  <p className="text-xs text-accentRed italic pt-1 font-medium">
-                    Instructions: {currentPaper.instructions}
-                  </p>
+                  <span className="text-xs font-mono font-bold text-dim bg-paper3 px-2.5 py-1 rounded-md border border-ink/30">
+                    {mapItem.chapters.length} Chapters
+                  </span>
                 </div>
 
-                {/* Sections & Questions */}
-                <div className="space-y-6">
-                  {currentPaper.sections.map((sec, sIdx) => (
-                    <div key={sIdx} className="space-y-4">
-                      <div className="text-xs font-bold uppercase tracking-wider text-ink bg-paper px-3 py-1.5 rounded-lg border-2 border-ink shadow-sketchy inline-block">
-                        {sec.name}
+                <div className="space-y-4">
+                  {mapItem.chapters.map((ch) => (
+                    <div key={ch.chapterNo} className="border-2 border-ink/40 bg-paper rounded-xl p-4 shadow-sketchy">
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-hair pb-2 mb-2">
+                        <h4 className="font-bold text-sm text-ink flex items-center gap-2">
+                          <span className="w-6 h-6 rounded-md border border-ink bg-accentTeal text-paper text-xs font-mono font-bold inline-flex items-center justify-center">
+                            Ch {ch.chapterNo}
+                          </span>
+                          {ch.title}
+                        </h4>
+                        <span className="text-xs font-mono font-bold text-accentRed bg-accentRed/10 px-2 py-0.5 rounded border border-accentRed/30">
+                          {ch.weightage}
+                        </span>
                       </div>
 
-                      <div className="space-y-4">
-                        {sec.questions.map((q, qIdx) => (
-                          <div
-                            key={qIdx}
-                            className={`p-4 sm:p-5 rounded-xl ${currentTheme.cardInner} space-y-3`}
-                          >
-                            <div className="flex items-start justify-between gap-2">
-                              <h3 className="text-sm font-bold text-ink flex items-center gap-2">
-                                <span className="text-accentRed font-mono font-bold">Q.{q.qNum}</span>
-                                <span className="font-mono text-xs text-dim">
-                                  [{q.marks} {q.marks === 1 ? 'Mark' : 'Marks'}]
-                                </span>
-                              </h3>
-                            </div>
+                      {/* Topics bullet chips */}
+                      <div className="mb-3">
+                        <div className="text-xs font-mono uppercase text-dim font-bold mb-1.5">
+                          Syllabus Concepts &amp; Derivations:
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {ch.topics.map((t, tIdx) => (
+                            <span
+                              key={tIdx}
+                              className="px-2.5 py-1 rounded-md border border-ink/30 bg-paper3 text-xs text-ink font-medium"
+                            >
+                              • {t}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
 
-                            <p className="text-xs sm:text-sm text-ink whitespace-pre-line leading-relaxed font-sans font-medium">
-                              {q.q}
-                            </p>
-
-                            {/* Solved Answer */}
-                            <div className={`p-3.5 rounded-xl border-2 border-accentTeal/50 bg-paper3 text-xs sm:text-sm font-mono text-ink whitespace-pre-line leading-relaxed shadow-xs`}>
-                              <div className="text-[10px] text-accentTeal font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
-                                <CheckCircle2 className="w-3.5 h-3.5 text-accentGreen" />
-                                <span>Official Verified Topper Solution:</span>
-                              </div>
-                              <KatexText htmlOrText={q.sol} />
-                            </div>
-                          </div>
-                        ))}
+                      {/* Exam Strategy */}
+                      <div className="p-2.5 rounded-lg border border-ink/30 bg-paper2 text-xs text-dim">
+                        <strong className="text-ink font-bold">Exam Preparation Strategy: </strong>
+                        {ch.examTips}
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
-            ) : (
-              <div className={`p-8 text-center rounded-xl border-2 border-ink bg-paper2 text-dim text-sm shadow-sketchy`}>
-                No transcribed paper available for this subject yet.
-              </div>
-            )}
+            ))}
           </div>
         )}
 
-        {/* =========================================================================
-            TAB 6: TIMED MOCK EXAM SIMULATOR
-           ========================================================================= */}
+        {/* ========================================================================= */}
+        {/* TAB 6: TIMED MOCK SIMULATOR (15-Min CBT) */}
+        {/* ========================================================================= */}
         {activeTab === 'simulator' && (
           <div className="space-y-6">
-            <div className={`p-6 sm:p-8 rounded-2xl ${currentTheme.card} space-y-5 text-center`}>
-              <div className="inline-flex p-3 rounded-full border-2 border-ink bg-accentRed/10 text-accentRed mb-1 shadow-sketchy">
-                <Clock className="w-8 h-8" />
-              </div>
-              <h2 className="font-hand text-2xl sm:text-3xl font-bold text-ink">
-                15-Minute Rapid Mid-Sem Diagnostic Simulator
-              </h2>
-              <p className="text-xs text-dim max-w-lg mx-auto font-medium">
-                Test your speed and accuracy on 10 randomized high-yield questions for {currentCourse.title}. Timed simulation replicates actual exam pressure.
-              </p>
+            <div className="border-2 border-ink bg-paper2 rounded-xl p-5 shadow-sketch">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-hair pb-3 mb-4">
+                <div>
+                  <h2 className="font-hand text-3xl font-bold text-ink">
+                    Timed 15-Minute Mock Exam Simulator
+                  </h2>
+                  <p className="text-xs text-dim">
+                    Test your speed and accuracy under authentic BEU exam clock pressure. 15 randomized questions.
+                  </p>
+                </div>
 
-              {/* Timer Display */}
-              <div className="py-2">
-                <span className="font-mono text-5xl sm:text-6xl font-extrabold text-accentRed tracking-wider drop-shadow-xs">
-                  {Math.floor(mockSecondsLeft / 60)
-                    .toString()
-                    .padStart(2, '0')}
-                  :
-                  {(mockSecondsLeft % 60).toString().padStart(2, '0')}
-                </span>
+                <div className="flex items-center gap-3">
+                  <div className={`text-lg font-mono font-bold px-4 py-1.5 rounded-xl border-2 ${
+                    mockSecondsLeft < 180 ? 'border-accentRed bg-accentRed/15 text-accentRed animate-pulse' : 'border-ink bg-paper text-ink shadow-sketchy'
+                  }`}>
+                    {Math.floor(mockSecondsLeft / 60)}:{(mockSecondsLeft % 60).toString().padStart(2, '0')}
+                  </div>
+
+                  {!mockRunning && !mockSubmitted && (
+                    <button
+                      onClick={() => {
+                        setMockRunning(true);
+                        setMockSecondsLeft(900);
+                        setMockUserAnswers({});
+                        setMockSubmitted(false);
+                      }}
+                      className="px-4 py-2 rounded-xl border-2 border-ink bg-accentTeal text-paper font-bold text-xs shadow-sketch hover:bg-accentTeal/90 transition-all flex items-center gap-1.5"
+                    >
+                      <Play className="w-4 h-4" /> Start Simulator
+                    </button>
+                  )}
+
+                  {mockRunning && (
+                    <button
+                      onClick={() => {
+                        setMockSubmitted(true);
+                        setMockRunning(false);
+                      }}
+                      className="px-4 py-2 rounded-xl border-2 border-ink bg-accentGold text-paper font-bold text-xs shadow-sketch hover:bg-accentGold/90 transition-all"
+                    >
+                      Submit Mock Exam
+                    </button>
+                  )}
+
+                  {mockSubmitted && (
+                    <button
+                      onClick={() => {
+                        setMockRunning(true);
+                        setMockSecondsLeft(900);
+                        setMockUserAnswers({});
+                        setMockSubmitted(false);
+                      }}
+                      className="px-4 py-2 rounded-xl border-2 border-ink bg-paper text-ink font-bold text-xs shadow-sketchy hover:bg-paper3 transition-all flex items-center gap-1.5"
+                    >
+                      <RotateCcw className="w-4 h-4" /> Retake Mock
+                    </button>
+                  )}
+                </div>
               </div>
 
-              {/* Controls */}
-              <div className="flex items-center justify-center gap-3">
-                {!mockRunning && !mockSubmitted ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMockRunning(true);
-                      setMockSecondsLeft(900);
-                      setMockUserAnswers({});
-                    }}
-                    className="btn red border-2 border-ink px-6 py-2.5 font-bold text-sm shadow-sketch transition-transform hover:scale-105"
-                  >
-                    <Play className="w-4 h-4 fill-white inline mr-1.5" />
-                    <span>Start Timed Mock Test</span>
-                  </button>
-                ) : mockRunning ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMockSubmitted(true);
-                      setMockRunning(false);
-                    }}
-                    className="btn border-2 border-ink bg-accentGreen text-paper hover:bg-ink hover:text-paper px-6 py-2.5 font-bold text-sm shadow-sketch transition-transform hover:scale-105"
-                  >
-                    <CheckCircle2 className="w-4 h-4 inline mr-1.5" />
-                    <span>Submit &amp; View Result</span>
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMockSubmitted(false);
-                      setMockRunning(false);
-                      setMockSecondsLeft(900);
-                      setMockUserAnswers({});
-                    }}
-                    className="btn border-2 border-ink bg-paper hover:bg-ink hover:text-paper px-6 py-2.5 font-bold text-sm shadow-sketch transition-transform hover:scale-105"
-                  >
-                    <RotateCcw className="w-4 h-4 inline mr-1.5" />
-                    <span>Retake Simulator</span>
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Questions while running or submitted */}
-            {(mockRunning || mockSubmitted) && (
+              {/* Mock Questions List */}
               <div className="space-y-4">
-                {filteredMcqs.slice(0, 10).map((q, idx) => {
-                  const userAns = mockUserAnswers[q.id];
-                  const answered = userAns !== undefined;
-                  const correct = answered && userAns === q.ans;
+                {filteredMcqs.slice(0, 15).map((mcq, idx) => {
+                  const userAns = mockUserAnswers[mcq.id];
+                  const isSubmitted = mockSubmitted;
+                  const isCorrect = userAns === mcq.ans;
 
                   return (
-                    <div
-                      key={q.id}
-                      className={`p-5 rounded-2xl border-2 shadow-sketchy space-y-3 ${
-                        mockSubmitted
-                          ? correct
-                            ? 'border-accentGreen bg-accentGreen/15'
-                            : 'border-accentRed bg-accentRed/15'
-                          : 'border-ink bg-paper'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between text-xs font-mono font-bold text-dim">
-                        <span>Question {idx + 1} of 10</span>
-                        <span>Unit {q.unitNo}</span>
+                    <div key={mcq.id} className="border-2 border-ink/40 bg-paper rounded-xl p-4 shadow-sketchy">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-mono text-xs font-bold text-accentRed">
+                          Question {idx + 1} of 15
+                        </span>
+                        {isSubmitted && (
+                          <span className={`text-xs font-mono font-bold ${isCorrect ? 'text-accentTeal' : 'text-accentRed'}`}>
+                            {isCorrect ? '✓ Correct' : '✗ Missed'}
+                          </span>
+                        )}
                       </div>
-                      <p className="text-sm font-bold text-ink">{q.q}</p>
+                      <div className="text-sm font-bold text-ink mb-3">
+                        <MathText text={mcq.q} />
+                      </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {q.options.map((opt, oIdx) => (
+                        {mcq.options.map((opt, oIdx) => (
                           <button
                             key={oIdx}
-                            type="button"
-                            disabled={mockSubmitted}
-                            onClick={() => {
-                              if (!mockSubmitted) {
-                                setMockUserAnswers((prev) => ({
-                                  ...prev,
-                                  [q.id]: oIdx,
-                                }));
-                              }
-                            }}
-                            className={`p-3 rounded-xl border-2 text-left text-xs transition-colors shadow-sketchy ${
+                            disabled={!mockRunning || isSubmitted}
+                            onClick={() => setMockUserAnswers((prev) => ({ ...prev, [mcq.id]: oIdx }))}
+                            className={`p-2 rounded-lg border text-left text-xs transition-all ${
                               userAns === oIdx
-                                ? 'border-ink bg-accentTeal text-paper font-bold'
-                                : 'border-ink/40 bg-paper2 text-ink hover:border-ink hover:bg-paper3'
-                            } ${
-                              mockSubmitted && q.ans === oIdx
-                                ? 'border-accentGreen bg-accentGreen text-paper font-bold'
-                                : ''
+                                ? 'border-2 border-accentTeal bg-accentTeal/20 font-bold text-accentTeal'
+                                : 'border-ink/20 bg-paper2 text-ink hover:bg-paper3'
                             }`}
                           >
-                            <span className="font-mono mr-2">{String.fromCharCode(65 + oIdx)}.</span>
-                            <span>{opt}</span>
+                            <strong>{String.fromCharCode(65 + oIdx)}.</strong> <MathText text={opt} />
                           </button>
                         ))}
                       </div>
-                      {mockSubmitted && (
-                        <div className="text-xs text-ink pt-2 border-t-2 border-ink/20 font-medium">
-                          <strong className="text-accentRed">Explanation: </strong>
-                          <span>{q.explanation}</span>
-                        </div>
-                      )}
                     </div>
                   );
                 })}
               </div>
-            )}
+            </div>
           </div>
         )}
 
-        {/* =========================================================================
-            TAB 7: 15-PILLAR FULL MARKS SCORE PREDICTOR
-           ========================================================================= */}
+        {/* ========================================================================= */}
+        {/* TAB 7: 15-PILLAR READINESS PREDICTOR */}
+        {/* ========================================================================= */}
         {activeTab === 'predictor' && (
           <div className="space-y-6">
-            <div className={`p-6 sm:p-8 rounded-2xl ${currentTheme.card} space-y-4`}>
-              <div className="flex items-center justify-between gap-3 flex-wrap">
+            <div className="border-2 border-ink bg-paper2 rounded-xl p-5 shadow-sketch">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-hair pb-4 mb-4">
                 <div>
-                  <h2 className="font-hand text-2xl sm:text-3xl font-bold text-ink flex items-center gap-2">
-                    <Award className="w-6 h-6 text-accentGold" />
-                    <span>15-Pillar Full Marks (20/20) Readiness Audit</span>
+                  <h2 className="font-hand text-3xl font-bold text-ink">
+                    15-Pillar Mid-Sem Marks Predictor
                   </h2>
-                  <p className="text-xs text-dim mt-0.5 font-medium">
-                    Tick each item you have verified. Aim for 100% to guarantee full marks in Semester-I Mid-Sem exams.
+                  <p className="text-xs text-dim">
+                    Check off each preparation pillar to compute your predicted score out of 20 marks.
                   </p>
                 </div>
-                {/* Readiness Meter */}
                 <div className="text-right">
-                  <div className="text-xs text-dim font-mono font-bold">Predicted Readiness</div>
-                  <div className="font-mono text-3xl sm:text-4xl font-extrabold text-accentRed">
-                    {totalPillarsScore}%
+                  <div className="font-hand text-4xl font-bold text-accentTeal">
+                    {Math.round((totalPillarsScore / 100) * 20)} / 20 Marks
+                  </div>
+                  <div className="text-xs font-mono text-dim">
+                    Preparedness: {totalPillarsScore}%
                   </div>
                 </div>
               </div>
 
               {/* Progress Bar */}
-              <div className="w-full h-4 rounded-full border-2 border-ink bg-paper p-0.5 overflow-hidden shadow-inner">
+              <div className="w-full h-4 bg-paper rounded-full border-2 border-ink overflow-hidden mb-6 p-0.5">
                 <div
-                  className="h-full rounded-full bg-linear-to-r from-accentTeal via-accentGold to-accentRed transition-all duration-500"
+                  className="h-full bg-accentTeal rounded-full transition-all duration-500"
                   style={{ width: `${totalPillarsScore}%` }}
                 />
               </div>
 
-              {/* Checklist Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 pt-2">
-                {READINESS_PILLARS.map((pillar) => {
-                  const checked = !!readinessChecks[pillar.id];
+              {/* Checkboxes Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {READINESS_PILLARS.map((p) => {
+                  const isChecked = readinessChecks[p.id] || false;
                   return (
                     <button
-                      key={pillar.id}
-                      type="button"
+                      key={p.id}
                       onClick={() =>
-                        setReadinessChecks((prev) => ({
-                          ...prev,
-                          [pillar.id]: !prev[pillar.id],
-                        }))
+                        setReadinessChecks((prev) => ({ ...prev, [p.id]: !isChecked }))
                       }
-                      className={`flex items-start gap-3 p-3.5 rounded-xl border-2 text-left transition-all shadow-sketchy ${
-                        checked
-                          ? 'border-accentGreen bg-accentGreen/15 text-ink'
-                          : 'border-ink/40 bg-paper text-dim hover:border-ink hover:bg-paper3'
+                      className={`p-3 rounded-xl border-2 text-left transition-all flex items-start gap-3 ${
+                        isChecked
+                          ? 'border-accentTeal bg-accentTeal/15 shadow-sketchy'
+                          : 'border-ink/30 bg-paper hover:bg-paper3'
                       }`}
                     >
-                      {checked ? (
-                        <CheckSquare className="w-4 h-4 text-accentGreen shrink-0 mt-0.5" />
+                      {isChecked ? (
+                        <CheckSquare className="w-5 h-5 text-accentTeal shrink-0 mt-0.5" />
                       ) : (
-                        <Square className="w-4 h-4 text-dim shrink-0 mt-0.5" />
+                        <Square className="w-5 h-5 text-dim shrink-0 mt-0.5" />
                       )}
-                      <div className="text-xs">
-                        <span className="font-bold text-ink block leading-snug">{pillar.label}</span>
-                        <span className="text-[10px] text-dim font-mono font-medium">
-                          Pillar weight: +{pillar.weight}%
-                        </span>
+                      <div>
+                        <div className={`text-xs font-bold ${isChecked ? 'text-ink' : 'text-dim'}`}>
+                          {p.label}
+                        </div>
+                        <div className="text-[11px] font-mono text-dim">
+                          Weight: +{p.weight}% readiness
+                        </div>
                       </div>
                     </button>
                   );
@@ -1228,191 +1745,237 @@ export default function MidsemRevisionPage() {
           </div>
         )}
 
-        {/* =========================================================================
-            TAB 8: INTERACTIVE ENGINEERING CALCULATORS
-           ========================================================================= */}
+        {/* ========================================================================= */}
+        {/* TAB 8: FORMULA CALCULATORS */}
+        {/* ========================================================================= */}
         {activeTab === 'calculator' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* 1. Series RLC Resonant Frequency Calculator */}
-            <div className={`p-6 rounded-2xl ${currentTheme.card} space-y-4`}>
-              <h3 className="font-hand text-xl sm:text-2xl font-bold text-ink flex items-center gap-2">
-                <Zap className="w-5 h-5 text-accentRed" />
-                <span>Series RLC Resonant Frequency (f_0)</span>
+            {/* RLC Series Resonance Calculator */}
+            <div className="border-2 border-ink bg-paper2 rounded-xl p-5 shadow-sketch">
+              <h3 className="font-hand text-2xl font-bold text-ink mb-1 flex items-center gap-2">
+                <Calculator className="w-5 h-5 text-accentTeal" />
+                RLC Series Resonance Calculator
               </h3>
-              <p className="text-xs text-dim font-mono font-semibold">
-                Formula: f_0 = 1 / [2π√(L · C)]
-              </p>
-              <div className="grid grid-cols-2 gap-3 text-xs">
+              <p className="text-xs text-dim mb-3">Formula: f_0 = 1 / [2π √(LC)]</p>
+              <div className="space-y-3">
                 <div>
-                  <label className="text-dim font-bold block mb-1">Inductance L (Henrys):</label>
+                  <label className="text-xs font-mono text-dim block">Inductance L (Henries):</label>
                   <input
                     type="number"
-                    step="0.01"
                     value={rlcL}
+                    step="0.01"
                     onChange={(e) => setRlcL(parseFloat(e.target.value) || 0)}
-                    className="w-full p-2.5 rounded-lg border-2 border-ink bg-paper text-ink font-mono text-sm focus:border-accentRed focus:outline-none shadow-sketchy"
+                    className="w-full p-2 border-2 border-ink rounded-lg bg-paper text-xs font-mono"
                   />
                 </div>
                 <div>
-                  <label className="text-dim font-bold block mb-1">Capacitance C (µF):</label>
+                  <label className="text-xs font-mono text-dim block">Capacitance C (Microfarads µF):</label>
                   <input
                     type="number"
-                    step="0.1"
                     value={rlcC}
+                    step="1"
                     onChange={(e) => setRlcC(parseFloat(e.target.value) || 0)}
-                    className="w-full p-2.5 rounded-lg border-2 border-ink bg-paper text-ink font-mono text-sm focus:border-accentRed focus:outline-none shadow-sketchy"
+                    className="w-full p-2 border-2 border-ink rounded-lg bg-paper text-xs font-mono"
                   />
                 </div>
-              </div>
-              <div className="p-3.5 rounded-xl border-2 border-ink bg-gold/20 text-center font-mono shadow-sketchy">
-                <span className="text-xs text-dim font-semibold">Resonant Frequency f_0: </span>
-                <strong className="text-lg text-accentRed font-bold">{rlcResonantFreq} Hz</strong>
+                <div className="p-3 bg-paper3 rounded-lg border-2 border-ink">
+                  <div className="text-xs font-mono text-dim">Resonant Frequency f_0:</div>
+                  <div className="font-mono text-xl font-bold text-accentTeal">{rlcResonantFreq} Hz</div>
+                </div>
               </div>
             </div>
 
-            {/* 2. Thevenin Maximum Power Calculator */}
-            <div className={`p-6 rounded-2xl ${currentTheme.card} space-y-4`}>
-              <h3 className="font-hand text-xl sm:text-2xl font-bold text-ink flex items-center gap-2">
-                <Cpu className="w-5 h-5 text-accentTeal" />
-                <span>Thevenin &amp; Max Power Calculator</span>
+            {/* Thevenin Maximum Power Calculator */}
+            <div className="border-2 border-ink bg-paper2 rounded-xl p-5 shadow-sketch">
+              <h3 className="font-hand text-2xl font-bold text-ink mb-1 flex items-center gap-2">
+                <Calculator className="w-5 h-5 text-accentRed" />
+                Thevenin &amp; Max Power Calculator
               </h3>
-              <p className="text-xs text-dim font-mono font-semibold">
-                Formula: I_L = V_th / (R_th + R_L), P_L = I_L² · R_L
-              </p>
-              <div className="grid grid-cols-3 gap-2 text-xs">
-                <div>
-                  <label className="text-dim font-bold block mb-1">V_th (V):</label>
-                  <input
-                    type="number"
-                    value={thevV}
-                    onChange={(e) => setThevV(parseFloat(e.target.value) || 0)}
-                    className="w-full p-2.5 rounded-lg border-2 border-ink bg-paper text-ink font-mono text-sm focus:border-accentRed focus:outline-none shadow-sketchy"
-                  />
+              <p className="text-xs text-dim mb-3">P_max = V_th² / (4 R_th) when R_L = R_th</p>
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="text-xs font-mono text-dim block">V_th (Volts):</label>
+                    <input
+                      type="number"
+                      value={thevV}
+                      onChange={(e) => setThevV(parseFloat(e.target.value) || 0)}
+                      className="w-full p-2 border-2 border-ink rounded-lg bg-paper text-xs font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-mono text-dim block">R_th (Ohms):</label>
+                    <input
+                      type="number"
+                      value={thevR}
+                      onChange={(e) => setThevR(parseFloat(e.target.value) || 0)}
+                      className="w-full p-2 border-2 border-ink rounded-lg bg-paper text-xs font-mono"
+                    />
+                  </div>
                 </div>
                 <div>
-                  <label className="text-dim font-bold block mb-1">R_th (Ω):</label>
-                  <input
-                    type="number"
-                    value={thevR}
-                    onChange={(e) => setThevR(parseFloat(e.target.value) || 0)}
-                    className="w-full p-2.5 rounded-lg border-2 border-ink bg-paper text-ink font-mono text-sm focus:border-accentRed focus:outline-none shadow-sketchy"
-                  />
-                </div>
-                <div>
-                  <label className="text-dim font-bold block mb-1">R_L (Ω):</label>
+                  <label className="text-xs font-mono text-dim block">Load Resistance R_L (Ohms):</label>
                   <input
                     type="number"
                     value={thevRl}
                     onChange={(e) => setThevRl(parseFloat(e.target.value) || 0)}
-                    className="w-full p-2.5 rounded-lg border-2 border-ink bg-paper text-ink font-mono text-sm focus:border-accentRed focus:outline-none shadow-sketchy"
+                    className="w-full p-2 border-2 border-ink rounded-lg bg-paper text-xs font-mono"
                   />
                 </div>
-              </div>
-              <div className="p-3.5 rounded-xl border-2 border-ink bg-gold/20 text-center font-mono flex items-center justify-around shadow-sketchy">
-                <div>
-                  <span className="text-[11px] text-dim block font-bold">Load Current I_L</span>
-                  <strong className="text-sm text-accentTeal font-bold">{theveninPower.il} A</strong>
-                </div>
-                <div>
-                  <span className="text-[11px] text-dim block font-bold">Load Power P_L</span>
-                  <strong className="text-sm text-accentRed font-bold">{theveninPower.pl} W</strong>
+                <div className="p-3 bg-paper3 rounded-lg border-2 border-ink flex justify-between">
+                  <div>
+                    <div className="text-xs font-mono text-dim">Load Current I_L:</div>
+                    <div className="font-mono text-lg font-bold text-ink">{theveninPower.il} A</div>
+                  </div>
+                  <div>
+                    <div className="text-xs font-mono text-dim">Power P_L:</div>
+                    <div className="font-mono text-lg font-bold text-accentRed">{theveninPower.pl} W</div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* 3. Optical Fiber Numerical Aperture (NA) Calculator */}
-            <div className={`p-6 rounded-2xl ${currentTheme.card} space-y-4`}>
-              <h3 className="font-hand text-xl sm:text-2xl font-bold text-ink flex items-center gap-2">
-                <Layers className="w-5 h-5 text-accentRed" />
-                <span>Optical Fiber NA &amp; Acceptance Angle</span>
+            {/* Optical Fiber NA & Acceptance Angle */}
+            <div className="border-2 border-ink bg-paper2 rounded-xl p-5 shadow-sketch">
+              <h3 className="font-hand text-2xl font-bold text-ink mb-1 flex items-center gap-2">
+                <Calculator className="w-5 h-5 text-accentGold" />
+                Optical Fiber NA Calculator
               </h3>
-              <p className="text-xs text-dim font-mono font-semibold">
-                Formula: NA = √(n₁² - n₂²), θ_a = arcsin(NA), θ_c = arcsin(n₂/n₁)
-              </p>
-              <div className="grid grid-cols-2 gap-3 text-xs">
-                <div>
-                  <label className="text-dim font-bold block mb-1">Core Index n1:</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={fiberN1}
-                    onChange={(e) => setFiberN1(parseFloat(e.target.value) || 0)}
-                    className="w-full p-2.5 rounded-lg border-2 border-ink bg-paper text-ink font-mono text-sm focus:border-accentRed focus:outline-none shadow-sketchy"
-                  />
+              <p className="text-xs text-dim mb-3">NA = √(n₁² - n₂²), θ_a = sin⁻¹(NA)</p>
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="text-xs font-mono text-dim block">Core Index n₁:</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={fiberN1}
+                      onChange={(e) => setFiberN1(parseFloat(e.target.value) || 0)}
+                      className="w-full p-2 border-2 border-ink rounded-lg bg-paper text-xs font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-mono text-dim block">Cladding Index n₂:</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={fiberN2}
+                      onChange={(e) => setFiberN2(parseFloat(e.target.value) || 0)}
+                      className="w-full p-2 border-2 border-ink rounded-lg bg-paper text-xs font-mono"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="text-dim font-bold block mb-1">Cladding Index n2:</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={fiberN2}
-                    onChange={(e) => setFiberN2(parseFloat(e.target.value) || 0)}
-                    className="w-full p-2.5 rounded-lg border-2 border-ink bg-paper text-ink font-mono text-sm focus:border-accentRed focus:outline-none shadow-sketchy"
-                  />
-                </div>
-              </div>
-              <div className="p-3.5 rounded-xl border-2 border-ink bg-gold/20 text-center font-mono flex items-center justify-around shadow-sketchy">
-                <div>
-                  <span className="text-[11px] text-dim block font-bold">NA</span>
-                  <strong className="text-sm text-accentRed font-bold">{fiberParams.na}</strong>
-                </div>
-                <div>
-                  <span className="text-[11px] text-dim block font-bold">Acceptance Angle</span>
-                  <strong className="text-sm text-accentTeal font-bold">{fiberParams.thetaA}</strong>
-                </div>
-                <div>
-                  <span className="text-[11px] text-dim block font-bold">Critical Angle</span>
-                  <strong className="text-sm text-ink font-bold">{fiberParams.thetaC}</strong>
+                <div className="p-3 bg-paper3 rounded-lg border-2 border-ink grid grid-cols-3 gap-2 text-center">
+                  <div>
+                    <div className="text-[11px] font-mono text-dim">NA:</div>
+                    <div className="font-mono text-sm font-bold text-accentTeal">{fiberParams.na}</div>
+                  </div>
+                  <div>
+                    <div className="text-[11px] font-mono text-dim">θ_a:</div>
+                    <div className="font-mono text-sm font-bold text-ink">{fiberParams.thetaA}</div>
+                  </div>
+                  <div>
+                    <div className="text-[11px] font-mono text-dim">θ_c:</div>
+                    <div className="font-mono text-sm font-bold text-accentGold">{fiberParams.thetaC}</div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* 4. Cache Average Access Time Calculator */}
-            <div className={`p-6 rounded-2xl ${currentTheme.card} space-y-4`}>
-              <h3 className="font-hand text-xl sm:text-2xl font-bold text-ink flex items-center gap-2">
-                <Cpu className="w-5 h-5 text-accentTeal" />
-                <span>Cache Memory Average Access Time</span>
+            {/* Cache Memory Access Time Calculator */}
+            <div className="border-2 border-ink bg-paper2 rounded-xl p-5 shadow-sketch">
+              <h3 className="font-hand text-2xl font-bold text-ink mb-1 flex items-center gap-2">
+                <Calculator className="w-5 h-5 text-accentTeal" />
+                Cache Memory Access Time
               </h3>
-              <p className="text-xs text-dim font-mono font-semibold">
-                Formula: T_avg = h · t_c + (1 - h) · t_m
-              </p>
-              <div className="grid grid-cols-3 gap-2 text-xs">
+              <p className="text-xs text-dim mb-3">T_avg = h * t_c + (1 - h) * t_m</p>
+              <div className="space-y-3">
                 <div>
-                  <label className="text-dim font-bold block mb-1">Hit Ratio h (0-1):</label>
+                  <label className="text-xs font-mono text-dim block">Hit Ratio h (0 to 1):</label>
                   <input
                     type="number"
                     step="0.01"
+                    min="0"
+                    max="1"
                     value={cacheH}
                     onChange={(e) => setCacheH(parseFloat(e.target.value) || 0)}
-                    className="w-full p-2.5 rounded-lg border-2 border-ink bg-paper text-ink font-mono text-sm focus:border-accentRed focus:outline-none shadow-sketchy"
+                    className="w-full p-2 border-2 border-ink rounded-lg bg-paper text-xs font-mono"
                   />
                 </div>
-                <div>
-                  <label className="text-dim font-bold block mb-1">Cache t_c (ns):</label>
-                  <input
-                    type="number"
-                    value={cacheTc}
-                    onChange={(e) => setCacheTc(parseFloat(e.target.value) || 0)}
-                    className="w-full p-2.5 rounded-lg border-2 border-ink bg-paper text-ink font-mono text-sm focus:border-accentRed focus:outline-none shadow-sketchy"
-                  />
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="text-xs font-mono text-dim block">Cache Access t_c (ns):</label>
+                    <input
+                      type="number"
+                      step="0.5"
+                      value={cacheTc}
+                      onChange={(e) => setCacheTc(parseFloat(e.target.value) || 0)}
+                      className="w-full p-2 border-2 border-ink rounded-lg bg-paper text-xs font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-mono text-dim block">Main Memory t_m (ns):</label>
+                    <input
+                      type="number"
+                      step="1"
+                      value={cacheTm}
+                      onChange={(e) => setCacheTm(parseFloat(e.target.value) || 0)}
+                      className="w-full p-2 border-2 border-ink rounded-lg bg-paper text-xs font-mono"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="text-dim font-bold block mb-1">Main t_m (ns):</label>
-                  <input
-                    type="number"
-                    value={cacheTm}
-                    onChange={(e) => setCacheTm(parseFloat(e.target.value) || 0)}
-                    className="w-full p-2.5 rounded-lg border-2 border-ink bg-paper text-ink font-mono text-sm focus:border-accentRed focus:outline-none shadow-sketchy"
-                  />
+                <div className="p-3 bg-paper3 rounded-lg border-2 border-ink">
+                  <div className="text-xs font-mono text-dim">Average Access Time T_avg:</div>
+                  <div className="font-mono text-xl font-bold text-accentTeal">{cacheTavg} ns</div>
                 </div>
-              </div>
-              <div className="p-3.5 rounded-xl border-2 border-ink bg-gold/20 text-center font-mono shadow-sketchy">
-                <span className="text-xs text-dim font-semibold">Average Memory Access Time T_avg: </span>
-                <strong className="text-lg text-accentRed font-bold">{cacheTavg} ns</strong>
               </div>
             </div>
           </div>
         )}
+      {/* DIAGRAM LIGHTBOX MODAL */}
+      {diagramModal && (
+        <div
+          className="fixed inset-0 z-50 bg-ink/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in"
+          onClick={() => setDiagramModal(null)}
+        >
+          <div
+            className="border-2 border-ink bg-paper rounded-2xl max-w-4xl w-full p-6 shadow-sketch relative max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b-2 border-hair pb-3 mb-4">
+              <div>
+                <span className="text-xs font-mono uppercase tracking-wider text-accentRed font-bold">
+                  Unit {diagramModal.unitNo} · {diagramModal.subject}
+                </span>
+                <h3 className="font-hand text-3xl font-bold text-ink">
+                  {diagramModal.title}
+                </h3>
+              </div>
+              <button
+                onClick={() => setDiagramModal(null)}
+                className="p-2 rounded-xl border-2 border-ink bg-paper2 hover:bg-paper3 text-ink transition-all"
+                title="Close Lightbox (Esc)"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="border-2 border-ink rounded-xl bg-paper2 p-4 shadow-inner mb-4 flex items-center justify-center overflow-x-auto">
+              <div
+                dangerouslySetInnerHTML={{ __html: diagramModal.svg }}
+                className="w-full max-w-2xl select-none"
+              />
+            </div>
+
+            <div className="p-4 rounded-xl border-2 border-ink bg-paper3 text-xs leading-relaxed space-y-2">
+              <p><strong>Technical Analysis:</strong> {diagramModal.caption}</p>
+              <p className="text-dim">
+                <strong>BEU Exam Scoring Advice:</strong> Use sharp pencil for circuits &amp; curves, write all labels horizontally in neat script, and always write the governing formula directly beneath the diagram to score full 4/4 marks.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
       </main>
     </div>
   );

@@ -419,5 +419,397 @@ export const MIDSEM_DIAGRAMS: MidsemDiagram[] = [
       <polygon points="275,110 265,115 275,120" fill="#9e3512"/>
       <text x="300" y="105" fill="#9e3512" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">Sanyama</text>
     </svg>`
-  }
+  },
+  // 11. CFET — Unit 1: 4-Variable K-Map 16-Cell Grid
+  {
+    id: "cfet_u1_kmap",
+    subjectCode: "100108",
+    subject: "CFET",
+    unitNo: 1,
+    title: "4-Variable Karnaugh Map (K-Map) 16-Cell Grid",
+    caption: "Gray code ordered grid (00, 01, 11, 10) for AB (rows) and CD (columns). Groups of 1, 2, 4, 8, or 16 adjacent cells eliminate variables to yield minimal SOP expressions with corner wrap-around.",
+    svg: `<svg viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+      <rect width="600" height="240" fill="#fcfaf3" stroke="#2b2a28" stroke-width="2" rx="8"/>
+      <text x="300" y="24" fill="#9e3512" font-size="13" font-weight="bold" text-anchor="middle" font-family="sans-serif">16-Cell 4-Variable K-Map: F(A,B,C,D)</text>
+      <!-- Row/Col Headers -->
+      <line x1="70" y1="35" x2="130" y2="75" stroke="#2b2a28" stroke-width="1.5"/>
+      <text x="80" y="65" fill="#1e6e67" font-size="11" font-weight="bold" font-family="sans-serif">AB \</text>
+      <text x="105" y="48" fill="#9e3512" font-size="11" font-weight="bold" font-family="sans-serif">CD</text>
+      <!-- CD Column Labels -->
+      <text x="175" y="65" fill="#2b2a28" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">00</text>
+      <text x="245" y="65" fill="#2b2a28" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">01</text>
+      <text x="315" y="65" fill="#2b2a28" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">11</text>
+      <text x="385" y="65" fill="#2b2a28" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">10</text>
+      <!-- AB Row Labels -->
+      <text x="110" y="102" fill="#2b2a28" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">00</text>
+      <text x="110" y="137" fill="#2b2a28" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">01</text>
+      <text x="110" y="172" fill="#2b2a28" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">11</text>
+      <text x="110" y="207" fill="#2b2a28" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">10</text>
+      <!-- 4x4 Grid -->
+      <g fill="#efe7d2" stroke="#2b2a28" stroke-width="1.5">
+        <!-- Row 0: m0, m1, m3, m2 -->
+        <rect x="140" y="80" width="70" height="35"/>
+        <rect x="210" y="80" width="70" height="35"/>
+        <rect x="280" y="80" width="70" height="35"/>
+        <rect x="350" y="80" width="70" height="35"/>
+        <!-- Row 1: m4, m5, m7, m6 -->
+        <rect x="140" y="115" width="70" height="35"/>
+        <rect x="210" y="115" width="70" height="35"/>
+        <rect x="280" y="115" width="70" height="35"/>
+        <rect x="350" y="115" width="70" height="35"/>
+        <!-- Row 2: m12, m13, m15, m14 -->
+        <rect x="140" y="150" width="70" height="35"/>
+        <rect x="210" y="150" width="70" height="35"/>
+        <rect x="280" y="150" width="70" height="35"/>
+        <rect x="350" y="150" width="70" height="35"/>
+        <!-- Row 3: m8, m9, m11, m10 -->
+        <rect x="140" y="185" width="70" height="35"/>
+        <rect x="210" y="185" width="70" height="35"/>
+        <rect x="280" y="185" width="70" height="35"/>
+        <rect x="350" y="185" width="70" height="35"/>
+      </g>
+      <!-- Minterm Indexes -->
+      <g fill="#555046" font-size="9" font-family="sans-serif">
+        <text x="144" y="93">m0</text><text x="214" y="93">m1</text><text x="284" y="93">m3</text><text x="354" y="93">m2</text>
+        <text x="144" y="128">m4</text><text x="214" y="128">m5</text><text x="284" y="128">m7</text><text x="354" y="128">m6</text>
+        <text x="144" y="163">m12</text><text x="214" y="163">m13</text><text x="284" y="163">m15</text><text x="354" y="163">m14</text>
+        <text x="144" y="198">m8</text><text x="214" y="198">m9</text><text x="284" y="198">m11</text><text x="354" y="198">m10</text>
+      </g>
+      <!-- Highlighted Quad Grouping (m5, m7, m13, m15) -->
+      <rect x="214" y="119" width="132" height="62" fill="#1e6e67" fill-opacity="0.25" stroke="#1e6e67" stroke-width="2.5" rx="6" stroke-dasharray="4 2"/>
+      <text x="280" y="145" fill="#1e6e67" font-size="14" font-weight="bold" text-anchor="middle" font-family="sans-serif">1</text>
+      <!-- Legend box -->
+      <rect x="435" y="75" width="150" height="135" fill="#efe7d2" stroke="#2b2a28" stroke-width="1.5" rx="6"/>
+      <text x="510" y="95" fill="#9e3512" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">Minimization Rules</text>
+      <text x="445" y="115" fill="#2b2a28" font-size="9.5" font-family="sans-serif">• Octet (8) eliminates 3 vars</text>
+      <text x="445" y="135" fill="#2b2a28" font-size="9.5" font-family="sans-serif">• Quad (4) eliminates 2 vars</text>
+      <text x="445" y="155" fill="#2b2a28" font-size="9.5" font-family="sans-serif">• Pair (2) eliminates 1 var</text>
+      <text x="445" y="175" fill="#1e6e67" font-size="9.5" font-weight="bold" font-family="sans-serif">Quad term = B · D</text>
+      <text x="445" y="195" fill="#555046" font-size="9" font-family="sans-serif">• 4 corners wrap-around</text>
+    </svg>`
+  },
+
+  // 12. CFET — Unit 2: Von Neumann Architecture
+  {
+    id: "cfet_u2_von_neumann",
+    subjectCode: "100108",
+    subject: "CFET",
+    unitNo: 2,
+    title: "Von Neumann Architecture & Bus Structure",
+    caption: "Classic stored-program computer model uniting CPU (Control Unit, ALU, Registers), Main Memory, and I/O over shared Address, Data, and Control System Buses.",
+    svg: `<svg viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+      <rect width="600" height="240" fill="#fcfaf3" stroke="#2b2a28" stroke-width="2" rx="8"/>
+      <text x="300" y="24" fill="#9e3512" font-size="13" font-weight="bold" text-anchor="middle" font-family="sans-serif">Von Neumann Computer Architecture Model</text>
+      <!-- CPU Block -->
+      <rect x="25" y="45" width="180" height="145" fill="#efe7d2" stroke="#2b2a28" stroke-width="2" rx="6"/>
+      <text x="115" y="65" fill="#9e3512" font-size="12" font-weight="bold" text-anchor="middle" font-family="sans-serif">Central Processing Unit (CPU)</text>
+      <!-- ALU -->
+      <rect x="40" y="78" width="150" height="30" fill="#f6f0e1" stroke="#2b2a28" stroke-width="1.5" rx="4"/>
+      <text x="115" y="98" fill="#2b2a28" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">Arithmetic Logic Unit (ALU)</text>
+      <!-- Control Unit -->
+      <rect x="40" y="115" width="150" height="30" fill="#f6f0e1" stroke="#2b2a28" stroke-width="1.5" rx="4"/>
+      <text x="115" y="135" fill="#1e6e67" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">Control Unit (CU)</text>
+      <!-- Registers -->
+      <rect x="40" y="152" width="150" height="26" fill="#f6f0e1" stroke="#2b2a28" stroke-width="1.5" rx="4"/>
+      <text x="115" y="169" fill="#555046" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">Registers (PC, IR, MAR, MDR)</text>
+      <!-- System Bus -->
+      <rect x="235" y="65" width="130" height="105" fill="#e6dcc3" stroke="#2b2a28" stroke-width="2" rx="4"/>
+      <text x="300" y="85" fill="#2b2a28" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">SYSTEM BUSES</text>
+      <rect x="245" y="95" width="110" height="18" fill="#f6f0e1" stroke="#9e3512" stroke-width="1" rx="2"/>
+      <text x="300" y="108" fill="#9e3512" font-size="9" font-weight="bold" text-anchor="middle" font-family="sans-serif">Control Bus (Control)</text>
+      <rect x="245" y="120" width="110" height="18" fill="#f6f0e1" stroke="#1e6e67" stroke-width="1" rx="2"/>
+      <text x="300" y="133" fill="#1e6e67" font-size="9" font-weight="bold" text-anchor="middle" font-family="sans-serif">Address Bus (Uni-dir)</text>
+      <rect x="245" y="145" width="110" height="18" fill="#f6f0e1" stroke="#b8810b" stroke-width="1" rx="2"/>
+      <text x="300" y="158" fill="#b8810b" font-size="9" font-weight="bold" text-anchor="middle" font-family="sans-serif">Data Bus (Bi-dir)</text>
+      <!-- Interconnect lines -->
+      <path d="M 205 115 L 235 115" stroke="#2b2a28" stroke-width="2.5" marker-end="url(#arrow)"/>
+      <path d="M 365 115 L 395 115" stroke="#2b2a28" stroke-width="2.5"/>
+      <!-- Main Memory Block -->
+      <rect x="395" y="45" width="180" height="68" fill="#efe7d2" stroke="#2b2a28" stroke-width="2" rx="6"/>
+      <text x="485" y="70" fill="#1e6e67" font-size="12" font-weight="bold" text-anchor="middle" font-family="sans-serif">Primary Memory (RAM)</text>
+      <text x="485" y="90" fill="#555046" font-size="10" text-anchor="middle" font-family="sans-serif">Stored Program + Data</text>
+      <!-- I/O Block -->
+      <rect x="395" y="122" width="180" height="68" fill="#efe7d2" stroke="#2b2a28" stroke-width="2" rx="6"/>
+      <text x="485" y="147" fill="#b8810b" font-size="12" font-weight="bold" text-anchor="middle" font-family="sans-serif">Input / Output Units</text>
+      <text x="485" y="167" fill="#555046" font-size="10" text-anchor="middle" font-family="sans-serif">Keyboard, Monitor, Storage</text>
+      <!-- Footnote on bottleneck -->
+      <text x="300" y="215" fill="#9e3512" font-size="10.5" font-weight="bold" text-anchor="middle" font-family="sans-serif">⚠️ Von Neumann Bottleneck: CPU throughput is strictly bounded by shared Memory Bus bandwidth</text>
+    </svg>`
+  },
+
+  // 13. Physics — Unit 3: He-Ne Gas Laser 4-Level Transition
+  {
+    id: "phy_u3_hene_laser",
+    subjectCode: "100104",
+    subject: "Physics",
+    unitNo: 3,
+    title: "Helium-Neon (He-Ne) 4-Level Laser Energy Scheme",
+    caption: "Resonant energy transfer from excited Helium metastable states (20.61 eV) to Neon 3s level creates population inversion. Lasing occurs at 632.8 nm (red light) via stimulated emission.",
+    svg: `<svg viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+      <rect width="600" height="240" fill="#fcfaf3" stroke="#2b2a28" stroke-width="2" rx="8"/>
+      <text x="300" y="24" fill="#9e3512" font-size="13" font-weight="bold" text-anchor="middle" font-family="sans-serif">Helium-Neon (He-Ne) Laser Energy Level Diagram (632.8 nm)</text>
+      <!-- Helium Column -->
+      <rect x="40" y="38" width="220" height="185" fill="#efe7d2" stroke="#2b2a28" stroke-width="1.5" rx="6"/>
+      <text x="150" y="58" fill="#9e3512" font-size="12" font-weight="bold" text-anchor="middle" font-family="sans-serif">Helium Atom (He)</text>
+      <!-- He levels -->
+      <line x1="60" y1="200" x2="240" y2="200" stroke="#2b2a28" stroke-width="2.5"/>
+      <text x="50" y="204" fill="#555046" font-size="10" font-weight="bold" text-anchor="end" font-family="sans-serif">Ground</text>
+      <line x1="60" y1="85" x2="240" y2="85" stroke="#9e3512" stroke-width="2.5"/>
+      <text x="50" y="89" fill="#9e3512" font-size="10" font-weight="bold" text-anchor="end" font-family="sans-serif">20.61 eV</text>
+      <text x="150" y="80" fill="#9e3512" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">2¹S Metastable State</text>
+      <!-- Electric discharge pumping arrow -->
+      <path d="M 100 195 L 100 90" stroke="#9e3512" stroke-width="2" stroke-dasharray="3 3"/>
+      <polygon points="100,85 96,93 104,93" fill="#9e3512"/>
+      <text x="105" y="145" fill="#9e3512" font-size="9" font-family="sans-serif">e⁻ collision pump</text>
+      <!-- Resonant Transfer Arrow -->
+      <path d="M 230 85 L 340 85" stroke="#1e6e67" stroke-width="3"/>
+      <polygon points="345,85 337,81 337,89" fill="#1e6e67"/>
+      <text x="285" y="78" fill="#1e6e67" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">Resonant Transfer</text>
+      <!-- Neon Column -->
+      <rect x="340" y="38" width="220" height="185" fill="#efe7d2" stroke="#2b2a28" stroke-width="1.5" rx="6"/>
+      <text x="450" y="58" fill="#1e6e67" font-size="12" font-weight="bold" text-anchor="middle" font-family="sans-serif">Neon Atom (Ne)</text>
+      <!-- Ne levels -->
+      <line x1="360" y1="200" x2="540" y2="200" stroke="#2b2a28" stroke-width="2.5"/>
+      <text x="548" y="204" fill="#555046" font-size="10" font-family="sans-serif">Ground (1p)</text>
+      <line x1="360" y1="85" x2="540" y2="85" stroke="#1e6e67" stroke-width="2.5"/>
+      <text x="548" y="89" fill="#1e6e67" font-size="10" font-weight="bold" font-family="sans-serif">3s (20.66 eV)</text>
+      <line x1="360" y1="135" x2="540" y2="135" stroke="#2b2a28" stroke-width="2"/>
+      <text x="548" y="139" fill="#2b2a28" font-size="10" font-family="sans-serif">2p (18.70 eV)</text>
+      <line x1="360" y1="170" x2="540" y2="170" stroke="#555046" stroke-width="1.5"/>
+      <text x="548" y="174" fill="#555046" font-size="10" font-family="sans-serif">1s (16.70 eV)</text>
+      <!-- Lasing transition 3s to 2p -->
+      <path d="M 430 90 L 430 130" stroke="#9e3512" stroke-width="3"/>
+      <polygon points="430,135 426,127 434,127" fill="#9e3512"/>
+      <text x="440" y="112" fill="#9e3512" font-size="11" font-weight="bold" font-family="sans-serif">λ = 632.8 nm (Red Laser)</text>
+      <!-- Spontaneous decay 2p to 1s -->
+      <path d="M 430 138 L 430 165" stroke="#555046" stroke-width="1.5" stroke-dasharray="2 2"/>
+      <text x="440" y="153" fill="#555046" font-size="9" font-family="sans-serif">Spontaneous decay</text>
+      <!-- Wall de-excitation 1s to ground -->
+      <path d="M 430 173 L 430 195" stroke="#1e6e67" stroke-width="1.5"/>
+      <text x="440" y="188" fill="#1e6e67" font-size="8.5" font-family="sans-serif">Tubewall collision</text>
+    </svg>`
+  },
+
+  // 14. Physics — Unit 3: Optical Fiber TIR & Acceptance Angle
+  {
+    id: "phy_u3_fiber_optic",
+    subjectCode: "100104",
+    subject: "Physics",
+    unitNo: 3,
+    title: "Optical Fiber Total Internal Reflection (TIR) & Acceptance Cone",
+    caption: "Light entering core within acceptance angle θ_a undergoes total internal reflection at the core-cladding interface. Numerical Aperture NA = √(n₁² - n₂²) measures light gathering power.",
+    svg: `<svg viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+      <rect width="600" height="240" fill="#fcfaf3" stroke="#2b2a28" stroke-width="2" rx="8"/>
+      <text x="300" y="24" fill="#9e3512" font-size="13" font-weight="bold" text-anchor="middle" font-family="sans-serif">Step-Index Optical Fiber: TIR &amp; Acceptance Angle Geometry</text>
+      <!-- Cladding Top -->
+      <rect x="180" y="45" width="380" height="40" fill="#efe7d2" stroke="#2b2a28" stroke-width="1.5"/>
+      <text x="370" y="70" fill="#555046" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">Cladding (Refractive Index n₂ = 1.48)</text>
+      <!-- Core Center -->
+      <rect x="180" y="85" width="380" height="70" fill="#f6f0e1" stroke="#2b2a28" stroke-width="2"/>
+      <text x="370" y="125" fill="#1e6e67" font-size="13" font-weight="bold" text-anchor="middle" font-family="sans-serif">Core (Refractive Index n₁ = 1.50, where n₁ > n₂)</text>
+      <!-- Cladding Bottom -->
+      <rect x="180" y="155" width="380" height="40" fill="#efe7d2" stroke="#2b2a28" stroke-width="1.5"/>
+      <text x="370" y="180" fill="#555046" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">Cladding (n₂ = 1.48)</text>
+      <!-- Axis of fiber -->
+      <line x1="20" y1="120" x2="570" y2="120" stroke="#555046" stroke-width="1.5" stroke-dasharray="5 3"/>
+      <!-- Acceptance Cone at entrance (left) -->
+      <polygon points="30,80 180,120 30,160" fill="#b8810b" fill-opacity="0.15" stroke="#b8810b" stroke-width="1.5" stroke-dasharray="3 2"/>
+      <text x="80" y="105" fill="#b8810b" font-size="10" font-weight="bold" font-family="sans-serif">θ_a</text>
+      <!-- Incident Ray -->
+      <path d="M 40 90 L 180 120" stroke="#9e3512" stroke-width="2.5"/>
+      <!-- Refracted ray inside core -->
+      <path d="M 180 120 L 290 85" stroke="#9e3512" stroke-width="2.5"/>
+      <!-- TIR at interface -->
+      <path d="M 290 85 L 430 155 L 540 85" stroke="#9e3512" stroke-width="2.5"/>
+      <!-- Normal at TIR point -->
+      <line x1="290" y1="65" x2="290" y2="105" stroke="#2b2a28" stroke-width="1" stroke-dasharray="2 2"/>
+      <text x="300" y="80" fill="#9e3512" font-size="11" font-weight="bold" font-family="sans-serif">ϕ > ϕ_c (TIR)</text>
+      <!-- Formulas footer -->
+      <rect x="30" y="202" width="540" height="28" fill="#efe7d2" stroke="#2b2a28" stroke-width="1" rx="4"/>
+      <text x="300" y="221" fill="#1e6e67" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">NA = √(n₁² - n₂²) = sin(θ_a) · Fractional index: Δ = (n₁ - n₂) / n₁ · Critical angle: ϕ_c = sin⁻¹(n₂/n₁)</text>
+    </svg>`
+  },
+
+  // 15. Introduction to AI — Unit 1: PEAS Agent Architecture
+  {
+    id: "iai_u1_peas_agent",
+    subjectCode: "100105",
+    subject: "IAI",
+    unitNo: 1,
+    title: "PEAS Intelligent Agent & Environment Interaction Loop",
+    caption: "The agent perceives its environment through sensors and acts upon it through actuators. The PEAS model defines: Performance Measure, Environment, Actuators, and Sensors.",
+    svg: `<svg viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+      <rect width="600" height="240" fill="#fcfaf3" stroke="#2b2a28" stroke-width="2" rx="8"/>
+      <text x="300" y="24" fill="#9e3512" font-size="13" font-weight="bold" text-anchor="middle" font-family="sans-serif">PEAS Intelligent Agent Architecture &amp; Environment Interaction</text>
+      <!-- Agent Boundary Box -->
+      <rect x="40" y="45" width="230" height="150" fill="#efe7d2" stroke="#2b2a28" stroke-width="2" rx="8"/>
+      <text x="155" y="68" fill="#9e3512" font-size="13" font-weight="bold" text-anchor="middle" font-family="sans-serif">INTELLIGENT AGENT</text>
+      <!-- Sensors block -->
+      <rect x="60" y="80" width="190" height="28" fill="#f6f0e1" stroke="#1e6e67" stroke-width="1.5" rx="4"/>
+      <text x="155" y="99" fill="#1e6e67" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">Sensors (Percepts)</text>
+      <!-- Agent Program / State -->
+      <rect x="60" y="116" width="190" height="34" fill="#f6f0e1" stroke="#2b2a28" stroke-width="1.5" rx="4"/>
+      <text x="155" y="132" fill="#2b2a28" font-size="10.5" font-weight="bold" text-anchor="middle" font-family="sans-serif">Agent Program f : P* → A</text>
+      <text x="155" y="145" fill="#555046" font-size="9" text-anchor="middle" font-family="sans-serif">Performance Evaluation</text>
+      <!-- Actuators block -->
+      <rect x="60" y="158" width="190" height="28" fill="#f6f0e1" stroke="#b8810b" stroke-width="1.5" rx="4"/>
+      <text x="155" y="177" fill="#b8810b" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">Actuators (Actions)</text>
+      <!-- Environment Box -->
+      <rect x="330" y="60" width="230" height="120" fill="#e6dcc3" stroke="#2b2a28" stroke-width="2" rx="8"/>
+      <text x="445" y="90" fill="#1e6e67" font-size="14" font-weight="bold" text-anchor="middle" font-family="sans-serif">ENVIRONMENT</text>
+      <text x="445" y="115" fill="#2b2a28" font-size="10.5" text-anchor="middle" font-family="sans-serif">• Fully vs Partially Observable</text>
+      <text x="445" y="132" fill="#2b2a28" font-size="10.5" text-anchor="middle" font-family="sans-serif">• Deterministic vs Stochastic</text>
+      <text x="445" y="149" fill="#2b2a28" font-size="10.5" text-anchor="middle" font-family="sans-serif">• Static vs Dynamic · Discrete/Cont.</text>
+      <!-- Arrow: Environment to Sensors (Percepts) -->
+      <path d="M 330 94 L 255 94" stroke="#1e6e67" stroke-width="2.5"/>
+      <polygon points="250,94 258,90 258,98" fill="#1e6e67"/>
+      <text x="292" y="86" fill="#1e6e67" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">Percepts</text>
+      <!-- Arrow: Actuators to Environment (Actions) -->
+      <path d="M 250 172 L 325 172" stroke="#b8810b" stroke-width="2.5"/>
+      <polygon points="330,172 322,168 322,176" fill="#b8810b"/>
+      <text x="290" y="165" fill="#b8810b" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">Actions</text>
+      <!-- PEAS breakdown footer -->
+      <text x="300" y="215" fill="#9e3512" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">P: Performance Measure · E: Environment · A: Actuators · S: Sensors</text>
+    </svg>`
+  },
+
+  // 16. Introduction to AI — Unit 2: Search Tree Comparison (BFS, DFS, A*)
+  {
+    id: "iai_u2_search_trees",
+    subjectCode: "100105",
+    subject: "IAI",
+    unitNo: 2,
+    title: "State Space Search Trees (BFS vs DFS vs A*)",
+    caption: "BFS searches layer-by-layer using FIFO queue (O(b^d) space). DFS explores depth-first using LIFO stack (O(bm) space). A* guides exploration using evaluation function f(n) = g(n) + h(n).",
+    svg: `<svg viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+      <rect width="600" height="240" fill="#fcfaf3" stroke="#2b2a28" stroke-width="2" rx="8"/>
+      <text x="300" y="24" fill="#9e3512" font-size="13" font-weight="bold" text-anchor="middle" font-family="sans-serif">Search Strategies: BFS (FIFO) vs DFS (LIFO) vs A* (Heuristic)</text>
+      <!-- Root Node -->
+      <circle cx="200" cy="55" r="16" fill="#efe7d2" stroke="#2b2a28" stroke-width="2"/>
+      <text x="200" y="60" fill="#9e3512" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">S</text>
+      <!-- Level 1 Nodes -->
+      <line x1="188" y1="67" x2="130" y2="105" stroke="#2b2a28" stroke-width="2"/>
+      <line x1="212" y1="67" x2="270" y2="105" stroke="#2b2a28" stroke-width="2"/>
+      <circle cx="130" cy="115" r="14" fill="#f6f0e1" stroke="#1e6e67" stroke-width="2"/>
+      <text x="130" y="119" fill="#1e6e67" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">A</text>
+      <circle cx="270" cy="115" r="14" fill="#f6f0e1" stroke="#2b2a28" stroke-width="2"/>
+      <text x="270" y="119" fill="#2b2a28" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">B</text>
+      <!-- Level 2 Nodes -->
+      <line x1="120" y1="126" x2="80" y2="165" stroke="#2b2a28" stroke-width="1.5"/>
+      <line x1="140" y1="126" x2="175" y2="165" stroke="#2b2a28" stroke-width="1.5"/>
+      <circle cx="80" cy="175" r="12" fill="#efe7d2" stroke="#2b2a28" stroke-width="1.5"/>
+      <text x="80" y="179" fill="#555046" font-size="10" text-anchor="middle" font-family="sans-serif">C</text>
+      <circle cx="175" cy="175" r="12" fill="#1e6e67" fill-opacity="0.3" stroke="#1e6e67" stroke-width="2"/>
+      <text x="175" y="179" fill="#1e6e67" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">G</text>
+      <line x1="260" y1="126" x2="225" y2="165" stroke="#2b2a28" stroke-width="1.5"/>
+      <line x1="280" y1="126" x2="315" y2="165" stroke="#2b2a28" stroke-width="1.5"/>
+      <circle cx="225" cy="175" r="12" fill="#efe7d2" stroke="#2b2a28" stroke-width="1.5"/>
+      <text x="225" y="179" fill="#555046" font-size="10" text-anchor="middle" font-family="sans-serif">D</text>
+      <circle cx="315" cy="175" r="12" fill="#efe7d2" stroke="#2b2a28" stroke-width="1.5"/>
+      <text x="315" y="179" fill="#555046" font-size="10" text-anchor="middle" font-family="sans-serif">E</text>
+      <!-- BFS Horizontal layer wave -->
+      <path d="M 40 115 L 340 115" stroke="#1e6e67" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <text x="35" y="119" fill="#1e6e67" font-size="9" font-weight="bold" font-family="sans-serif">BFS Level 1</text>
+      <!-- Summary Table Right Box -->
+      <rect x="365" y="45" width="215" height="175" fill="#efe7d2" stroke="#2b2a28" stroke-width="1.5" rx="6"/>
+      <text x="472" y="65" fill="#9e3512" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">Search Algorithm Complexity</text>
+      <text x="375" y="88" fill="#1e6e67" font-size="10" font-weight="bold" font-family="sans-serif">BFS (Breadth-First):</text>
+      <text x="385" y="103" fill="#2b2a28" font-size="9.5" font-family="sans-serif">Time: O(b^d) · Space: O(b^d) [High]</text>
+      <text x="385" y="118" fill="#2b2a28" font-size="9.5" font-family="sans-serif">Complete: Yes · Optimal: Yes (unit cost)</text>
+      <text x="375" y="138" fill="#b8810b" font-size="10" font-weight="bold" font-family="sans-serif">DFS (Depth-First):</text>
+      <text x="385" y="153" fill="#2b2a28" font-size="9.5" font-family="sans-serif">Time: O(b^m) · Space: O(bm) [Linear]</text>
+      <text x="385" y="168" fill="#2b2a28" font-size="9.5" font-family="sans-serif">Complete: No · Optimal: No</text>
+      <text x="375" y="188" fill="#9e3512" font-size="10" font-weight="bold" font-family="sans-serif">A* Search: f(n) = g(n) + h(n)</text>
+      <text x="385" y="205" fill="#1e6e67" font-size="9.5" font-weight="bold" font-family="sans-serif">Optimal when h(n) is Admissible</text>
+    </svg>`
+  },
+
+  // 17. Mathematics-I — Unit 1: Normal Form [Ir | 0] & Rank
+  {
+    id: "math1_u1_rank_normal",
+    subjectCode: "100102",
+    subject: "Math-I",
+    unitNo: 1,
+    title: "Matrix Canonical Normal Form [I_r | 0] & Rank Subspaces",
+    caption: "Every matrix of rank r transforms through elementary row and column operations into normal form. Rouché-Capelli Theorem governs system consistency: ρ(A) = ρ(A|B).",
+    svg: `<svg viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+      <rect width="600" height="240" fill="#fcfaf3" stroke="#2b2a28" stroke-width="2" rx="8"/>
+      <text x="300" y="24" fill="#9e3512" font-size="13" font-weight="bold" text-anchor="middle" font-family="sans-serif">Matrix Rank ρ(A) &amp; Canonical Normal Form [I_r 0; 0 0]</text>
+      <!-- Normal Form Matrix Block -->
+      <rect x="50" y="50" width="200" height="150" fill="#efe7d2" stroke="#2b2a28" stroke-width="2" rx="6"/>
+      <!-- I_r block -->
+      <rect x="65" y="65" width="85" height="65" fill="#1e6e67" fill-opacity="0.2" stroke="#1e6e67" stroke-width="2" rx="4"/>
+      <text x="107" y="103" fill="#1e6e67" font-size="16" font-weight="bold" text-anchor="middle" font-family="sans-serif">I_r</text>
+      <text x="107" y="120" fill="#1e6e67" font-size="9" text-anchor="middle" font-family="sans-serif">(r × r Identity)</text>
+      <!-- Zero Block Top Right -->
+      <rect x="155" y="65" width="80" height="65" fill="#f6f0e1" stroke="#2b2a28" stroke-width="1.5" stroke-dasharray="3 2"/>
+      <text x="195" y="103" fill="#555046" font-size="16" text-anchor="middle" font-family="sans-serif">0</text>
+      <!-- Zero Block Bottom Left -->
+      <rect x="65" y="135" width="85" height="50" fill="#f6f0e1" stroke="#2b2a28" stroke-width="1.5" stroke-dasharray="3 2"/>
+      <text x="107" y="165" fill="#555046" font-size="16" text-anchor="middle" font-family="sans-serif">0</text>
+      <!-- Zero Block Bottom Right -->
+      <rect x="155" y="135" width="80" height="50" fill="#f6f0e1" stroke="#2b2a28" stroke-width="1.5" stroke-dasharray="3 2"/>
+      <text x="195" y="165" fill="#555046" font-size="16" text-anchor="middle" font-family="sans-serif">0</text>
+      <!-- Operations labels -->
+      <text x="150" y="42" fill="#2b2a28" font-size="10.5" font-weight="bold" text-anchor="middle" font-family="sans-serif">PAQ = [I_r 0; 0 0] → Rank = r</text>
+      <!-- System Consistency Box (Right) -->
+      <rect x="290" y="45" width="270" height="175" fill="#efe7d2" stroke="#2b2a28" stroke-width="1.5" rx="6"/>
+      <text x="425" y="68" fill="#9e3512" font-size="12" font-weight="bold" text-anchor="middle" font-family="sans-serif">Rouché-Capelli System Consistency: AX = B</text>
+      <!-- Condition 1 -->
+      <rect x="305" y="80" width="240" height="32" fill="#f6f0e1" stroke="#9e3512" stroke-width="1.5" rx="4"/>
+      <text x="315" y="96" fill="#9e3512" font-size="10" font-weight="bold" font-family="sans-serif">1. ρ(A) ≠ ρ(A|B) → Inconsistent</text>
+      <text x="315" y="108" fill="#555046" font-size="9" font-family="sans-serif">No solution exists (parallel hyperplanes)</text>
+      <!-- Condition 2 -->
+      <rect x="305" y="120" width="240" height="32" fill="#f6f0e1" stroke="#1e6e67" stroke-width="1.5" rx="4"/>
+      <text x="315" y="136" fill="#1e6e67" font-size="10" font-weight="bold" font-family="sans-serif">2. ρ(A) = ρ(A|B) = n (unknowns)</text>
+      <text x="315" y="148" fill="#555046" font-size="9" font-family="sans-serif">Unique solution (Cramer's rule holds)</text>
+      <!-- Condition 3 -->
+      <rect x="305" y="160" width="240" height="42" fill="#f6f0e1" stroke="#b8810b" stroke-width="1.5" rx="4"/>
+      <text x="315" y="176" fill="#b8810b" font-size="10" font-weight="bold" font-family="sans-serif">3. ρ(A) = ρ(A|B) = r &lt; n</text>
+      <text x="315" y="190" fill="#555046" font-size="9" font-family="sans-serif">Infinitely many solutions (n - r free variables)</text>
+    </svg>`
+  },
+
+  // 18. Universal Human Values — Unit 3: Harmony in Nature (4 Orders)
+  {
+    id: "uhv_u3_nature_harmony",
+    subjectCode: "100109",
+    subject: "UHV",
+    unitNo: 3,
+    title: "Harmony in Nature: Mutual Fulfillment of the 4 Orders",
+    caption: "The four orders in nature (Material, Bio, Animal, Human) are naturally interconnected by mutual fulfillment (Parasparta). Human beings must live with right understanding to complete recyclability.",
+    svg: `<svg viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+      <rect width="600" height="240" fill="#fcfaf3" stroke="#2b2a28" stroke-width="2" rx="8"/>
+      <text x="300" y="24" fill="#9e3512" font-size="13" font-weight="bold" text-anchor="middle" font-family="sans-serif">Cyclic Harmony in Nature: Mutual Fulfillment (Parasparta)</text>
+      <!-- 4 Order Circles -->
+      <!-- Order 1: Material -->
+      <circle cx="100" cy="115" r="42" fill="#efe7d2" stroke="#2b2a28" stroke-width="2"/>
+      <text x="100" y="105" fill="#9e3512" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">Material Order</text>
+      <text x="100" y="120" fill="#555046" font-size="9" text-anchor="middle" font-family="sans-serif">Padartha Avastha</text>
+      <text x="100" y="133" fill="#2b2a28" font-size="8.5" text-anchor="middle" font-family="sans-serif">Soil, Water, Air</text>
+      <!-- Order 2: Plant / Bio -->
+      <circle cx="235" cy="65" r="42" fill="#efe7d2" stroke="#1e6e67" stroke-width="2"/>
+      <text x="235" y="55" fill="#1e6e67" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">Pranic / Bio</text>
+      <text x="235" y="70" fill="#555046" font-size="9" text-anchor="middle" font-family="sans-serif">Prana Avastha</text>
+      <text x="235" y="83" fill="#2b2a28" font-size="8.5" text-anchor="middle" font-family="sans-serif">Plants, Trees, Crops</text>
+      <!-- Order 3: Animal -->
+      <circle cx="370" cy="115" r="42" fill="#efe7d2" stroke="#b8810b" stroke-width="2"/>
+      <text x="370" y="105" fill="#b8810b" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">Animal Order</text>
+      <text x="370" y="120" fill="#555046" font-size="9" text-anchor="middle" font-family="sans-serif">Jeeva Avastha</text>
+      <text x="370" y="133" fill="#2b2a28" font-size="8.5" text-anchor="middle" font-family="sans-serif">Animals, Birds</text>
+      <!-- Order 4: Human -->
+      <circle cx="505" cy="115" r="42" fill="#f6f0e1" stroke="#9e3512" stroke-width="2.5"/>
+      <text x="505" y="105" fill="#9e3512" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">Human Order</text>
+      <text x="505" y="120" fill="#555046" font-size="9" text-anchor="middle" font-family="sans-serif">Jnana Avastha</text>
+      <text x="505" y="133" fill="#1e6e67" font-size="8.5" font-weight="bold" text-anchor="middle" font-family="sans-serif">Right Understanding</text>
+      <!-- Interconnecting arrows -->
+      <path d="M 142 110 L 195 78" stroke="#1e6e67" stroke-width="2"/>
+      <path d="M 275 78 L 330 105" stroke="#b8810b" stroke-width="2"/>
+      <path d="M 412 115 L 460 115" stroke="#9e3512" stroke-width="2"/>
+      <!-- Cyclic feedback return loop -->
+      <path d="M 505 160 C 420 220, 180 220, 100 160" stroke="#1e6e67" stroke-width="2.5" stroke-dasharray="4 2"/>
+      <text x="300" y="195" fill="#1e6e67" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">Mutual Enrichment &amp; Cyclic Recyclability</text>
+      <text x="300" y="222" fill="#555046" font-size="10" text-anchor="middle" font-family="sans-serif">Inherent Natural Property: Composition / Decomposition &amp; Self-Regulation</text>
+    </svg>`
+  },
 ];
