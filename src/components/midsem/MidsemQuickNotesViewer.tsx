@@ -325,20 +325,20 @@ export const MidsemQuickMarkdownRenderer: React.FC<{
             );
           case 'image':
             return (
-              <figure key={idx} className="midsem-avoid-break my-4 rounded-xl border-2 border-ink bg-white p-3 shadow-sketchy">
-                <div className="relative overflow-x-auto">
+              <figure key={idx} className="midsem-avoid-break my-4 rounded-2xl border-2 border-ink bg-paper2 p-3 sm:p-4 shadow-sketch">
+                <div className="relative w-full overflow-x-auto rounded-xl border border-ink/25 bg-paper p-2">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={block.src} alt={block.alt || 'Engineering diagram'} className="w-full h-auto max-h-[540px] object-contain mx-auto rounded" />
+                  <img src={block.src} alt={block.alt || 'Engineering diagram'} className="w-full h-auto block mx-auto rounded" />
                 </div>
-                <figcaption className="mt-2.5 flex items-center justify-between gap-2 border-t border-hair/50 pt-2 midsem-meta text-dim font-medium">
+                <figcaption className="mt-2.5 flex items-center justify-between gap-2 pt-1 midsem-meta text-dim font-medium">
                   <span>{block.alt}</span>
                   <button
                     type="button"
                     onClick={() => setZoomImg({ src: block.src, alt: block.alt })}
-                    className="midsem-noprint midsem-tap inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-ink/40 bg-paper2 hover:bg-paper3 text-ink font-bold"
+                    className="midsem-noprint midsem-tap inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border-2 border-ink/40 bg-paper hover:bg-paper3 text-ink font-bold"
                   >
                     <Maximize2 className="w-4 h-4" aria-hidden="true" />
-                    <span>Zoom</span>
+                    <span>Full Size</span>
                   </button>
                 </figcaption>
               </figure>
@@ -425,27 +425,27 @@ export const MidsemQuickMarkdownRenderer: React.FC<{
 
       {zoomImg && (
         <div
-          className="midsem-noprint fixed inset-0 z-50 bg-ink/80 flex items-center justify-center p-4"
+          className="midsem-noprint fixed inset-0 z-50 bg-ink/80 flex items-center justify-center p-2 sm:p-4"
           onClick={() => setZoomImg(null)}
         >
           <div
-            className="bg-white rounded-xl border-2 border-ink max-w-5xl w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl"
+            className="bg-paper rounded-2xl border-2 border-ink max-w-7xl w-[96vw] max-h-[94vh] flex flex-col overflow-hidden shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-4 py-2.5 bg-paper2 border-b border-ink">
+            <div className="flex items-center justify-between px-4 py-3 bg-paper2 border-b-2 border-ink">
               <span className="font-bold midsem-meta text-ink">{zoomImg.alt || 'Diagram Preview'}</span>
               <button
                 type="button"
                 onClick={() => setZoomImg(null)}
-                className="midsem-tap inline-flex items-center justify-center rounded-lg hover:bg-paper3 text-ink"
+                className="midsem-tap inline-flex items-center justify-center rounded-xl border-2 border-ink/30 bg-paper hover:bg-paper3 text-ink"
                 aria-label="Close zoom preview"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="p-4 overflow-auto flex-1 bg-white">
+            <div className="p-3 sm:p-5 overflow-auto flex-1 bg-paper">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={zoomImg.src} alt={zoomImg.alt} className="w-full h-auto mx-auto" />
+              <img src={zoomImg.src} alt={zoomImg.alt} className="w-full h-auto mx-auto block" />
             </div>
           </div>
         </div>

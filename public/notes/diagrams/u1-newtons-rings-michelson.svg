@@ -1,99 +1,99 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 430" width="920" height="430">
-  <rect width="920" height="430" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
-  <text x="460" y="28" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#0f172a">Unit 1 Ray Diagrams: Newton's Rings Setup &amp; Michelson Interferometer</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 430">
+  <rect width="920" height="430" rx="12" fill="#fcfaf3" stroke="#2b2a28" stroke-width="2"/>
+  <text x="460" y="28" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="bold" fill="#2b2a28">Unit 1 Ray Diagrams: Newton's Rings Setup &amp; Michelson Interferometer</text>
 
   <!-- LEFT PANEL: NEWTON'S RINGS -->
-  <rect x="20" y="45" width="430" height="365" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.2"/>
-  <text x="235" y="68" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1e3a8a">(a) Newton's Rings (Division of Amplitude)</text>
+  <rect x="20" y="45" width="430" height="365" rx="8" fill="#efe7d2" stroke="#555046" stroke-width="1.2"/>
+  <text x="235" y="68" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="bold" fill="#1e6e67">(a) Newton's Rings (Division of Amplitude)</text>
 
   <!-- Traveling Microscope -->
-  <rect x="210" y="82" width="42" height="58" rx="4" fill="#cbd5e1" stroke="#334155" stroke-width="1.5"/>
-  <rect x="220" y="140" width="22" height="16" fill="#94a3b8" stroke="#334155" stroke-width="1.5"/>
-  <text x="231" y="108" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#0f172a">Micro-</text>
-  <text x="231" y="121" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#0f172a">scope</text>
+  <rect x="210" y="82" width="42" height="58" rx="4" fill="#2b2a28" stroke="#2b2a28" stroke-width="1.5"/>
+  <rect x="220" y="140" width="22" height="16" fill="#555046" stroke="#2b2a28" stroke-width="1.5"/>
+  <text x="231" y="108" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="bold" fill="#2b2a28">Micro-</text>
+  <text x="231" y="121" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="bold" fill="#2b2a28">scope</text>
 
   <!-- Sodium Source + Collimating Lens -->
-  <circle cx="52" cy="215" r="14" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
-  <text x="52" y="244" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#854d0e">Na Source</text>
-  <text x="52" y="256" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#854d0e">(589.3 nm)</text>
-  <ellipse cx="105" cy="215" rx="6" ry="26" fill="#bae6fd" stroke="#0284c7" stroke-width="1.5"/>
-  <text x="105" y="252" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#0369a1">Lens L</text>
+  <circle cx="52" cy="215" r="14" fill="#e6dcc3" stroke="#b8810b" stroke-width="2"/>
+  <text x="52" y="244" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="bold" fill="#8f6200">Na Source</text>
+  <text x="52" y="256" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#8f6200">(589.3 nm)</text>
+  <ellipse cx="105" cy="215" rx="6" ry="26" fill="#e6dcc3" stroke="#1e6e67" stroke-width="1.5"/>
+  <text x="105" y="252" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#13534d">Lens L</text>
 
   <!-- Horizontal rays to 45 deg Glass Plate G -->
-  <line x1="66" y1="205" x2="220" y2="205" stroke="#eab308" stroke-width="1.8"/>
-  <line x1="66" y1="225" x2="240" y2="225" stroke="#eab308" stroke-width="1.8"/>
+  <line x1="66" y1="205" x2="220" y2="205" stroke="#b8810b" stroke-width="1.8"/>
+  <line x1="66" y1="225" x2="240" y2="225" stroke="#b8810b" stroke-width="1.8"/>
 
   <!-- 45 deg Beam Splitter Glass Plate G -->
-  <line x1="195" y1="245" x2="265" y2="175" stroke="#0ea5e9" stroke-width="4"/>
-  <text x="275" y="196" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#0369a1">Glass Plate G (45°)</text>
+  <line x1="195" y1="245" x2="265" y2="175" stroke="#1e6e67" stroke-width="4"/>
+  <text x="275" y="196" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="bold" fill="#13534d">Glass Plate G (45°)</text>
 
   <!-- Vertical rays down to Plano-convex lens and flat glass plate -->
-  <line x1="220" y1="205" x2="220" y2="305" stroke="#eab308" stroke-width="1.6"/>
-  <line x1="240" y1="225" x2="240" y2="305" stroke="#eab308" stroke-width="1.6"/>
+  <line x1="220" y1="205" x2="220" y2="305" stroke="#b8810b" stroke-width="1.6"/>
+  <line x1="240" y1="225" x2="240" y2="305" stroke="#b8810b" stroke-width="1.6"/>
   <!-- Reflected rays up into microscope -->
-  <line x1="222" y1="305" x2="222" y2="156" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,2"/>
-  <line x1="242" y1="305" x2="242" y2="156" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <line x1="222" y1="305" x2="222" y2="156" stroke="#9e3512" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <line x1="242" y1="305" x2="242" y2="156" stroke="#9e3512" stroke-width="1.5" stroke-dasharray="4,2"/>
 
   <!-- Plano-Convex Lens (radius R) -->
-  <path d="M 150 288 L 312 288 Q 231 318 150 288 Z" fill="#bae6fd" stroke="#0284c7" stroke-width="1.8"/>
-  <text x="320" y="294" font-family="Arial, sans-serif" font-size="10" fill="#0f172a">Plano-Convex Lens (R)</text>
+  <path d="M 150 288 L 312 288 Q 231 318 150 288 Z" fill="#e6dcc3" stroke="#1e6e67" stroke-width="1.8"/>
+  <text x="320" y="294" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#2b2a28">Plano-Convex Lens (R)</text>
   <!-- Air film annotation -->
-  <text x="150" y="303" text-anchor="end" font-family="Arial, sans-serif" font-size="9.5" fill="#dc2626">Air wedge (t)</text>
+  <text x="150" y="303" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="9.5" fill="#9e3512">Air wedge (t)</text>
 
   <!-- Optically Flat Glass Plate P -->
-  <rect x="140" y="305" width="182" height="16" fill="#cbd5e1" stroke="#334155" stroke-width="1.5"/>
-  <text x="231" y="335" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#334155">Flat Glass Plate P (π shift at reflection)</text>
+  <rect x="140" y="305" width="182" height="16" fill="#2b2a28" stroke="#2b2a28" stroke-width="1.5"/>
+  <text x="231" y="335" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="bold" fill="#2b2a28">Flat Glass Plate P (π shift at reflection)</text>
 
   <!-- Top-view Rings Inset -->
-  <circle cx="380" cy="360" r="36" fill="#ffffff" stroke="#0f172a" stroke-width="1.5"/>
-  <circle cx="380" cy="360" r="29" fill="none" stroke="#0f172a" stroke-width="2.5"/>
-  <circle cx="380" cy="360" r="21" fill="none" stroke="#0f172a" stroke-width="2.2"/>
-  <circle cx="380" cy="360" r="12" fill="none" stroke="#0f172a" stroke-width="2"/>
-  <circle cx="380" cy="360" r="4" fill="#0f172a"/>
-  <text x="235" y="360" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#0f172a">Center is DARK (t = 0, Δ = λ/2)</text>
-  <text x="235" y="378" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#1e3a8a">D_n² = 4 n λ R (Dark Rings)</text>
+  <circle cx="380" cy="360" r="36" fill="#fcfaf3" stroke="#2b2a28" stroke-width="1.5"/>
+  <circle cx="380" cy="360" r="29" fill="none" stroke="#2b2a28" stroke-width="2.5"/>
+  <circle cx="380" cy="360" r="21" fill="none" stroke="#2b2a28" stroke-width="2.2"/>
+  <circle cx="380" cy="360" r="12" fill="none" stroke="#2b2a28" stroke-width="2"/>
+  <circle cx="380" cy="360" r="4" fill="#2b2a28"/>
+  <text x="235" y="360" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#2b2a28">Center is DARK (t = 0, Δ = λ/2)</text>
+  <text x="235" y="378" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="bold" fill="#1e6e67">D_n² = 4 n λ R (Dark Rings)</text>
 
   <!-- RIGHT PANEL: MICHELSON INTERFEROMETER -->
-  <rect x="470" y="45" width="430" height="365" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.2"/>
-  <text x="685" y="68" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1e3a8a">(b) Michelson Interferometer</text>
+  <rect x="470" y="45" width="430" height="365" rx="8" fill="#efe7d2" stroke="#555046" stroke-width="1.2"/>
+  <text x="685" y="68" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="bold" fill="#1e6e67">(b) Michelson Interferometer</text>
 
   <!-- Mirror M1 (Movable) at Top -->
-  <rect x="640" y="88" width="90" height="10" fill="#64748b" stroke="#0f172a" stroke-width="1.5"/>
-  <text x="685" y="82" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#0f172a">Movable Mirror M₁ (move by d)</text>
-  <path d="M 745 86 L 745 104 M 741 90 L 745 84 L 749 90 M 741 100 L 745 106 L 749 100" stroke="#dc2626" stroke-width="1.5" fill="none"/>
+  <rect x="640" y="88" width="90" height="10" fill="#555046" stroke="#2b2a28" stroke-width="1.5"/>
+  <text x="685" y="82" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="bold" fill="#2b2a28">Movable Mirror M₁ (move by d)</text>
+  <path d="M 745 86 L 745 104 M 741 90 L 745 84 L 749 90 M 741 100 L 745 106 L 749 100" stroke="#9e3512" stroke-width="1.5" fill="none"/>
 
   <!-- Mirror M2 (Fixed) at Right -->
-  <rect x="850" y="195" width="10" height="90" fill="#64748b" stroke="#0f172a" stroke-width="1.5"/>
-  <text x="855" y="188" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#0f172a">Fixed M₂</text>
+  <rect x="850" y="195" width="10" height="90" fill="#555046" stroke="#2b2a28" stroke-width="1.5"/>
+  <text x="855" y="188" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="bold" fill="#2b2a28">Fixed M₂</text>
 
   <!-- Source S + Lens on Left -->
-  <circle cx="502" cy="240" r="13" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
-  <text x="502" y="268" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#854d0e">Source S</text>
-  <ellipse cx="545" cy="240" rx="6" ry="24" fill="#bae6fd" stroke="#0284c7" stroke-width="1.5"/>
+  <circle cx="502" cy="240" r="13" fill="#e6dcc3" stroke="#b8810b" stroke-width="2"/>
+  <text x="502" y="268" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="bold" fill="#8f6200">Source S</text>
+  <ellipse cx="545" cy="240" rx="6" ry="24" fill="#e6dcc3" stroke="#1e6e67" stroke-width="1.5"/>
 
   <!-- Beam Splitter G1 (45 deg) -->
-  <rect x="645" y="236" width="80" height="8" transform="rotate(-45 685 240)" fill="#7dd3fc" fill-opacity="0.7" stroke="#0284c7" stroke-width="1.5"/>
-  <text x="635" y="218" text-anchor="end" font-family="Arial, sans-serif" font-size="10.5" font-weight="bold" fill="#0369a1">G₁ (Semi-silvered)</text>
+  <rect x="645" y="236" width="80" height="8" transform="rotate(-45 685 240)" fill="#1e6e67" fill-opacity="0.7" stroke="#1e6e67" stroke-width="1.5"/>
+  <text x="635" y="218" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="10.5" font-weight="bold" fill="#13534d">G₁ (Semi-silvered)</text>
 
   <!-- Compensating Plate G2 (45 deg) -->
-  <rect x="720" y="236" width="76" height="8" transform="rotate(-45 758 240)" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5" stroke-dasharray="3,2"/>
-  <text x="760" y="202" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#0369a1">G₂ (Compensator)</text>
+  <rect x="720" y="236" width="76" height="8" transform="rotate(-45 758 240)" fill="#f6f0e1" stroke="#1e6e67" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <text x="760" y="202" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="bold" fill="#13534d">G₂ (Compensator)</text>
 
   <!-- Light rays -->
-  <line x1="515" y1="240" x2="685" y2="240" stroke="#2563eb" stroke-width="2"/>
+  <line x1="515" y1="240" x2="685" y2="240" stroke="#1e6e67" stroke-width="2"/>
   <!-- Ray 1 up to M1 and down -->
-  <line x1="683" y1="240" x2="683" y2="98" stroke="#dc2626" stroke-width="1.8"/>
-  <line x1="689" y1="98" x2="689" y2="335" stroke="#dc2626" stroke-width="1.8"/>
+  <line x1="683" y1="240" x2="683" y2="98" stroke="#9e3512" stroke-width="1.8"/>
+  <line x1="689" y1="98" x2="689" y2="335" stroke="#9e3512" stroke-width="1.8"/>
   <!-- Ray 2 right to M2 and back to G1 then down -->
-  <line x1="685" y1="238" x2="850" y2="238" stroke="#16a34a" stroke-width="1.8"/>
-  <line x1="850" y1="244" x2="685" y2="244" stroke="#16a34a" stroke-width="1.8"/>
-  <line x1="680" y1="244" x2="680" y2="335" stroke="#16a34a" stroke-width="1.8"/>
+  <line x1="685" y1="238" x2="850" y2="238" stroke="#13534d" stroke-width="1.8"/>
+  <line x1="850" y1="244" x2="685" y2="244" stroke="#13534d" stroke-width="1.8"/>
+  <line x1="680" y1="244" x2="680" y2="335" stroke="#13534d" stroke-width="1.8"/>
 
   <!-- Telescope T at Bottom -->
-  <rect x="665" y="335" width="40" height="32" rx="4" fill="#cbd5e1" stroke="#334155" stroke-width="1.5"/>
-  <text x="685" y="355" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#0f172a">Eye/Tel</text>
+  <rect x="665" y="335" width="40" height="32" rx="4" fill="#2b2a28" stroke="#2b2a28" stroke-width="1.5"/>
+  <text x="685" y="355" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="bold" fill="#2b2a28">Eye/Tel</text>
 
   <!-- Bottom formula box -->
-  <rect x="495" y="376" width="380" height="24" rx="4" fill="#eff6ff" stroke="#93c5fd"/>
-  <text x="685" y="392" text-anchor="middle" font-family="Arial, sans-serif" font-size="11.5" font-weight="bold" fill="#1e3a8a">Shift N fringes by moving M₁: 2d = N·λ (G₂ equalizes glass path)</text>
+  <rect x="495" y="376" width="380" height="24" rx="4" fill="#f6f0e1" stroke="#555046"/>
+  <text x="685" y="392" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11.5" font-weight="bold" fill="#1e6e67">Shift N fringes by moving M₁: 2d = N·λ (G₂ equalizes glass path)</text>
 </svg>

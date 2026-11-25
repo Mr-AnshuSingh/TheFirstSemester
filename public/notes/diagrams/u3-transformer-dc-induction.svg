@@ -1,94 +1,94 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 430" width="920" height="430">
-  <rect width="920" height="430" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
-  <text x="460" y="28" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#0f172a">Unit 3 Electrical Machines: Transformer, Equivalent Circuit &amp; Induction Motor Curve</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 430">
+  <rect width="920" height="430" rx="12" fill="#fcfaf3" stroke="#2b2a28" stroke-width="2"/>
+  <text x="460" y="28" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="bold" fill="#2b2a28">Unit 3 Electrical Machines: Transformer, Equivalent Circuit &amp; Induction Motor Curve</text>
 
   <!-- PANEL 1: SINGLE PHASE TRANSFORMER -->
-  <rect x="20" y="45" width="285" height="365" rx="8" fill="#f8fafc" stroke="#94a3b8"/>
-  <text x="162" y="68" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#1e3a8a">(a) Single-Phase Core Transformer</text>
+  <rect x="20" y="45" width="285" height="365" rx="8" fill="#efe7d2" stroke="#555046"/>
+  <text x="162" y="68" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="bold" fill="#1e6e67">(a) Single-Phase Core Transformer</text>
 
   <!-- Laminated iron core -->
-  <rect x="75" y="100" width="175" height="145" fill="#cbd5e1" stroke="#334155" stroke-width="2"/>
-  <rect x="108" y="128" width="109" height="89" fill="#f8fafc" stroke="#334155" stroke-width="1.8"/>
+  <rect x="75" y="100" width="175" height="145" fill="#2b2a28" stroke="#2b2a28" stroke-width="2"/>
+  <rect x="108" y="128" width="109" height="89" fill="#efe7d2" stroke="#2b2a28" stroke-width="1.8"/>
   <!-- Mutual Flux dashed path -->
-  <rect x="91" y="114" width="143" height="117" fill="none" stroke="#16a34a" stroke-width="1.8" stroke-dasharray="5,3"/>
-  <text x="162" y="110" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#15803d">Flux Φ = Φₘ sin ωt</text>
+  <rect x="91" y="114" width="143" height="117" fill="none" stroke="#13534d" stroke-width="1.8" stroke-dasharray="5,3"/>
+  <text x="162" y="110" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="bold" fill="#13534d">Flux Φ = Φₘ sin ωt</text>
 
   <!-- Primary winding N1 -->
-  <path d="M 45 128 L 75 128 Q 90 138 75 148 Q 90 158 75 168 Q 90 178 75 188 Q 90 198 75 208 L 45 208" fill="none" stroke="#dc2626" stroke-width="2.5"/>
-  <text x="42" y="172" text-anchor="end" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#dc2626">V₁, N₁</text>
-  <text x="42" y="124" text-anchor="end" font-family="Arial, sans-serif" font-size="10" fill="#dc2626">I₁ →</text>
+  <path d="M 45 128 L 75 128 Q 90 138 75 148 Q 90 158 75 168 Q 90 178 75 188 Q 90 198 75 208 L 45 208" fill="none" stroke="#9e3512" stroke-width="2.5"/>
+  <text x="42" y="172" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="bold" fill="#9e3512">V₁, N₁</text>
+  <text x="42" y="124" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#9e3512">I₁ →</text>
 
   <!-- Secondary winding N2 -->
-  <path d="M 280 128 L 250 128 Q 235 138 250 148 Q 235 158 250 168 Q 235 178 250 188 Q 235 198 250 208 L 280 208" fill="none" stroke="#2563eb" stroke-width="2.5"/>
-  <text x="275" y="172" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#2563eb">N₂, V₂</text>
-  <text x="268" y="124" font-family="Arial, sans-serif" font-size="10" fill="#2563eb">→ I₂</text>
+  <path d="M 280 128 L 250 128 Q 235 138 250 148 Q 235 158 250 168 Q 235 178 250 188 Q 235 198 250 208 L 280 208" fill="none" stroke="#1e6e67" stroke-width="2.5"/>
+  <text x="275" y="172" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="bold" fill="#1e6e67">N₂, V₂</text>
+  <text x="268" y="124" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#1e6e67">→ I₂</text>
 
-  <rect x="34" y="262" width="257" height="133" rx="5" fill="#eff6ff" stroke="#93c5fd"/>
-  <text x="162" y="282" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#1e3a8a">EMF Eq: E₁ = 4.44 f N₁ Φₘ</text>
-  <text x="162" y="302" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#dc2626">Ratio: V₂/V₁ = E₂/E₁ = N₂/N₁ = I₁/I₂ = K</text>
-  <text x="162" y="324" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" fill="#0f172a">Max Efficiency Condition: P_cu(load) = P_iron</text>
-  <text x="162" y="344" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" fill="#0f172a">η = (x·S·cos φ) / (x·S·cos φ + P_i + x² P_cu,fl)</text>
-  <text x="162" y="366" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#15803d">Laminated Si-Steel core cuts eddy current loss</text>
+  <rect x="34" y="262" width="257" height="133" rx="5" fill="#f6f0e1" stroke="#555046"/>
+  <text x="162" y="282" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="bold" fill="#1e6e67">EMF Eq: E₁ = 4.44 f N₁ Φₘ</text>
+  <text x="162" y="302" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="bold" fill="#9e3512">Ratio: V₂/V₁ = E₂/E₁ = N₂/N₁ = I₁/I₂ = K</text>
+  <text x="162" y="324" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10.5" fill="#2b2a28">Max Efficiency Condition: P_cu(load) = P_iron</text>
+  <text x="162" y="344" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10.5" fill="#2b2a28">η = (x·S·cos φ) / (x·S·cos φ + P_i + x² P_cu,fl)</text>
+  <text x="162" y="366" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#13534d">Laminated Si-Steel core cuts eddy current loss</text>
 
   <!-- PANEL 2: APPROX EQUIVALENT CIRCUIT & REGULATION -->
-  <rect x="315" y="45" width="305" height="365" rx="8" fill="#f8fafc" stroke="#94a3b8"/>
-  <text x="467" y="68" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#1e3a8a">(b) Transformer Eq. Circuit &amp; DC Motor</text>
+  <rect x="315" y="45" width="305" height="365" rx="8" fill="#efe7d2" stroke="#555046"/>
+  <text x="467" y="68" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="bold" fill="#1e6e67">(b) Transformer Eq. Circuit &amp; DC Motor</text>
 
   <!-- Equivalent circuit referred to primary -->
-  <line x1="335" y1="120" x2="395" y2="120" stroke="#0f172a" stroke-width="2"/>
-  <line x1="335" y1="205" x2="585" y2="205" stroke="#0f172a" stroke-width="2"/>
+  <line x1="335" y1="120" x2="395" y2="120" stroke="#2b2a28" stroke-width="2"/>
+  <line x1="335" y1="205" x2="585" y2="205" stroke="#2b2a28" stroke-width="2"/>
   <!-- Shunt branch R0 || Xm -->
-  <line x1="375" y1="120" x2="375" y2="205" stroke="#64748b" stroke-width="1.5"/>
-  <rect x="369" y="145" width="12" height="35" fill="#cbd5e1" stroke="#334155"/>
-  <text x="364" y="166" text-anchor="end" font-family="Arial, sans-serif" font-size="9.5">I₀ (P_i)</text>
+  <line x1="375" y1="120" x2="375" y2="205" stroke="#555046" stroke-width="1.5"/>
+  <rect x="369" y="145" width="12" height="35" fill="#2b2a28" stroke="#2b2a28"/>
+  <text x="364" y="166" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="9.5">I₀ (P_i)</text>
   <!-- R01 and jX01 -->
-  <rect x="410" y="112" width="40" height="16" fill="#fef08a" stroke="#ca8a04"/>
-  <text x="430" y="106" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold">R₀₁</text>
-  <line x1="450" y1="120" x2="475" y2="120" stroke="#0f172a" stroke-width="2"/>
-  <path d="M 475 120 Q 482 106 489 120 Q 496 106 503 120 Q 510 106 517 120" fill="none" stroke="#2563eb" stroke-width="2"/>
-  <text x="496" y="104" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#2563eb">jX₀₁</text>
-  <line x1="517" y1="120" x2="585" y2="120" stroke="#0f172a" stroke-width="2"/>
-  <rect x="575" y="142" width="20" height="42" fill="#bbf7d0" stroke="#16a34a"/>
-  <line x1="585" y1="120" x2="585" y2="142" stroke="#0f172a" stroke-width="2"/>
-  <line x1="585" y1="184" x2="585" y2="205" stroke="#0f172a" stroke-width="2"/>
-  <text x="568" y="168" text-anchor="end" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#15803d">Load V₂′</text>
+  <rect x="410" y="112" width="40" height="16" fill="#e6dcc3" stroke="#b8810b"/>
+  <text x="430" y="106" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="bold">R₀₁</text>
+  <line x1="450" y1="120" x2="475" y2="120" stroke="#2b2a28" stroke-width="2"/>
+  <path d="M 475 120 Q 482 106 489 120 Q 496 106 503 120 Q 510 106 517 120" fill="none" stroke="#1e6e67" stroke-width="2"/>
+  <text x="496" y="104" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="bold" fill="#1e6e67">jX₀₁</text>
+  <line x1="517" y1="120" x2="585" y2="120" stroke="#2b2a28" stroke-width="2"/>
+  <rect x="575" y="142" width="20" height="42" fill="#e6dcc3" stroke="#13534d"/>
+  <line x1="585" y1="120" x2="585" y2="142" stroke="#2b2a28" stroke-width="2"/>
+  <line x1="585" y1="184" x2="585" y2="205" stroke="#2b2a28" stroke-width="2"/>
+  <text x="568" y="168" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="bold" fill="#13534d">Load V₂′</text>
 
-  <text x="467" y="232" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" font-weight="bold" fill="#0f172a">R₀₁ = R₁ + R₂/K²  |  X₀₁ = X₁ + X₂/K²</text>
-  <text x="467" y="250" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" font-weight="bold" fill="#dc2626">%Reg = I₁(R₀₁cosφ ± X₀₁sinφ)/V₁ × 100%</text>
+  <text x="467" y="232" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10.5" font-weight="bold" fill="#2b2a28">R₀₁ = R₁ + R₂/K²  |  X₀₁ = X₁ + X₂/K²</text>
+  <text x="467" y="250" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10.5" font-weight="bold" fill="#9e3512">%Reg = I₁(R₀₁cosφ ± X₀₁sinφ)/V₁ × 100%</text>
 
   <!-- DC machine box -->
-  <rect x="330" y="268" width="275" height="127" rx="5" fill="#fef3c7" stroke="#f59e0b"/>
-  <text x="467" y="288" text-anchor="middle" font-family="Arial, sans-serif" font-size="11.5" font-weight="bold" fill="#92400e">DC Machines (Commutator + Brushes)</text>
-  <text x="467" y="308" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" fill="#0f172a">Generated / Back EMF: E = (Φ Z N / 60) · (P / A)</text>
-  <text x="467" y="328" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#334155">Lap: A = P (high current) | Wave: A = 2 (high V)</text>
-  <text x="467" y="348" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" font-weight="bold" fill="#b45309">Motor Back EMF: V = E_b + I_a R_a</text>
-  <text x="467" y="368" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" font-weight="bold" fill="#b45309">Armature Torque: T_a = (Φ Z P / 2πA) · I_a</text>
-  <text x="467" y="386" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#78350f">Series motor: high starting torque | Shunt: const speed</text>
+  <rect x="330" y="268" width="275" height="127" rx="5" fill="#f6f0e1" stroke="#9e3512"/>
+  <text x="467" y="288" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11.5" font-weight="bold" fill="#8f6200">DC Machines (Commutator + Brushes)</text>
+  <text x="467" y="308" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10.5" fill="#2b2a28">Generated / Back EMF: E = (Φ Z N / 60) · (P / A)</text>
+  <text x="467" y="328" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#2b2a28">Lap: A = P (high current) | Wave: A = 2 (high V)</text>
+  <text x="467" y="348" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10.5" font-weight="bold" fill="#8f6200">Motor Back EMF: V = E_b + I_a R_a</text>
+  <text x="467" y="368" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10.5" font-weight="bold" fill="#8f6200">Armature Torque: T_a = (Φ Z P / 2πA) · I_a</text>
+  <text x="467" y="386" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#8f6200">Series motor: high starting torque | Shunt: const speed</text>
 
   <!-- PANEL 3: 3-PHASE INDUCTION MOTOR TORQUE-SLIP -->
-  <rect x="630" y="45" width="270" height="365" rx="8" fill="#f8fafc" stroke="#94a3b8"/>
-  <text x="765" y="68" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#1e3a8a">(c) 3-Φ Induction Motor T–Slip</text>
+  <rect x="630" y="45" width="270" height="365" rx="8" fill="#efe7d2" stroke="#555046"/>
+  <text x="765" y="68" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="bold" fill="#1e6e67">(c) 3-Φ Induction Motor T–Slip</text>
 
   <!-- Axes -->
-  <line x1="655" y1="255" x2="880" y2="255" stroke="#334155" stroke-width="1.8"/>
-  <line x1="665" y1="265" x2="665" y2="100" stroke="#334155" stroke-width="1.8"/>
-  <text x="672" y="110" font-family="Arial, sans-serif" font-size="10.5" font-weight="bold">Torque T</text>
-  <text x="665" y="272" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold">s=1 (N=0)</text>
-  <text x="868" y="272" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold">s=0 (Ns)</text>
+  <line x1="655" y1="255" x2="880" y2="255" stroke="#2b2a28" stroke-width="1.8"/>
+  <line x1="665" y1="265" x2="665" y2="100" stroke="#2b2a28" stroke-width="1.8"/>
+  <text x="672" y="110" font-family="Inter, system-ui, sans-serif" font-size="10.5" font-weight="bold">Torque T</text>
+  <text x="665" y="272" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="bold">s=1 (N=0)</text>
+  <text x="868" y="272" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="bold">s=0 (Ns)</text>
 
   <!-- Torque-slip curve -->
-  <path d="M 665 188 Q 740 165 785 120 Q 828 115 868 255" fill="none" stroke="#dc2626" stroke-width="2.6"/>
-  <circle cx="665" cy="188" r="4" fill="#2563eb"/>
-  <text x="675" y="192" font-family="Arial, sans-serif" font-size="9.5" font-weight="bold" fill="#2563eb">T_start</text>
-  <circle cx="798" cy="118" r="4" fill="#dc2626"/>
-  <text x="798" y="106" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#dc2626">T_max (s_m = R₂/X₂₀)</text>
-  <rect x="820" y="128" width="44" height="125" fill="#bbf7d0" fill-opacity="0.35" stroke="#16a34a" stroke-dasharray="3,2"/>
-  <text x="842" y="205" text-anchor="middle" font-family="Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#15803d" transform="rotate(-90 842 205)">Stable Operating</text>
+  <path d="M 665 188 Q 740 165 785 120 Q 828 115 868 255" fill="none" stroke="#9e3512" stroke-width="2.6"/>
+  <circle cx="665" cy="188" r="4" fill="#1e6e67"/>
+  <text x="675" y="192" font-family="Inter, system-ui, sans-serif" font-size="9.5" font-weight="bold" fill="#1e6e67">T_start</text>
+  <circle cx="798" cy="118" r="4" fill="#9e3512"/>
+  <text x="798" y="106" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="bold" fill="#9e3512">T_max (s_m = R₂/X₂₀)</text>
+  <rect x="820" y="128" width="44" height="125" fill="#e6dcc3" fill-opacity="0.35" stroke="#13534d" stroke-dasharray="3,2"/>
+  <text x="842" y="205" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="8.5" font-weight="bold" fill="#13534d" transform="rotate(-90 842 205)">Stable Operating</text>
 
-  <rect x="642" y="286" width="246" height="110" rx="5" fill="#eff6ff" stroke="#93c5fd"/>
-  <text x="765" y="305" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" font-weight="bold" fill="#1e3a8a">N_s = 120 f / P  |  s = (N_s − N_r)/N_s</text>
-  <text x="765" y="325" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" font-weight="bold" fill="#dc2626">Rotor Current Freq: f_r = s · f</text>
-  <text x="765" y="346" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#334155">Low slip: T ∝ s (Linear stable zone)</text>
-  <text x="765" y="365" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#334155">1-Φ IM: Not self-starting (double revolving</text>
-  <text x="765" y="381" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#334155">field); FHP uses: fans, mixers, washing</text>
+  <rect x="642" y="286" width="246" height="110" rx="5" fill="#f6f0e1" stroke="#555046"/>
+  <text x="765" y="305" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10.5" font-weight="bold" fill="#1e6e67">N_s = 120 f / P  |  s = (N_s − N_r)/N_s</text>
+  <text x="765" y="325" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10.5" font-weight="bold" fill="#9e3512">Rotor Current Freq: f_r = s · f</text>
+  <text x="765" y="346" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#2b2a28">Low slip: T ∝ s (Linear stable zone)</text>
+  <text x="765" y="365" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#2b2a28">1-Φ IM: Not self-starting (double revolving</text>
+  <text x="765" y="381" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#2b2a28">field); FHP uses: fans, mixers, washing</text>
 </svg>

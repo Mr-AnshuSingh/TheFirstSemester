@@ -92,6 +92,7 @@ export const MidsemDiagramsView: React.FC<{
   const [globalHideLabels, setGlobalHideLabels] = useState(false);
   const [hideLabels, setHideLabels] = useState<Record<string, boolean>>({});
   const [modalDiagram, setModalDiagram] = useState<MidsemDiagram | null>(null);
+  const [fullWidthLayout, setFullWidthLayout] = useState(true);
 
   return (
     <div className="space-y-6">
@@ -111,6 +112,15 @@ export const MidsemDiagramsView: React.FC<{
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            aria-pressed={fullWidthLayout}
+            onClick={() => setFullWidthLayout((v) => !v)}
+            className="midsem-tap px-3.5 py-2 rounded-xl border-2 border-ink bg-paper hover:bg-paper3 midsem-meta font-bold text-ink inline-flex items-center gap-1.5 transition-colors"
+          >
+            <Maximize2 className="w-4 h-4 text-accentTeal" aria-hidden="true" />
+            <span>{fullWidthLayout ? 'Layout: Full Width' : 'Layout: 2-Column'}</span>
+          </button>
           <button
             type="button"
             aria-pressed={globalHideLabels}
@@ -135,7 +145,7 @@ export const MidsemDiagramsView: React.FC<{
           No schematics found for this unit filter. Try selecting &ldquo;All&rdquo; units.
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className={fullWidthLayout ? 'grid grid-cols-1 gap-6' : 'grid grid-cols-1 lg:grid-cols-2 gap-6'}>
           {diagrams.map((d) => {
             const isLabelHidden = globalHideLabels || hideLabels[d.id] || false;
             return (
@@ -162,13 +172,13 @@ export const MidsemDiagramsView: React.FC<{
                   </div>
 
                   <div
-                    className={`relative border-2 border-ink rounded-xl bg-paper overflow-hidden p-2 shadow-inner ${
+                    className={`relative border-2 border-ink rounded-xl bg-paper overflow-hidden p-2 sm:p-3 shadow-inner ${
                       isLabelHidden ? '[&_text]:opacity-0 hover:[&_text]:opacity-100' : ''
                     }`}
                   >
                     <div
                       dangerouslySetInnerHTML={{ __html: d.svg }}
-                      className="w-full flex items-center justify-center select-none"
+                      className="w-full [&_svg]:w-full [&_svg]:h-auto flex items-center justify-center select-none"
                     />
                     {isLabelHidden && (
                       <div className="midsem-badge absolute top-3 right-3 font-mono font-bold bg-accentRed text-paper px-2.5 py-0.5 rounded shadow">
@@ -225,14 +235,14 @@ export const MidsemDiagramsView: React.FC<{
 
       {modalDiagram && (
         <div
-          className="fixed inset-0 z-50 bg-ink/80 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-ink/80 flex items-center justify-center p-2 sm:p-4"
           role="dialog"
           aria-modal="true"
           aria-label={modalDiagram.title}
           onClick={() => setModalDiagram(null)}
         >
           <div
-            className="border-2 border-ink bg-paper rounded-2xl max-w-4xl w-full p-5 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto space-y-4"
+            className="border-2 border-ink bg-paper rounded-2xl max-w-7xl w-[96vw] p-4 sm:p-6 shadow-2xl max-h-[94vh] overflow-y-auto space-y-4"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b-2 border-hair pb-3">
@@ -251,8 +261,8 @@ export const MidsemDiagramsView: React.FC<{
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="border-2 border-ink rounded-xl bg-paper2 p-4 flex items-center justify-center overflow-x-auto">
-              <div dangerouslySetInnerHTML={{ __html: modalDiagram.svg }} className="w-full max-w-2xl select-none" />
+            <div className="border-2 border-ink rounded-xl bg-paper2 p-3 sm:p-5 flex items-center justify-center overflow-x-auto">
+              <div dangerouslySetInnerHTML={{ __html: modalDiagram.svg }} className="w-full [&_svg]:w-full [&_svg]:h-auto select-none" />
             </div>
             <div className="p-4 rounded-xl border-2 border-ink bg-paper3 midsem-body space-y-2">
               <p><strong>Technical Analysis: </strong>{modalDiagram.caption}</p>

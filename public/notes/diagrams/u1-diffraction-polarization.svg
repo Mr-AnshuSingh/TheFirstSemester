@@ -1,82 +1,82 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 430" width="920" height="430">
-  <rect width="920" height="430" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
-  <text x="460" y="28" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#0f172a">Unit 1 Wave Optics: Diffraction Intensity, Rayleigh Resolution &amp; Nicol Prism</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 430">
+  <rect width="920" height="430" rx="12" fill="#fcfaf3" stroke="#2b2a28" stroke-width="2"/>
+  <text x="460" y="28" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="bold" fill="#2b2a28">Unit 1 Wave Optics: Diffraction Intensity, Rayleigh Resolution &amp; Nicol Prism</text>
 
   <!-- PANEL 1: SINGLE SLIT INTENSITY -->
-  <rect x="20" y="45" width="290" height="365" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.2"/>
-  <text x="165" y="68" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#1e3a8a">(a) Single Slit Diffraction</text>
+  <rect x="20" y="45" width="290" height="365" rx="8" fill="#efe7d2" stroke="#555046" stroke-width="1.2"/>
+  <text x="165" y="68" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="bold" fill="#1e6e67">(a) Single Slit Diffraction</text>
   <!-- Axes -->
-  <line x1="35" y1="265" x2="295" y2="265" stroke="#334155" stroke-width="1.5"/>
-  <line x1="165" y1="88" x2="165" y2="275" stroke="#334155" stroke-width="1.2" stroke-dasharray="3,3"/>
+  <line x1="35" y1="265" x2="295" y2="265" stroke="#2b2a28" stroke-width="1.5"/>
+  <line x1="165" y1="88" x2="165" y2="275" stroke="#2b2a28" stroke-width="1.2" stroke-dasharray="3,3"/>
   <!-- Sinc^2 curve -->
-  <path d="M 42 264 Q 55 259 68 265 Q 84 252 98 265 Q 112 246 125 265 Q 145 100 165 100 Q 185 100 205 265 Q 218 246 232 265 Q 246 252 262 265 Q 275 259 288 264" fill="#bfdbfe" fill-opacity="0.55" stroke="#2563eb" stroke-width="2.3"/>
-  <text x="165" y="94" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" font-weight="bold" fill="#1e3a8a">I₀ (Central Max)</text>
-  <text x="115" y="240" text-anchor="end" font-family="Arial, sans-serif" font-size="9.5" fill="#dc2626">I₁ ≈ I₀/22</text>
-  <text x="215" y="240" font-family="Arial, sans-serif" font-size="9.5" fill="#dc2626">(4.5%)</text>
-  <text x="125" y="282" text-anchor="middle" font-family="Arial, sans-serif" font-size="9.5" fill="#0f172a">-π</text>
-  <text x="205" y="282" text-anchor="middle" font-family="Arial, sans-serif" font-size="9.5" fill="#0f172a">+π</text>
-  <text x="98" y="282" text-anchor="middle" font-family="Arial, sans-serif" font-size="9.5" fill="#0f172a">-2π</text>
-  <text x="232" y="282" text-anchor="middle" font-family="Arial, sans-serif" font-size="9.5" fill="#0f172a">+2π</text>
-  <line x1="125" y1="296" x2="205" y2="296" stroke="#dc2626" stroke-width="1.5"/>
-  <text x="165" y="314" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#dc2626">Width = 2λ/a</text>
-  <text x="165" y="340" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" fill="#334155">Minima: a sin θ = m λ</text>
-  <text x="165" y="358" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" fill="#334155">Max Ratio: 1 : 4/9π² : 4/25π²</text>
-  <text x="165" y="376" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" font-weight="bold" fill="#0f172a">≈ 1 : 1/22 : 1/62 : 1/121</text>
+  <path d="M 42 264 Q 55 259 68 265 Q 84 252 98 265 Q 112 246 125 265 Q 145 100 165 100 Q 185 100 205 265 Q 218 246 232 265 Q 246 252 262 265 Q 275 259 288 264" fill="#e6dcc3" fill-opacity="0.55" stroke="#1e6e67" stroke-width="2.3"/>
+  <text x="165" y="94" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10.5" font-weight="bold" fill="#1e6e67">I₀ (Central Max)</text>
+  <text x="115" y="240" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="9.5" fill="#9e3512">I₁ ≈ I₀/22</text>
+  <text x="215" y="240" font-family="Inter, system-ui, sans-serif" font-size="9.5" fill="#9e3512">(4.5%)</text>
+  <text x="125" y="282" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9.5" fill="#2b2a28">-π</text>
+  <text x="205" y="282" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9.5" fill="#2b2a28">+π</text>
+  <text x="98" y="282" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9.5" fill="#2b2a28">-2π</text>
+  <text x="232" y="282" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9.5" fill="#2b2a28">+2π</text>
+  <line x1="125" y1="296" x2="205" y2="296" stroke="#9e3512" stroke-width="1.5"/>
+  <text x="165" y="314" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="bold" fill="#9e3512">Width = 2λ/a</text>
+  <text x="165" y="340" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10.5" fill="#2b2a28">Minima: a sin θ = m λ</text>
+  <text x="165" y="358" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10.5" fill="#2b2a28">Max Ratio: 1 : 4/9π² : 4/25π²</text>
+  <text x="165" y="376" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10.5" font-weight="bold" fill="#2b2a28">≈ 1 : 1/22 : 1/62 : 1/121</text>
 
   <!-- PANEL 2: RAYLEIGH CRITERION -->
-  <rect x="320" y="45" width="275" height="365" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.2"/>
-  <text x="457" y="68" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#1e3a8a">(b) Rayleigh Criterion</text>
+  <rect x="320" y="45" width="275" height="365" rx="8" fill="#efe7d2" stroke="#555046" stroke-width="1.2"/>
+  <text x="457" y="68" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="bold" fill="#1e6e67">(b) Rayleigh Criterion</text>
   <!-- Well Resolved -->
-  <text x="335" y="96" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#16a34a">1. Well Resolved (θ &gt; θ_min)</text>
-  <path d="M 340 165 Q 375 165 395 110 Q 415 165 440 165" fill="none" stroke="#2563eb" stroke-width="2"/>
-  <path d="M 465 165 Q 490 165 510 110 Q 530 165 565 165" fill="none" stroke="#dc2626" stroke-width="2"/>
-  <line x1="335" y1="165" x2="575" y2="165" stroke="#64748b" stroke-width="1"/>
+  <text x="335" y="96" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="bold" fill="#13534d">1. Well Resolved (θ &gt; θ_min)</text>
+  <path d="M 340 165 Q 375 165 395 110 Q 415 165 440 165" fill="none" stroke="#1e6e67" stroke-width="2"/>
+  <path d="M 465 165 Q 490 165 510 110 Q 530 165 565 165" fill="none" stroke="#9e3512" stroke-width="2"/>
+  <line x1="335" y1="165" x2="575" y2="165" stroke="#555046" stroke-width="1"/>
   <!-- Just Resolved -->
-  <text x="335" y="196" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#d97706">2. Just Resolved (Peak₁ on Min₂)</text>
-  <path d="M 355 270 Q 385 270 415 215 Q 445 270 475 270" fill="none" stroke="#2563eb" stroke-width="1.8" stroke-dasharray="4,2"/>
-  <path d="M 415 270 Q 445 270 475 215 Q 505 270 535 270" fill="none" stroke="#dc2626" stroke-width="1.8" stroke-dasharray="4,2"/>
+  <text x="335" y="196" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="bold" fill="#8f6200">2. Just Resolved (Peak₁ on Min₂)</text>
+  <path d="M 355 270 Q 385 270 415 215 Q 445 270 475 270" fill="none" stroke="#1e6e67" stroke-width="1.8" stroke-dasharray="4,2"/>
+  <path d="M 415 270 Q 445 270 475 215 Q 505 270 535 270" fill="none" stroke="#9e3512" stroke-width="1.8" stroke-dasharray="4,2"/>
   <!-- Resultant Dip -->
-  <path d="M 355 270 Q 385 270 415 213 Q 445 232 475 213 Q 505 270 535 270" fill="none" stroke="#0f172a" stroke-width="2.2"/>
-  <text x="445" y="246" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" font-weight="bold" fill="#0f172a">~19% dip</text>
-  <line x1="335" y1="270" x2="575" y2="270" stroke="#64748b" stroke-width="1"/>
+  <path d="M 355 270 Q 385 270 415 213 Q 445 232 475 213 Q 505 270 535 270" fill="none" stroke="#2b2a28" stroke-width="2.2"/>
+  <text x="445" y="246" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="bold" fill="#2b2a28">~19% dip</text>
+  <line x1="335" y1="270" x2="575" y2="270" stroke="#555046" stroke-width="1"/>
   <!-- Unresolved -->
-  <text x="335" y="302" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#dc2626">3. Unresolved (No dip)</text>
-  <path d="M 380 355 Q 425 355 450 315 Q 475 355 520 355" fill="none" stroke="#0f172a" stroke-width="2.2"/>
-  <line x1="335" y1="355" x2="575" y2="355" stroke="#64748b" stroke-width="1"/>
-  <text x="457" y="382" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" font-weight="bold" fill="#1e3a8a">Telescope: θ = 1.22λ/D | Grating: n·N</text>
+  <text x="335" y="302" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="bold" fill="#9e3512">3. Unresolved (No dip)</text>
+  <path d="M 380 355 Q 425 355 450 315 Q 475 355 520 355" fill="none" stroke="#2b2a28" stroke-width="2.2"/>
+  <line x1="335" y1="355" x2="575" y2="355" stroke="#555046" stroke-width="1"/>
+  <text x="457" y="382" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10.5" font-weight="bold" fill="#1e6e67">Telescope: θ = 1.22λ/D | Grating: n·N</text>
 
   <!-- PANEL 3: NICOL PRISM -->
-  <rect x="605" y="45" width="295" height="365" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.2"/>
-  <text x="752" y="68" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#1e3a8a">(c) Nicol Prism (Double Refraction)</text>
+  <rect x="605" y="45" width="295" height="365" rx="8" fill="#efe7d2" stroke="#555046" stroke-width="1.2"/>
+  <text x="752" y="68" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="bold" fill="#1e6e67">(c) Nicol Prism (Double Refraction)</text>
 
   <!-- Calcite parallelogram crystal with Canada Balsam diagonal -->
-  <polygon points="665,140 835,140 800,295 630,295" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+  <polygon points="665,140 835,140 800,295 630,295" fill="#f6f0e1" stroke="#1e6e67" stroke-width="2"/>
   <!-- Canada Balsam Diagonal -->
-  <line x1="665" y1="140" x2="800" y2="295" stroke="#f59e0b" stroke-width="4.5"/>
-  <text x="755" y="132" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#b45309">Canada Balsam (μ = 1.55)</text>
-  <text x="772" y="172" font-family="Arial, sans-serif" font-size="10" fill="#0369a1">Calcite (68° face)</text>
+  <line x1="665" y1="140" x2="800" y2="295" stroke="#9e3512" stroke-width="4.5"/>
+  <text x="755" y="132" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="bold" fill="#8f6200">Canada Balsam (μ = 1.55)</text>
+  <text x="772" y="172" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#13534d">Calcite (68° face)</text>
 
   <!-- Unpolarized incident ray -->
-  <line x1="612" y1="220" x2="646" y2="220" stroke="#0f172a" stroke-width="2.2"/>
-  <circle cx="628" cy="220" r="3" fill="#0f172a"/>
-  <line x1="628" y1="210" x2="628" y2="230" stroke="#0f172a" stroke-width="1.5"/>
-  <text x="615" y="203" font-family="Arial, sans-serif" font-size="9.5" font-weight="bold" fill="#0f172a">Unpol.</text>
+  <line x1="612" y1="220" x2="646" y2="220" stroke="#2b2a28" stroke-width="2.2"/>
+  <circle cx="628" cy="220" r="3" fill="#2b2a28"/>
+  <line x1="628" y1="210" x2="628" y2="230" stroke="#2b2a28" stroke-width="1.5"/>
+  <text x="615" y="203" font-family="Inter, system-ui, sans-serif" font-size="9.5" font-weight="bold" fill="#2b2a28">Unpol.</text>
 
   <!-- E-ray (transmitted plane polarized) -->
-  <line x1="646" y1="220" x2="880" y2="195" stroke="#16a34a" stroke-width="2.2"/>
+  <line x1="646" y1="220" x2="880" y2="195" stroke="#13534d" stroke-width="2.2"/>
   <!-- Vertical polarization ticks on emerging E-ray -->
-  <line x1="850" y1="188" x2="850" y2="208" stroke="#16a34a" stroke-width="1.6"/>
-  <line x1="868" y1="186" x2="868" y2="206" stroke="#16a34a" stroke-width="1.6"/>
-  <text x="855" y="178" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#16a34a">E-ray (μₑ=1.486)</text>
+  <line x1="850" y1="188" x2="850" y2="208" stroke="#13534d" stroke-width="1.6"/>
+  <line x1="868" y1="186" x2="868" y2="206" stroke="#13534d" stroke-width="1.6"/>
+  <text x="855" y="178" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="bold" fill="#13534d">E-ray (μₑ=1.486)</text>
 
   <!-- O-ray (TIR at Balsam) -->
-  <line x1="646" y1="220" x2="758" y2="246" stroke="#dc2626" stroke-width="2"/>
-  <line x1="758" y1="246" x2="725" y2="295" stroke="#dc2626" stroke-width="2" stroke-dasharray="4,2"/>
+  <line x1="646" y1="220" x2="758" y2="246" stroke="#9e3512" stroke-width="2"/>
+  <line x1="758" y1="246" x2="725" y2="295" stroke="#9e3512" stroke-width="2" stroke-dasharray="4,2"/>
   <!-- Black absorbing coat at bottom -->
-  <line x1="630" y1="296" x2="800" y2="296" stroke="#0f172a" stroke-width="6"/>
-  <text x="715" y="314" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#dc2626">O-ray TIR (μₒ=1.658) Absorbed</text>
+  <line x1="630" y1="296" x2="800" y2="296" stroke="#2b2a28" stroke-width="6"/>
+  <text x="715" y="314" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="bold" fill="#9e3512">O-ray TIR (μₒ=1.658) Absorbed</text>
 
-  <text x="752" y="346" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" fill="#0f172a">μₒ (1.658) &gt; μ_balsam (1.55) &gt; μₑ (1.486)</text>
-  <text x="752" y="366" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" fill="#334155">O-ray hits at i &gt; θc (~69°) ⇒ TIR</text>
-  <text x="752" y="386" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" font-weight="bold" fill="#16a34a">Output = 100% Plane Polarized E-ray</text>
+  <text x="752" y="346" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10.5" fill="#2b2a28">μₒ (1.658) &gt; μ_balsam (1.55) &gt; μₑ (1.486)</text>
+  <text x="752" y="366" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10.5" fill="#2b2a28">O-ray hits at i &gt; θc (~69°) ⇒ TIR</text>
+  <text x="752" y="386" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10.5" font-weight="bold" fill="#13534d">Output = 100% Plane Polarized E-ray</text>
 </svg>

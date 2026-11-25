@@ -300,7 +300,7 @@ export const MidsemMermaidFlowchart: React.FC<{ code: string }> = ({ code }) => 
       </div>
       <svg
         viewBox={`0 0 ${layout.width} ${layout.height}`}
-        className="w-full h-auto max-h-[520px] mx-auto block"
+        className="w-full h-auto mx-auto block"
         role="img"
         aria-label="Concept flowchart diagram"
       >
