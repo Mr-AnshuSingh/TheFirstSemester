@@ -10,6 +10,15 @@
   background-color: #f6f0e1;
 }
 
+/* Subtle contrast-safe AA palette refinements strictly inside /midsem */
+.midsem-shell .text-accentTeal {
+  color: #13534d !important;
+}
+
+.midsem-shell .bg-accentGold {
+  color: #2b2a28 !important;
+}
+
 /* Override globals.css nowrap & typography floor only within /midsem */
 .midsem-shell button,
 .midsem-shell [role='tab'],

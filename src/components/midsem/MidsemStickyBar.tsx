@@ -311,7 +311,7 @@ export const MidsemStickyBar: React.FC<MidsemStickyBarProps> = ({
             <div
               role="tablist"
               aria-label="Mid-Sem study modes"
-              className="midsem-chip-rail flex items-center gap-1.5 overflow-x-auto py-0.5"
+              className="midsem-chip-rail flex items-center lg:flex-wrap gap-1.5 overflow-x-auto py-0.5"
             >
               {MIDSEM_MODES.map((m, idx) => {
                 const Icon = MODE_ICONS[m.id];
@@ -333,7 +333,7 @@ export const MidsemStickyBar: React.FC<MidsemStickyBarProps> = ({
                     tabIndex={isSelected ? 0 : -1}
                     onClick={() => onSelectMode(m.id)}
                     onKeyDown={(e) => handleTabKeyDown(e, idx, MIDSEM_MODES)}
-                    className={`midsem-tap midsem-nowrap shrink-0 px-3 py-1 rounded-xl border-2 transition-colors inline-flex items-center gap-1.5 ${
+                    className={`midsem-tap midsem-nowrap shrink-0 px-2.5 py-1 rounded-xl border-2 transition-colors inline-flex items-center gap-1.5 ${
                       matchesGroup ? 'inline-flex' : 'hidden 2xl:inline-flex'
                     } ${
                       isSelected
