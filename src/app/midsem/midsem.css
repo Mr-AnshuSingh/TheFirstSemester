@@ -1,0 +1,173 @@
+/* ============================================================================
+ * /MIDSEM-SCOPED STYLESHEET (Never touches / or shared globals.css)
+ * ============================================================================ */
+
+.midsem-shell {
+  font-family: var(--font-inter), 'Inter', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #2b2a28;
+  background-color: #f6f0e1;
+}
+
+/* Override globals.css nowrap & typography floor only within /midsem */
+.midsem-shell button,
+.midsem-shell [role='tab'],
+.midsem-shell a,
+.midsem-shell input {
+  white-space: normal;
+}
+
+.midsem-shell .midsem-nowrap {
+  white-space: nowrap !important;
+}
+
+/* Strict typography scale:
+ * - Body reading text: 16px min, line-height 1.6, never italic
+ * - Secondary meta: 14px min
+ * - Compact badges only: 12px
+ * - Caveat strictly for headings, numeric callouts, tab labels >=22px, and diagram labels
+ */
+.midsem-shell .midsem-body,
+.midsem-shell .midsem-body p,
+.midsem-shell .midsem-body li,
+.midsem-shell .midsem-body td,
+.midsem-shell .midsem-body th {
+  font-family: var(--font-inter), 'Inter', system-ui, sans-serif !important;
+  font-size: 16px !important;
+  line-height: 1.6 !important;
+  font-style: normal !important;
+}
+
+.midsem-shell .midsem-meta {
+  font-size: 14px !important;
+  line-height: 1.45 !important;
+  font-style: normal !important;
+}
+
+.midsem-shell .midsem-badge {
+  font-size: 12px !important;
+  line-height: 1.25 !important;
+  font-style: normal !important;
+}
+
+.midsem-shell .midsem-tab-label {
+  font-family: var(--font-caveat), 'Caveat', cursive !important;
+  font-size: 22px !important;
+  line-height: 1.15 !important;
+  font-weight: 700 !important;
+}
+
+.midsem-shell .midsem-heading {
+  font-family: var(--font-caveat), 'Caveat', cursive !important;
+  font-weight: 700 !important;
+  font-style: normal !important;
+}
+
+.midsem-shell .midsem-num {
+  font-family: var(--font-caveat), 'Caveat', cursive !important;
+  font-weight: 700 !important;
+}
+
+/* Accessible tap target floor (>= 44x44px) */
+.midsem-shell .midsem-tap {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Horizontal chip rail without ugly scrollbars on small viewports */
+.midsem-chip-rail {
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Safe-area bottom padding above fixed mobile dock */
+.midsem-bottom-safe {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}
+
+/* Accessible skip link */
+.midsem-skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  background: #2b2a28;
+  color: #f6f0e1;
+  padding: 12px 18px;
+  border-radius: 0 0 10px 0;
+  font-weight: 700;
+  font-size: 16px;
+}
+.midsem-skip-link:focus {
+  left: 8px;
+  top: 8px;
+  outline: 3px solid #9e3512;
+  outline-offset: 2px;
+}
+
+/* Focus visibility */
+.midsem-shell button:focus-visible,
+.midsem-shell a:focus-visible,
+.midsem-shell input:focus-visible,
+.midsem-shell [role='tab']:focus-visible {
+  outline: 3px solid #9e3512 !important;
+  outline-offset: 2px !important;
+}
+
+/* Respect reduced motion inside /midsem */
+@media (prefers-reduced-motion: reduce) {
+  .midsem-shell *,
+  .midsem-shell *::before,
+  .midsem-shell *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================================
+ * /MIDSEM DEDICATED PRINT LAYOUT (Cheat Sheet + Quick Handbook Chapter Breaks)
+ * ============================================================================ */
+@media print {
+  @page {
+    margin: 12mm;
+  }
+
+  .midsem-shell {
+    background: #ffffff !important;
+    color: #111827 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .midsem-noprint {
+    display: none !important;
+  }
+
+  .midsem-print-only {
+    display: block !important;
+  }
+
+  .midsem-print-break {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  .midsem-print-break:first-child {
+    break-before: auto;
+    page-break-before: auto;
+  }
+
+  .midsem-avoid-break {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .midsem-shell .print-chapter-card,
+  .midsem-shell .cheat-sheet-unit {
+    box-shadow: none !important;
+    background: #ffffff !important;
+    border: 1.5px solid #374151 !important;
+  }
+}
